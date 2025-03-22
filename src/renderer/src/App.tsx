@@ -1,9 +1,9 @@
-function App(): JSX.Element {
+import { Outlet,  } from 'react-router-dom'
 
+function App() {
   return (
     <>
-      <h1 className="text-red-500 text-4xl">bonjour</h1>
-      <h2 className="text-blue-400">salama</h2>
+      <Outlet />
     </>
   )
 }
