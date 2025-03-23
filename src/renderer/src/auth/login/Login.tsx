@@ -21,14 +21,14 @@ function Login(): JSX.Element {
     reset
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     console.log(data)
     reset()
   }
 
   return (
     <div className="flex h-screen bg-white">
-      {/* Section Logo */}
+
       <div className="w-2/4 flex items-center justify-center bg-white">
         <img className="w-3/4" src={logo} alt="Logo" />
       </div>
