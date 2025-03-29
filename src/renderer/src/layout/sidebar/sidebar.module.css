@@ -1,0 +1,49 @@
+.link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #ECF0F1;
+    padding: 6px 160px 6px 10px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.inactive {
+    color: #B0BEC5;
+}
+
+.link:hover {
+    background-color: #ECF0F133;
+    color: #ECF0F1;
+}
+
+.active {
+    font-weight: bold;
+    background-color: #ECF0F133;
+    color: #FFFFFF;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.active:hover {
+    background-color: #D3D3D366;
+    color: #FFFFFF;
+}
+
+/* en burgerrrr */
+
+.linkclose {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #ECF0F1;
+    padding: 6px 10px 6px 10px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.linkclose:hover {
+    background-color: #ECF0F133;
+    color: #ECF0F1;
+}

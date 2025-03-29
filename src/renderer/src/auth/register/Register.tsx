@@ -46,7 +46,6 @@ function Register(): JSX.Element {
           <h2 className="text-4xl font-bold text-center mb-8">Inscription</h2>
 
           <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-
             <div className="flex gap-6">
               <div className="relative flex-1 flex flex-col">
                 <div className="relative">
@@ -124,7 +123,7 @@ function Register(): JSX.Element {
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                  onClick={() => setShowPassword((prev) => !prev)}
+                  onClick={() => setShowPassword((showPassword) => !showPassword)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
