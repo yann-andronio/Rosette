@@ -8,7 +8,7 @@ import Store from './redux/Store'
 import Login from './auth/login/Login'
 import Register from './auth/register/Register'
 import Home from './pages/home/Home'
-import Studentsinfo from './pages/studentsinfo/Studentsinfo'
+import Studentsinfo from './pages/students/studentsinfo/Studentsinfo'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './redux/Store'
 import Sidebar from './layout/sidebar/Sidebar'
@@ -36,6 +36,7 @@ const route = createBrowserRouter([
     children: [
       {
         index: true,
+        path: '/home/Dashboard',
         element: <Dashboard />
       },
       {

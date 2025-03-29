@@ -1,29 +1,16 @@
-.link {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: #ECF0F1;
-    padding: 6px 160px 6px 10px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-.inactive {
-    color: #B0BEC5;
-}
-
-.link:hover {
-    background-color: #ECF0F133;
-    color: #ECF0F1;
-}
 
 .active {
+    background-color: #f0f0f0;
+    color: #000;
     font-weight: bold;
-    background-color: #ECF0F133;
-    color: #FFFFFF;
-    border: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    border-left: 4px solid #3498db;
+}
+
+
+.inactive {
+    background-color: transparent;
+    color: #999;
 }
 
 .active:hover {
@@ -31,19 +18,9 @@
     color: #FFFFFF;
 }
 
-/* en burgerrrr */
+.submenuactive{
+background-color: #f0f0f0;
+    color: #000;
+    font-weight: bold;
+    border-left: 4px solid #3498db;}
 
-.linkclose {
-    display: flex;
-    align-items: center;
-    font-size: 0.875rem;
-    color: #ECF0F1;
-    padding: 6px 10px 6px 10px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.linkclose:hover {
-    background-color: #ECF0F133;
-    color: #ECF0F1;
-}
