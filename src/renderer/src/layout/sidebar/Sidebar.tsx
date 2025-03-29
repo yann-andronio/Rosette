@@ -67,7 +67,7 @@ const Sidebar = () => {
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0`}
         aria-label="Sidenav"
       >
-        <div className="overflow-y-auto py-5 px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <div className="overflow-y-auto py-5 px-3 h-full dark:bg-gray-800 dark:border-gray-700">
           <ul className="space-y-2">
             {menus.map((menu, index) => (
               <li key={index}>
@@ -112,7 +112,7 @@ const Sidebar = () => {
                     {menu.subMenus.map((subMenu, subIndex) => (
                       <li
                         key={subIndex}
-                        className={`${activeName === subMenu.name ? s.submenuactive : ''}   text-gray-900 rounded-lg transition duration-75 text-white `}
+                        className={`${activeName === subMenu.name ? s.submenuactive : ''}    rounded-lg transition duration-75 text-white group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700   `}
                       >
                         <NavLink
                           onClick={() => dispatch(setActiveName(subMenu.name))}
