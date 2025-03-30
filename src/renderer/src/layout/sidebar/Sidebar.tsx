@@ -13,7 +13,7 @@ interface Menu {
   name: string
   path?: string
   icon: JSX.Element
-  subMenus: { name: string; path: string }[]
+  subMenus: { name: string; path: string; iconsubmenu?:JSX.Element }[]
 }
 
 const Sidebar = () => {
@@ -30,15 +30,32 @@ const Sidebar = () => {
       name: 'Elèves',
       icon: <LuGraduationCap size={25} />,
       subMenus: [
-        { name: 'information', path: '/home/StudentsInfo' },
-        { name: 'gestion des notes', path: '/gestionnotestudents' },
-        { name: 'Ecolage', path: '/ecolagestudents' }
+        { name: 'information', path: '/home/StudentsInfo', iconsubmenu:<LuGraduationCap size={25} /> },
+        { name: 'gestion des notes', path: '/gestionnotestudents' , iconsubmenu:<LuGraduationCap size={25} /> },
+        { name: 'Ecolage', path: '/ecolagestudents' , iconsubmenu:<LuGraduationCap size={25} />}
       ]
     },
     {
       name: 'Employés',
       icon: <MdWorkOutline size={25} />,
-      subMenus: [{ name: `information d'employer`, path: '/sales/products' }]
+      subMenus: [
+        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} />  },
+        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} /> },
+        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
+        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} /> },
+        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  }
+      ]
+    },
+    {
+      name: 'Employés',
+      icon: <MdWorkOutline size={25} />,
+      subMenus: [
+        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
+        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} /> },
+        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
+        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
+        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  }
+      ]
     }
   ]
   const dispatch = useDispatch()
@@ -58,6 +75,8 @@ const Sidebar = () => {
 
   return (
     <div className="relative">
+   
+
       <aside
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0`}
         aria-label="Sidenav"
@@ -65,7 +84,7 @@ const Sidebar = () => {
         <div className="overflow-y-auto py-5 px-3 h-full bg-[#895256]">
           <ul className="space-y-2.5">
             {menus.map((menu, index) => (
-              <li key={index}>
+              <li key={index} className="relative">
                 {menu.subMenus.length === 0 ? (
                   <Link
                     onClick={() => dispatch(setActiveName(menu.name))}
@@ -73,8 +92,9 @@ const Sidebar = () => {
                     className={`flex items-center  ${activeName === menu.name ? s.active : s.inactive} p-2 w-full ${closeBar ? 'w-[5rem] justify-center' : 'w-[16rem]'}`}
                   >
                     {menu.icon}
+                    {/* mbola mila reglegna nle hidden eto */}
                     <span
-                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 -scale-0' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
+                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 hidden' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
                     >
                       {menu.name}
                     </span>
@@ -88,7 +108,7 @@ const Sidebar = () => {
                   >
                     {menu.icon}
                     <span
-                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 -scale-0' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
+                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 hidden' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
                     >
                       {menu.name}
                     </span>
@@ -115,6 +135,53 @@ const Sidebar = () => {
                           className={` flex items-center p-2 pl-11 w-full text-base font-normal `}
                         >
                           {subMenu.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* test1 */}
+                {/* {menu.subMenus.length > 0 && (
+                  <ul
+                    id={`dropdown-${menu.name.toLowerCase()}`}
+                    className={` py-2 space-y-2 ${closeBar ? s.menukely : 'hidden'}`}
+                  >
+                    {menu.subMenus.map((subMenu, subIndex) => (
+                      <li
+                        key={subIndex}
+                        className={`${activeName === subMenu.name ? s.submenuactive : s.submenuinactive}     `}
+                      >
+                        <NavLink
+                          onClick={() => dispatch(setActiveName(subMenu.name))}
+                          to={subMenu.path}
+                          className={` flex items-center p-2 pl-11 w-full text-base font-normal `}
+                        >
+                          {subMenu.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                )} */}
+
+                {/* test2 */}
+
+                {menu.subMenus.length > 0 && (
+                  <ul
+                    id={`dropdown-${menu.name.toLowerCase()}`}
+                    className={` py-2 space-y-2 ${closeBar ? s.menukely2 : 'hidden'}  `}
+                  >
+                    {menu.subMenus.map((subMenu, subIndex) => (
+                      <li
+                        key={subIndex}
+                        className={`   flex ${activeName === subMenu.name ? s.submenuactive : s.submenuinactive}     `}
+                      >
+                        <NavLink
+                          onClick={() => dispatch(setActiveName(subMenu.name))}
+                          to={subMenu.path}
+                          className={` flex items-center p-2 pl-11 w-full text-base font-normal `}
+                        >
+                          {subMenu.iconsubmenu}
                         </NavLink>
                       </li>
                     ))}
