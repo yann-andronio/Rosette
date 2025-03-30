@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 
 const initialState = {
-  activeName: 'Accueil',
+  activeName: 'Dashboard',
   closeBar: false
 }
 

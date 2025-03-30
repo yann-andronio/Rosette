@@ -1,29 +1,62 @@
 .active {
-    background-color: #f0f0f0;
-    color: #000;
-    font-weight: bold;
-    border-left: 4px solid #3498db;
+    background-color: #a86a66;
+    color: #fff;
+    font-weight: 600;
+    border-left: 4px solid #fffbe7;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.active:hover {
+    background-color: #b07672;
+    border-left-color: #fffbe7;
 }
 
 
 .inactive {
     background-color: transparent;
-    color: #999;
+    color: white;
+    font-weight: 500;
 }
 
-.active:hover {
-    background-color: #D3D3D366;
-    color: #FFFFFF;
+.inactive:hover {
+    border-radius: 8px;
+    background-color: #b07672;
+    border-left-color: #fffbe7;
 }
+
+
 
 .submenuactive {
-    background-color: #f0f0f0;
-    color: #000;
-    font-weight: bold;
-    border-left: 4px solid #3498db;
+background-color: #a86a66;
+    color: #fff;
+    font-weight: 600;
+    border-left: 4px solid #fffbe7;
+    border-radius: 8px;
 }
 
 .submenuactive:hover {
-    background-color: #D3D3D366;
-    color: #FFFFFF;
+    background-color: #b07672;
+    border-left-color: #fffbe7;
+    border-radius: 8px;
+}
+
+.submenuinactive {
+    color: white;
+}
+
+.submenuinactive:hover {
+    border-radius: 8px;
+    background-color: #b07672;
+    border-left-color: #fffbe7;
+}
+
+.normalBtn {
+    color: white;
+}
+
+.normalBtn:hover {
+border-radius: 8px;
+    background-color: #b07672;
+    border-left-color: #fffbe7;
 }

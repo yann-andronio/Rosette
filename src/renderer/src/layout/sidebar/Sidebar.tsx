@@ -67,7 +67,7 @@ const Sidebar = () => {
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0`}
         aria-label="Sidenav"
       >
-        <div className="overflow-y-auto py-5 px-3 h-full dark:bg-gray-800 dark:border-gray-700">
+        <div className="overflow-y-auto py-5 px-3 h-full bg-[#895256] dark:border-gray-700">
           <ul className="space-y-2">
             {menus.map((menu, index) => (
               <li key={index}>
@@ -75,11 +75,11 @@ const Sidebar = () => {
                   <Link
                     onClick={() => dispatch(setActiveName(menu.name))}
                     to={menu.path || '#'}
-                    className={`flex items-center  ${activeName === menu.name ? s.active : ''} p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 ${closeBar ? 'w-[5rem] justify-center' : 'w-[16rem]'}`}
+                    className={`flex items-center  ${activeName === menu.name ? s.active : s.inactive} p-2 w-full ${closeBar ? 'w-[5rem] justify-center' : 'w-[16rem]'}`}
                   >
                     {menu.icon}
                     <span
-                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 translate-x-40' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
+                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 -scale-0' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
                     >
                       {menu.name}
                     </span>
@@ -88,12 +88,12 @@ const Sidebar = () => {
                   <button
                     type="button"
                     onClick={() => handleMenuClick(menu.name)}
-                    className={`flex items-center justify-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 ${closeBar ? 'w-[5rem]' : 'w-[16rem]'}`}
+                    className={`flex items-center justify-center p-2 w-full text-base font-normal ${s.normalBtn} ${closeBar ? 'w-[5rem]' : 'w-[16rem]'}`}
                     aria-controls={`dropdown-${menu.name.toLowerCase()}`}
                   >
                     {menu.icon}
                     <span
-                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 translate-x-40' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
+                      className={`font-normal transition-all duration-500 absolute left-12 ${closeBar ? 'opacity-0 -scale-0' : 'flex-1 ml-3 text-left whitespace-nowrap'}`}
                     >
                       {menu.name}
                     </span>
@@ -112,7 +112,7 @@ const Sidebar = () => {
                     {menu.subMenus.map((subMenu, subIndex) => (
                       <li
                         key={subIndex}
-                        className={`${activeName === subMenu.name ? s.submenuactive : ''}    rounded-lg transition duration-75 text-white group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700   `}
+                        className={`${activeName === subMenu.name ? s.submenuactive : s.submenuinactive}     `}
                       >
                         <NavLink
                           onClick={() => dispatch(setActiveName(subMenu.name))}
