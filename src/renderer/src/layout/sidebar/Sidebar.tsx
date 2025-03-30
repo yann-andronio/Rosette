@@ -1,34 +1,34 @@
 import { setActiveName } from '@renderer/redux/slice/activeLinkSlice'
 import { RootState } from '@renderer/redux/Store'
-import { useState , useEffect } from 'react'
-import { FaHome, FaUsers, FaUsersCog } from 'react-icons/fa'
+import { useState, useEffect } from 'react'
+import { LuLayoutDashboard, LuGraduationCap } from 'react-icons/lu'
+import { MdWorkOutline } from 'react-icons/md'
 import { IoIosArrowForward } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, NavLink } from 'react-router-dom'
 import logo from '../../images/logo.jpg'
-import s from "./sidebar.module.css"
-import { set } from 'react-hook-form'
+import s from './sidebar.module.css'
 
 interface Menu {
   name: string
   path?: string
   icon: JSX.Element
-  subMenus: { name: string; path: string }[] // Chaque sous-menu a un nom et un chemin
+  subMenus: { name: string; path: string }[]
 }
 
 const Sidebar = () => {
-  const [activeMenu, setActiveMenu] = useState<string | null>(null) // Gérer l'état des sous-menus
+  const [activeMenu, setActiveMenu] = useState<string | null>(null)
 
   const menus: Menu[] = [
     {
       name: 'Dashboard',
       path: '/home/Dashboard',
-      icon: <FaHome size={25} />,
-      subMenus: [] // Pas de sous-menus
+      icon: <LuLayoutDashboard size={25} />,
+      subMenus: []
     },
     {
       name: 'Elèves',
-      icon: <FaUsers size={25} />, // Icône pour "Elèves"
+      icon: <LuGraduationCap size={25} />,
       subMenus: [
         { name: 'information', path: '/home/StudentsInfo' },
         { name: 'gestion des notes', path: '/gestionnotestudents' },
@@ -37,7 +37,7 @@ const Sidebar = () => {
     },
     {
       name: 'Employés',
-      icon: <FaUsersCog size={25} />, // Icône pour "Employés"
+      icon: <MdWorkOutline size={25} />,
       subMenus: [{ name: `information d'employer`, path: '/sales/products' }]
     }
   ]
@@ -45,21 +45,16 @@ const Sidebar = () => {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
 
+  const handleMenuClick = (menuName: string) => {
+    if (closeBar) return // Désactive le clic si closeBar est true
 
- const handleMenuClick = (menuName: string) => {
-   if (closeBar) return // Désactive le clic si closeBar est true
-
-   setActiveMenu(activeMenu === menuName ? null : menuName)
+    setActiveMenu(activeMenu === menuName ? null : menuName)
   }
   useEffect(() => {
     if (closeBar) {
-      setActiveMenu(null) 
+      setActiveMenu(null)
     }
   }, [closeBar])
-
-
-
-  
 
   return (
     <div className="relative">
@@ -67,8 +62,8 @@ const Sidebar = () => {
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0`}
         aria-label="Sidenav"
       >
-        <div className="overflow-y-auto py-5 px-3 h-full bg-[#895256] dark:border-gray-700">
-          <ul className="space-y-2">
+        <div className="overflow-y-auto py-5 px-3 h-full bg-[#895256]">
+          <ul className="space-y-2.5">
             {menus.map((menu, index) => (
               <li key={index}>
                 {menu.subMenus.length === 0 ? (
