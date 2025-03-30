@@ -9,6 +9,13 @@ import { Link, NavLink } from 'react-router-dom'
 import logo from '../../images/logo.jpg'
 import s from './sidebar.module.css'
 
+import { HiOutlineInformationCircle } from 'react-icons/hi'
+import { MdAssignment } from 'react-icons/md'
+import { BiStats } from 'react-icons/bi'
+import { RiScales3Line } from 'react-icons/ri'
+import { BsCash } from 'react-icons/bs'
+import { HiUserCircle } from 'react-icons/hi'
+
 interface Menu {
   name: string
   path?: string
@@ -30,33 +37,21 @@ const Sidebar = () => {
       name: 'Elèves',
       icon: <LuGraduationCap size={25} />,
       subMenus: [
-        { name: 'information', path: '/home/StudentsInfo', iconsubmenu:<LuGraduationCap size={25} /> },
-        { name: 'gestion des notes', path: '/gestionnotestudents' , iconsubmenu:<LuGraduationCap size={25} /> },
-        { name: 'Ecolage', path: '/ecolagestudents' , iconsubmenu:<LuGraduationCap size={25} />}
+      { name: 'information', path: '/home/StudentsInfo', iconsubmenu: <HiOutlineInformationCircle size={25} /> },
+  { name: 'gestion des notes', path: '/home/gestionnotestudents', iconsubmenu: <MdAssignment size={25} /> },
+  { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
+  { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
+  { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> }
       ]
     },
     {
       name: 'Employés',
       icon: <MdWorkOutline size={25} />,
       subMenus: [
-        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} />  },
-        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} /> },
-        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
-        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} /> },
-        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  }
+ { name: `information d'employer`, path: '/sales/products', iconsubmenu: <HiUserCircle size={25} /> }       
       ]
     },
-    {
-      name: 'Employés',
-      icon: <MdWorkOutline size={25} />,
-      subMenus: [
-        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
-        { name: `information d'employer`, path: '/sales/products' , iconsubmenu:<LuGraduationCap size={25} /> },
-        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
-        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  },
-        { name: `information d'employer`, path: '/sales/products', iconsubmenu:<LuGraduationCap size={25} />  }
-      ]
-    }
+  
   ]
   const dispatch = useDispatch()
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
