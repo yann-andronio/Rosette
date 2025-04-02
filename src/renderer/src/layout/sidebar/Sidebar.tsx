@@ -7,7 +7,7 @@ import { IoIosArrowForward } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, NavLink } from 'react-router-dom'
 import logo from '../../images/logo.jpg'
-import { FiSun, FiMoon } from 'react-icons/fi'
+import { FiSun, FiMoon, FiLogOut } from 'react-icons/fi'
 import { MdSettings } from 'react-icons/md'
 import s from './sidebar.module.css'
 
@@ -71,13 +71,16 @@ const Sidebar = () => {
     }
   }, [closeBar])
 
+
+
+
   return (
     <div className="relative">
       <aside
         className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0`}
         aria-label="Sidenav"
       >
-        <div className="overflow-y-auto py-5 px-3 h-full bg-[#895256]">
+        <div className={`overflow-y-auto py-5 px-3 h-full bg-[#895256]`}>
           <ul className="space-y-2.5">
             {menus.map((menu, index) => (
               <li key={index} className="relative">
@@ -188,21 +191,18 @@ const Sidebar = () => {
           </ul>
         </div>
 
-        {/* Paramètres sy  mode sombre */}
+        {/* Paramètres sy  deconnexion */}
         <div className="absolute bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
           <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`${closeBar ? 'justify-center' : ''} flex items-center justify-between p-2 bg-white text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg w-full transition-all duration-300 shadow-md`}
+            className={` ${closeBar ? 'justify-center' : ''} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
-            {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
-            {!closeBar && (
-              <span className="ml-3 font-medium">{darkMode ? 'Mode Clair' : 'Mode Nuit'}</span>
-            )}
+            <FiLogOut size={22} />
+            {!closeBar && <span className="ml-3">Se deconnecter</span>}
           </button>
 
           <Link
             to="/settings"
-            className={` ${closeBar ? 'justify-center' : ''} flex items-center p-2 bg-white text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
+            className={` ${closeBar ? 'justify-center' : ''} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
             <MdSettings size={25} />
             {!closeBar && <span className="ml-3">Paramètres</span>}

@@ -8,10 +8,14 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../../redux/slice/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 function Register(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const navigate = useNavigate()
 
   const ValidationSchema = yup.object({
     name: yup.string().required('Nom requis'),
@@ -32,8 +36,12 @@ function Register(): JSX.Element {
     reset
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
+  const dispatch = useDispatch()
   const onSubmit = (data: any) => {
+     dispatch(setUser({ name: data.name, role: data.role }))
     console.log(data)
+    navigate("/home")
+
     reset()
   }
 
