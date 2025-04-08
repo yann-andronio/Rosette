@@ -153,31 +153,7 @@ const Sidebar = () => {
                   </ul>
                 )}
 
-                {/* test1 */}
-                {/* {menu.subMenus.length > 0 && (
-                  <ul
-                    id={`dropdown-${menu.name.toLowerCase()}`}
-                    className={` py-2 space-y-2 ${closeBar ? s.menukely : 'hidden'}`}
-                  >
-                    {menu.subMenus.map((subMenu, subIndex) => (
-                      <li
-                        key={subIndex}
-                        className={`${activeName === subMenu.name ? s.submenuactive : s.submenuinactive}     `}
-                      >
-                        <NavLink
-                          onClick={() => dispatch(setActiveName(subMenu.name))}
-                          to={subMenu.path}
-                          className={` flex items-center p-2 pl-11 w-full text-base font-normal `}
-                        >
-                          {subMenu.name}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
-                )} */}
-
-                {/* test2 */}
-
+            
                 {menu.subMenus.length > 0 && (
                   <ul
                     id={`dropdown-${menu.name.toLowerCase()}`}
