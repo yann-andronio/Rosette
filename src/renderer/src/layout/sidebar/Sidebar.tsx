@@ -84,7 +84,7 @@ const Sidebar = () => {
   return (
     <div className="relative">
       <aside
-        className={`fixed top-0 left-0  z-40 w-64 h-screen transition-transform ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0`}
+        className={`fixed top-0 left-0  z-40 w-64 h-screen  ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0   duration-[550ms] ease-in-out`}
         aria-label="Sidenav"
       >
         <div className="w-full flex gap-2 items-center justify-center p-3  bg-[#895256]     ">
@@ -153,7 +153,6 @@ const Sidebar = () => {
                   </ul>
                 )}
 
-            
                 {menu.subMenus.length > 0 && (
                   <ul
                     id={`dropdown-${menu.name.toLowerCase()}`}
