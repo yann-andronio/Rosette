@@ -40,7 +40,7 @@ const Sidebar = () => {
       icon: <LuGraduationCap size={25} />,
       subMenus: [
         {
-          name: 'information',
+          name: 'Information des élèves',
           path: '/home/StudentsInfo',
           iconsubmenu: <HiOutlineInformationCircle size={25} />
         },
@@ -181,10 +181,10 @@ const Sidebar = () => {
         </div>
 
         {/* Paramètres sy  deconnexion */}
-        <div className="absolute bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
+        <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
           <Link
             to="/settings"
-            className={` ${closeBar ? 'justify-center' : ''} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
+            className={` ${closeBar ? 'justify-center' : ''} z-50 flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
             <MdSettings size={25} />
             {!closeBar && <span className="ml-3">Paramètres</span>}
