@@ -6,7 +6,7 @@ import { MdWorkOutline } from 'react-icons/md'
 import { IoIosArrowForward } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, NavLink } from 'react-router-dom'
-import logo from '../../images/logo/Logo1.png'
+import logo from '../../images/logo/Logo4.png'
 import { FiSun, FiMoon, FiLogOut } from 'react-icons/fi'
 import { MdSettings } from 'react-icons/md'
 import s from './sidebar.module.css'
@@ -26,7 +26,7 @@ interface Menu {
 
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-  const [darkMode, setDarkMode] = useState<boolean>(false)
+  
 
   const menus: Menu[] = [
     {

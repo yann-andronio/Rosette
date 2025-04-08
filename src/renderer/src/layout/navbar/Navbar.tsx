@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
 
   return (
     <Fragment>
-      <div className="navbar justify-between bg-white  flex w-full pr-14 pl-4 py-3 items-center">
+      <div className="navbar justify-between bg-white     flex w-full pr-14 pl-4 py-3 items-center">
         <div className="burgerflex gap-4 px-4 py-2 flex">
           <AiOutlineMenu size={27} onClick={() => dispatch(toggleCloseBar())} />
           <h1 className="text-lg font-semibold">{activeName}</h1>
