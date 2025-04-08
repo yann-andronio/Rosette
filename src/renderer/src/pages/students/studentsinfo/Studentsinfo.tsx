@@ -15,9 +15,7 @@ function Studentsinfo(): JSX.Element {
   const [students] = useState([
     { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2' },
     { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM2' },
-    { id: 3, nom: 'WINTCHESTER', prenom: 'John', sexe: 'Homme', classe: 'CM2' },
-    { id: 4, nom: 'WINTCHESTER', prenom: 'Marie', sexe: 'Femme', classe: 'CM2' },
-    { id: 5, nom: 'WINTCHESTER', prenom: 'Jack', sexe: 'Homme', classe: 'CM2' }
+   
   ])
 
    const [filteredUsers, setFilteredUsers] = useState(students)
@@ -35,9 +33,9 @@ function Studentsinfo(): JSX.Element {
 
   return (
     <div
-      className={`Rigth bg-[#E6E6FA] w-full min-h-screen px-16 py-6 transition-all duration-500 ease-in-out ${
-        closeBar ? '' : ''
-      }`}
+      className={`Rigth bg-[#E6E6FA] w-full min-h-screen p-12  ${
+        closeBar ? '"ml-16"' : ''
+      } transition-all duration-[600ms] ease-in-out`}
     >
       <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
@@ -58,24 +56,24 @@ function Studentsinfo(): JSX.Element {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg shadow-lg">
-        <table className="min-w-full bg-white rounded-lg">
-          <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
+      <div className="relative overflow-x-auto mt-4">
+        <table className="w-full text-sm text-left border-collapse">
+          <thead className="text-xs bg-[#E6E6FA54]">
             <tr>
-              <th className="py-3 px-5 text-left">Photo</th>
-              <th className="py-3 px-5 text-left">Nom</th>
-              <th className="py-3 px-5 text-left">Prénom</th>
-              <th className="py-3 px-5 text-left">Sexe</th>
-              <th className="py-3 px-5 text-left">Classe</th>
-              <th className="py-3 px-5 text-left">Opération</th>
+              <th className="py-3 px-5 ">Photo</th>
+              <th className="py-3 px-5 ">Prénom</th>
+              <th className="py-3 px-5 ">Nom</th>
+              <th className="py-3 px-5 ">Sexe</th>
+              <th className="py-3 px-5 ">Classe</th>
+              <th className="py-3 px-5 ">Opération</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map((student, index) => (
               <tr
                 key={student.id}
-                className={`hover:bg-gray-50 transition duration-200 ${
-                  index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                className={`hover:bg-gray-50 transition duration-200 hover:border-l-2 border-[#]  ${
+                  index % 2 === 0 ? 'bg-white' : 'bg-gray-200'
                 }`}
               >
                 <td className="py-4 px-5">
@@ -98,7 +96,6 @@ function Studentsinfo(): JSX.Element {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
         <button className="hover:underline">&lt; Précédent</button>
         <div className="flex gap-2 mt-3 md:mt-0">
@@ -106,7 +103,7 @@ function Studentsinfo(): JSX.Element {
             <button
               key={page}
               className={`px-3 py-1 rounded-full font-medium ${
-                page === 3
+                page === 1
                   ? 'bg-[#9f7126] text-white'
                   : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
               }`}
