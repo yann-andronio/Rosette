@@ -6,34 +6,32 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
-   const [searchCommande, setSearchClients] = useState('')
-   const [addcommandemodule, setAddcommandemodule] = useState(false)
+  const [searchCommande, setSearchClients] = useState('')
 
-   const handleSearchCommande = (dataclients: string) => {
-     setSearchClients(dataclients)
-   }
+  const handleSearchCommande = (dataclients: string) => {
+    setSearchClients(dataclients)
+  }
   const [students] = useState([
     { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2' },
-    { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM2' },
-    { id: 3, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM2' },
-    { id: 4, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM2' },
-    { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM2' },
-    { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM2' },
-   
+    { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1' },
+    { id: 3, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP2' },
+    { id: 4, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM4' },
+    { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CE' },
+    { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP1' }
   ])
 
-   const [filteredUsers, setFilteredUsers] = useState(students)
+  const [filtereEleves, setfiltereEleves] = useState(students)
 
-   useEffect(() => {
-     const result = students.filter(
-       (datacmd) =>
-         datacmd.nom.toLowerCase().includes(searchCommande.toLowerCase()) ||
-         datacmd.prenom.toLowerCase().includes(searchCommande.toLowerCase()) 
-     
-     )
-     setFilteredUsers(searchCommande === '' ? [...students] : [...result])
-     //  setFilteredUsers(searchClients === "" ? users : result);
-   }, [searchCommande, students])
+  useEffect(() => {
+    const result = students.filter(
+      (dataStudents) =>
+        dataStudents.nom.toLowerCase().includes(searchCommande.toLowerCase()) ||
+        dataStudents.prenom.toLowerCase().includes(searchCommande.toLowerCase()) ||
+        dataStudents.classe.toLowerCase().includes(searchCommande.toLowerCase()) 
+        
+    )
+    setfiltereEleves(searchCommande === '' ? [...students] : [...result])
+  }, [searchCommande, students])
 
   return (
     <div
@@ -41,18 +39,18 @@ function Studentsinfo(): JSX.Element {
         closeBar ? '"ml-16"' : ''
       } transition-all duration-[600ms] ease-in-out`}
     >
-      <div className="p-8">
+      <div className="px-20 py-8">
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <Searchbar onSearch={handleSearchCommande} setAddcommandemodule={setAddcommandemodule} />
+          <Searchbar onSearch={handleSearchCommande} />
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select className="px-4 py-2 rounded-lg bg-[#9f7126] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+              <select className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
                 <option>05</option>
                 <option>10</option>
                 <option>20</option>
@@ -65,9 +63,9 @@ function Studentsinfo(): JSX.Element {
         </div>
 
         <div className="relative overflow-x-auto mt-4 bg-white rounded-lg p-8">
-          <div className="bg-[#9f7126] text-white text-sm rounded-t-lg mb-2">
+          <div className="bg-[#895256] text-white text-sm rounded-lg mb-2">
             <div className="flex px-6 py-3 font-medium tracking-wide">
-              <div className="flex-1">Photo</div>
+              <div className="w-30">Photo</div>
               <div className="flex-1">Prénom</div>
               <div className="flex-1">Nom</div>
               <div className="flex-1">Sexe</div>
@@ -77,29 +75,36 @@ function Studentsinfo(): JSX.Element {
           </div>
 
           <div className="space-y-2">
-            {filteredUsers.map((student, index) => (
-              <div
-                key={student.id}
-                className={`flex px-6 py-4 rounded-lg ${
-                  index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                } border border-gray-200 hover:bg-gray-50 hover:shadow-lg transition duration-300`}
-              >
-                <div className="flex-1 flex items-center">
-                  <FaUserCircle className="text-3xl text-[#9f7126]" />
-                </div>
-                <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
-                <div className="flex-1 text-gray-700">{student.prenom}</div>
-                <div className="flex-1 text-gray-700">{student.sexe}</div>
-                <div className="flex-1 text-gray-700">{student.classe}</div>
-                <div className="flex-1">
-                  <div className="flex gap-3 text-[#9f7126] text-lg">
-                    <FaEye className="hover:text-black cursor-pointer transition" />
-                    <FaEdit className="hover:text-black cursor-pointer transition" />
-                    <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+            {filtereEleves.length === 0 ? (
+              <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
+            ) : (
+              filtereEleves.map((student, index) => (
+                <div
+                  key={student.id}
+                  className={`flex px-6 py-2 rounded-lg items-center ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+                  }  hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
+                >
+                  <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
+                    <div className="image bg-[#895256] p-2 rounded-lg">
+                      <FaUserCircle className="text-3xl text-[#ffff]" />
+                    </div>
+                  </div>
+
+                  <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
+                  <div className="flex-1 text-gray-700">{student.prenom}</div>
+                  <div className="flex-1 text-gray-700">{student.sexe}</div>
+                  <div className="flex-1 text-gray-700">{student.classe}</div>
+                  <div className="flex-1">
+                    <div className="flex gap-3 text-[#9f7126] text-lg">
+                      <FaEye className="hover:text-black cursor-pointer transition" />
+                      <FaEdit className="hover:text-black cursor-pointer transition" />
+                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
@@ -115,7 +120,7 @@ function Studentsinfo(): JSX.Element {
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
                 }`}
               >
-                {page.toString().padStart(2, '0')}
+                {page}
               </button>
             ))}
           </div>

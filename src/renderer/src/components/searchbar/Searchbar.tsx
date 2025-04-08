@@ -4,10 +4,9 @@ import { IoSearchSharp } from 'react-icons/io5'
 
 type Searchlistclientseleves = {
   onSearch: (searchCategorie: string) => void
-  setAddcommandemodule: (value: boolean) => void
 }
 
-const Searchbar: React.FC<Searchlistclientseleves> = ({ onSearch, setAddcommandemodule }) => {
+const Searchbar: React.FC<Searchlistclientseleves> = ({ onSearch }) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onSearch(event.target.value)
   }
