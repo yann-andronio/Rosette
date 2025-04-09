@@ -31,7 +31,7 @@ const Sidebar = () => {
   const menus: Menu[] = [
     {
       name: 'Dashboard',
-      path: '/home/Dashboard',
+      path: '/home',
       icon: <LuLayoutDashboard size={25} />,
       subMenus: []
     },
