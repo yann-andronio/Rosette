@@ -6,32 +6,32 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
-  const [searchCommande, setSearchClients] = useState('')
+  const [searcheleves, setSearcheleves] = useState('')
 
-  const handleSearchCommande = (dataclients: string) => {
-    setSearchClients(dataclients)
+  const handleSearcheleves = (dataeleve: string) => {
+    setSearcheleves(dataeleve)
   }
-  const [students] = useState([
+  const data = [
     { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2' },
     { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1' },
     { id: 3, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP2' },
     { id: 4, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM4' },
     { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CE' },
     { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP1' }
-  ])
+  ]
+  const [students] = useState(data)
 
   const [filtereEleves, setfiltereEleves] = useState(students)
 
   useEffect(() => {
     const result = students.filter(
       (dataStudents) =>
-        dataStudents.nom.toLowerCase().includes(searchCommande.toLowerCase()) ||
-        dataStudents.prenom.toLowerCase().includes(searchCommande.toLowerCase()) ||
-        dataStudents.classe.toLowerCase().includes(searchCommande.toLowerCase()) 
-        
+        dataStudents.nom.toLowerCase().includes(searcheleves.toLowerCase()) ||
+        dataStudents.prenom.toLowerCase().includes(searcheleves.toLowerCase()) ||
+        dataStudents.classe.toLowerCase().includes(searcheleves.toLowerCase())
     )
-    setfiltereEleves(searchCommande === '' ? [...students] : [...result])
-  }, [searchCommande, students])
+    setfiltereEleves(searcheleves === '' ? [...students] : [...result])
+  }, [searcheleves, students])
 
   return (
     <div
@@ -45,7 +45,7 @@ function Studentsinfo(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <Searchbar onSearch={handleSearchCommande} />
+          <Searchbar onSearch={handleSearcheleves} />
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
