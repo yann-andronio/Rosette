@@ -6,6 +6,7 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
+  const [FilterEtudients, setFilterEtudients] = useState('')
   const [searcheleves, setSearcheleves] = useState('')
 
   const handleSearcheleves = (dataeleve: string) => {
