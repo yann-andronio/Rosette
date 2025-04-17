@@ -40,6 +40,12 @@ function Studentsinfo(): JSX.Element {
         closeBar ? '"ml-16"' : ''
       } transition-all duration-[600ms] ease-in-out`}
     >
+      <div className="filter">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
       <div className="px-20 py-8">
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
