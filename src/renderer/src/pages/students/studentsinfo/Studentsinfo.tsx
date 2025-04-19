@@ -249,7 +249,12 @@ function Studentsinfo(): JSX.Element {
 
         {
           <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-            <button className="hover:underline cursor-pointer">&lt; Précédent</button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+              <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
+                &lt;
+              </span>
+              Précédent
+            </button>
             <div className="flex gap-2 mt-3 md:mt-0">
               {[1, 2, 3, 4, 5].map((page) => (
                 <button
@@ -264,7 +269,12 @@ function Studentsinfo(): JSX.Element {
                 </button>
               ))}
             </div>
-            <button className="hover:underline mt-3 md:mt-0">Suivant &gt;</button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+              Suivant
+              <span className="transform group-hover:translate-x-1 transition-transform duration-300">
+                &gt;
+              </span>
+            </button>
           </div>
         }
       </div>
