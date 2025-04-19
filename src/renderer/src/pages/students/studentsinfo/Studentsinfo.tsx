@@ -54,11 +54,16 @@ function Studentsinfo(): JSX.Element {
     >
       <div className="px-20 py-8">
         <div className="filter p-4 rounded-xl flex flex-col bg-white w-[30%] shadow-md relative">
+
+          <div className="icones">
+            
+          </div>
+
           <div className="pb-2 border-b border-gray-300 mb-3">
             <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
             {years.map((year, index) => (
               <h1
                 key={index}
@@ -69,11 +74,11 @@ function Studentsinfo(): JSX.Element {
             ))}
           </div>
 
-          <div className="  flex gap-3">
-            <button className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition duration-200">
+          <div className="w-full justify-end mt-4 flex gap-2">
+            <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
               <FaEdit />
             </button>
-            <button className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition duration-200">
+            <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
               <FaTrash />
             </button>
           </div>
