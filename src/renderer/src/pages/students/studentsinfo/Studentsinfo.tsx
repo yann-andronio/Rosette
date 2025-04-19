@@ -8,10 +8,11 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<string | null>(null)
-  const [selectedclasse, setselectedclasse] = useState<string | null>(null)
-  const [selectedSexe, setSelectedSexe] = useState<string | null>(null)
-   const handleSelect = (current, setter) => {
+  const [selectedyear, setselectedyear] = useState<string | null>("All")
+  const [selectedclasse, setselectedclasse] = useState<string | null>("All")
+  const [selectedSexe, setSelectedSexe] = useState<string | null>("All")
+
+   const handleselect = (current, setter) => {
      setter((prev) => (prev === current ? 'All' : current))
    }
 
@@ -61,9 +62,21 @@ function Studentsinfo(): JSX.Element {
     setfiltereEleves(searcheleves === '' ? [...students] : [...result])
   }, [searcheleves, students])
 
-  useEffect(() => {
-    console.log('Année sélectionnée :', selectedyear)
-  }, [selectedyear])
+  // useEffect(() => {
+  //   console.log('Année sélectionnée :', selectedyear)
+  //   console.log('classe sélectionnée :', selectedclasse)
+  //   console.log('sexe sélectionnée :', selectedSexe)
+  // }, [selectedyear, selectedclasse, selectedSexe])
+  
+  const handleSubmitFilter = () => {
+    const valeursFiltres = {
+      annee: selectedyear,
+      classe: selectedclasse,
+      sexe: selectedSexe
+    }
+    console.log('Filtres sélectionnés :', valeursFiltres)
+  }
+
 
   return (
     <div
@@ -87,7 +100,7 @@ function Studentsinfo(): JSX.Element {
               {years.map((year, index) => (
                 <h1
                   key={index}
-                  onClick={() => handleSelect(year.ans, setselectedyear)}
+                  onClick={() => handleselect(year.ans, setselectedyear)}
                   className={`${selectedyear === year.ans ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
                 >
                   {year.ans}
@@ -118,7 +131,7 @@ function Studentsinfo(): JSX.Element {
               {classe.map((classe, index) => (
                 <h1
                   key={index}
-                  onClick={() => handleSelect(classe.name, setselectedclasse)}
+                  onClick={() => handleselect(classe.name, setselectedclasse)}
                   className={`${selectedclasse === classe.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
                 >
                   {classe.name}
@@ -147,13 +160,13 @@ function Studentsinfo(): JSX.Element {
 
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
               <h1
-                onClick={() => handleSelect('Homme', setSelectedSexe)}
+                onClick={() => handleselect('Homme', setSelectedSexe)}
                 className={`${selectedSexe === 'Homme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Homme
               </h1>
               <h1
-                onClick={() => handleSelect('Femme', setSelectedSexe)}
+                onClick={() => handleselect('Femme', setSelectedSexe)}
                 className={`${selectedSexe === 'Femme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Femme
@@ -167,7 +180,7 @@ function Studentsinfo(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <Searchbar onSearch={handleSearcheleves} />
+          <Searchbar onSearch={handleSearcheleves} onfilter={handleSubmitFilter} />
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
