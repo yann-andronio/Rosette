@@ -2,14 +2,18 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../redux/Store'
 import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
-import { LuCalendarDays } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<number | null>(null)
+  const [selectedyear, setselectedyear] = useState<string | null>(null)
   const [selectedclasse, setselectedclasse] = useState<string | null>(null)
+  const [selectedSexe, setSelectedSexe] = useState<string | null>(null)
+   const handleSelect = (current, setter) => {
+     setter((prev) => (prev === current ? 'All' : current))
+   }
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
@@ -24,24 +28,24 @@ function Studentsinfo(): JSX.Element {
   ]
 
   const years = [
-    { id: 1, ans: 2000 },
-    { id: 2, ans: 2001 },
-    { id: 3, ans: 2002 },
-    { id: 4, ans: 2003 },
-    { id: 4, ans: 2004 },
-    { id: 4, ans: 2005 },
-    { id: 4, ans: 2006 },
-    { id: 4, ans: 2007 }
+    { id: 1, ans: "2000" },
+    { id: 2, ans: "2001" },
+    { id: 3, ans: "2002" },
+    { id: 4, ans: "2003" },
+    { id: 4, ans: "2004" },
+    { id: 4, ans: "2005" },
+    { id: 4, ans: "2006" },
+    { id: 4, ans: "2007" }
   ]
   const classe = [
-    { id: 1, name: T1 },
-    { id: 2, name: T2 },
-    { id: 3, name: T3 },
-    { id: 4, name: T4 },
-    { id: 4, name: T5 },
-    { id: 4, name: T6 },
-    { id: 4, name: T7 },
-    { id: 4, name: T8 }
+    { id: 1, name: 'T1' },
+    { id: 2, name: 'T2' },
+    { id: 3, name: 'CM1' },
+    { id: 4, name: 'Term 25 ' },
+    { id: 4, name: '2nd 1' },
+    { id: 4, name: 'T6' },
+    { id: 4, name: 'T7' },
+    { id: 4, name: 'T8' }
   ]
   const [students] = useState(data)
 
@@ -83,7 +87,7 @@ function Studentsinfo(): JSX.Element {
               {years.map((year, index) => (
                 <h1
                   key={index}
-                  onClick={() => setselectedyear(year.ans)}
+                  onClick={() => handleSelect(year.ans, setselectedyear)}
                   className={`${selectedyear === year.ans ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
                 >
                   {year.ans}
@@ -105,19 +109,19 @@ function Studentsinfo(): JSX.Element {
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
             <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
               <div className="icones  flex justify-center rounded-lg p-2">
-                <LuCalendarDays size={30} />
+                <LuGraduationCap size={30} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une classe</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
-              {years.map((year, index) => (
+              {classe.map((classe, index) => (
                 <h1
                   key={index}
-                  onClick={() => setselectedyear(year.ans)}
-                  className={`${selectedyear === year.ans ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  onClick={() => handleSelect(classe.name, setselectedclasse)}
+                  className={`${selectedclasse === classe.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
                 >
-                  {year.ans}
+                  {classe.name}
                 </h1>
               ))}
             </div>
@@ -135,31 +139,25 @@ function Studentsinfo(): JSX.Element {
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
             <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuCalendarDays size={30} />
+              <div className="icones flex justify-center rounded-lg p-2">
+                <LuUsers size={30} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un sexe</h1>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
-              {years.map((year, index) => (
-                <h1
-                  key={index}
-                  onClick={() => setselectedyear(year.ans)}
-                  className={`${selectedyear === year.ans ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
-                >
-                  {year.ans}
-                </h1>
-              ))}
-            </div>
-
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
-                <FaTrash />
-              </button>
+            <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
+              <h1
+                onClick={() => handleSelect('Homme', setSelectedSexe)}
+                className={`${selectedSexe === 'Homme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+              >
+                Homme
+              </h1>
+              <h1
+                onClick={() => handleSelect('Femme', setSelectedSexe)}
+                className={`${selectedSexe === 'Femme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+              >
+                Femme
+              </h1>
             </div>
           </div>
         </div>
