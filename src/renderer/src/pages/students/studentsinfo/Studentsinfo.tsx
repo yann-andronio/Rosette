@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 
+
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [FilterEtudients, setFilterEtudients] = useState('')
@@ -52,21 +53,30 @@ function Studentsinfo(): JSX.Element {
       } transition-all duration-[600ms] ease-in-out`}
     >
       <div className="px-20 py-8">
-        <div className="filter p-2 rounded- lg flex flex-col bg-red-700 w-[30%]">
-          <div className="py-2 border-b-2">
-            <h1>Selectionnez une année</h1>
+        <div className="filter p-4 rounded-xl flex flex-col bg-white w-[30%] shadow-md relative">
+          <div className="pb-2 border-b border-gray-300 mb-3">
+            <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
           </div>
-          <div className=" py-4 grid grid-cols-3 gap-4 overflow-y-auto max-h-[100px]">
+
+          <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             {years.map((year, index) => (
               <h1
                 key={index}
-                className=" border-2 border-gray-500 p-2 flex items-center justify-center "
+                className="border border-gray-400 rounded-md p-2 text-center text-gray-700 bg-gray-100 hover:bg-gray-200 transition duration-200"
               >
                 {year.ans}
               </h1>
             ))}
           </div>
-          <div></div>
+
+          <div className="  flex gap-3">
+            <button className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition duration-200">
+              <FaEdit />
+            </button>
+            <button className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition duration-200">
+              <FaTrash />
+            </button>
+          </div>
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
