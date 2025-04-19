@@ -20,6 +20,17 @@ function Studentsinfo(): JSX.Element {
     { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CE' },
     { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP1' }
   ]
+
+  const years = [
+    {id: 1, ans: 2000},
+    {id: 2, ans: 2001},
+    {id: 3, ans: 2002},
+    {id: 4, ans: 2003},
+    {id: 4, ans: 2004},
+    {id: 4, ans: 2005},
+    {id: 4, ans: 2006},
+    {id: 4, ans: 2007},
+  ]
   const [students] = useState(data)
 
   const [filtereEleves, setfiltereEleves] = useState(students)
@@ -40,13 +51,24 @@ function Studentsinfo(): JSX.Element {
         closeBar ? '"ml-16"' : ''
       } transition-all duration-[600ms] ease-in-out`}
     >
-      <div className="filter">
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-
       <div className="px-20 py-8">
+        <div className="filter p-2 rounded- lg flex flex-col bg-red-700 w-[30%]">
+          <div className="py-2 border-b-2">
+            <h1>Selectionnez une année</h1>
+          </div>
+          <div className=" py-4 grid grid-cols-3 gap-4 overflow-y-auto max-h-[100px]">
+            {years.map((year, index) => (
+              <h1
+                key={index}
+                className=" border-2 border-gray-500 p-2 flex items-center justify-center "
+              >
+                {year.ans}
+              </h1>
+            ))}
+          </div>
+          <div></div>
+        </div>
+
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
         </div>
@@ -116,7 +138,7 @@ function Studentsinfo(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button className="hover:underline">&lt; Précédent</button>
+          <button className="hover:underline cursor-pointer">&lt; Précédent</button>
           <div className="flex gap-2 mt-3 md:mt-0">
             {[1, 2, 3, 4, 5].map((page) => (
               <button
