@@ -2,12 +2,11 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../redux/Store'
 import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
+import { LuCalendarDays } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
-
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
-  const [FilterEtudients, setFilterEtudients] = useState('')
   const [searcheleves, setSearcheleves] = useState('')
 
   const handleSearcheleves = (dataeleve: string) => {
@@ -23,14 +22,14 @@ function Studentsinfo(): JSX.Element {
   ]
 
   const years = [
-    {id: 1, ans: 2000},
-    {id: 2, ans: 2001},
-    {id: 3, ans: 2002},
-    {id: 4, ans: 2003},
-    {id: 4, ans: 2004},
-    {id: 4, ans: 2005},
-    {id: 4, ans: 2006},
-    {id: 4, ans: 2007},
+    { id: 1, ans: 2000 },
+    { id: 2, ans: 2001 },
+    { id: 3, ans: 2002 },
+    { id: 4, ans: 2003 },
+    { id: 4, ans: 2004 },
+    { id: 4, ans: 2005 },
+    { id: 4, ans: 2006 },
+    { id: 4, ans: 2007 }
   ]
   const [students] = useState(data)
 
@@ -54,12 +53,10 @@ function Studentsinfo(): JSX.Element {
     >
       <div className="px-20 py-8">
         <div className="filter p-4 rounded-xl flex flex-col bg-white w-[30%] shadow-md relative">
-
-          <div className="icones">
-            
-          </div>
-
-          <div className="pb-2 border-b border-gray-300 mb-3">
+          <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
+            <div className="icones  flex justify-center rounded-lg p-2">
+              <LuCalendarDays size={30} />
+            </div>
             <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
           </div>
 
@@ -67,7 +64,7 @@ function Studentsinfo(): JSX.Element {
             {years.map((year, index) => (
               <h1
                 key={index}
-                className="border border-gray-400 rounded-md p-2 text-center text-gray-700 bg-gray-100 hover:bg-gray-200 transition duration-200"
+                className="border font-bold border-gray-400 rounded-md p-2 text-center text-gray-700 bg-gray-100 hover:bg-gray-200 transition duration-200"
               >
                 {year.ans}
               </h1>
