@@ -193,8 +193,8 @@ function Studentsinfo(): JSX.Element {
             <div className="bg-[#895256] text-white text-sm rounded-lg mb-2">
               <div className="flex px-6 py-3 font-medium tracking-wide">
                 <div className="w-30">Photo</div>
-                <div className="flex-1">Prénom</div>
                 <div className="flex-1">Nom</div>
+                <div className="flex-1">Prénom</div>
                 <div className="flex-1">Sexe</div>
                 <div className="flex-1">Classe</div>
                 <div className="flex-1">Opération</div>
