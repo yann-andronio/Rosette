@@ -4,20 +4,19 @@ import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
-import {  useFilterData } from '../../../hooks/useFilterData'
+import { useFilterData } from '../../../hooks/useFilterData'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<string | null>("All")
-  const [selectedclasse, setselectedclasse] = useState<string | null>("All")
-  const [selectedSexe, setSelectedSexe] = useState<string | null>("All")
+  const [selectedyear, setselectedyear] = useState<string | null>('All')
+  const [selectedclasse, setselectedclasse] = useState<string | null>('All')
+  const [selectedSexe, setSelectedSexe] = useState<string | null>('All')
 
-   const handleselect = (current, setter) => {
-     setter((prev) => (prev === current ? 'All' : current))
-   }
+  const handleselect = (current, setter) => {
+    setter((prev) => (prev === current ? 'All' : current))
+  }
 
- 
   const data = [
     { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2' },
     { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1' },
@@ -28,14 +27,14 @@ function Studentsinfo(): JSX.Element {
   ]
 
   const years = [
-    { id: 1, ans: "2000" },
-    { id: 2, ans: "2001" },
-    { id: 3, ans: "2002" },
-    { id: 4, ans: "2003" },
-    { id: 4, ans: "2004" },
-    { id: 4, ans: "2005" },
-    { id: 4, ans: "2006" },
-    { id: 4, ans: "2007" }
+    { id: 1, ans: '2000' },
+    { id: 2, ans: '2001' },
+    { id: 3, ans: '2002' },
+    { id: 4, ans: '2003' },
+    { id: 4, ans: '2004' },
+    { id: 4, ans: '2005' },
+    { id: 4, ans: '2006' },
+    { id: 4, ans: '2007' }
   ]
   const classe = [
     { id: 1, name: 'T1' },
@@ -47,25 +46,12 @@ function Studentsinfo(): JSX.Element {
     { id: 4, name: 'T7' },
     { id: 4, name: 'T8' }
   ]
-  // const [students] = useState(data)
 
-  // const [filtereEleves, setfiltereEleves] = useState(students)
+  const handleSearcheleves = (dataeleve: string) => {
+    setSearcheleves(dataeleve)
+  }
+  const filtereEleves = useFilterData(data, searcheleves, ['nom', 'prenom', 'classe'])
 
-  // useEffect(() => {
-  //   const result = students.filter(
-  //     (dataStudents) =>
-  //       dataStudents.nom.toLowerCase().includes(searcheleves.toLowerCase()) ||
-  //       dataStudents.prenom.toLowerCase().includes(searcheleves.toLowerCase()) ||
-  //       dataStudents.classe.toLowerCase().includes(searcheleves.toLowerCase())
-  //   )
-  //   setfiltereEleves(searcheleves === '' ? [...students] : [...result])
-  // }, [searcheleves, students])
-   const handleSearcheleves = (dataeleve: string) => {
-     setSearcheleves(dataeleve)
-   }
-    const filtereEleves = useFilterData(data, searcheleves, ['nom', 'prenom', 'classe'])
-
-  
   const handleSubmitFilter = () => {
     const valeursFiltres = {
       annee: selectedyear,
@@ -74,7 +60,6 @@ function Studentsinfo(): JSX.Element {
     }
     console.log('Filtres sélectionnés :', valeursFiltres)
   }
-
 
   return (
     <div

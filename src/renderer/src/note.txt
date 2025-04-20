@@ -1,0 +1,13 @@
+ const [students] = useState(data)
+
+   const [filtereEleves, setfiltereEleves] = useState(students)
+
+   useEffect(() => {
+     const result = students.filter(
+       (dataStudents) =>
+         dataStudents.nom.toLowerCase().includes(searcheleves.toLowerCase()) ||
+         dataStudents.prenom.toLowerCase().includes(searcheleves.toLowerCase()) ||
+         dataStudents.classe.toLowerCase().includes(searcheleves.toLowerCase())
+    )
+     setfiltereEleves(searcheleves === '' ? [...students] : [...result])
+   }, [searcheleves, students])
