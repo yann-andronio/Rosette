@@ -6,8 +6,8 @@ import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/l
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import { useFilterData } from '@renderer/hooks/useFilterData'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import Addyearmodal from '@renderer/components/modals/Addyearmodal'
-import Addclassemodal from '@renderer/components/modals/Addclassemodal'
+import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
+import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
 
 function Notestudentsmanagement(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -17,7 +17,7 @@ function Notestudentsmanagement(): JSX.Element {
   const [selectedSexe, setSelectedSexe] = useState<string | null>('All')
   const [selectedmention, setSelectedmention] = useState<string | null>('All')
 
-  const handleselect = (current:string, setter:any) => {
+  const handleselect = (current: string, setter: any) => {
     setter((prev: string) => (prev === current ? 'All' : current))
   }
 
@@ -56,8 +56,7 @@ function Notestudentsmanagement(): JSX.Element {
     { id: 3, name: 'A-bien' },
     { id: 4, name: 'Bien ' },
     { id: 5, name: 'Très-Bien' },
-    { id: 6, name: 'Honorable' },
-   
+    { id: 6, name: 'Honorable' }
   ]
 
   const handleSearcheleves = (dataeleve: string) => {
@@ -70,21 +69,19 @@ function Notestudentsmanagement(): JSX.Element {
       annee: selectedyear,
       classe: selectedclasse,
       sexe: selectedSexe,
-      mention: selectedmention,
+      mention: selectedmention
     }
     console.log('Filtres sélectionnés :', valeursFiltres)
-    }
-    
+  }
 
-    function getMentionColor(moyenne: number): string {
-      if (moyenne < 10) return 'text-red-500' // Échec
-      if (moyenne < 12) return 'text-yellow-500' // Passable
-      if (moyenne < 14) return 'text-orange-500' // Assez bien
-      if (moyenne < 16) return 'text-green-500' // Bien
-      if (moyenne < 18) return 'text-blue-500' // Très bien
-      return 'text-purple-500' // Honorable
-    }
-
+  function getMentionColor(moyenne: number): string {
+    if (moyenne < 10) return 'text-red-500' // Échec
+    if (moyenne < 12) return 'text-yellow-500' // Passable
+    if (moyenne < 14) return 'text-orange-500' // Assez bien
+    if (moyenne < 16) return 'text-green-500' // Bien
+    if (moyenne < 18) return 'text-blue-500' // Très bien
+    return 'text-purple-500' // Honorable
+  }
 
   const { modal, openModal, closModal } = useMultiModals()
   return (

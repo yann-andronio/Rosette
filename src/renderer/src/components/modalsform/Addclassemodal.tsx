@@ -1,19 +1,39 @@
 import { FiPlus, FiX } from 'react-icons/fi'
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 type SearchBarProps = {
   closemodal: () => void
 }
 
 const Addclassemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
-  const [year, setYear] = useState('')
+  const ValidationSchema = yup.object({
+    classadd: yup.string().required('vous devez saisir une nom de classe')
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({ resolver: yupResolver(ValidationSchema) })
+
+  const onSubmit = (data: any) => {
+    console.log(data)
+    reset()
+    closemodal()
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in"
+      >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            Ajouter une Classe
+            Ajouter une année
           </h2>
           <button
             onClick={closemodal}
@@ -25,11 +45,13 @@ const Addclassemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
 
         <input
           type="text"
-          placeholder="Ex: 2025"
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-          className="w-full px-4 py-2.5 border border-[#895256] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400"
+          placeholder="Ex: CM2"
+          {...register('classadd')}
+          className={`w-full px-4 py-2.5 border border-[#895256] ${
+            errors.classadd ? 'border-red-400' : 'border-gray-300'
+          } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
         />
+        {errors.classadd && <p className="text-sm text-red-400 mt-1">{errors.classadd.message}</p>}
 
         <div className="flex justify-end gap-3 mt-6">
           <button
@@ -43,7 +65,7 @@ const Addclassemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
             Ajouter
           </button>
         </div>
-      </div>
+      </form>
     </div>
   )
 }

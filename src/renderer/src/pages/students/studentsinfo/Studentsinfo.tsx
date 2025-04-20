@@ -6,8 +6,9 @@ import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import { useFilterData } from '@renderer/hooks/useFilterData'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import Addyearmodal from '@renderer/components/modals/Addyearmodal'
-import Addclassemodal from '@renderer/components/modals/Addclassemodal'
+import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
+import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
+import AdUpinfostudents from '@renderer/components/modalsform/AdUpinfostudents'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -271,7 +272,7 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <Addclassemodal closemodal={() => closModal('addclass')} />}
+      {modal.addclass && <AdUpinfostudents closemodal={() => closModal('addclass')} />}
     </div>
   )
 }
