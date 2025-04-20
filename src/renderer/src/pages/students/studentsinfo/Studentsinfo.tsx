@@ -7,6 +7,7 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 import { useFilterData } from '@renderer/hooks/useFilterData'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modals/Addyearmodal'
+import Addclassemodal from '@renderer/components/modals/Addclassemodal'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -66,7 +67,7 @@ function Studentsinfo(): JSX.Element {
   const { modal, openModal, closModal } = useMultiModals()
   return (
     <div
-      className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : '' } transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
+      className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
     >
       <div className="px-20 py-8">
         <div className="bigboxfilter flex flex-col gap-6 w-full lg:flex-row justify-center">
@@ -127,7 +128,10 @@ function Studentsinfo(): JSX.Element {
             </div>
 
             <div className="w-full justify-end mt-4 flex gap-2">
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
+              <button
+                onClick={() => openModal('addclass')}
+                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
+              >
                 <FaEdit />
               </button>
               <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
@@ -267,6 +271,7 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
+      {modal.addclass && <Addclassemodal closemodal={() => closModal('addclass')} />}
     </div>
   )
 }
