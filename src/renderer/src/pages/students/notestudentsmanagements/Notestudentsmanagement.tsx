@@ -22,12 +22,12 @@ function Notestudentsmanagement(): JSX.Element {
   }
 
   const data = [
-    { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2', moyenne: '10' },
-    { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1', moyenne: '15' },
-    { id: 3, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP2', moyenne: '12' },
-    { id: 4, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM4', moyenne: '18' },
-    { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CE', moyenne: '11' },
-    { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP1', moyenne: '15' }
+    { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2', moyenne: 10 },
+    { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1', moyenne: 15 },
+    { id: 3, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP2', moyenne: 12 },
+    { id: 4, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM4', moyenne: 18 },
+    { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CE', moyenne: 11 },
+    { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP1', moyenne: 15 }
   ]
 
   const years = [
@@ -73,7 +73,18 @@ function Notestudentsmanagement(): JSX.Element {
       mention: selectedmention,
     }
     console.log('Filtres sélectionnés :', valeursFiltres)
-  }
+    }
+    
+
+    function getMentionColor(moyenne: number): string {
+      if (moyenne < 10) return 'text-red-500' // Échec
+      if (moyenne < 12) return 'text-yellow-500' // Passable
+      if (moyenne < 14) return 'text-orange-500' // Assez bien
+      if (moyenne < 16) return 'text-green-500' // Bien
+      if (moyenne < 18) return 'text-blue-500' // Très bien
+      return 'text-purple-500' // Honorable
+    }
+
 
   const { modal, openModal, closModal } = useMultiModals()
   return (
@@ -271,7 +282,9 @@ function Notestudentsmanagement(): JSX.Element {
                     <div className="flex-1 text-gray-700">{student.prenom}</div>
                     <div className="flex-1 text-gray-700">{student.sexe}</div>
                     <div className="flex-1 text-gray-700">{student.classe}</div>
-                    <div className="flex-1 text-gray-700">{student.moyenne}</div>
+                    <div className={`${getMentionColor(student.moyenne)} flex-1 `}>
+                      {student.moyenne}
+                    </div>
                     <div className="flex-1">
                       <div className="flex gap-3 text-[#9f7126] text-lg">
                         <FaEye className="hover:text-black cursor-pointer transition" />
