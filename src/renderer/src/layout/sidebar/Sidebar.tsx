@@ -87,7 +87,7 @@ const Sidebar = () => {
         className={`fixed top-0 left-0  z-40 w-64 h-screen  ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0   duration-[550ms] ease-in-out`}
         aria-label="Sidenav"
       >
-        <div className="w-full flex gap-2 items-center justify-center p-3  bg-[#895256]     ">
+        <div className="w-full flex gap-2 items-center justify-start p-3  bg-[#895256]     ">
           <img className={`${closeBar ? 'w-[100%]' : 'w-[25%]'}`} src={logo} alt="Logo" />
           <p className={`${closeBar ? 'hidden' : ''} font-mono text-2xl font-normal text-white `}>
             LA ROSETTE
