@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
+import {  useFilterData } from '../../../hooks/useFilterData'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -16,9 +17,7 @@ function Studentsinfo(): JSX.Element {
      setter((prev) => (prev === current ? 'All' : current))
    }
 
-  const handleSearcheleves = (dataeleve: string) => {
-    setSearcheleves(dataeleve)
-  }
+ 
   const data = [
     { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2' },
     { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1' },
@@ -48,25 +47,24 @@ function Studentsinfo(): JSX.Element {
     { id: 4, name: 'T7' },
     { id: 4, name: 'T8' }
   ]
-  const [students] = useState(data)
+  // const [students] = useState(data)
 
-  const [filtereEleves, setfiltereEleves] = useState(students)
-
-  useEffect(() => {
-    const result = students.filter(
-      (dataStudents) =>
-        dataStudents.nom.toLowerCase().includes(searcheleves.toLowerCase()) ||
-        dataStudents.prenom.toLowerCase().includes(searcheleves.toLowerCase()) ||
-        dataStudents.classe.toLowerCase().includes(searcheleves.toLowerCase())
-    )
-    setfiltereEleves(searcheleves === '' ? [...students] : [...result])
-  }, [searcheleves, students])
+  // const [filtereEleves, setfiltereEleves] = useState(students)
 
   // useEffect(() => {
-  //   console.log('Année sélectionnée :', selectedyear)
-  //   console.log('classe sélectionnée :', selectedclasse)
-  //   console.log('sexe sélectionnée :', selectedSexe)
-  // }, [selectedyear, selectedclasse, selectedSexe])
+  //   const result = students.filter(
+  //     (dataStudents) =>
+  //       dataStudents.nom.toLowerCase().includes(searcheleves.toLowerCase()) ||
+  //       dataStudents.prenom.toLowerCase().includes(searcheleves.toLowerCase()) ||
+  //       dataStudents.classe.toLowerCase().includes(searcheleves.toLowerCase())
+  //   )
+  //   setfiltereEleves(searcheleves === '' ? [...students] : [...result])
+  // }, [searcheleves, students])
+   const handleSearcheleves = (dataeleve: string) => {
+     setSearcheleves(dataeleve)
+   }
+    const filtereEleves = useFilterData(data, searcheleves, ['nom', 'prenom', 'classe'])
+
   
   const handleSubmitFilter = () => {
     const valeursFiltres = {
