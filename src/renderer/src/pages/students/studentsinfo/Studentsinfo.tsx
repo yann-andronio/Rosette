@@ -109,10 +109,10 @@ function Studentsinfo(): JSX.Element {
             </div>
 
             <div className="w-full justify-end mt-4 flex gap-2">
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
+              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
                 <FaEdit />
               </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
+              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
                 <FaTrash />
               </button>
             </div>
@@ -140,10 +140,10 @@ function Studentsinfo(): JSX.Element {
             </div>
 
             <div className="w-full justify-end mt-4 flex gap-2">
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
+              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
                 <FaEdit />
               </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200">
+              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
                 <FaTrash />
               </button>
             </div>
@@ -167,7 +167,7 @@ function Studentsinfo(): JSX.Element {
               </h1>
               <h1
                 onClick={() => handleselect('Femme', setSelectedSexe)}
-                className={`${selectedSexe === 'Femme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                className={`${selectedSexe === 'Femme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200 `}
               >
                 Femme
               </h1>

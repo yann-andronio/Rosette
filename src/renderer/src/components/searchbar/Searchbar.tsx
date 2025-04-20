@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import { IoSearchSharp } from 'react-icons/io5'
+import { FiFilter } from 'react-icons/fi'
 
 type SearchBarProps = {
   onSearch: (searchCategorie: string) => void
@@ -30,12 +31,12 @@ const Searchbar: React.FC<SearchBarProps> = ({ onSearch , onfilter }) => {
         <div className="filter">
           <button
             onClick={() => onfilter()}
-            className=" absolute top-[15%] right-2 p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-blue-600 transition duration-200"
+            className="absolute top-[15%] right-2 p-2 rounded-lg w-[20%] flex items-center justify-center gap-2 shadow-lg bg-[#895256] text-white hover:bg-[#733935] transition duration-200"
           >
+            <FiFilter size={18} />
             Filtrer
           </button>
         </div>
-       
       </div>
     </Fragment>
   )
