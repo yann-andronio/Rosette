@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import { useFilterData } from '@renderer/hooks/useFilterData'
 import useMultiModals from '@renderer/hooks/useMultiModals'
@@ -181,7 +181,7 @@ function Notestudentsmanagement(): JSX.Element {
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
             <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
               <div className="icones  flex justify-center rounded-lg p-2">
-                <LuGraduationCap size={30} />
+                <LuAward size={30} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une Mention</h1>
             </div>
