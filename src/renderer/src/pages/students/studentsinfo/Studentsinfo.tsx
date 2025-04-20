@@ -68,7 +68,7 @@ function Studentsinfo(): JSX.Element {
     <div
       className={`Rigth bg-[#E6E6FA] w-full    ${
         closeBar ? '"ml-16"' : ''
-      } transition-all duration-[600ms] ease-in-out`}
+      } transition-all duration-[600ms] ease-in-out    ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
     >
       <div className="px-20 py-8">
         <div className="bigboxfilter flex flex-col gap-6 w-full lg:flex-row justify-center">

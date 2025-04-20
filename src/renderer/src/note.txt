@@ -11,3 +11,7 @@
     )
      setfiltereEleves(searcheleves === '' ? [...students] : [...result])
    }, [searcheleves, students])
+
+JSON.stringify: pemet de transformer une valeur dans un tableaux on string afin de l' utilise dans un condition de comparaison 
+Object.values(modal) : retourne un tableau contenant uniquement les valeurs de l’objet modal.ex : [false, true, false]
+${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''} : mipolu hoe misy true le modal agny sa non raha misy raika de overflow-hidden
