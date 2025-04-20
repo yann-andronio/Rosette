@@ -10,24 +10,23 @@ type SearchBarProps = {
 
 const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
   const ValidationSchema = yup.object({
-    classadd: yup.string().required('vous devez saisir une nom de classe'),
     nom: yup.string().required('Nom requis'),
     prenom: yup.string().required('Prénom requis'),
     adresse: yup.string().required('Adresse requise'),
     sexe: yup.string().required('Sexe requis'),
-    datenaissance: yup.string().required('Date de naissance requise'),
-    lieunaissance: yup.string().required('Lieu de naissance requis'),
-    nompere: yup.string(),
-    prenompere: yup.string(),
-    nommere: yup.string(),
-    prenommere: yup.string(),
-    telpere: yup.string(),
-    telmere: yup.string(),
-    nomtuteur: yup.string(),
-    prenomtuteur: yup.string(),
-    teltuteur: yup.string(),
+    date_naissance: yup.string().required('Date de naissance requise'),
+    lieu_naissance: yup.string().required('Lieu de naissance requis'),
+    nom_pere: yup.string(),
+    prenom_pere: yup.string(),
+    nom_mere: yup.string(),
+    prenom_mere: yup.string(),
+    tel_pere: yup.string(),
+    tel_mere: yup.string(),
+    nom_tuteur: yup.string(),
+    prenom_tuteur: yup.string(),
+    tel_tuteur: yup.string(),
     matricule: yup.string(),
-    ecoleprec: yup.string()
+    ecole_prec: yup.string()
   })
 
   const {
@@ -38,7 +37,6 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
   const onSubmit = (data: any) => {
-    alert("mipa")
     console.log(data)
     reset()
     closemodal()
@@ -46,7 +44,9 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-2xl w-full max-w-[90%] p-6 animate-fade-in"
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-[90%] p-6 animate-fade-in"
       >
         <div className="flex items-center justify-center    mb-12">
           <h2 className=" text-2xl font-bold text-gray-800 flex items-center gap-2">
@@ -134,13 +134,13 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
                 <label className="block font-medium text-gray-700 mb-1">date de naissance</label>
                 <input
                   type="date"
-                  {...register('datenaissance')}
+                  {...register('date_naissance')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.datenaissance ? 'border-red-400' : 'border-gray-300'
+                    errors.date_naissance ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.datenaissance && (
-                  <p className="text-sm text-red-400 mt-1">{errors.datenaissance.message}</p>
+                {errors.date_naissance && (
+                  <p className="text-sm text-red-400 mt-1">{errors.date_naissance.message}</p>
                 )}
               </div>
 
@@ -149,29 +149,29 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
                 <input
                   type="text"
                   placeholder="Tana"
-                  {...register('lieunaissance')}
+                  {...register('lieu_naissance')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.lieunaissance ? 'border-red-400' : 'border-gray-300'
+                    errors.lieu_naissance ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.lieunaissance && (
-                  <p className="text-sm text-red-400 mt-1">{errors.lieunaissance.message}</p>
+                {errors.lieu_naissance && (
+                  <p className="text-sm text-red-400 mt-1">{errors.lieu_naissance.message}</p>
                 )}
               </div>
 
-              <div className="nompereandprenompere flex gap-3">
-                <div className="nompere">
+              <div className="nom_pereandprenom_pere flex gap-3">
+                <div className="nom_pere">
                   <label className="block font-medium text-gray-700 mb-1">nom du pere</label>
                   <input
                     type="text"
                     placeholder="rajao"
-                    {...register('nompere')}
+                    {...register('nom_pere')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nompere ? 'border-red-400' : 'border-gray-300'
+                      errors.nom_pere ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.nompere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nompere.message}</p>
+                  {errors.nom_pere && (
+                    <p className="text-sm text-red-400 mt-1">{errors.nom_pere.message}</p>
                   )}
                 </div>
 
@@ -180,30 +180,30 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
                   <input
                     type="text"
                     placeholder="kely"
-                    {...register('prenompere')}
+                    {...register('prenom_pere')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenompere ? 'border-red-400' : 'border-gray-300'
+                      errors.prenom_pere ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.prenompere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenompere.message}</p>
+                  {errors.prenom_pere && (
+                    <p className="text-sm text-red-400 mt-1">{errors.prenom_pere.message}</p>
                   )}
                 </div>
               </div>
 
-              <div className="nommereandprenompere flex gap-3">
-                <div className="nommere">
+              <div className="nom_mereandprenom_pere flex gap-3">
+                <div className="nom_mere">
                   <label className="block font-medium text-gray-700 mb-1">nom du mere</label>
                   <input
                     type="text"
                     placeholder="rasoa"
-                    {...register('nommere')}
+                    {...register('nom_mere')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nommere ? 'border-red-400' : 'border-gray-300'
+                      errors.nom_mere ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.nommere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nommere.message}</p>
+                  {errors.nom_mere && (
+                    <p className="text-sm text-red-400 mt-1">{errors.nom_mere.message}</p>
                   )}
                 </div>
 
@@ -212,29 +212,29 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
                   <input
                     type="text"
                     placeholder="be"
-                    {...register('prenommere')}
+                    {...register('prenom_mere')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenommere ? 'border-red-400' : 'border-gray-300'
+                      errors.prenom_mere ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.prenommere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenommere.message}</p>
+                  {errors.prenom_mere && (
+                    <p className="text-sm text-red-400 mt-1">{errors.prenom_mere.message}</p>
                   )}
                 </div>
               </div>
 
-              <div className="telpere">
+              <div className="tel_pere">
                 <label className="block font-medium text-gray-700 mb-1">telephone du pere</label>
                 <input
                   type="tel"
-                  {...register('telpere')}
+                  {...register('tel_pere')}
                   placeholder="0342290407"
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.telpere ? 'border-red-400' : 'border-gray-300'
+                    errors.tel_pere ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.telpere && (
-                  <p className="text-sm text-red-400 mt-1">{errors.telpere.message}</p>
+                {errors.tel_pere && (
+                  <p className="text-sm text-red-400 mt-1">{errors.tel_pere.message}</p>
                 )}
               </div>
             </div>
@@ -246,61 +246,61 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
                 <label className="block font-medium text-gray-700 mb-1">telephone du mere</label>
                 <input
                   type="tel"
-                  {...register('telmere')}
+                  {...register('tel_mere')}
                   placeholder="0342290407"
                   className={`w-full px-4 py-2.5 border border-[#895256] bg-[#F1F1F1] ${
-                    errors.telmere ? 'border-red-400' : 'border-gray-300'
+                    errors.tel_mere ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.telmere && (
-                  <p className="text-sm text-red-400 mt-1">{errors.telmere.message}</p>
+                {errors.tel_mere && (
+                  <p className="text-sm text-red-400 mt-1">{errors.tel_mere.message}</p>
                 )}
               </div>
 
-              <div className="nomtuteurandprenompere flex gap-3">
-                <div className="nomtuteur">
+              <div className="nom_tuteurandprenom_pere flex gap-3">
+                <div className="nom_tuteur">
                   <label className="block font-medium text-gray-700 mb-1">nom du tuteur</label>
                   <input
                     type="text"
                     placeholder="razafi"
-                    {...register('nomtuteur')}
+                    {...register('nom_tuteur')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nomtuteur ? 'border-red-400' : 'border-gray-300'
+                      errors.nom_tuteur ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.nomtuteur && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nomtuteur.message}</p>
+                  {errors.nom_tuteur && (
+                    <p className="text-sm text-red-400 mt-1">{errors.nom_tuteur.message}</p>
                   )}
                 </div>
 
-                <div className="prenomtuteur">
+                <div className="prenom_tuteur">
                   <label className="block font-medium text-gray-700 mb-1">prenom du tuteur</label>
                   <input
                     type="text"
                     placeholder="jean"
-                    {...register('prenomtuteur')}
+                    {...register('prenom_tuteur')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenomtuteur ? 'border-red-400' : 'border-gray-300'
+                      errors.prenom_tuteur ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.prenomtuteur && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenomtuteur.message}</p>
+                  {errors.prenom_tuteur && (
+                    <p className="text-sm text-red-400 mt-1">{errors.prenom_tuteur.message}</p>
                   )}
                 </div>
               </div>
 
-              <div className="teltuteur">
+              <div className="tel_tuteur">
                 <label className="block font-medium text-gray-700 mb-1">telephone du tuteur</label>
                 <input
                   type="tel"
                   placeholder="0342290407"
-                  {...register('teltuteur')}
+                  {...register('tel_tuteur')}
                   className={`w-full px-4 py-2.5 border border-[#895256] bg-[#F1F1F1]  ${
-                    errors.teltuteur ? 'border-red-400' : 'border-gray-300'
+                    errors.tel_tuteur ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.teltuteur && (
-                  <p className="text-sm text-red-400 mt-1">{errors.teltuteur.message}</p>
+                {errors.tel_tuteur && (
+                  <p className="text-sm text-red-400 mt-1">{errors.tel_tuteur.message}</p>
                 )}
               </div>
 
@@ -318,19 +318,19 @@ const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
                 )}
               </div>
 
-              <div className="ecoleprec">
+              <div className="ecole_prec">
                 <label className="block font-medium text-gray-700 mb-1">
                   dernier ecole frequente
                 </label>
                 <input
                   type="text"
-                  {...register('ecoleprec')}
+                  {...register('ecole_prec')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.telpere ? 'border-red-400' : 'border-gray-300'
+                    errors.tel_pere ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.ecoleprec && (
-                  <p className="text-sm text-red-400 mt-1">{errors.ecoleprec.message}</p>
+                {errors.ecole_prec && (
+                  <p className="text-sm text-red-400 mt-1">{errors.ecole_prec.message}</p>
                 )}
               </div>
             </div>
