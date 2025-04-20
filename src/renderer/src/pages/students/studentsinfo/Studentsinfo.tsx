@@ -1,10 +1,12 @@
 import { useSelector } from 'react-redux'
-import { RootState } from '../../../redux/Store'
-import { useEffect, useState } from 'react'
+import { RootState } from '@renderer/redux/Store'
+import { useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
-import { useFilterData } from '../../../hooks/useFilterData'
+import { useFilterData } from '@renderer/hooks/useFilterData'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import Addyearmodal from '@renderer/components/modals/Addyearmodal'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -61,6 +63,7 @@ function Studentsinfo(): JSX.Element {
     console.log('Filtres sélectionnés :', valeursFiltres)
   }
 
+  const { modal, openModal, closModal } = useMultiModals()
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full    ${
@@ -92,7 +95,10 @@ function Studentsinfo(): JSX.Element {
             </div>
 
             <div className="w-full justify-end mt-4 flex gap-2">
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
+              <button
+                onClick={() => openModal('addyear')}
+                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
+              >
                 <FaEdit />
               </button>
               <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
@@ -261,6 +267,8 @@ function Studentsinfo(): JSX.Element {
           </div>
         }
       </div>
+
+      {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
     </div>
   )
 }
