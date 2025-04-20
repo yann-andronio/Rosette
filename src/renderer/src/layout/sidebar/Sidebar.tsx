@@ -46,7 +46,7 @@ const Sidebar = () => {
         },
         {
           name: 'gestion des notes',
-          path: '/home/gestionnotestudents',
+          path: '/home/notemanagements',
           iconsubmenu: <MdAssignment size={25} />
         },
         { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
