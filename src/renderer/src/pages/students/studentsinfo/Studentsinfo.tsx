@@ -9,6 +9,7 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
 import AdUpinfostudents from '@renderer/components/modalsform/AdUpinfostudents'
+import Addnotemodal from '@renderer/components/modalsform/Addnotemodal'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -272,7 +273,7 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <AdUpinfostudents closemodal={() => closModal('addclass')} />}
+      {modal.addclass && <Addnotemodal closemodal={() => closModal('addclass')} />}
     </div>
   )
 }
