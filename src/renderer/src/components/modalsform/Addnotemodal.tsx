@@ -211,69 +211,10 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
             <div className="champ3 flex flex-col gap-4 ">
               
 
-              <div className="nom_tuteurandtotalcoefficient flex gap-3">
-               
+          
 
-                <div className="prenom_tuteur">
-                  <label className="block font-medium text-gray-700 mb-1">prenom du tuteur</label>
-                  <input
-                    type="text"
-                    placeholder="jean"
-                    {...register('prenom_tuteur')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenom_tuteur ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.prenom_tuteur && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenom_tuteur.message}</p>
-                  )}
-                </div>
-              </div>
+             
 
-              <div className="tel_tuteur">
-                <label className="block font-medium text-gray-700 mb-1">telephone du tuteur</label>
-                <input
-                  type="tel"
-                  placeholder="0342290407"
-                  {...register('tel_tuteur')}
-                  className={`w-full px-4 py-2.5 border border-[#895256] bg-[#F1F1F1]  ${
-                    errors.tel_tuteur ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.tel_tuteur && (
-                  <p className="text-sm text-red-400 mt-1">{errors.tel_tuteur.message}</p>
-                )}
-              </div>
-
-              <div className="matricule">
-                <label className="block font-medium text-gray-700 mb-1">matricule</label>
-                <input
-                  type="text"
-                  {...register('matricule')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.matricule ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.matricule && (
-                  <p className="text-sm text-red-400 mt-1">{errors.matricule.message}</p>
-                )}
-              </div>
-
-              <div className="ecole_prec">
-                <label className="block font-medium text-gray-700 mb-1">
-                  dernier ecole frequente
-                </label>
-                <input
-                  type="text"
-                  {...register('ecole_prec')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.tel_pere ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.ecole_prec && (
-                  <p className="text-sm text-red-400 mt-1">{errors.ecole_prec.message}</p>
-                )}
-              </div>
             </div>
           </div>{' '}
         </div>
