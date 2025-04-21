@@ -17,15 +17,9 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
     trimestre2: yup.string().required('Date de naissance requise'),
     trimestre3: yup.string().required('Lieu de naissance requis'),
     totalcoefficient: yup.string(),
-    nom_mere: yup.string(),
+    moyenne: yup.string(),
     mention: yup.string(),
-    tel_pere: yup.string(),
-    tel_mere: yup.string(),
-    nom_tuteur: yup.string(),
-    prenom_tuteur: yup.string(),
-    tel_tuteur: yup.string(),
-    matricule: yup.string(),
-    ecole_prec: yup.string()
+   
   })
 
   const {
@@ -159,20 +153,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               </div>
 
               <div className="nom_pereandtotalcoefficient flex gap-3">
-                <div className="nom_pere">
-                  <label className="block font-medium text-gray-700 mb-1">nom du pere</label>
-                  <input
-                    type="text"
-                    placeholder="rajao"
-                    {...register('nom_pere')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom_pere ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.nom_pere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nom_pere.message}</p>
-                  )}
-                </div>
+               
 
                 <div className="prenom">
                   <label className="block font-medium text-gray-700 mb-1">prenom du pere</label>
@@ -190,19 +171,19 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 </div>
               </div>
 
-              <div className="nom_mereandtotalcoefficient flex gap-3">
-                <div className="nom_mere">
+              <div className="moyenneandtotalcoefficient flex gap-3">
+                <div className="moyenne">
                   <label className="block font-medium text-gray-700 mb-1">nom du mere</label>
                   <input
                     type="text"
                     placeholder="rasoa"
-                    {...register('nom_mere')}
+                    {...register('moyenne')}
                     className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom_mere ? 'border-red-400' : 'border-gray-300'
+                      errors.moyenne ? 'border-red-400' : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                   />
-                  {errors.nom_mere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nom_mere.message}</p>
+                  {errors.moyenne && (
+                    <p className="text-sm text-red-400 mt-1">{errors.moyenne.message}</p>
                   )}
                 </div>
 
@@ -222,55 +203,16 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 </div>
               </div>
 
-              <div className="tel_pere">
-                <label className="block font-medium text-gray-700 mb-1">telephone du pere</label>
-                <input
-                  type="tel"
-                  {...register('tel_pere')}
-                  placeholder="0342290407"
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.tel_pere ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.tel_pere && (
-                  <p className="text-sm text-red-400 mt-1">{errors.tel_pere.message}</p>
-                )}
-              </div>
+             
             </div>
           </div>
           {/* section33333333333333333333333333333333333333 */}
           <div className="flex-1">
             <div className="champ3 flex flex-col gap-4 ">
-              <div className="classe">
-                <label className="block font-medium text-gray-700 mb-1">telephone du mere</label>
-                <input
-                  type="tel"
-                  {...register('tel_mere')}
-                  placeholder="0342290407"
-                  className={`w-full px-4 py-2.5 border border-[#895256] bg-[#F1F1F1] ${
-                    errors.tel_mere ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.tel_mere && (
-                  <p className="text-sm text-red-400 mt-1">{errors.tel_mere.message}</p>
-                )}
-              </div>
+              
 
               <div className="nom_tuteurandtotalcoefficient flex gap-3">
-                <div className="nom_tuteur">
-                  <label className="block font-medium text-gray-700 mb-1">nom du tuteur</label>
-                  <input
-                    type="text"
-                    placeholder="razafi"
-                    {...register('nom_tuteur')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom_tuteur ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.nom_tuteur && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nom_tuteur.message}</p>
-                  )}
-                </div>
+               
 
                 <div className="prenom_tuteur">
                   <label className="block font-medium text-gray-700 mb-1">prenom du tuteur</label>
