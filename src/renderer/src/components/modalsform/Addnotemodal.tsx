@@ -9,16 +9,17 @@ type SearchBarProps = {
 }
 
 const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
-  const ValidationSchema = yup.object({
-    nom: yup.string().required('Nom requis'),
-    prenom: yup.string().required('Prénom requis'),
-    classe: yup.string().required('classe requise'),
-    totalcoefficient: yup.string(),
-    trimestre1: yup.string(),
-    trimestre2: yup.string(),
-    trimestre3: yup.string(),
-    moyenne: yup.string()
-  })
+ const ValidationSchema = yup.object({
+   nom: yup.string().required('Nom requis'),
+   prenom: yup.string().required('Prénom requis'),
+   classe: yup.string().required('classe requise'),
+   totalcoefficient: yup.string(),
+   trimestre1: yup.string(),
+   trimestre2: yup.string(),
+   trimestre3: yup.string(),
+   moyenne: yup.string()
+ })
+
 
   const {
     register,
@@ -54,7 +55,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
             <div className="champ1 flex flex-col gap-4 ">
               <div className="sary ">
                 <div className=" flex items-center justify-center bg-white-500">
-                  <img className="w-[40%]" src={logo} alt="Logo" />
+                  <img className="w-[75%]" src={logo} alt="Logo" />
                 </div>
               </div>
             </div>
@@ -108,7 +109,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="totalcoefficient">
                 <label className="block font-medium text-gray-700 mb-1">total coefficient</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder="Tana"
                   {...register('totalcoefficient')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -127,7 +128,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="T1">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 1</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder=""
                   {...register('trimestre1')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -142,7 +143,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="T2">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 2</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder=""
                   {...register('trimestre2')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -157,7 +158,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="T3">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 3</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder=""
                   {...register('trimestre3')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -172,7 +173,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="classe">
                 <label className="block font-medium text-gray-700 mb-1">Moyenne General</label>
                 <input
-                  type="text"
+                  type="number"
                   placeholder=""
                   {...register('moyenne')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -190,7 +191,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
         <div className="flex justify-end gap-3 mt-6">
           <p
             onClick={closemodal}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-red-500 hover:text-white hover:transition-all transition-all font-medium"
+            className=" cursor-pointer px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-red-500 hover:text-white hover:transition-all transition-all font-medium"
           >
             Annuler
           </p>
