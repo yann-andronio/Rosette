@@ -13,9 +13,9 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
     nom: yup.string().required('Nom requis'),
     prenom: yup.string().required('Prénom requis'),
     classe: yup.string().required('classe requise'),
-    trimestre1: yup.string().required('trimestre1 requis'),
-    trimestre2: yup.string().required('Date de naissance requise'),
-    trimestre3: yup.string().required('Lieu de naissance requis'),
+    trimestre1: yup.string(),
+    trimestre2: yup.string(),
+    trimestre3: yup.string(),
     totalcoefficient: yup.string(),
     moyenne: yup.string(),
    
@@ -128,7 +128,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="totalcoefficient">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 1</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder=""
                   {...register('trimestre1')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -143,7 +143,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="totalcoefficient">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 2</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder=""
                   {...register('trimestre2')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -158,7 +158,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="classe">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 3</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder=""
                   {...register('trimestre3')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
@@ -173,7 +173,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
               <div className="classe">
                 <label className="block font-medium text-gray-700 mb-1">Moyenne General</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder=""
                   {...register('moyenne')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
