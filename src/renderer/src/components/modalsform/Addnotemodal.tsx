@@ -97,8 +97,8 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                   {...register('classe')}
                 >
                   <option value="">Sélectionner un classe</option>
-                  <option value="directeur">CM2</option>
-                  <option value="secretaire">CM1</option>
+                  <option value="cm2">CM2</option>
+                  <option value="cm1">CM1</option>
                 </select>
                 {errors.classe && (
                   <p className="text-sm text-red-400 mt-1">{errors.classe.message}</p>
@@ -110,7 +110,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 <input
                   type="text"
                   placeholder="Tana"
-                  {...register('trimestre3')}
+                  {...register('totalcoefficient')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
                     errors.totalcoefficient ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
