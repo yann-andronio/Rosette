@@ -13,12 +13,11 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
     nom: yup.string().required('Nom requis'),
     prenom: yup.string().required('Prénom requis'),
     classe: yup.string().required('classe requise'),
+    totalcoefficient: yup.string(),
     trimestre1: yup.string(),
     trimestre2: yup.string(),
     trimestre3: yup.string(),
-    totalcoefficient: yup.string(),
-    moyenne: yup.string(),
-   
+    moyenne: yup.string()
   })
 
   const {
@@ -63,7 +62,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
           {/* section222222222222222222222222222222222222222 */}
           <div className="flex-1">
             <div className="champ2 flex flex-col gap-4 ">
-              <div className="classe">
+              <div className="Nom">
                 <label className="block font-medium text-gray-700 mb-1">Nom</label>
                 <input
                   type="text"
@@ -76,7 +75,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 {errors.nom && <p className="text-sm text-red-400 mt-1">{errors.nom.message}</p>}
               </div>
 
-              <div className="classe">
+              <div className="prenom">
                 <label className="block font-medium text-gray-700 mb-1">prenom</label>
                 <input
                   type="text"
@@ -91,7 +90,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 )}
               </div>
 
-              <div className="trimestre1">
+              <div className="classe">
                 <label className="block font-medium text-gray-700 mb-1">classe</label>
                 <select
                   className={` bg-[#F1F1F1]  text-black w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.trimestre1 ? 'border-red-400' : 'border-gray-300'}`}
@@ -125,7 +124,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
           {/* section33333333333333333333333333333333333333 */}
           <div className="flex-1">
             <div className="champ3 flex flex-col gap-4 ">
-              <div className="totalcoefficient">
+              <div className="T1">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 1</label>
                 <input
                   type="text"
@@ -140,7 +139,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 )}
               </div>
 
-              <div className="totalcoefficient">
+              <div className="T2">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 2</label>
                 <input
                   type="text"
@@ -155,7 +154,7 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 )}
               </div>
 
-              <div className="classe">
+              <div className="T3">
                 <label className="block font-medium text-gray-700 mb-1">Trimestre 3</label>
                 <input
                   type="text"
