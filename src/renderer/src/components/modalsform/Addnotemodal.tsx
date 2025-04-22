@@ -81,14 +81,14 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
                 <label className="block font-medium text-gray-700 mb-1">classe</label>
                 <select
                   className={` bg-[#F1F1F1]  text-black w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.trimestre1 ? 'border-red-400' : 'border-gray-300'}`}
-                  {...register('trimestre1')}
+                  {...register('classe')}
                 >
-                  <option value="">Sélectionner un trimestre1</option>
-                  <option value="directeur">Homme</option>
-                  <option value="secretaire">Femme</option>
+                  <option value="">Sélectionner un classe</option>
+                  <option value="directeur">CM2</option>
+                  <option value="secretaire">CM1</option>
                 </select>
-                {errors.trimestre1 && (
-                  <p className="text-sm text-red-400 mt-1">{errors.trimestre1.message}</p>
+                {errors.classe && (
+                  <p className="text-sm text-red-400 mt-1">{errors.classe.message}</p>
                 )}
               </div>
 
