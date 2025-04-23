@@ -8,7 +8,7 @@ type SearchBarProps = {
   closemodal: () => void
 }
 
-const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
+const Addmontant: React.FC<SearchBarProps> = ({ closemodal }) => {
   const ValidationSchema = yup.object({
     nom: yup.string().required('Nom requis'),
     prenom: yup.string().required('Prénom requis'),
@@ -208,4 +208,4 @@ const Addnotemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
   )
 }
 
-export default Addnotemodal
+export default Addmontant
