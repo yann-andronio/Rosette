@@ -10,9 +10,8 @@ type montantmodalProps = {
 
 const Addmontant: React.FC<montantmodalProps> = ({ closemodal }) => {
   const ValidationSchema = yup.object({
-    nom: yup.string().required('Nom requis'),
-    prenom: yup.string().required('Prénom requis'),
-    classe: yup.string().required('classe requise'),
+    classe: yup.string().required('Nom requis'),
+    montant: yup.string().required('Prénom requis'),
     totalcoefficient: yup.string(),
     trimestre1: yup.string(),
     trimestre2: yup.string(),
@@ -40,7 +39,9 @@ const Addmontant: React.FC<montantmodalProps> = ({ closemodal }) => {
         className="bg-white rounded-2xl shadow-2xl w-full max-w-[90%] p-6 animate-fade-in"
       >
         <div className="flex items-center justify-center    mb-12">
-          <h2 className=" text-2xl font-bold text-gray-800 flex items-center gap-2">Notes</h2>
+          <h2 className=" text-2xl font-bold text-gray-800 flex items-center gap-2">
+            Ajoutez du montant{' '}
+          </h2>
           <button
             onClick={closemodal}
             className="text-white absolute right-25 rounded-lg p-1 bg-red-400 hover:bg-red-500 hover:scale-105  transition"
@@ -63,62 +64,37 @@ const Addmontant: React.FC<montantmodalProps> = ({ closemodal }) => {
           <div className="flex-1">
             <div className="champ2 flex flex-col gap-4 ">
               <div className="Nom">
-                <label className="block font-medium text-gray-700 mb-1">Nom</label>
+                <label className="block font-medium text-gray-700 mb-1">Classe</label>
                 <input
                   type="text"
                   placeholder="rakoto"
-                  {...register('nom')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.nom ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.nom && <p className="text-sm text-red-400 mt-1">{errors.nom.message}</p>}
-              </div>
-
-              <div className="prenom">
-                <label className="block font-medium text-gray-700 mb-1">prenom</label>
-                <input
-                  type="text"
-                  placeholder="kely"
-                  {...register('prenom')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.prenom ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.prenom && (
-                  <p className="text-sm text-red-400 mt-1">{errors.prenom.message}</p>
-                )}
-              </div>
-
-              <div className="classe">
-                <label className="block font-medium text-gray-700 mb-1">classe</label>
-                <select
-                  className={` bg-[#F1F1F1]  text-black w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.trimestre1 ? 'border-red-400' : 'border-gray-300'}`}
                   {...register('classe')}
-                >
-                  <option value="">Sélectionner un classe</option>
-                  <option value="cm2">CM2</option>
-                  <option value="cm1">CM1</option>
-                </select>
+                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
+                    errors.classe ? 'border-red-400' : 'border-gray-300'
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                />
                 {errors.classe && (
                   <p className="text-sm text-red-400 mt-1">{errors.classe.message}</p>
                 )}
               </div>
 
-              <div className="totalcoefficient">
-                <label className="block font-medium text-gray-700 mb-1">total coefficient</label>
+              <div className="prenom">
+                <label className="block font-medium text-gray-700 mb-1">montant</label>
                 <input
-                  type="number"
-                  placeholder="Tana"
-                  {...register('totalcoefficient')}
+                  type="text"
+                  placeholder="kely"
+                  {...register('montant')}
                   className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.totalcoefficient ? 'border-red-400' : 'border-gray-300'
+                    errors.montant ? 'border-red-400' : 'border-gray-300'
                   } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
                 />
-                {errors.totalcoefficient && (
-                  <p className="text-sm text-red-400 mt-1">{errors.totalcoefficient.message}</p>
+                {errors.montant && (
+                  <p className="text-sm text-red-400 mt-1">{errors.montant.message}</p>
                 )}
               </div>
+
+             
+             
             </div>
           </div>
           {/* section33333333333333333333333333333333333333 */}
@@ -154,35 +130,7 @@ const Addmontant: React.FC<montantmodalProps> = ({ closemodal }) => {
                 )}
               </div>
 
-              <div className="T3">
-                <label className="block font-medium text-gray-700 mb-1">Trimestre 3</label>
-                <input
-                  type="number"
-                  placeholder=""
-                  {...register('trimestre3')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.trimestre3 ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.trimestre3 && (
-                  <p className="text-sm text-red-400 mt-1">{errors.trimestre3.message}</p>
-                )}
-              </div>
-
-              <div className="classe">
-                <label className="block font-medium text-gray-700 mb-1">Moyenne General</label>
-                <input
-                  type="number"
-                  placeholder=""
-                  {...register('moyenne')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.moyenne ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.moyenne && (
-                  <p className="text-sm text-red-400 mt-1">{errors.moyenne.message}</p>
-                )}
-              </div>
+            
             </div>
           </div>
         </div>

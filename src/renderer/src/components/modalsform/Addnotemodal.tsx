@@ -170,7 +170,7 @@ const Addnotemodal: React.FC<notemodalProps> = ({ closemodal }) => {
                 )}
               </div>
 
-              <div className="classe">
+              <div className="moyennegeneral">
                 <label className="block font-medium text-gray-700 mb-1">Moyenne General</label>
                 <input
                   type="number"
