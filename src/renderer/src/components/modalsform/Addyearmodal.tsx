@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-type SearchBarProps = {
+type YearProps = {
   closemodal: () => void
 }
 
-const Addyearmodal: React.FC<SearchBarProps> = ({ closemodal }) => {
+const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
 
  const ValidationSchema = yup.object({
    yearadd: yup.string().min(4, 'Au moins 4 caractères').required('vous devez saisir une anné')
