@@ -4,11 +4,11 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../images/test.png'
 
-type SearchBarProps = {
+type infostudentsProps = {
   closemodal: () => void
 }
 
-const AdUpinfostudents: React.FC<SearchBarProps> = ({ closemodal }) => {
+const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
   const ValidationSchema = yup.object({
     nom: yup.string().required('Nom requis'),
     prenom: yup.string().required('Prénom requis'),
