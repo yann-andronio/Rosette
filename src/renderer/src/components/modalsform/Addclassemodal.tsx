@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-type SearchBarProps = {
+type classmodalProps = {
   closemodal: () => void
 }
 
-const Addclassemodal: React.FC<SearchBarProps> = ({ closemodal }) => {
+const Addclassemodal: React.FC<classmodalProps> = ({ closemodal }) => {
   const ValidationSchema = yup.object({
     classadd: yup.string().required('vous devez saisir une nom de classe')
   })
