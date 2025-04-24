@@ -274,7 +274,7 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <Addmontant closemodal={() => closModal('addclass')} />}
+      {modal.addclass && <Addnotemodal closemodal={() => closModal('addclass')} />}
     </div>
   )
 }
