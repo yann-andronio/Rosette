@@ -34,7 +34,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            Ajouter une année
+            Ajouter une année scolaire
           </h2>
           <button
             onClick={closemodal}
