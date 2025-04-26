@@ -170,7 +170,7 @@ const Detaildroits: React.FC<notemodalProps> = ({ closemodal }) => {
               </div>
 
               <div className="moyennegeneral">
-                <label className="block font-medium text-gray-700 mb-1">Moyenne General</label>
+                <label className="block font-medium text-gray-700 mb-1">Encadrement</label>
                 <input
                   type="number"
                   placeholder=""
