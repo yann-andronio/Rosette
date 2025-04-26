@@ -106,7 +106,7 @@ const Detaildroits: React.FC<notemodalProps> = ({ closemodal }) => {
               </div>
 
               <div className="totalcoefficient">
-                <label className="block font-medium text-gray-700 mb-1">total coefficient</label>
+                <label className="block font-medium text-gray-700 mb-1">total de droit</label>
                 <input
                   type="number"
                   placeholder="Tana"
