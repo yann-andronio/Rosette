@@ -8,9 +8,11 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const ValidationSchema = yup.object({
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
@@ -26,6 +28,7 @@ function Login(): JSX.Element {
 
   const onSubmit = (data: any) => {
     console.log(data)
+    navigate('/home')
     reset()
   }
 

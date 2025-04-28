@@ -84,7 +84,7 @@ function Studentsinfo(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
+            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2  ">
               {years.map((year, index) => (
                 <h1
                   key={index}
@@ -274,7 +274,7 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <Addnotemodal closemodal={() => closModal('addclass')} />}
+      {modal.addclass && <AdUpinfostudents closemodal={() => closModal('addclass')} />}
     </div>
   )
 }

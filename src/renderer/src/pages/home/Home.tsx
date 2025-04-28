@@ -1,11 +1,15 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import Sidebar from '../../layout/sidebar/Sidebar'
 import Navbar from '@renderer/layout/navbar/Navbar'
+import { useEffect } from 'react'
 
 function Home(): JSX.Element {
+  const navigate = useNavigate()
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
+
+ 
 
   return (
     <div className="parents flex h-screen">

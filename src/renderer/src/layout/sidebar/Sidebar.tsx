@@ -87,13 +87,14 @@ const Sidebar = () => {
         className={`fixed top-0 left-0  z-40 w-64 h-screen  ${closeBar ? 'w-[5rem]' : 'w-[16rem]'} sm:translate-x-0   duration-[550ms] ease-in-out`}
         aria-label="Sidenav"
       >
-        <div className="w-full flex gap-2 items-center justify-start p-3  bg-[#895256]     ">
+        <div className="w-full flex gap-2 items-center justify-start p-3  bg-[#6a2e3e]     ">
           <img className={`${closeBar ? 'w-[100%]' : 'w-[25%]'}`} src={logo} alt="Logo" />
           <p className={`${closeBar ? 'hidden' : ''} font-mono text-2xl font-normal text-white `}>
             LA ROSETTE
           </p>
         </div>
-        <div className={`overflow-y-auto py-2 px-3 h-full bg-[#895256]`}>
+        {/* bg color taloha =  895256 */}
+        <div className={`overflow-y-auto py-2 px-3 h-full bg-[#6a2e3e]`}>
           <ul className="space-y-2.5">
             {menus.map((menu, index) => (
               <li key={index} className="relative">
@@ -178,7 +179,6 @@ const Sidebar = () => {
             ))}
           </ul>
         </div>
-
         {/* Paramètres sy  deconnexion */}
         <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
           <Link
