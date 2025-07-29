@@ -96,7 +96,7 @@ function Studentsinfo(): JSX.Element {
               ))}
             </div>
 
-            <div className="w-full justify-end mt-4 flex gap-2">
+            {/* <div className="w-full justify-end mt-4 flex gap-2">
               <button
                 onClick={() => openModal('addyear')}
                 className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
@@ -106,7 +106,7 @@ function Studentsinfo(): JSX.Element {
               <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
                 <FaTrash />
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* filter222 */}
