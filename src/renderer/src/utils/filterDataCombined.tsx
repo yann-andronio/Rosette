@@ -16,7 +16,8 @@ export function filterDataCombined<T>(data: T[], search: string, keys: (keyof T)
     const matchYear = filters.annee === 'All' || item['annee'] === filters.annee
     const matchClasse = filters.classe === 'All' || item['classe'] === filters.classe
     const matchSexe = filters.sexe === 'All' || item['sexe'] === filters.sexe
+    const matchMention = filters.mention === 'All' || item['mention'] === filters.mention
 
-    return matchSearch && matchYear && matchClasse && matchSexe
+    return matchSearch && matchYear && matchClasse && matchSexe && matchMention
   })
 }

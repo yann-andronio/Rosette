@@ -8,7 +8,7 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import AdUpinfostudents from '@renderer/components/modalsform/AdUpinfostudents'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
-import { StudentsType, FilterOptions } from '@renderer/types/Alltypes'
+import {  FilterOptions } from '@renderer/types/Alltypes'
 import { Studentsdata } from '@renderer/data/Studentsdata'
 import { years , classe } from '@renderer/data/Filterselectiondata'
 
@@ -18,11 +18,7 @@ function Studentsinfo(): JSX.Element {
   const [selectedyear, setselectedyear] = useState<string>('All')
   const [selectedclasse, setselectedclasse] = useState<string>('All')
   const [selectedSexe, setSelectedSexe] = useState<string>('All')
- const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({
-   annee: 'All',
-   classe: 'All',
-   sexe: 'All'
- })
+  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All'})
 
   // isaka misy changement nle raha filtregna de atao modif selectiondefiltre
   useEffect(() => {
@@ -33,20 +29,16 @@ function Studentsinfo(): JSX.Element {
     })
   }, [selectedyear, selectedclasse, selectedSexe])
 
- const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
+  const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
    setter((prev) => (prev === current ? 'All' : current))
- }
-
+  }
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
   }
 
-  // Recherche sur ces clés
-  const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'classe']
-
-  // Filtrage direct sans useMemo dans le rendu (à gauche ici pour clarté)
-  const filteredData = filterDataCombined(Studentsdata, searcheleves, searchKeys, selectedFilters)
+  // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'classe']
+  const filteredData = filterDataCombined(Studentsdata, searcheleves,['nom', 'prenom', 'classe'], selectedFilters)
 
   const { modal, openModal, closModal } = useMultiModals()
 
@@ -62,83 +54,83 @@ function Studentsinfo(): JSX.Element {
         <div className="bigboxfilter flex flex-col gap-6 w-full lg:flex-row justify-center">
           {/* Filtre Année */}
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex items-center border-gray-300 mb-3">
-              <div className="icones flex justify-center rounded-lg p-2">
-                <LuCalendarDays size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuCalendarDays size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
               {years.map((year, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(year.ans, setselectedyear)}
                   className={`${
                     selectedyear === year.ans
                       ? 'bg-[#895256] text-white border-none'
-                      : 'text-gray-700 bg-gray-100'
-                  } border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {year.ans}
-                </h1>
+                </button>
               ))}
             </div>
           </div>
 
           {/* Filtre Classe */}
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex items-center border-gray-300 mb-3">
-              <div className="icones flex justify-center rounded-lg p-2">
-                <LuGraduationCap size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuGraduationCap size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une classe</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
               {classe.map((cl, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(cl.name, setselectedclasse)}
                   className={`${
                     selectedclasse === cl.name
                       ? 'bg-[#895256] text-white border-none'
-                      : 'text-gray-700 bg-gray-100'
-                  } border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {cl.name}
-                </h1>
+                </button>
               ))}
             </div>
           </div>
 
           {/* Filtre sexe */}
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex items-center border-gray-300 mb-3">
-              <div className="icones flex justify-center rounded-lg p-2">
-                <LuUsers size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuUsers size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un sexe</h1>
             </div>
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
-              <h1
+              <button
                 onClick={() => handleselect('Homme', setSelectedSexe)}
                 className={`${
                   selectedSexe === 'Homme'
                     ? 'bg-[#895256] text-white border-none'
-                    : 'text-gray-700 bg-gray-100'
-                } border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Homme
-              </h1>
-              <h1
+              </button>
+              <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
                 className={`${
                   selectedSexe === 'Femme'
                     ? 'bg-[#895256] text-white border-none'
-                    : 'text-gray-700 bg-gray-100'
-                } border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Femme
-              </h1>
+              </button>
             </div>
           </div>
         </div>
@@ -165,10 +157,10 @@ function Studentsinfo(): JSX.Element {
           </div>
         </div>
 
-        <div className="relative overflow-x-auto mt-4 bg-white rounded-lg p-8">
-          <div className="bg-[#895256] text-white text-sm rounded-lg mb-2">
-            <div className="flex px-6 py-3 font-medium tracking-wide">
-              <div className="w-30">Photo</div>
+        <div className="relative overflow-x-auto mt-4 bg-white rounded-xl p-4">
+          <div className="bg-[#895256] text-white text-sm rounded-t-xl mb-2">
+            <div className="flex px-4 py-3 font-medium tracking-wide">
+              <div className="w-33">Photo</div>
               <div className="flex-1">Nom</div>
               <div className="flex-1">Prénom</div>
               <div className="flex-1">Sexe</div>
@@ -177,7 +169,7 @@ function Studentsinfo(): JSX.Element {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {filteredData.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (

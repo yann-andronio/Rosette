@@ -1,87 +1,67 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
-import { useFilterData } from '@renderer/hooks/useFilterData'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
+import { Studentsdata } from '@renderer/data/Studentsdata'
+import { FilterOptions } from '@renderer/types/Alltypes'
+import { years , classe } from '@renderer/data/Filterselectiondata'
+import { filterDataCombined } from '@renderer/utils/filterDataCombined'
+import { getMentionColor } from '@renderer/utils/getMentionColor'
+import { getMention } from '@renderer/utils/getMention'
 
 function Notestudentsmanagement(): JSX.Element {
+
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<string | null>('All')
-  const [selectedclasse, setselectedclasse] = useState<string | null>('All')
-  const [selectedSexe, setSelectedSexe] = useState<string | null>('All')
-  const [selectedmention, setSelectedmention] = useState<string | null>('All')
+  const [selectedyear, setselectedyear] = useState<string>('All')
+  const [selectedclasse, setselectedclasse] = useState<string>('All')
+  const [selectedSexe, setSelectedSexe] = useState<string>('All')
+  const [selectedmention, setSelectedmention] = useState<string>('All')
+  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All' , mention:"All"})
+  
+  useEffect(() => {
+    setSelectedFilters({
+        annee: selectedyear,
+        classe: selectedclasse,
+        sexe: selectedSexe,
+        mention: selectedmention,
+    })
+  }, [selectedyear, selectedclasse, selectedSexe , selectedmention])
 
-  const handleselect = (current: string, setter: any) => {
-    setter((prev: string) => (prev === current ? 'All' : current))
+
+ const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
+   setter((prev) => (prev === current ? 'All' : current))
   }
+  
 
-  const data = [
-    { id: 1, nom: 'WINTCHESTER', prenom: 'Dean', sexe: 'Homme', classe: 'CM2', moyenne: 10 },
-    { id: 2, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM1', moyenne: 15 },
-    { id: 3, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP2', moyenne: 12 },
-    { id: 4, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CM4', moyenne: 18 },
-    { id: 5, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CE', moyenne: 11 },
-    { id: 6, nom: 'WINTCHESTER', prenom: 'Sammy', sexe: 'Homme', classe: 'CP1', moyenne: 15 }
-  ]
 
-  const years = [
-    { id: 1, ans: '2000' },
-    { id: 2, ans: '2001' },
-    { id: 3, ans: '2002' },
-    { id: 4, ans: '2003' },
-    { id: 4, ans: '2004' },
-    { id: 4, ans: '2005' },
-    { id: 4, ans: '2006' },
-    { id: 4, ans: '2007' }
-  ]
-  const classe = [
-    { id: 1, name: 'T1' },
-    { id: 2, name: 'T2' },
-    { id: 3, name: 'CM1' },
-    { id: 4, name: 'Term 25 ' },
-    { id: 4, name: '2nd 1' },
-    { id: 4, name: 'T6' },
-    { id: 4, name: 'T7' },
-    { id: 4, name: 'T8' }
-  ]
   const mention = [
     { id: 1, name: 'Aucune' },
     { id: 2, name: 'passable' },
     { id: 3, name: 'A-bien' },
-    { id: 4, name: 'Bien ' },
+    { id: 4, name: 'Bien' },
     { id: 5, name: 'Très-Bien' },
     { id: 6, name: 'Honorable' }
   ]
 
-  const handleSearcheleves = (dataeleve: string) => {
-    setSearcheleves(dataeleve)
-  }
-  const filtereEleves = useFilterData(data, searcheleves, ['nom', 'prenom', 'classe'])
 
-  const handleSubmitFilter = () => {
-    const valeursFiltres = {
-      annee: selectedyear,
-      classe: selectedclasse,
-      sexe: selectedSexe,
-      mention: selectedmention
-    }
-    console.log('Filtres sélectionnés :', valeursFiltres)
-  }
+const Studentsdatawithmention = Studentsdata.map((student) => ({
+  ...student,
+  mention: getMention(student.moyenne)
+}))
 
-  function getMentionColor(moyenne: number): string {
-    if (moyenne < 10) return 'text-red-500' // Échec
-    if (moyenne < 12) return 'text-yellow-500' // Passable
-    if (moyenne < 14) return 'text-orange-500' // Assez bien
-    if (moyenne < 16) return 'text-green-500' // Bien
-    if (moyenne < 18) return 'text-blue-500' // Très bien
-    return 'text-purple-500' // Honorable
-  }
+
+   const handleSearcheleves = (dataeleve: string) => {
+     setSearcheleves(dataeleve)
+   }
+
+   const filteredData = filterDataCombined( Studentsdatawithmention, searcheleves, ['nom', 'prenom', 'classe'], selectedFilters)
+
 
   const { modal, openModal, closModal } = useMultiModals()
   return (
@@ -225,7 +205,7 @@ function Notestudentsmanagement(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <Searchbar onSearch={handleSearcheleves} onfilter={handleSubmitFilter} />
+          <Searchbar onSearch={handleSearcheleves} />
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
@@ -259,10 +239,10 @@ function Notestudentsmanagement(): JSX.Element {
 
           {
             <div className="space-y-2">
-              {filtereEleves.length === 0 ? (
+              {filteredData.length === 0 ? (
                 <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
               ) : (
-                filtereEleves.map((student, index) => (
+                filteredData.map((student, index) => (
                   <div
                     key={student.id}
                     className={`flex px-6 py-2 rounded-lg items-center ${
