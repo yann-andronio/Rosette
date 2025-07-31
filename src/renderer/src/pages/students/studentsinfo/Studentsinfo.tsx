@@ -247,7 +247,6 @@ function Studentsinfo(): JSX.Element {
         </div>
       </div>
 
-      {/* {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />} */}
       {modal.AdUpinfostudents && (
         <AdUpinfostudents closemodal={() => closModal('AdUpinfostudents')} />
       )}
@@ -258,8 +257,7 @@ function Studentsinfo(): JSX.Element {
         />
       )}
 
-      {/* {modal.showinfostudents && (<ShowInfoStudents closemodal={() => closModal('showinfostudents')} />)} */}
-      {/* {modal.addclass && <AdUpinfostudents closemodal={() => closModal('addclass')} />} */}
+
     </div>
   )
 }
