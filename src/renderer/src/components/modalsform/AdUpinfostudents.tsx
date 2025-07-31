@@ -1,359 +1,390 @@
-import { FiPlus, FiX } from 'react-icons/fi'
+import { FiPlus, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../images/test.png'
+import { useState } from 'react'
 
 type infostudentsProps = {
   closemodal: () => void
 }
 
-const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
-  const ValidationSchema = yup.object({
-    nom: yup.string().required('Nom requis'),
-    prenom: yup.string().required('Prénom requis'),
-    adresse: yup.string().required('Adresse requise'),
-    sexe: yup.string().required('Sexe requis'),
-    date_naissance: yup.string().required('Date de naissance requise'),
-    lieu_naissance: yup.string().required('Lieu de naissance requis'),
-    nom_pere: yup.string(),
-    prenom_pere: yup.string(),
-    nom_mere: yup.string(),
-    prenom_mere: yup.string(),
-    tel_pere: yup.string(),
-    tel_mere: yup.string(),
-    nom_tuteur: yup.string(),
-    prenom_tuteur: yup.string(),
-    tel_tuteur: yup.string(),
-    matricule: yup.string(),
-    ecole_prec: yup.string()
-  })
+const schema = yup.object().shape({
+  photo: yup.mixed().required('Photo requise'),
+  nom: yup.string().required('Nom requis'),
+  prenom: yup.string().required('Prénom requis'),
+  sexe: yup.string().required('Sexe requis'),
+  date_naissance: yup.string().required('Date de naissance requise'),
+  lieu_naissance: yup.string().required('Lieu de naissance requis'),
+  adresse: yup.string().required('Adresse requise'),
+  nom_pere: yup.string(),
+  prenom_pere: yup.string(),
+  tel_pere: yup.string(),
+  nom_mere: yup.string(),
+  prenom_mere: yup.string(),
+  tel_mere: yup.string(),
+  nom_tuteur: yup.string(),
+  prenom_tuteur: yup.string(),
+  tel_tuteur: yup.string(),
+  matricule: yup.string(),
+  ecole_prec: yup.string()
+})
 
+const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm({ resolver: yupResolver(ValidationSchema) })
+    formState: { errors }
+  } = useForm({ resolver: yupResolver(schema) })
 
   const onSubmit = (data: any) => {
     console.log(data)
-    reset()
-    closemodal()
   }
+ const [imageforprofil, setImageforprofil] = useState<string | null>(null)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-[90%] p-6 animate-fade-in"
-      >
-        <div className="flex items-center justify-center    mb-12">
-          <h2 className=" text-2xl font-bold text-gray-800 flex items-center gap-2">
-            Information de l'eleve
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+      <div className="bg-white w-[75%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
+
+        {/* DESIGN DROIT */}
+        <div className="w-1/2 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
+          <div className="flex flex-col items-center mb-10">
+            <label htmlFor="photo" className="cursor-pointer">
+              <input
+                type="file"
+                id="photo"
+                accept="image/*"
+                {...register('photo')}
+                className="hidden"
+              />
+              {imageforprofil ? (
+                <img
+                  src={imageforprofil}
+                  alt="Photo étudiante"
+                  className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
+                />
+              ) : (
+                <div className="w-40 h-40 flex items-center justify-center rounded-full bg-[#6b4a52] border-4 border-white mb-10 shadow-lg">
+                  <FiUser className="text-white text-[7rem]" />
+                </div>
+              )}
+            </label>
+
+            <span className="text-sm text-white">Cliquez pour choisir une photo</span>
+          </div>
+          <h2 className="text-2xl font-extrabold text-white mb-3 text-center tracking-wide">
+            Bienvenue dans le module étudiant
           </h2>
-          <button
-            onClick={closemodal}
-            className="text-white absolute right-25 rounded-lg p-1 bg-red-400 hover:bg-red-500 hover:scale-105  transition"
-          >
-            <FiX size={20} />
-          </button>
+          <p className="text-base text-white text-center mb-10 px-6 leading-relaxed">
+            Remplissez les informations à gauche pour ajouter un nouvel étudiant à votre base de
+            données.
+          </p>
         </div>
-        <div className="bigboxform flex gap-10 items-center ">
-          {/* section111 */}
-          <div className="flex-1 ">
-            <div className="champ1 flex flex-col gap-4 ">
-              <div className="sary ">
-                <div className=" flex items-center justify-center bg-white-500">
-                  <img className="w-[40%]" src={logo} alt="Logo" />
-                </div>
-              </div>
-              <div className="nomandprenom flex gap-3">
-                <div className="nom">
-                  <label className="block font-medium text-gray-700 mb-1">Nom</label>
-                  <input
-                    type="text"
-                    placeholder="rakoto"
-                    {...register('nom')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.nom && <p className="text-sm text-red-400 mt-1">{errors.nom.message}</p>}
-                </div>
 
-                <div className="prenom">
-                  <label className="block font-medium text-gray-700 mb-1">prenom</label>
-                  <input
-                    type="text"
-                    placeholder="kely"
-                    {...register('prenom')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenom ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.prenom && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenom.message}</p>
-                  )}
-                </div>
-              </div>
+        {/* section formul droite */}
+        <div className="w-1/2 p-10 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
+            <button
+              onClick={closemodal}
+              aria-label="Fermer"
+              className="text-gray-600 hover:text-red-600 transition"
+            >
+              <FiX className="text-3xl" />
+            </button>
+          </div>
 
-              <div className="sexe">
-                <label className="block font-medium text-gray-700 mb-1">sexe</label>
-                <select
-                  className={` bg-[#F1F1F1]  text-black w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.sexe ? 'border-red-400' : 'border-gray-300'}`}
-                  {...register('sexe')}
-                >
-                  <option value="">Sélectionner un sexe</option>
-                  <option value="directeur">Homme</option>
-                  <option value="secretaire">Femme</option>
-                </select>
-                {errors.sexe && <p className="text-sm text-red-400 mt-1">{errors.sexe.message}</p>}
-              </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="overflow-y-auto pr-3"
+            style={{ maxHeight: '460px' }}
+          >
+            {/* IG */}
+            <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
+              <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
+                Informations générales
+              </legend>
 
-              <div className="adresse">
-                <label className="block font-medium text-gray-700 mb-1">adresse</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nom *</label>
                 <input
                   type="text"
-                  placeholder="ambohipo"
-                  {...register('adresse')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.adresse ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  {...register('nom')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.nom
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Entrez le nom"
                 />
-                {errors.adresse && (
-                  <p className="text-sm text-red-400 mt-1">{errors.adresse.message}</p>
+                {errors.nom && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.nom.message}
+                  </p>
                 )}
               </div>
-            </div>
-          </div>
-          {/* section222222222222222222222222222222222222222 */}
-          <div className="flex-1">
-            <div className="champ2 flex flex-col gap-4 ">
-              <div className="adresse">
-                <label className="block font-medium text-gray-700 mb-1">date de naissance</label>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Prénom *</label>
+                <input
+                  type="text"
+                  {...register('prenom')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.prenom
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Entrez le prénom"
+                />
+                {errors.prenom && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.prenom.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Sexe *</label>
+                <select
+                  {...register('sexe')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.sexe
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                >
+                  <option value="">Sélectionnez</option>
+                  <option value="Homme">Homme</option>
+                  <option value="Femme">Femme</option>
+                </select>
+                {errors.sexe && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.sexe.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Date de naissance *
+                </label>
                 <input
                   type="date"
                   {...register('date_naissance')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.date_naissance ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.date_naissance
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
                 />
                 {errors.date_naissance && (
-                  <p className="text-sm text-red-400 mt-1">{errors.date_naissance.message}</p>
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.date_naissance.message}
+                  </p>
                 )}
               </div>
 
-              <div className="adresse">
-                <label className="block font-medium text-gray-700 mb-1">lieu de naissance</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Lieu de naissance *
+                </label>
                 <input
                   type="text"
-                  placeholder="Tana"
                   {...register('lieu_naissance')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.lieu_naissance ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.lieu_naissance
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Entrez le lieu de naissance"
                 />
                 {errors.lieu_naissance && (
-                  <p className="text-sm text-red-400 mt-1">{errors.lieu_naissance.message}</p>
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.lieu_naissance.message}
+                  </p>
                 )}
               </div>
 
-              <div className="nom_pereandprenom_pere flex gap-3">
-                <div className="nom_pere">
-                  <label className="block font-medium text-gray-700 mb-1">nom du pere</label>
-                  <input
-                    type="text"
-                    placeholder="rajao"
-                    {...register('nom_pere')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom_pere ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.nom_pere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nom_pere.message}</p>
-                  )}
-                </div>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Adresse *</label>
+                <input
+                  type="text"
+                  {...register('adresse')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.adresse
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Entrez l'adresse"
+                />
+                {errors.adresse && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.adresse.message}
+                  </p>
+                )}
+              </div>
+            </fieldset>
 
-                <div className="prenom">
-                  <label className="block font-medium text-gray-700 mb-1">prenom du pere</label>
-                  <input
-                    type="text"
-                    placeholder="kely"
-                    {...register('prenom_pere')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenom_pere ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.prenom_pere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenom_pere.message}</p>
-                  )}
-                </div>
+            {/* info parent */}
+            <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
+              <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
+                Informations parentales
+              </legend>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nom du père</label>
+                <input
+                  type="text"
+                  {...register('nom_pere')}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Nom du père"
+                />
               </div>
 
-              <div className="nom_mereandprenom_pere flex gap-3">
-                <div className="nom_mere">
-                  <label className="block font-medium text-gray-700 mb-1">nom du mere</label>
-                  <input
-                    type="text"
-                    placeholder="rasoa"
-                    {...register('nom_mere')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom_mere ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.nom_mere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nom_mere.message}</p>
-                  )}
-                </div>
-
-                <div className="prenom">
-                  <label className="block font-medium text-gray-700 mb-1">prenom du mere</label>
-                  <input
-                    type="text"
-                    placeholder="be"
-                    {...register('prenom_mere')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenom_mere ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.prenom_mere && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenom_mere.message}</p>
-                  )}
-                </div>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Prénom du père
+                </label>
+                <input
+                  type="text"
+                  {...register('prenom_pere')}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Prénom du père"
+                />
               </div>
 
-              <div className="tel_pere">
-                <label className="block font-medium text-gray-700 mb-1">telephone du pere</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Téléphone du père
+                </label>
                 <input
                   type="tel"
                   {...register('tel_pere')}
-                  placeholder="0342290407"
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.tel_pere ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Téléphone du père"
                 />
-                {errors.tel_pere && (
-                  <p className="text-sm text-red-400 mt-1">{errors.tel_pere.message}</p>
-                )}
               </div>
-            </div>
-          </div>
-          {/* section33333333333333333333333333333333333333 */}
-          <div className="flex-1">
-            <div className="champ3 flex flex-col gap-4 ">
-              <div className="adresse">
-                <label className="block font-medium text-gray-700 mb-1">telephone du mere</label>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom de la mère
+                </label>
+                <input
+                  type="text"
+                  {...register('nom_mere')}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Nom de la mère"
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Prénom de la mère
+                </label>
+                <input
+                  type="text"
+                  {...register('prenom_mere')}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Prénom de la mère"
+                />
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Téléphone de la mère
+                </label>
                 <input
                   type="tel"
                   {...register('tel_mere')}
-                  placeholder="0342290407"
-                  className={`w-full px-4 py-2.5 border border-[#895256] bg-[#F1F1F1] ${
-                    errors.tel_mere ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Téléphone de la mère"
                 />
-                {errors.tel_mere && (
-                  <p className="text-sm text-red-400 mt-1">{errors.tel_mere.message}</p>
-                )}
+              </div>
+            </fieldset>
+
+            <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
+              <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
+                Informations tuteur
+              </legend>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom du tuteur
+                </label>
+                <input
+                  type="text"
+                  {...register('nom_tuteur')}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Nom du tuteur"
+                />
               </div>
 
-              <div className="nom_tuteurandprenom_pere flex gap-3">
-                <div className="nom_tuteur">
-                  <label className="block font-medium text-gray-700 mb-1">nom du tuteur</label>
-                  <input
-                    type="text"
-                    placeholder="razafi"
-                    {...register('nom_tuteur')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.nom_tuteur ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.nom_tuteur && (
-                    <p className="text-sm text-red-400 mt-1">{errors.nom_tuteur.message}</p>
-                  )}
-                </div>
-
-                <div className="prenom_tuteur">
-                  <label className="block font-medium text-gray-700 mb-1">prenom du tuteur</label>
-                  <input
-                    type="text"
-                    placeholder="jean"
-                    {...register('prenom_tuteur')}
-                    className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                      errors.prenom_tuteur ? 'border-red-400' : 'border-gray-300'
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                  />
-                  {errors.prenom_tuteur && (
-                    <p className="text-sm text-red-400 mt-1">{errors.prenom_tuteur.message}</p>
-                  )}
-                </div>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Prénom du tuteur
+                </label>
+                <input
+                  type="text"
+                  {...register('prenom_tuteur')}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Prénom du tuteur"
+                />
               </div>
 
-              <div className="tel_tuteur">
-                <label className="block font-medium text-gray-700 mb-1">telephone du tuteur</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Téléphone du tuteur
+                </label>
                 <input
                   type="tel"
-                  placeholder="0342290407"
                   {...register('tel_tuteur')}
-                  className={`w-full px-4 py-2.5 border border-[#895256] bg-[#F1F1F1]  ${
-                    errors.tel_tuteur ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Téléphone du tuteur"
                 />
-                {errors.tel_tuteur && (
-                  <p className="text-sm text-red-400 mt-1">{errors.tel_tuteur.message}</p>
-                )}
               </div>
+            </fieldset>
 
-              <div className="matricule">
-                <label className="block font-medium text-gray-700 mb-1">matricule</label>
+            {/* autres informations */}
+            <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
+              <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
+                Autres informations
+              </legend>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Matricule</label>
                 <input
                   type="text"
                   {...register('matricule')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.matricule ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="Matricule"
                 />
-                {errors.matricule && (
-                  <p className="text-sm text-red-400 mt-1">{errors.matricule.message}</p>
-                )}
               </div>
 
-              <div className="ecole_prec">
-                <label className="block font-medium text-gray-700 mb-1">
-                  dernier ecole frequente
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  École précédente
                 </label>
                 <input
                   type="text"
                   {...register('ecole_prec')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.tel_pere ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
+                  placeholder="École précédente"
                 />
-                {errors.ecole_prec && (
-                  <p className="text-sm text-red-400 mt-1">{errors.ecole_prec.message}</p>
-                )}
               </div>
+            </fieldset>
+
+            <div className="mb-4">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
+              >
+                <FiPlus size={22} />
+                Ajouter
+              </button>
             </div>
-          </div>{' '}
+          </form>
         </div>
-
-        <div className="flex justify-end gap-3 mt-6">
-          <p
-            onClick={closemodal}
-            className=" cursor-pointer px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-red-500 hover:text-white hover:transition-all transition-all font-medium"
-          >
-            Annuler
-          </p>
-
-          <button
-            type="submit"
-            className={`px-5 py-2 rounded-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition font-semibold flex items-center gap-2`}
-          >
-            <FiPlus size={18} />
-            Ajouter
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   )
 }

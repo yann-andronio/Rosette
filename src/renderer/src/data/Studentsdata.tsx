@@ -1,16 +1,10 @@
 import { StudentsType } from '@renderer/types/Alltypes'
 
 export const Studentsdata: StudentsType[] = [
-  { id: 1, nom: 'Andriamatoa', prenom: 'Jean', sexe: 'Homme', classe: 'CM2', moyenne: 14.3, annee: '2005' },
-  { id: 2, nom: 'Rakoto', prenom: 'Lalao', sexe: 'Femme', classe: 'CM1', moyenne: 11, annee: '2004' },
-  { id: 3, nom: 'Rasoa', prenom: 'Mickael', sexe: 'Homme', classe: 'CP2', moyenne: 9, annee: '2005' },
-  { id: 4, nom: 'Rabe', prenom: 'Fanja', sexe: 'Femme', classe: 'CM4', moyenne: 13, annee: '2006' },
-  { id: 5, nom: 'Rajaonary', prenom: 'Hery', sexe: 'Homme', classe: 'CE', moyenne: 15.25, annee: '2004' },
-  { id: 6, nom: 'Randriamamonjy', prenom: 'Miora', sexe: 'Femme', classe: 'CP1', moyenne: 12, annee: '2006' },
-  { id: 7, nom: 'Razafindrakoto', prenom: 'Solo', sexe: 'Homme', classe: 'CM2', moyenne: 16.7, annee: '2005' },
-  { id: 8, nom: 'Rasolofondraibe', prenom: 'Noro', sexe: 'Femme', classe: 'CM1', moyenne: 10.5, annee: '2006' },
-  { id: 9, nom: 'Rakotomanga', prenom: 'Jean', sexe: 'Homme', classe: 'CP2', moyenne: 17.2, annee: '2004' },
-  { id: 10, nom: 'Raharimalala', prenom: 'Soa', sexe: 'Femme', classe: 'CM4', moyenne: 8.9, annee: '2005' },
-  { id: 11, nom: 'Koto', prenom: 'Kely', sexe: 'Femme', classe: 'CM4', moyenne: 14, annee: '2005' },
+  { id: 1 , nom: 'Rakotovao', prenom: 'Arnaud', sexe: 'Homme', classe: 'CM2', moyenne: 16.4, annee: '2006', mention: 'Très Bien', adresse: 'Lot II F 45, Antananarivo', date_naissance: '2012-04-12', lieu_naissance: 'Antsirabe', nom_pere: 'Rakotovao', prenom_pere: 'Jean', nom_mere: 'Randrianasolo', prenom_mere: 'Fanja', tel_pere: '0321234567', tel_mere: '0349876543', nom_tuteur: 'Andrianarisoa', prenom_tuteur: 'Patrick', tel_tuteur: '0331122334', matricule: 'A001', ecole_prec: 'École Sainte-Marie' },
+  { id: 2, photo:"" , nom: 'Ramiaramanana', prenom: 'Lova', sexe: 'Femme', classe: 'CM1', moyenne: 13.2, annee: '2006', mention: 'Assez Bien', adresse: 'Ampasapito, Antananarivo', date_naissance: '2013-08-09', lieu_naissance: 'Fianarantsoa', nom_pere: 'Ramiaramanana', prenom_pere: 'Hery', nom_mere: 'Rasoa', prenom_mere: 'Lilas', tel_pere: '0329876543', tel_mere: '0345566778', nom_tuteur: '', prenom_tuteur: '', tel_tuteur: '', matricule: 'A002', ecole_prec: 'École La Lumière' },
+  { id: 3, photo:"test" , nom: 'Andrianantenaina', prenom: 'Feno', sexe: 'Homme', classe: 'CE', moyenne: 11.5, annee: '2005', mention: 'Passable', adresse: 'Ankazomanga, Antananarivo', date_naissance: '2012-11-25', lieu_naissance: 'Toamasina', nom_pere: 'Andrianantenaina', prenom_pere: 'Lova', nom_mere: 'Rakotomanga', prenom_mere: 'Soa', tel_pere: '0327778888', tel_mere: '0341112223', nom_tuteur: '', prenom_tuteur: '', tel_tuteur: '', matricule: 'A003', ecole_prec: 'École Primaire Ambatomanga' },
+  { id: 4, photo:"test" , nom: 'Randriamahazosoa', prenom: 'Miora', sexe: 'Femme', classe: 'CP2', moyenne: 9.8, annee: '2005', mention: 'Insuffisant', adresse: 'Analamahitsy, Antananarivo', date_naissance: '2013-01-05', lieu_naissance: 'Mahajanga', nom_pere: 'Randriamahazosoa', prenom_pere: 'Tiana', nom_mere: 'Rabe', prenom_mere: 'Hanta', tel_pere: '0329991122', tel_mere: '0341234432', nom_tuteur: 'Rakoto', prenom_tuteur: 'Laza', tel_tuteur: '0338899776', matricule: 'A004', ecole_prec: 'École Catholique Mahajanga' },
+  { id: 5, photo:"../images/test.png" , nom: 'Raherinirina', prenom: 'Tsanta', sexe: 'Homme', classe: 'CM2', moyenne: 14.9, annee: '2006', mention: 'Bien', adresse: 'Ambohibao, Antananarivo', date_naissance: '2012-06-17', lieu_naissance: 'Antananarivo', nom_pere: 'Raherinirina', prenom_pere: 'Mamy', nom_mere: 'Ratsimbazafy', prenom_mere: 'Vero', tel_pere: '0324445556', tel_mere: '0347788990', nom_tuteur: '', prenom_tuteur: '', tel_tuteur: '', matricule: 'A005', ecole_prec: 'École La Sagesse' }
 
 ]

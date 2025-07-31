@@ -8,9 +8,10 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import AdUpinfostudents from '@renderer/components/modalsform/AdUpinfostudents'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
-import {  FilterOptions } from '@renderer/types/Alltypes'
+import {  FilterOptions, StudentsType } from '@renderer/types/Alltypes'
 import { Studentsdata } from '@renderer/data/Studentsdata'
 import { years , classe } from '@renderer/data/Filterselectiondata'
+import ShowInfoStudents from '@renderer/components/modalsform/Showinfostudents'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -18,7 +19,9 @@ function Studentsinfo(): JSX.Element {
   const [selectedyear, setselectedyear] = useState<string>('All')
   const [selectedclasse, setselectedclasse] = useState<string>('All')
   const [selectedSexe, setSelectedSexe] = useState<string>('All')
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All'})
+  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All' })
+  const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
+
 
   // isaka misy changement nle raha filtregna de atao modif selectiondefiltre
   useEffect(() => {
@@ -38,7 +41,9 @@ function Studentsinfo(): JSX.Element {
   }
 
   // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'classe']
-  const filteredData = filterDataCombined(Studentsdata, searcheleves,['nom', 'prenom', 'classe'], selectedFilters)
+  const filteredData = filterDataCombined(Studentsdata, searcheleves, ['nom', 'prenom', 'classe'], selectedFilters)
+ 
+  
 
   const { modal, openModal, closModal } = useMultiModals()
 
@@ -175,7 +180,7 @@ function Studentsinfo(): JSX.Element {
             ) : (
               filteredData.map((student, index) => (
                 <div
-                  key={student.id}
+                  key={index}
                   className={`flex px-6 py-2 rounded-lg items-center ${
                     index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
                   } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
@@ -192,8 +197,17 @@ function Studentsinfo(): JSX.Element {
                   <div className="flex-1 text-gray-700">{student.classe}</div>
                   <div className="flex-1">
                     <div className="flex gap-3 text-[#9f7126] text-lg">
-                      <FaEye className="hover:text-black cursor-pointer transition" />
-                      <FaEdit className="hover:text-black cursor-pointer transition" />
+                      <FaEye
+                        onClick={() => {
+                          setSelectedStudent(student)
+                          openModal('showinfostudents')
+                        }}
+                        className="hover:text-black cursor-pointer transition"
+                      />
+                      <FaEdit
+                        onClick={() => openModal('AdUpinfostudents')}
+                        className="hover:text-black cursor-pointer transition"
+                      />
                       <FaTrash className="hover:text-red-600 cursor-pointer transition" />
                     </div>
                   </div>
@@ -233,8 +247,19 @@ function Studentsinfo(): JSX.Element {
         </div>
       </div>
 
-      {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <AdUpinfostudents closemodal={() => closModal('addclass')} />}
+      {/* {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />} */}
+      {modal.AdUpinfostudents && (
+        <AdUpinfostudents closemodal={() => closModal('AdUpinfostudents')} />
+      )}
+      {modal.showinfostudents && selectedStudent && (
+        <ShowInfoStudents
+          closemodal={() => closModal('showinfostudents')}
+          student={selectedStudent}
+        />
+      )}
+
+      {/* {modal.showinfostudents && (<ShowInfoStudents closemodal={() => closModal('showinfostudents')} />)} */}
+      {/* {modal.addclass && <AdUpinfostudents closemodal={() => closModal('addclass')} />} */}
     </div>
   )
 }

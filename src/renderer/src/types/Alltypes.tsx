@@ -1,5 +1,6 @@
 export type StudentsType = {
   id: number
+  photo?:string
   nom: string
   prenom: string
   sexe: string
@@ -7,6 +8,20 @@ export type StudentsType = {
   moyenne: number
   annee: string
   mention?: string
+  adresse?: string
+  date_naissance?: string
+  lieu_naissance?: string
+  nom_pere?: string
+  prenom_pere?: string
+  nom_mere?: string
+  prenom_mere?: string
+  tel_pere?: string
+  tel_mere?: string
+  nom_tuteur?: string
+  prenom_tuteur?: string
+  tel_tuteur?: string
+  matricule?: string
+  ecole_prec?: string
 }
 
 export type FilterOptions = {

@@ -1,4 +1,3 @@
-// [key]:true crochet ou dans un tableaux satria on modife la val precedent fa tsy on apigna , raha amigna de key : true
 import { useState } from "react";
 type modalstate = {
     [key:string]: boolean;
