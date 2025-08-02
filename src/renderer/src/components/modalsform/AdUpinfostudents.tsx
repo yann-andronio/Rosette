@@ -3,14 +3,14 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../images/test.png'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useRef, useState } from 'react'
 
 type infostudentsProps = {
   closemodal: () => void
 }
 
 const schema = yup.object().shape({
-  photo: yup.mixed().required('Photo requise'),
+
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
   sexe: yup.string().required('Sexe requis'),
@@ -34,32 +34,57 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
   const {
     register,
     handleSubmit,
+
     formState: { errors }
   } = useForm({ resolver: yupResolver(schema) })
 
+  // const refs = useRef<string | Blob>('')
+  const [imagePreview, setImagePreview] = useState<string | undefined>(undefined)
+  const [image, setImage] = useState<Blob | string>('')
+
+  const change = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target?.files && e.target?.files[0]) {
+  
+      const reader = new FileReader()
+      const file = e.target?.files[0]
+
+      setImage(file)
+      reader.onload = () => {
+        setImagePreview(reader.result as string)
+      }
+
+      reader.readAsDataURL(file)
+    }
+  }
+
   const onSubmit = (data: any) => {
     console.log(data)
+    const formdata = new FormData()
+    formdata.append("image", image)
+    console.log(Image)
   }
- const [imageforprofil, setImageforprofil] = useState<string | null>(null)
+
+
+  const [imageforprofil, setImageforprofil] = useState<string | null>(null)
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <div className="bg-white w-[75%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
-
         {/* DESIGN DROIT */}
         <div className="w-1/2 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
           <div className="flex flex-col items-center mb-10">
             <label htmlFor="photo" className="cursor-pointer">
               <input
                 type="file"
+                onChange={change}
                 id="photo"
                 accept="image/*"
-                {...register('photo')}
+                // {...register('photo')}
                 className="hidden"
               />
-              {imageforprofil ? (
+              {imagePreview ? (
                 <img
-                  src={imageforprofil}
+                  src={imagePreview}
                   alt="Photo étudiante"
                   className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
                 />
