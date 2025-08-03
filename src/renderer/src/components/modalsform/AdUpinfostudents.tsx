@@ -1,4 +1,4 @@
-import { FiPlus, FiUser, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -27,7 +27,8 @@ const schema = yup.object().shape({
   prenom_tuteur: yup.string(),
   tel_tuteur: yup.string(),
   matricule: yup.string(),
-  ecole_prec: yup.string()
+  ecole_prec: yup.string(),
+  enfant_prof: yup.string().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
 
 const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) => {
@@ -119,11 +120,13 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
         {/* section formul droite */}
         <div className="w-1/2 p-10 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-8">
-            {mode === "modifstudents" ? (
-              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Modifier cet étudiant </h2>
+            {mode === 'modifstudents' ? (
+              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">
+                Modifier cet étudiant{' '}
+              </h2>
             ) : (
-              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>)
-            }
+              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
+            )}
             <button
               onClick={closemodal}
               aria-label="Fermer"
@@ -410,6 +413,39 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
                   placeholder="École précédente"
                 />
               </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Est-il enfant de professeur ? *
+                </label>
+                <div className="flex gap-6">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="oui"
+                      {...register('enfant_prof')}
+                      className="accent-[#895256] w-5 h-5"
+                    />
+                    <span className="text-gray-700 text-sm font-medium">Oui</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="non"
+                      {...register('enfant_prof')}
+                      className="accent-[#895256] w-5 h-5"
+                    />
+                    <span className="text-gray-700 text-sm font-medium">Non</span>
+                  </label>
+                </div>
+                {errors.enfant_prof && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.enfant_prof.message}
+                  </p>
+                )}
+              </div>
+
+              {}
             </fieldset>
 
             <div className="mb-4">
@@ -417,9 +453,8 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
               >
-                <FiPlus size={22} />
-                 {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}
-
+                {mode === 'ajoutstudents' ? <FiPlus size={22} /> : <FiEdit size={22} />}{' '}
+                {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}
               </button>
             </div>
           </form>

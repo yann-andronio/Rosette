@@ -1,6 +1,6 @@
 export type StudentsType = {
   id: number
-  photo?:string
+  photo?: string
   nom: string
   prenom: string
   sexe: string
@@ -22,6 +22,7 @@ export type StudentsType = {
   tel_tuteur?: string
   matricule?: string
   ecole_prec?: string
+  enfant_prof: "oui" |"non"
 }
 
 export type FilterOptions = {
