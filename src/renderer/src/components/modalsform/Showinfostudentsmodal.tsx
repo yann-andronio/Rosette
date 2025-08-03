@@ -7,7 +7,7 @@ type ShowInfoStudentsProps = {
   student: StudentsType
 }
 
-const ShowInfoStudents = ({ closemodal, student }: ShowInfoStudentsProps) => {
+const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-w-6xl overflow-hidden flex relative">
@@ -149,4 +149,4 @@ const ShowInfoStudents = ({ closemodal, student }: ShowInfoStudentsProps) => {
   )
 }
 
-export default ShowInfoStudents
+export default Showinfostudentsmodal

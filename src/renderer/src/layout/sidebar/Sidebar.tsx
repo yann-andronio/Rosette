@@ -182,7 +182,8 @@ const Sidebar = () => {
         {/* Paramètres sy  deconnexion */}
         <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
           <Link
-            to="/settings"
+            to="/home/parametre"
+            onClick={() => dispatch(setActiveName('Paramètres'))}
             className={` ${closeBar ? 'justify-center' : ''} z-50 flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
             <MdSettings size={25} />

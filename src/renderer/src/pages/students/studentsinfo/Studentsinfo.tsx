@@ -6,12 +6,12 @@ import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
-import AdUpinfostudents from '@renderer/components/modalsform/AdUpinfostudents'
+import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
 import {  FilterOptions, StudentsType } from '@renderer/types/Alltypes'
 import { Studentsdata } from '@renderer/data/Studentsdata'
 import { years , classe } from '@renderer/data/Filterselectiondata'
-import ShowInfoStudents from '@renderer/components/modalsform/Showinfostudents'
+import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -248,13 +248,10 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.AdUpinfostudents && (
-        <AdUpinfostudents closemodal={() => closModal('AdUpinfostudents')} mode="modifstudents"  />
+        <AdUpinfostudentsmodal closemodal={() => closModal('AdUpinfostudents')} mode="modifstudents" />
       )}
       {modal.showinfostudents && selectedStudent && (
-        <ShowInfoStudents
-          closemodal={() => closModal('showinfostudents')}
-          student={selectedStudent}
-        />
+        <Showinfostudentsmodal closemodal={() => closModal('showinfostudents')} student={selectedStudent}/>
       )}
     </div>
   )

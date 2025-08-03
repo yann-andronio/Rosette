@@ -31,13 +31,12 @@ const schema = yup.object().shape({
   enfant_prof: yup.string().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
 
-const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) => {
+const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }) => {
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm({ resolver: yupResolver(schema) })
-  
 
   // const refs = useRef<string | Blob>('')
   const [imagePreview, setImagePreview] = useState<string | undefined>(undefined)
@@ -61,17 +60,17 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
     console.log(data)
     const formdata = new FormData()
     formdata.append('image', image)
-     for (const key in data) {
-       formdata.append(key, data[key])
-     }
+    for (const key in data) {
+      formdata.append(key, data[key])
+    }
     console.log(Image)
 
-      if (mode === 'ajoutstudents') {
-        console.log('Ajouter étudiant', data)
-        // req axio
-      } else {
-        console.log('Modifier étudiant', data)
-        // req axios
+    if (mode === 'ajoutstudents') {
+      console.log('Ajouter étudiant', data)
+      // req axio
+    } else {
+      console.log('Modifier étudiant', data)
+      // req axios
     }
     closemodal()
   }
@@ -127,6 +126,7 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
             ) : (
               <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
             )}
+            
             <button
               onClick={closemodal}
               aria-label="Fermer"
@@ -453,7 +453,7 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
               >
-                {mode === 'ajoutstudents' ? <FiPlus size={22} /> : <FiEdit size={22} />}{' '}
+                {mode === 'ajoutstudents' ? <FiPlus size={22} /> : <FiEdit size={22} />}
                 {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}
               </button>
             </div>
@@ -464,4 +464,4 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) =>
   )
 }
 
-export default AdUpinfostudents
+export default AdUpinfostudentsmodal
