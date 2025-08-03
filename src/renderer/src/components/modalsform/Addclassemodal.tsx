@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { years } from '@renderer/data/Filterselectiondata'
 
-
 type ClassModalProps = {
   closemodal: () => void
 }
@@ -13,15 +12,21 @@ type ClassModalProps = {
 type FormDataAlefa = {
   classadd: string
   selectedyear: string
+  ecolage: number
 }
 
 const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [classes, setClasses] = useState<{ name: string; year: string }[]>([])
+  const [classes, setClasses] = useState<{ classadd: string; year: string; ecolageeee: number }[]>([])
 
   const schema = yup.object({
     classadd: yup.string().required('Vous devez saisir un nom de classe'),
-    selectedyear: yup.string().required('Sélectionnez une année')
+    selectedyear: yup.string().required('Sélectionnez une année'),
+    ecolage: yup
+      .number()
+      .typeError('Le montant doit être un nombre')
+      .required('Le montant est requis')
+      .min(0, 'Le montant ne peut pas être négatif')
   })
 
   const {
@@ -37,16 +42,21 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
 
   const onSubmit = (data: FormDataAlefa) => {
     const supspaceclasse = data.classadd.trim()
-    if (!classes.some((c) => c.name === supspaceclasse && c.year === data.selectedyear)) {
-      setClasses([...classes, { name: supspaceclasse, year: data.selectedyear }])
+
+    if (!classes.some((c) => c.classadd === supspaceclasse && c.year === data.selectedyear)) {
+      setClasses([
+        ...classes,
+        { classadd: supspaceclasse, year: data.selectedyear, ecolageeee: data.ecolage }
+      ])
     }
 
-  const donneAlefa = {
-    classadd: data.classadd,
-    year: data.selectedyear
-  }
+    const donneAlefa = {
+      classadd: data.classadd,
+      year: data.selectedyear,
+      ecolage: data.ecolage
+    }
 
-  console.log('Données soumises :', donneAlefa)
+    console.log(' Données  :', donneAlefa)
 
     reset()
     setActiveTab('historique')
@@ -98,15 +108,35 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
               <p className="text-sm text-red-400 mt-1">{errors.classadd.message}</p>
             )}
 
+            {/* ecolage  */}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Frais scolaire (ex: 50000 Ar)"
+                {...register('ecolage')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.ecolage
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.ecolage && (
+                <p className="text-sm text-red-400 mt-1">{errors.ecolage.message}</p>
+              )}
+            </div>
+
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
-              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4  rounded-xl border-gray-300 bg-white ">
+              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
                 {years.map((year, index) => (
                   <div
                     key={index}
                     onClick={() => setValue('selectedyear', year.ans)}
-                    className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border
-                      ${selectedYearforstyle === year.ans ? 'bg-[#895256] text-white border-[#895256]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                    className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
+                      selectedYearforstyle === year.ans
+                        ? 'bg-[#895256] text-white border-[#895256]'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                    }`}
                   >
                     {year.ans}
                   </div>
@@ -139,19 +169,22 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             {classes.length === 0 ? (
               <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
             ) : (
-              <ul className="space-y-2">
-                {classes.map(({ name, year }, index) => (
+              <ul className="space-y-3">
+                {classes.map(({ classadd, year, ecolageeee }, index) => (
                   <li
                     key={index}
-                    className="bg-gray-100 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-200 transition flex justify-between items-center"
+                    className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                   >
-                    <span>
-                      {name} ({year})
-                    </span>
+                    <div className="flex flex-col text-left">
+                      <span className="text-base font-semibold text-gray-800">{classadd}</span>
+                      <span className="text-sm text-gray-500">Année : {year}</span>
+                      <span className="text-sm text-[#895256] font-medium mt-1">
+                        {ecolageeee.toLocaleString()} Ar
+                      </span>
+                    </div>
                     <button
                       onClick={() => setClasses(classes.filter((_, i) => i !== index))}
-                      className="text-red-500 hover:text-red-700 transition"
-                      aria-label={`Supprimer la classe ${name}`}
+                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
                     </button>

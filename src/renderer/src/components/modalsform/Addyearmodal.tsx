@@ -76,12 +76,15 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
-
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             <button
               type="button"
-              onClick={() => { setActiveTab('ajouter'); reset();setSelectedMonths([])  }}
+              onClick={() => {
+                setActiveTab('ajouter')
+                reset()
+                setSelectedMonths([])
+              }}
               className={`text-lg font-semibold transition ${
                 activeTab === 'ajouter' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
               }`}
@@ -182,7 +185,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                     <button
                       aria-label={`Supprimer l'année ${year}`}
                       onClick={() => removeYear(year)}
-                      className="text-red-500 hover:text-red-700 transition"
+                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
                     </button>
