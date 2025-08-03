@@ -7,10 +7,10 @@ import { ChangeEvent, FormEvent, useRef, useState } from 'react'
 
 type infostudentsProps = {
   closemodal: () => void
+  mode: 'ajoutstudents' | 'modifstudents'
 }
 
 const schema = yup.object().shape({
-
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
   sexe: yup.string().required('Sexe requis'),
@@ -30,13 +30,13 @@ const schema = yup.object().shape({
   ecole_prec: yup.string()
 })
 
-const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
+const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal , mode }) => {
   const {
     register,
     handleSubmit,
-
     formState: { errors }
   } = useForm({ resolver: yupResolver(schema) })
+  
 
   // const refs = useRef<string | Blob>('')
   const [imagePreview, setImagePreview] = useState<string | undefined>(undefined)
@@ -44,7 +44,6 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
 
   const change = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files && e.target?.files[0]) {
-  
       const reader = new FileReader()
       const file = e.target?.files[0]
 
@@ -60,10 +59,21 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
   const onSubmit = (data: any) => {
     console.log(data)
     const formdata = new FormData()
-    formdata.append("image", image)
+    formdata.append('image', image)
+     for (const key in data) {
+       formdata.append(key, data[key])
+     }
     console.log(Image)
-  }
 
+      if (mode === 'ajoutstudents') {
+        console.log('Ajouter étudiant', data)
+        // req axio
+      } else {
+        console.log('Modifier étudiant', data)
+        // req axios
+    }
+    closemodal()
+  }
 
   const [imageforprofil, setImageforprofil] = useState<string | null>(null)
 
@@ -109,7 +119,11 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
         {/* section formul droite */}
         <div className="w-1/2 p-10 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
+            {mode === "modifstudents" ? (
+              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Modifier cet étudiant </h2>
+            ) : (
+              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>)
+            }
             <button
               onClick={closemodal}
               aria-label="Fermer"
@@ -404,7 +418,8 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
                 className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
               >
                 <FiPlus size={22} />
-                Ajouter
+                 {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}
+
               </button>
             </div>
           </form>

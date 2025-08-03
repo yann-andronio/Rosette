@@ -248,7 +248,7 @@ function Studentsinfo(): JSX.Element {
       </div>
 
       {modal.AdUpinfostudents && (
-        <AdUpinfostudents closemodal={() => closModal('AdUpinfostudents')} />
+        <AdUpinfostudents closemodal={() => closModal('AdUpinfostudents')} mode="modifstudents"  />
       )}
       {modal.showinfostudents && selectedStudent && (
         <ShowInfoStudents
@@ -256,8 +256,6 @@ function Studentsinfo(): JSX.Element {
           student={selectedStudent}
         />
       )}
-
-
     </div>
   )
 }
