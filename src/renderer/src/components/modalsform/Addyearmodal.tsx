@@ -3,49 +3,85 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { MonthType } from '@renderer/types/Alltypes'
+import { Monthlistedata } from '@renderer/data/Monthlistedata'
 
 type YearProps = {
   closemodal: () => void
 }
 
+type FormDataAlefa = {
+  yearadd: string
+  selectedMonths: (number | undefined)[]
+}
+
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-   const [years, setYears] = useState<string[]>([]) 
+  const [yearsWithMonths, setYearsWithMonths] = useState<{ year: string; months: number[] }[]>([])
+  const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
-  const ValidationSchema = yup.object({
+  const schema = yup.object({
     yearadd: yup
       .string()
-      .matches(/^\d{4}$/, 'L’année doit contenir exactement 4 chiffres')
-      .required('Vous devez saisir une année')
+      .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
+      .required('Vous devez saisir une année'),
+    selectedMonths: yup
+      .array()
+      .of(yup.number())
+      .min(1, 'Sélectionnez au moins un mois')
+      .required('Sélectionnez au moins un mois')
   })
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     reset
-  } = useForm({ resolver: yupResolver(ValidationSchema) })
+  } = useForm<FormDataAlefa>({
+    resolver: yupResolver(schema)
+  })
 
-  const onSubmit = (data: any) => {
-
-     // const response = await axios.post('/api/years', { year: data.yearadd })
-   if (!years.includes(data.yearadd)) {
-     setYears([...years, data.yearadd])
-   }
-    reset()
-    
-   setActiveTab('historique')
+  const handleMonthClick = (id: number) => {
+    let updated: number[]
+    if (selectedMonths.includes(id)) {
+      updated = selectedMonths.filter((mid) => mid !== id)
+    } else {
+      updated = [...selectedMonths, id]
+    }
+    setSelectedMonths(updated)
+    setValue('selectedMonths', updated)
   }
 
+  const onSubmit = (data) => {
+    if (!yearsWithMonths.some((y) => y.year === data.yearadd)) {
+      setYearsWithMonths((prev) => [...prev, { year: data.yearadd, months: data.selectedMonths }])
+    }
 
+    const donneAlefa = {
+      year: data.yearadd,
+      months: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
+    }
+
+    console.log('Données :', donneAlefa)
+
+    reset()
+    setActiveTab('historique')
+  }
+
+  const removeYear = (year: string) => {
+    setYearsWithMonths((prev) => prev.filter((y) => y.year !== year))
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
+
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             <button
-              onClick={() => setActiveTab('ajouter')}
+              type="button"
+              onClick={() => { setActiveTab('ajouter'); reset();setSelectedMonths([])  }}
               className={`text-lg font-semibold transition ${
                 activeTab === 'ajouter' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
               }`}
@@ -53,6 +89,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               Ajouter
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('historique')}
               className={`text-lg font-semibold transition ${
                 activeTab === 'historique' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
@@ -82,6 +119,29 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               <p className="text-sm text-red-400 mt-1">{errors.yearadd.message}</p>
             )}
 
+            <div className="mt-6">
+              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez les mois</h2>
+              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4  rounded-xl border-gray-300 bg-white ">
+                {Monthlistedata.map((month) => {
+                  const isSelected = selectedMonths.includes(month.id)
+                  return (
+                    <div
+                      key={month.id}
+                      onClick={() => handleMonthClick(month.id)}
+                      className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border
+                       ${isSelected ? 'bg-[#895256] text-white border-[#895256]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                    >
+                      {month.name}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {errors.selectedMonths && (
+                <p className="text-sm text-red-400 mt-1">{errors.selectedMonths.message}</p>
+              )}
+            </div>
+
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
@@ -100,23 +160,29 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
             </div>
           </form>
         ) : (
-          <div className="mt-4 max-h-64 overflow-auto">
-            {years.length === 0 ? (
-              <p className="text-gray-500 text-center">Aucune année ajoutée</p>
+          <div className="mt-4 max-h-[400px] overflow-auto">
+            {yearsWithMonths.length === 0 ? (
+              <p className="text-center text-gray-500">Aucune année ajoutée</p>
             ) : (
-              <ul className="space-y-2">
-                {years.map((year, index) => (
+              <ul className="space-y-3">
+                {yearsWithMonths.map(({ year, months }, index) => (
                   <li
                     key={index}
-                    className="bg-gray-100 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-200 transition flex justify-between items-center"
+                    className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
                   >
-                    <span>Année : {year}</span>
+                    <div>
+                      <p className="font-semibold">Année : {year}</p>
+                      <p className="text-sm text-gray-700">
+                        Mois :{' '}
+                        {Monthlistedata.filter((m) => months.includes(m.id))
+                          .map((m) => m.name)
+                          .join(', ')}
+                      </p>
+                    </div>
                     <button
-                      onClick={() => {
-                        setYears(years.filter((_, i) => i !== index))
-                      }}
-                      className="text-red-500 hover:text-red-700 transition"
                       aria-label={`Supprimer l'année ${year}`}
+                      onClick={() => removeYear(year)}
+                      className="text-red-500 hover:text-red-700 transition"
                     >
                       <FiTrash2 size={18} />
                     </button>

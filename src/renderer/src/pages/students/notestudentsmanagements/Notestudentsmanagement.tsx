@@ -8,11 +8,13 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
 import { Studentsdata } from '@renderer/data/Studentsdata'
-import { FilterOptions } from '@renderer/types/Alltypes'
+import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
 import { years , classe } from '@renderer/data/Filterselectiondata'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
 import { getMentionColor } from '@renderer/utils/getMentionColor'
 import { getMention } from '@renderer/utils/getMention'
+import Addnotemodal from '@renderer/components/modalsform/Addnotemodal'
+import Showinfonotestudents from '@renderer/components/modalsform/Showinfonotestudents'
 
 function Notestudentsmanagement(): JSX.Element {
 
@@ -22,7 +24,9 @@ function Notestudentsmanagement(): JSX.Element {
   const [selectedclasse, setselectedclasse] = useState<string>('All')
   const [selectedSexe, setSelectedSexe] = useState<string>('All')
   const [selectedmention, setSelectedmention] = useState<string>('All')
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All' , mention:"All"})
+  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All', mention: "All" })
+  const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
+
   
   useEffect(() => {
     setSelectedFilters({
@@ -188,7 +192,6 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
 
             <div className="w-full justify-end mt-4 flex gap-2">
               <button
-                onClick={() => openModal('addclass')}
                 className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
               >
                 <FaEdit />
@@ -264,8 +267,17 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
                     </div>
                     <div className="flex-1">
                       <div className="flex gap-3 text-[#9f7126] text-lg">
-                        <FaEye className="hover:text-black cursor-pointer transition" />
-                        <FaEdit className="hover:text-black cursor-pointer transition" />
+                        <FaEye
+                          onClick={() => {
+                            setSelectedStudent(student)
+                            openModal('Showinfonotestudents')
+                          }}
+                          className="hover:text-black cursor-pointer transition"
+                        />
+                        <FaEdit
+                          onClick={() => openModal('Addnotemodal')}
+                          className="hover:text-black cursor-pointer transition"
+                        />
                         <FaTrash className="hover:text-red-600 cursor-pointer transition" />
                       </div>
                     </div>
@@ -308,8 +320,10 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
         }
       </div>
 
-      {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <Addclassemodal closemodal={() => closModal('addclass')} />}
+      {modal.Showinfonotestudents && selectedStudent && (
+        <Showinfonotestudents closemodal={() => closModal('Showinfonotestudents')} student={selectedStudent}/>
+      )}
+      {modal.Addnotemodal && <Addnotemodal closemodal={() => closModal('Addnotemodal')} />}
     </div>
   )
 }

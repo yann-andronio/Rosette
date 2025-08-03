@@ -80,7 +80,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <div className="bg-white w-[75%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
-        {/* DESIGN DROIT */}
+        {/* DESIGN gauche */}
         <div className="w-1/2 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
           <div className="flex flex-col items-center mb-10">
             <label htmlFor="photo" className="cursor-pointer">

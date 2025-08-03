@@ -3,30 +3,51 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { years } from '@renderer/data/Filterselectiondata'
+
 
 type ClassModalProps = {
   closemodal: () => void
 }
 
+type FormDataAlefa = {
+  classadd: string
+  selectedyear: string
+}
+
 const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [classes, setClasses] = useState<string[]>([])
+  const [classes, setClasses] = useState<{ name: string; year: string }[]>([])
 
-  const ValidationSchema = yup.object({
-    classadd: yup.string().required('Vous devez saisir un nom de classe')
+  const schema = yup.object({
+    classadd: yup.string().required('Vous devez saisir un nom de classe'),
+    selectedyear: yup.string().required('Sélectionnez une année')
   })
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
-  } = useForm({ resolver: yupResolver(ValidationSchema) })
+    reset,
+    setValue,
+    watch
+  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) })
 
-  const onSubmit = (data: any) => {
-    if (!classes.includes(data.classadd.trim())) {
-      setClasses([...classes, data.classadd.trim()])
+  const selectedYearforstyle = watch('selectedyear')
+
+  const onSubmit = (data: FormDataAlefa) => {
+    const supspaceclasse = data.classadd.trim()
+    if (!classes.some((c) => c.name === supspaceclasse && c.year === data.selectedyear)) {
+      setClasses([...classes, { name: supspaceclasse, year: data.selectedyear }])
     }
+
+  const donneAlefa = {
+    classadd: data.classadd,
+    year: data.selectedyear
+  }
+
+  console.log('Données soumises :', donneAlefa)
+
     reset()
     setActiveTab('historique')
   }
@@ -34,11 +55,13 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
-
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             <button
-              onClick={() => setActiveTab('ajouter')}
+              onClick={() => {
+                setActiveTab('ajouter')
+                reset()
+              }}
               className={`text-lg font-semibold transition ${
                 activeTab === 'ajouter' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
               }`}
@@ -75,6 +98,25 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
               <p className="text-sm text-red-400 mt-1">{errors.classadd.message}</p>
             )}
 
+            <div className="mt-6">
+              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
+              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4  rounded-xl border-gray-300 bg-white ">
+                {years.map((year, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setValue('selectedyear', year.ans)}
+                    className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border
+                      ${selectedYearforstyle === year.ans ? 'bg-[#895256] text-white border-[#895256]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                  >
+                    {year.ans}
+                  </div>
+                ))}
+              </div>
+              {errors.selectedyear && (
+                <p className="text-sm text-red-400 mt-1">{errors.selectedyear.message}</p>
+              )}
+            </div>
+
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
@@ -98,18 +140,18 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
               <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
             ) : (
               <ul className="space-y-2">
-                {classes.map((classe, index) => (
+                {classes.map(({ name, year }, index) => (
                   <li
                     key={index}
                     className="bg-gray-100 px-4 py-2 rounded-md text-gray-700 hover:bg-gray-200 transition flex justify-between items-center"
                   >
-                    <span>Classe : {classe}</span>
+                    <span>
+                      {name} ({year})
+                    </span>
                     <button
-                      onClick={() => {
-                        setClasses(classes.filter((_, i) => i !== index))
-                      }}
+                      onClick={() => setClasses(classes.filter((_, i) => i !== index))}
                       className="text-red-500 hover:text-red-700 transition"
-                      aria-label={`Supprimer la classe ${classe}`}
+                      aria-label={`Supprimer la classe ${name}`}
                     >
                       <FiTrash2 size={18} />
                     </button>

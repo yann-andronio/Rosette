@@ -22,7 +22,12 @@ export type StudentsType = {
   tel_tuteur?: string
   matricule?: string
   ecole_prec?: string
-  enfant_prof: "oui" |"non"
+  enfant_prof: 'oui' | 'non'
+ 
+  totalcoefficient?: number
+  trimestre1?: number
+  trimestre2?: number
+  trimestre3?: number
 }
 
 export type FilterOptions = {
@@ -31,3 +36,9 @@ export type FilterOptions = {
   sexe: string | null
   mention?: string | null
 }
+export type MonthType = {
+  id:number
+  name:  string | null
+}
+
+

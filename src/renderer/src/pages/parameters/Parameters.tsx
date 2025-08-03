@@ -18,8 +18,6 @@ function Parameters(): JSX.Element {
     {  icon: <FiCalendar size={28} />,  label: 'Ajouter une année scolaire',  modalName: 'Addyearmodal' },
     { icon: <FiLayers size={28} />, label: 'Ajouter une classe', modalName: 'Addclassemodal' },
     { icon: <FiDollarSign size={28} />, label: 'Modifier l’écolage', modalName: 'ModifyFees' },
-    { icon: <FiEdit3 size={28} />, label: 'Gérer les matières', modalName: 'ManageSubjects' },
-    { icon: <FiSettings size={28} />, label: 'Paramètres globaux', modalName: 'GlobalSettings' }
   ]
 
   return (
@@ -39,7 +37,7 @@ function Parameters(): JSX.Element {
             <button
               key={index}
               onClick={handleOpenModal(item.modalName)}
-              className="bg-white border border-[#e5e5e5] hover:scale-[1.03] transition-all duration-300  shadow-md rounded-2xl p-6 flex flex-col items-center gap-4 hover:shadow-xl  hover:bg-[#f9f4f1] group"
+              className="bg-white border cursor-pointer border-[#e5e5e5] hover:scale-[1.03] transition-all duration-300  shadow-md rounded-2xl p-6 flex flex-col items-center gap-4 hover:shadow-xl  hover:bg-[#f9f4f1] group"
             >
               <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white shadow-md group-hover:rotate-12 transition-transform duration-300">
                 {item.icon}
