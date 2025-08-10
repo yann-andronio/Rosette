@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 
 type YearProps = {
@@ -23,19 +24,13 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     yearadd: yup
       .string()
       .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
-      .required('Vous devez saisir une année')
-      .test('unique-year', 'Cette année existe déjà.', function (value) {
-        const { yearsWithMonths } = this.options.context || {}
-        if (!value || !yearsWithMonths) return true
-        return !yearsWithMonths.some((y) => y.year === value)
-      }),
+      .required('Vous devez saisir une année'),
     selectedMonths: yup
       .array()
       .of(yup.number())
       .min(1, 'Sélectionnez au moins un mois')
       .required('Sélectionnez au moins un mois')
   })
-
 
   const {
     register,
@@ -44,8 +39,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     setValue,
     reset
   } = useForm<FormDataAlefa>({
-    resolver: yupResolver(schema),
-    context: { yearsWithMonths }
+    resolver: yupResolver(schema)
   })
 
   const handleMonthClick = (id: number) => {
@@ -80,10 +74,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="flex items-center justify-center text-white gap-3 mb-5">
-        <h1 className="text-2xl font-bold ">Ajouter une année scolaire</h1>
-      </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
