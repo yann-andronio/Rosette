@@ -11,10 +11,13 @@ import Home from './pages/home/Home'
 import Studentsinfo from './pages/students/studentsinfo/Studentsinfo'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './redux/Store'
-import Sidebar from './layout/sidebar/Sidebar'
+// import Sidebar from './layout/sidebar/Sidebar'
 import Dashboard from './pages/dashboard/Dashboard'
 import Notestudentsmanagement from './pages/students/notestudentsmanagements/Notestudentsmanagement'
 import Parameters from './pages/parameters/Parameters'
+
+
+
 
 const route = createBrowserRouter([
   {
@@ -43,7 +46,7 @@ const route = createBrowserRouter([
       {
         path: '/home/StudentsInfo',
         element: <Studentsinfo />
-      }, 
+      },
        {
         path: '/home/notemanagements',
         element: <Notestudentsmanagement />
