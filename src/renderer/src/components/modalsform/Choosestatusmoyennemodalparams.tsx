@@ -5,46 +5,35 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { years } from '@renderer/data/Filterselectiondata'
 
-type ClassModalProps = {
+type ChosseCtausMoyenModalProps = {
   closemodal: () => void
 }
 
 type FormDataAlefa = {
-  classadd: string
   selectedyear: string
-  ecolage: number
+  moyenneAdmission: number
 }
 
-const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
+const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [classes, setClasses] = useState<{ classadd: string; year: string; ecolageeee: number }[]>([])
+  const [paramsList, setParamsList] = useState<{ year: string; moyenneAdmission: number }[]>([])
 
- const schema = yup.object({
-   classadd: yup
-     .string()
-     .required('Vous devez saisir un nom de classe')
-     .test(
-       'unique-class-forevery-year',
-       "Cette classe existe déjà pour l'année sélectionnée.",
-       function (value) {
-         const { classes } = this.options.context || {}
-         const selectedYear = this.parent.selectedyear
-         if (!value || !classes || !selectedYear) return true
-         return !classes.some(
-           (c) =>
-             c.classadd.toLowerCase().trim() === value.toLowerCase().trim() &&
-             c.year === selectedYear
-         )
-       }
-     ),
-   selectedyear: yup.string().required('Sélectionnez une année'),
-   ecolage: yup
-     .number()
-     .typeError('Le montant doit être un nombre')
-     .required('Le montant est requis')
-     .min(0, 'Le montant ne peut pas être négatif')
- })
-
+  const schema = yup.object({
+    selectedyear: yup
+      .string()
+      .required('Sélectionnez une année')
+      .test('check-one-years-fogna', 'Cette année a déjà une moyenne assignée.', function (value) {
+        const { paramsList } = this.options.context || {}
+        if (!value || !paramsList) return true
+        return !paramsList.some((param: { year: string }) => param.year === value)
+      }),
+    moyenneAdmission: yup
+      .number()
+      .typeError('La moyenne doit être un nombre')
+      .required('La moyenne est requise')
+      .min(0, 'La moyenne ne peut pas être négative')
+      .max(20, 'La moyenne ne peut pas dépasser 20')
+  })
 
   const {
     register,
@@ -53,28 +42,19 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     reset,
     setValue,
     watch
-  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) , context: { classes } })
+  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema), context: { paramsList } })
 
   const selectedYearforstyle = watch('selectedyear')
 
   const onSubmit = (data: FormDataAlefa) => {
-    const supspaceclasse = data.classadd.trim()
-
-    if (!classes.some((c) => c.classadd === supspaceclasse && c.year === data.selectedyear)) {
-      setClasses([
-        ...classes,
-        { classadd: supspaceclasse, year: data.selectedyear, ecolageeee: data.ecolage }
+    if (!paramsList.some((c) => c.year === data.selectedyear)) {
+      setParamsList([
+        ...paramsList,
+        { year: data.selectedyear, moyenneAdmission: data.moyenneAdmission }
       ])
     }
 
-    const donneAlefa = {
-      classadd: data.classadd,
-      year: data.selectedyear,
-      ecolage: data.ecolage
-    }
-
-    console.log(' Données  :', donneAlefa)
-
+    console.log('Paramètres :', data)
     reset()
     setActiveTab('historique')
   }
@@ -82,7 +62,7 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
-        <h1 className="text-2xl font-bold ">Ajouter une Classe</h1>
+        <h1 className="text-2xl font-bold ">Réglage d' admission</h1>
       </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
         <div className="flex items-center justify-between mb-6">
@@ -114,34 +94,20 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
 
         {activeTab === 'ajouter' ? (
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input
-              type="text"
-              placeholder="Ex: CM2"
-              {...register('classadd')}
-              className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                errors.classadd
-                  ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                  : 'border-gray-300 shadow-sm'
-              }`}
-            />
-            {errors.classadd && (
-              <p className="text-sm text-red-400 mt-1">{errors.classadd.message}</p>
-            )}
-
-            {/* ecolage  */}
-            <div className="mt-4">
+            <div>
               <input
                 type="number"
-                placeholder="Frais scolaire (ex: 50000 Ar)"
-                {...register('ecolage')}
+                placeholder="Moyenne d’admission (ex: 10)"
+                step="0.01"
+                {...register('moyenneAdmission')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.ecolage
+                  errors.moyenneAdmission
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
               />
-              {errors.ecolage && (
-                <p className="text-sm text-red-400 mt-1">{errors.ecolage.message}</p>
+              {errors.moyenneAdmission && (
+                <p className="text-sm text-red-400 mt-1">{errors.moyenneAdmission.message}</p>
               )}
             </div>
 
@@ -185,25 +151,25 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             </div>
           </form>
         ) : (
+          //   historique ajouté
           <div className="mt-4 max-h-64 overflow-auto">
-            {classes.length === 0 ? (
-              <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
+            {paramsList.length === 0 ? (
+              <p className="text-gray-500 text-center">Aucun paramètre ajouté</p>
             ) : (
               <ul className="space-y-3">
-                {classes.map(({ classadd, year, ecolageeee }, index) => (
+                {paramsList.map(({ year, moyenneAdmission }, index) => (
                   <li
                     key={index}
                     className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                   >
                     <div className="flex flex-col text-left">
-                      <span className="text-base font-semibold text-gray-800">{classadd}</span>
                       <span className="text-sm text-gray-500">Année : {year}</span>
                       <span className="text-sm text-[#895256] font-medium mt-1">
-                        {ecolageeee.toLocaleString()} Ar
+                        Moyenne : {moyenneAdmission}
                       </span>
                     </div>
                     <button
-                      onClick={() => setClasses(classes.filter((_, i) => i !== index))}
+                      onClick={() => setParamsList(paramsList.filter((_, i) => i !== index))}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -219,4 +185,4 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   )
 }
 
-export default Addclassemodal
+export default Choosestatusmoyennemodalparams

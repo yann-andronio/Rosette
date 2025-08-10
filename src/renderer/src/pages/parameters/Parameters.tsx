@@ -1,11 +1,12 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import { FiUserPlus, FiCalendar, FiLayers, FiDollarSign, FiEdit3, FiSettings } from 'react-icons/fi'
+import { FiUserPlus, FiCalendar, FiLayers, FiDollarSign, FiEdit3, FiSettings, FiBookOpen } from 'react-icons/fi'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
+import Choosestatusmoyennemodalparams from '@renderer/components/modalsform/Choosestatusmoyennemodalparams'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -13,10 +14,11 @@ function Parameters(): JSX.Element {
 
   const handleOpenModal = (modalName: string) => () => openModal(modalName)
 
-  const buttons = [
+  const buttonsForParamsStudents = [
     {  icon: <FiUserPlus size={28} />,  label: 'Ajouter un élève',  modalName: 'AdUpinfostudentsmodal'  },
     {  icon: <FiCalendar size={28} />,  label: 'Ajouter une année scolaire',  modalName: 'Addyearmodal' },
     { icon: <FiLayers size={28} />, label: 'Ajouter une classe', modalName: 'Addclassemodal' },
+      { icon: <FiBookOpen size={28} />, label: `Réglage d' admission`, modalName: 'Choosestatusmoyennemodalparams' }
   ]
 
   return (
@@ -32,7 +34,7 @@ function Parameters(): JSX.Element {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {buttons.map((item, index) => (
+          {buttonsForParamsStudents.map((item, index) => (
             <button
               key={index}
               onClick={handleOpenModal(item.modalName)}
@@ -55,6 +57,7 @@ function Parameters(): JSX.Element {
       )}
       {modal.Addyearmodal && <Addyearmodal closemodal={() => closModal('Addyearmodal')} />}
       {modal.Addclassemodal && <Addclassemodal closemodal={() => closModal('Addclassemodal')} />}
+      {modal.Choosestatusmoyennemodalparams && <Choosestatusmoyennemodalparams closemodal={() => closModal('Choosestatusmoyennemodalparams')} />}
     </div>
   )
 }
