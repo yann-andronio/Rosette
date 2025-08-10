@@ -17,7 +17,6 @@ function Parameters(): JSX.Element {
     {  icon: <FiUserPlus size={28} />,  label: 'Ajouter un élève',  modalName: 'AdUpinfostudentsmodal'  },
     {  icon: <FiCalendar size={28} />,  label: 'Ajouter une année scolaire',  modalName: 'Addyearmodal' },
     { icon: <FiLayers size={28} />, label: 'Ajouter une classe', modalName: 'Addclassemodal' },
-    { icon: <FiDollarSign size={28} />, label: 'Modifier l’écolage', modalName: 'ModifyFees' },
   ]
 
   return (

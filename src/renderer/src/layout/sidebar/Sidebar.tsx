@@ -49,8 +49,8 @@ const Sidebar = () => {
           path: '/home/notemanagements',
           iconsubmenu: <MdAssignment size={25} />
         },
-        { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
-        { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
+        // { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
+        // { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
         { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> }
       ]
     },

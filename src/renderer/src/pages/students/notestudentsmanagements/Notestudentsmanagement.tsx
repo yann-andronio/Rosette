@@ -96,17 +96,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
               ))}
             </div>
 
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button
-                onClick={() => openModal('addyear')}
-                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
-              >
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
-                <FaTrash />
-              </button>
-            </div>
+           
           </div>
 
           {/* filter222 */}
@@ -130,17 +120,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
               ))}
             </div>
 
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button
-                onClick={() => openModal('addclass')}
-                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
-              >
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
-                <FaTrash />
-              </button>
-            </div>
+           
           </div>
           {/* filter333 */}
 
@@ -190,16 +170,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
               ))}
             </div>
 
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button
-                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
-              >
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
-                <FaTrash />
-              </button>
-            </div>
+          
           </div>
         </div>
 
@@ -275,7 +246,10 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
                           className="hover:text-black cursor-pointer transition"
                         />
                         <FaEdit
-                          onClick={() => openModal('Addnotemodal')}
+                          onClick={() => {
+                             setSelectedStudent(student)
+                            openModal('Addnotemodal')
+                          }}
                           className="hover:text-black cursor-pointer transition"
                         />
                         <FaTrash className="hover:text-red-600 cursor-pointer transition" />
@@ -323,7 +297,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
       {modal.Showinfonotestudents && selectedStudent && (
         <Showinfonotestudents closemodal={() => closModal('Showinfonotestudents')} student={selectedStudent}/>
       )}
-      {modal.Addnotemodal && <Addnotemodal closemodal={() => closModal('Addnotemodal')} />}
+      {modal.Addnotemodal &&  selectedStudent &&  <Addnotemodal closemodal={() => closModal('Addnotemodal')}  student={selectedStudent} />}
     </div>
   )
 }

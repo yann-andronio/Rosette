@@ -27,10 +27,45 @@ export const Studentsdata: StudentsType[] = [
     matricule: 'A001',
     ecole_prec: 'École Sainte-Marie',
     enfant_prof: 'oui',
-    totalcoefficient: 25,
     trimestre1: 16.0,
     trimestre2: 17.1,
-    trimestre3: 16.2
+    trimestre3: 16.2,
+    historiqueStatus: [
+      {
+        annee_status: '2023',
+        classe: 'CM2',
+        Moyenne_status: 9.8,
+        statut: 'redoublé'
+      },
+      {
+        annee_status: '2023',
+        classe: 'CM2',
+       
+       
+      },
+      {
+        annee_status: '2023',
+        classe: 'CM2',
+        Moyenne_status: 9.8,
+        statut: 'redoublé'
+      }
+      ,
+      {
+        annee_status: '2023',
+        classe: 'CM2',
+        Moyenne_status: 9.8,
+        statut: 'admis'
+      },
+      {
+        annee_status: '2023',
+        classe: 'CM2',
+        Moyenne_status: 9.8,
+        statut: 'redoublé'
+      },
+   
+   
+    
+    ]
   },
   {
     id: 2,
@@ -57,10 +92,23 @@ export const Studentsdata: StudentsType[] = [
     matricule: 'A002',
     ecole_prec: 'École La Lumière',
     enfant_prof: 'oui',
-    totalcoefficient:2,
-    trimestre1:12.,
-    trimestre2:14.,
-    trimestre3:13.
+    trimestre1: 12,
+    trimestre2: 14,
+    trimestre3: 13,
+    historiqueStatus: [
+      {
+        annee_status: '2023',
+        classe: 'CM2',
+        Moyenne_status: 9.8,
+        statut: 'redoublé'
+      },
+      {
+        annee_status: '2024',
+        classe: 'T1',
+        Moyenne_status: 9.8,
+        statut: 'admis'
+      }
+    ]
   },
   {
     id: 3,
@@ -87,10 +135,10 @@ export const Studentsdata: StudentsType[] = [
     matricule: 'A003',
     ecole_prec: 'École Primaire Ambatomanga',
     enfant_prof: 'oui',
-    totalcoefficient: 3,
     trimestre1: 10.5,
     trimestre2: 12.0,
-    trimestre3: 12.0
-  },
-
+    trimestre3: 12.0,
+    historiqueStatus: [
+    ]
+  }
 ]

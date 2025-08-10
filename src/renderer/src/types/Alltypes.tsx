@@ -1,3 +1,10 @@
+export type StatusStudentsType = {
+  annee_status: string
+  classe: string
+  Moyenne_status?: number
+  statut?: 'admis' | 'redoublé'
+}
+
 export type StudentsType = {
   id: number
   photo?: string
@@ -23,11 +30,12 @@ export type StudentsType = {
   matricule?: string
   ecole_prec?: string
   enfant_prof: 'oui' | 'non'
- 
-  totalcoefficient?: number
+
   trimestre1?: number
   trimestre2?: number
   trimestre3?: number
+
+  historiqueStatus?: StatusStudentsType[]
 }
 
 export type FilterOptions = {
@@ -37,8 +45,6 @@ export type FilterOptions = {
   mention?: string | null
 }
 export type MonthType = {
-  id:number
-  name:  string | null
+  id: number
+  name: string | null
 }
-
-

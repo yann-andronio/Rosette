@@ -53,11 +53,6 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
             <p>
               <span className="font-medium">Classe :</span> {student.classe}
             </p>
-            {student.totalcoefficient && (
-              <p>
-                <span className="font-medium">Total Coefficient :</span> {student.totalcoefficient}
-              </p>
-            )}
             {student.trimestre1 && (
               <p>
                 <span className="font-medium">Trimestre 1 :</span> {student.trimestre1}
