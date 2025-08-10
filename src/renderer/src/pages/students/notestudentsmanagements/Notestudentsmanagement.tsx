@@ -77,104 +77,114 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
           {/* filter1111 */}
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuCalendarDays size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuCalendarDays size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
               {years.map((year, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(year.ans, setselectedyear)}
-                  className={`${selectedyear === year.ans ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  className={`${
+                    selectedyear === year.ans
+                      ? 'bg-[#895256] text-white border-none'
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {year.ans}
-                </h1>
+                </button>
               ))}
             </div>
-
-           
           </div>
 
           {/* filter222 */}
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuGraduationCap size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuGraduationCap size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une classe</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
               {classe.map((classe, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(classe.name, setselectedclasse)}
-                  className={`${selectedclasse === classe.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  className={`${
+                    selectedclasse === classe.name
+                      ? 'bg-[#895256] text-white border-none'
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {classe.name}
-                </h1>
+                </button>
               ))}
             </div>
-
-           
           </div>
           {/* filter333 */}
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones flex justify-center rounded-lg p-2">
-                <LuUsers size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuUsers size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un sexe</h1>
             </div>
 
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
-              <h1
+              <button
                 onClick={() => handleselect('Homme', setSelectedSexe)}
-                className={`${selectedSexe === 'Homme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                className={`${
+                  selectedSexe === 'Homme'
+                    ? 'bg-[#895256] text-white border-none'
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Homme
-              </h1>
-              <h1
+              </button>
+              <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
-                className={`${selectedSexe === 'Femme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200 `}
+                className={`${
+                  selectedSexe === 'Femme'
+                    ? 'bg-[#895256] text-white border-none'
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Femme
-              </h1>
+              </button>
             </div>
           </div>
 
           {/* filterrr44444 */}
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuAward size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuAward size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une Mention</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
               {mention.map((mention, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(mention.name, setSelectedmention)}
-                  className={`${selectedmention === mention.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  className={`${selectedmention === mention.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
                 >
                   {mention.name}
-                </h1>
+                </button>
               ))}
             </div>
-
-          
           </div>
         </div>
 
-        <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
+        <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
           <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
         </div>
 
@@ -247,7 +257,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
                         />
                         <FaEdit
                           onClick={() => {
-                             setSelectedStudent(student)
+                            setSelectedStudent(student)
                             openModal('Addnotemodal')
                           }}
                           className="hover:text-black cursor-pointer transition"
@@ -295,9 +305,14 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
       </div>
 
       {modal.Showinfonotestudents && selectedStudent && (
-        <Showinfonotestudents closemodal={() => closModal('Showinfonotestudents')} student={selectedStudent}/>
+        <Showinfonotestudents
+          closemodal={() => closModal('Showinfonotestudents')}
+          student={selectedStudent}
+        />
       )}
-      {modal.Addnotemodal &&  selectedStudent &&  <Addnotemodal closemodal={() => closModal('Addnotemodal')}  student={selectedStudent} />}
+      {modal.Addnotemodal && selectedStudent && (
+        <Addnotemodal closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
+      )}
     </div>
   )
 }
