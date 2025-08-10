@@ -2,8 +2,8 @@ import { FiEdit, FiPlus, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import logo from '../../images/test.png'
-import { ChangeEvent, FormEvent, useRef, useState } from 'react'
+// import logo from '../../images/test.png'
+import { ChangeEvent, useState } from 'react'
 
 type infostudentsProps = {
   closemodal: () => void
@@ -75,7 +75,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
     closemodal()
   }
 
-  const [imageforprofil, setImageforprofil] = useState<string | null>(null)
+
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -126,7 +126,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
             ) : (
               <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
             )}
-            
+
             <button
               onClick={closemodal}
               aria-label="Fermer"

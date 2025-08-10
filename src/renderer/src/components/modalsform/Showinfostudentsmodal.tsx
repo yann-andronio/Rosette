@@ -1,6 +1,6 @@
 import { FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
-import profilesary from '../../images/test.png'
+// import profilesary from '../../images/test.png'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void

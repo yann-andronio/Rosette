@@ -16,8 +16,8 @@ import Dashboard from './pages/dashboard/Dashboard'
 import Notestudentsmanagement from './pages/students/notestudentsmanagements/Notestudentsmanagement'
 import Parameters from './pages/parameters/Parameters'
 
-
-
+import {headers} from './config/helpers'
+ console.log(headers('token'))
 
 const route = createBrowserRouter([
   {
