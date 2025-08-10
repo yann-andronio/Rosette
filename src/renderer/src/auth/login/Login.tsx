@@ -8,11 +8,11 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
-  const navigate = useNavigate()
+
 
   const ValidationSchema = yup.object({
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
@@ -26,10 +26,25 @@ function Login(): JSX.Element {
     reset
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
-  const onSubmit = (data: any) => {
-    console.log(data)
-    navigate('/home')
-    reset()
+
+
+  const onSubmit =async (data: any) => {
+    try{
+      await axios.post('http://localhost:8000/api/users-connexion', data, {headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}}).then(({data}) => {
+        alert(data?.message)
+        if(data?.token){
+          localStorage.setItem('ACCESS_TOKEN', data?.token)
+
+          reset()
+        }
+      })
+
+    }catch(error) {
+      //aketo ela mi affiche toast we "Serveur deconnecté"
+    }
+    // console.log(data)
+
+
   }
 
   return (
