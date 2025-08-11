@@ -23,12 +23,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     yearadd: yup
       .string()
       .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
-      .required('Vous devez saisir une année')
-      .test('unique-year', 'Cette année existe déjà.', function (value) {
-        const { yearsWithMonths } = this.options.context || {}
-        if (!value || !yearsWithMonths) return true
-        return !yearsWithMonths.some((y) => y.year === value)
-      }),
+      .required('Vous devez saisir une année'),
     selectedMonths: yup
       .array()
       .of(yup.number())
@@ -45,7 +40,6 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     reset
   } = useForm<FormDataAlefa>({
     resolver: yupResolver(schema),
-    context: { yearsWithMonths }
   })
 
   const handleMonthClick = (id: number) => {

@@ -22,21 +22,7 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
  const schema = yup.object({
    classadd: yup
      .string()
-     .required('Vous devez saisir un nom de classe')
-     .test(
-       'unique-class-forevery-year',
-       "Cette classe existe déjà pour l'année sélectionnée.",
-       function (value) {
-         const { classes } = this.options.context || {}
-         const selectedYear = this.parent.selectedyear
-         if (!value || !classes || !selectedYear) return true
-         return !classes.some(
-           (c) =>
-             c.classadd.toLowerCase().trim() === value.toLowerCase().trim() &&
-             c.year === selectedYear
-         )
-       }
-     ),
+     .required('Vous devez saisir un nom de classe'),
    selectedyear: yup.string().required('Sélectionnez une année'),
    ecolage: yup
      .number()
@@ -53,7 +39,7 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     reset,
     setValue,
     watch
-  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) , context: { classes } })
+  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema)})
 
   const selectedYearforstyle = watch('selectedyear')
 

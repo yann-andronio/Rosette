@@ -21,12 +21,7 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
   const schema = yup.object({
     selectedyear: yup
       .string()
-      .required('Sélectionnez une année')
-      .test('check-one-years-fogna', 'Cette année a déjà une moyenne assignée.', function (value) {
-        const { paramsList } = this.options.context || {}
-        if (!value || !paramsList) return true
-        return !paramsList.some((param: { year: string }) => param.year === value)
-      }),
+      .required('Sélectionnez une année'),
     moyenneAdmission: yup
       .number()
       .typeError('La moyenne doit être un nombre')
@@ -42,7 +37,7 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
     reset,
     setValue,
     watch
-  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema), context: { paramsList } })
+  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) })
 
   const selectedYearforstyle = watch('selectedyear')
 

@@ -1,21 +1,18 @@
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import './register.css'
-import logo from '../../images/logo.jpg'
-import wave from '../../images/Style-Inscription.png'
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaUser, FaTimes } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/slice/userSlice'
-import { useNavigate } from 'react-router-dom'
 
-function Register(): JSX.Element {
+type RegisterProps = {
+  closemodal: () => void
+}
+
+function Register({ closemodal }: RegisterProps): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const navigate = useNavigate()
 
   const ValidationSchema = yup.object({
     name: yup.string().required('Nom requis'),
@@ -38,163 +35,126 @@ function Register(): JSX.Element {
 
   const dispatch = useDispatch()
   const onSubmit = (data: any) => {
-     dispatch(setUser({ name: data.name, role: data.role }))
-    console.log(data)
-    navigate("/home")
-
+    dispatch(setUser({ name: data.name, role: data.role }))
+    console.log("", data)
     reset()
+    closemodal()
   }
 
   return (
-    <div className="flex h-screen bg-white">
-      <div className="w-3/4 relative flex items-center justify-center">
-        <div className="absolute bg-[#6a2e3e] clip-trapeze2"></div>
+   
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-8 relative overflow-hidden">
+          {/* Bouton fermer */}
+          <button
+            onClick={closemodal}
+            className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
+          >
+            <FaTimes size={20} />
+          </button>
 
-        <div className="relative z-10 w-full max-w-md p-10 text-white">
-          <h2 className="text-4xl font-bold text-center mb-8">Inscription</h2>
+          <h2 className="text-3xl font-bold text-center text-[#7A3B3F] mb-6">Inscription</h2>
 
-          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex gap-6">
-              <div className="relative flex-1 flex flex-col">
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+
+          <div className="flex gap-3">
+              <div className="flex-1">
                 <div className="relative">
-                  <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                  <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.name ? 'border-red-400' : 'border-gray-300'}`}
                     placeholder="Nom"
+                    className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
+                      errors.name ? 'border-red-400' : 'border-gray-300'
+                    }`}
                     {...register('name')}
                   />
                 </div>
-                {errors.name && (
-                  <motion.p
-                    className="text-sm text-red-400 mt-1"
-                    initial={{ opacity: 0, y: -3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    {errors.name.message}
-                  </motion.p>
-                )}
+                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
 
-              <div className="relative flex-1 flex flex-col">
+              <div className="flex-1">
                 <div className="relative">
-                  <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                  <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.surname ? 'border-red-400' : 'border-gray-300'}`}
                     placeholder="Prénom"
+                    className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
+                      errors.surname ? 'border-red-400' : 'border-gray-300'
+                    }`}
                     {...register('surname')}
                   />
                 </div>
-                {errors.surname && (
-                  <motion.p
-                    className="text-sm text-red-400 mt-1"
-                    initial={{ opacity: 0, y: -3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    {errors.surname.message}
-                  </motion.p>
-                )}
+                {errors.surname && <p className="text-sm text-red-500">{errors.surname.message}</p>}
               </div>
             </div>
 
-            <div className="relative flex flex-col">
-              <div className="relative">
-                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type="email"
-                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.email ? 'border-red-400' : 'border-gray-300'}`}
-                  placeholder="Votre e-mail"
-                  {...register('email')}
-                />
-              </div>
-              {errors.email && (
-                <motion.p
-                  className="text-sm text-red-400 mt-1"
-                  initial={{ opacity: 0, y: -3 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {errors.email.message}
-                </motion.p>
-              )}
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="email"
+                placeholder="Email"
+                className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
+                  errors.email ? 'border-red-400' : 'border-gray-300'
+                }`}
+                {...register('email')}
+              />
             </div>
+            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
 
-            <div className="relative flex flex-col">
-              <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.password ? 'border-red-400' : 'border-gray-300'}`}
-                  placeholder="Votre mot de passe"
-                  {...register('password')}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                  onClick={() => setShowPassword((showPassword) => !showPassword)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-              {errors.password && (
-                <motion.p
-                  className="text-sm text-red-400 mt-1"
-                  initial={{ opacity: 0, y: -3 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {errors.password.message}
-                </motion.p>
-              )}
-            </div>
-
-            <div className="relative flex flex-col">
-              <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.passwordConfirm ? 'border-red-400' : 'border-gray-300'}`}
-                  placeholder="Confirmer le mot de passe"
-                  {...register('passwordConfirm')}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                >
-                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-              {errors.passwordConfirm && (
-                <motion.p
-                  className="text-sm text-red-400 mt-1"
-                  initial={{ opacity: 0, y: -3 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {errors.passwordConfirm.message}
-                </motion.p>
-              )}
-            </div>
-
-            <div className="relative flex flex-col">
-              <label className="text-white text-lg mb-2">Personnel d'encadrement</label>
-              <select
-                className={`bg-white text-black w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.role ? 'border-red-400' : 'border-gray-300'}`}
-                {...register('role')}
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Mot de passe"
+                className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
+                  errors.password ? 'border-red-400' : 'border-gray-300'
+                }`}
+                {...register('password')}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                onClick={() => setShowPassword(!showPassword)}
               >
-                <option value="">Sélectionner un rôle</option>
-                <option value="directeur">Directeur</option>
-                <option value="secretaire">Secrétaire</option>
-              </select>
-              {errors.role && (
-                <motion.p
-                  className="text-sm text-red-400 mt-1"
-                  initial={{ opacity: 0, y: -3 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  {errors.role.message}
-                </motion.p>
-              )}
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
+            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirmer le mot de passe"
+                className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
+                  errors.passwordConfirm ? 'border-red-400' : 'border-gray-300'
+                }`}
+                {...register('passwordConfirm')}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {errors.passwordConfirm && (
+              <p className="text-sm text-red-500">{errors.passwordConfirm.message}</p>
+            )}
+
+            <select
+              className={`w-full border p-3 rounded-lg focus:ring-2 outline-none ${
+                errors.role ? 'border-red-400' : 'border-gray-300'
+              }`}
+              {...register('role')}
+            >
+              <option value="">Sélectionner un rôle</option>
+              <option value="directeur">Directeur</option>
+              <option value="secretaire">Secrétaire</option>
+            </select>
+            {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
 
             <button
               type="submit"
@@ -203,20 +163,11 @@ function Register(): JSX.Element {
               S'inscrire
             </button>
 
-            <div className="mt-3 text-white flex justify-center">
-              <p>Vous avez déjà un compte?</p>
-              <Link to="/" className="text-white font-semibold hover:underline ml-2">
-                Connexion
-              </Link>
-            </div>
+         
           </form>
         </div>
-        <img className="absolute h-full w-full bottom-0" src={wave} alt="Background" />
       </div>
-      <div className="w-2/4 flex items-center justify-center bg-white">
-        <img className="w-3/4" src={logo} alt="Logo" />
-      </div>
-    </div>
+  
   )
 }
 
