@@ -3,48 +3,37 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import { years } from '@renderer/data/Filterselectiondata'
+import { niveau } from '@renderer/data/Filterselectiondata'
 
-type ClassModalProps = {
+type AddsalleModalProps = {
   closemodal: () => void
 }
 
-type FormDataAlefa = {
-  classadd: string
-  selectedyear: string
-  ecolage: number
+type FormDataalefa = {
+  selectedniveau: string
+  addnamesalle: string
+  effectif: number
 }
 
-const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
+const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [classes, setClasses] = useState<{ classadd: string; year: string; ecolageeee: number }[]>([])
+  const [paramsList, setParamsList] = useState<
+    { niveau: string; addnamesalle: string; effectif: number }[]
+  >([])
 
- const schema = yup.object({
-   classadd: yup
-     .string()
-     .required('Vous devez saisir un nom de classe')
-     .test(
-       'unique-class-forevery-year',
-       "Cette classe existe déjà pour l'année sélectionnée.",
-       function (value) {
-         const { classes } = this.options.context || {}
-         const selectedYear = this.parent.selectedyear
-         if (!value || !classes || !selectedYear) return true
-         return !classes.some(
-           (c) =>
-             c.classadd.toLowerCase().trim() === value.toLowerCase().trim() &&
-             c.year === selectedYear
-         )
-       }
-     ),
-   selectedyear: yup.string().required('Sélectionnez une année'),
-   ecolage: yup
-     .number()
-     .typeError('Le montant doit être un nombre')
-     .required('Le montant est requis')
-     .min(0, 'Le montant ne peut pas être négatif')
- })
-
+  const schema = yup.object({
+    selectedniveau: yup.string().required('Sélectionnez un niveau'),
+    addnamesalle: yup
+      .string()
+      .typeError(`Le nom de la salle doit être une chaîne de caractères`)
+      .required('Le nom de la salle est requis'),
+    effectif: yup
+      .number()
+      .typeError('L’effectif doit être un nombre')
+      .positive('L’effectif doit être supérieur à 0')
+      .integer('L’effectif doit être un entier')
+      .required('L’effectif est requis')
+  })
 
   const {
     register,
@@ -53,28 +42,19 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     reset,
     setValue,
     watch
-  } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) , context: { classes } })
+  } = useForm<FormDataalefa>({ resolver: yupResolver(schema) })
 
-  const selectedYearforstyle = watch('selectedyear')
+  const selectedniveauForStyle = watch('selectedniveau')
 
-  const onSubmit = (data: FormDataAlefa) => {
-    const supspaceclasse = data.classadd.trim()
-
-    if (!classes.some((c) => c.classadd === supspaceclasse && c.year === data.selectedyear)) {
-      setClasses([
-        ...classes,
-        { classadd: supspaceclasse, year: data.selectedyear, ecolageeee: data.ecolage }
-      ])
-    }
-
-    const donneAlefa = {
-      classadd: data.classadd,
-      year: data.selectedyear,
-      ecolage: data.ecolage
-    }
-
-    console.log(' Données  :', donneAlefa)
-
+    const onSubmit = (data: FormDataalefa) => {
+    //   miverifie  si efa misy  salle mitovy pour  ce niveau.
+   if (!paramsList.some((c) => c.niveau === data.selectedniveau && c.addnamesalle === data.addnamesalle)) {
+     setParamsList([
+       ...paramsList,
+       { niveau: data.selectedniveau, addnamesalle: data.addnamesalle , effectif: data.effectif },
+     ])
+   }
+      console.log(data)
     reset()
     setActiveTab('historique')
   }
@@ -82,7 +62,7 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
-        <h1 className="text-2xl font-bold ">Ajouter une Classe</h1>
+        <h1 className="text-2xl font-bold">Ajouter une salle</h1>
       </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
         <div className="flex items-center justify-between mb-6">
@@ -113,60 +93,65 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
         </div>
 
         {activeTab === 'ajouter' ? (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <input
-              type="text"
-              placeholder="Ex: CM2"
-              {...register('classadd')}
-              className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                errors.classadd
-                  ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                  : 'border-gray-300 shadow-sm'
-              }`}
-            />
-            {errors.classadd && (
-              <p className="text-sm text-red-400 mt-1">{errors.classadd.message}</p>
-            )}
-
-            {/* ecolage  */}
-            <div className="mt-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Nom de la salle */}
+            <div>
               <input
-                type="number"
-                placeholder="Frais scolaire (ex: 50000 Ar)"
-                {...register('ecolage')}
+                type="text"
+                placeholder="Nom de la salle (ex: Terminale 1A)"
+                {...register('addnamesalle')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.ecolage
+                  errors.addnamesalle
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
               />
-              {errors.ecolage && (
-                <p className="text-sm text-red-400 mt-1">{errors.ecolage.message}</p>
+              {errors.addnamesalle && (
+                <p className="text-sm text-red-400 mt-1">{errors.addnamesalle.message}</p>
               )}
             </div>
 
-            <div className="mt-6">
-              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
-              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
-                {years.map((year, index) => (
+            {/* Effectif */}
+            <div>
+              <input
+                type="number"
+                placeholder="Effectif d’élèves"
+                {...register('effectif')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.effectif
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.effectif && (
+                <p className="text-sm text-red-400 mt-1">{errors.effectif.message}</p>
+              )}
+            </div>
+
+            {/* select du niveau */}
+            <div>
+              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez un niveau</h2>
+              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl  bg-white ">
+                {niveau.map((niv, index) => (
                   <div
                     key={index}
-                    onClick={() => setValue('selectedyear', year.ans)}
+                    onClick={() => setValue('selectedniveau', niv.name)}
                     className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
-                      selectedYearforstyle === year.ans
+                      selectedniveauForStyle === niv.name
                         ? 'bg-[#895256] text-white border-[#895256]'
                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
                     }`}
                   >
-                    {year.ans}
+                    {niv.name}
                   </div>
                 ))}
               </div>
-              {errors.selectedyear && (
-                <p className="text-sm text-red-400 mt-1">{errors.selectedyear.message}</p>
+              {errors.selectedniveau && (
+                <p className="text-sm text-red-400 mt-1">{errors.selectedniveau.message}</p>
               )}
             </div>
 
+            {/* Boutons */}
             <div className="flex justify-end gap-3 mt-6">
               <button
                 type="button"
@@ -185,25 +170,26 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             </div>
           </form>
         ) : (
+          // Historique
           <div className="mt-4 max-h-64 overflow-auto">
-            {classes.length === 0 ? (
-              <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
+            {paramsList.length === 0 ? (
+              <p className="text-gray-500 text-center">Aucune salle ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {classes.map(({ classadd, year, ecolageeee }, index) => (
+                {paramsList.map(({ niveau, addnamesalle, effectif }, index) => (
                   <li
                     key={index}
                     className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                   >
                     <div className="flex flex-col text-left">
-                      <span className="text-base font-semibold text-gray-800">{classadd}</span>
-                      <span className="text-sm text-gray-500">Année : {year}</span>
-                      <span className="text-sm text-[#895256] font-medium mt-1">
-                        {ecolageeee.toLocaleString()} Ar
+                      <span className="text-sm text-gray-700 font-medium">
+                        Salle : {addnamesalle}
                       </span>
+                      <span className="text-sm text-[#895256]">Niveau : {niveau}</span>
+                      <span className="text-xs text-gray-500">Effectif : {effectif} élèves</span>
                     </div>
                     <button
-                      onClick={() => setClasses(classes.filter((_, i) => i !== index))}
+                      onClick={() => setParamsList(paramsList.filter((_, i) => i !== index))}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -219,4 +205,4 @@ const Addclassemodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   )
 }
 
-export default Addclassemodal
+export default Addsallemodal

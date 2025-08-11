@@ -49,7 +49,7 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
           <h2 className="text-xl font-semibold text-center">
             {student.nom} {student.prenom}
           </h2>
-          <p className="mt-1 text-sm italic opacity-90">{student.classe}</p>
+          <p className="mt-1 text-sm italic opacity-90">{student.salle}</p>
           
         </div>
 

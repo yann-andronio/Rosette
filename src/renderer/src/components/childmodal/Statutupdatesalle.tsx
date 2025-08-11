@@ -2,7 +2,7 @@ import { FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { classe } from '@renderer/data/Filterselectiondata'
+import { salle } from '@renderer/data/Filterselectiondata'
 
 type ClassModalProps = {
   closemodal: () => void
@@ -14,9 +14,9 @@ type FormData = {
   selectedClass: string
 }
 
-const Statutupdateclasse: React.FC<ClassModalProps> = ({ closemodal, statut, onValidated }) => {
+const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onValidated }) => {
   const schema = yup.object({
-    selectedClass: yup.string().required('Veuillez sélectionner une classe.')
+    selectedClass: yup.string().required('Veuillez sélectionner une salle.')
   })
 
   const {
@@ -30,7 +30,7 @@ const Statutupdateclasse: React.FC<ClassModalProps> = ({ closemodal, statut, onV
   const selectedClassForStyle = watch('selectedClass')
 
   const onSubmit = (data: FormData) => {
-      console.log(`Élève ${statut} vers la classe :`, data.selectedClass)
+      console.log(`Élève ${statut} vers la salle :`, data.selectedClass)
        onValidated(statut)
     closemodal()
   }
@@ -40,7 +40,7 @@ const Statutupdateclasse: React.FC<ClassModalProps> = ({ closemodal, statut, onV
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-[#895256]">
-            {statut === 'admis' ? 'Admission en classe' : 'Redoublement en classe'}
+            {statut === 'admis' ? 'Admission en salle' : 'Redoublement en salle'}
           </h2>
           <button onClick={closemodal} className="text-gray-600 hover:text-red-600 transition">
             <FiX size={24} />
@@ -49,10 +49,10 @@ const Statutupdateclasse: React.FC<ClassModalProps> = ({ closemodal, statut, onV
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="mb-2 font-medium text-gray-800">
-            Sélectionnez la classe {statut === 'admis' ? 'd’admission' : 'de redoublement'}
+            Sélectionnez la salle {statut === 'admis' ? 'd’admission' : 'de redoublement'}
           </h3>
           <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto rounded-x p-4 bg-white">
-            {classe.map((cl, index) => (
+            {salle.map((cl, index) => (
               <div
                 key={index}
                 onClick={() => setValue('selectedClass', cl.name, { shouldValidate: true })}
@@ -89,4 +89,4 @@ const Statutupdateclasse: React.FC<ClassModalProps> = ({ closemodal, statut, onV
   )
 }
 
-export default Statutupdateclasse
+export default Statutupdatesalle

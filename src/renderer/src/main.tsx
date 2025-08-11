@@ -29,11 +29,6 @@ const route = createBrowserRouter([
         index: true,
         element: <Login />
       },
-
-      {
-        path: '/register',
-        element: <Register />
-      }
     ]
   },
   {

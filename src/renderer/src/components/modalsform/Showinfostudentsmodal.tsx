@@ -2,6 +2,8 @@ import { FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
 
 
+
+
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: StudentsType
@@ -36,7 +38,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student.classe} - {student.annee}
+            {student.salle} - {student.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
@@ -143,6 +145,69 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
               </div>
             </section>
           )}
+
+
+          {/* Statuts */}
+          <section>
+            <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
+              Historique des statuts
+            </h3>
+
+            {student.historiqueStatus && student.historiqueStatus.length > 0 ? (
+              <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+                <table className="min-w-full bg-white divide-y divide-gray-200">
+                  <thead className="bg-[#895256]">
+                    <tr>
+                      {['Année', 'Classe', 'Moyenne', 'Statut'].map((titleStat) => (
+                        <th
+                          key={titleStat}
+                          className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider"
+                        >
+                          {titleStat}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {student.historiqueStatus.map((status, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-[#faf7f2] transition-colors cursor-default"
+                      >
+                        <td className="px-4 py-3  text-gray-800 font-medium">
+                          {status.annee_status}
+                        </td>
+                        <td className="px-4 py-3  text-gray-700">{status.salle}</td>
+                        <td className="px-4 py-3  text-gray-700">
+                          {status?.Moyenne_status ? status.Moyenne_status : ' en cours ...'}
+                        </td>
+                        <td className="px-4 py-3 ">
+                          <button
+                            onClick={() =>
+                              status.statut &&
+                              !TabStatusWhoAreValide.includes(index) &&
+                              handleStatusBtnClick(status.statut, index)
+                            }
+                            disabled={status.statut ? TabStatusWhoAreValide.includes(index) : false}
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${
+                              status.statut? TabStatusWhoAreValide.includes(index)  ? 'bg-gray-400 cursor-not-allowed' : status.statut.toLowerCase() === 'admis' ? 'bg-green-500': status.statut.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
+                          >
+                            {status.statut
+                              ? status.statut.charAt(0).toUpperCase() + status.statut.slice(1)
+                              : 'en cours...'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 italic">
+                Aucun historique de statut disponible.
+              </p>
+            )}
+          </section>
         </div>
       </div>
     </div>

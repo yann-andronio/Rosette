@@ -39,7 +39,9 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     setValue,
     reset
   } = useForm<FormDataAlefa>({
+
     resolver: yupResolver(schema)
+
   })
 
   const handleMonthClick = (id: number) => {

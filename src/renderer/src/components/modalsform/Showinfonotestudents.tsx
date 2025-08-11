@@ -34,7 +34,7 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
           <h2 className="text-xl font-semibold text-center">
             {student.nom} {student.prenom}
           </h2>
-          <p className="mt-1 text-sm italic opacity-90">{student.classe}</p>
+          <p className="mt-1 text-sm italic opacity-90">{student.salle}</p>
         </div>
 
         {/* Section droite - Infos */}
@@ -51,7 +51,7 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
               <span className="font-medium">Prénom :</span> {student.prenom}
             </p>
             <p>
-              <span className="font-medium">Classe :</span> {student.classe}
+              <span className="font-medium">Classe :</span> {student.salle}
             </p>
             {student.trimestre1 && (
               <p>
