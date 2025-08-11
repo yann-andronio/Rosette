@@ -178,6 +178,8 @@ const Sidebar = () => {
               </li>
             ))}
           </ul>
+
+          
         </div>
         {/* Paramètres sy  deconnexion */}
         <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
