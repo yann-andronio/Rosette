@@ -4,6 +4,8 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../images/test.png'
 import { ChangeEvent, FormEvent, useRef, useState } from 'react'
+import { niveau, salle } from '@renderer/data/Filterselectiondata' // adapte le chemin si besoin
+
 
 type infostudentsProps = {
   closemodal: () => void
@@ -17,6 +19,8 @@ const schema = yup.object().shape({
   date_naissance: yup.string().required('Date de naissance requise'),
   lieu_naissance: yup.string().required('Lieu de naissance requis'),
   adresse: yup.string().required('Adresse requise'),
+  niveau: yup.string().required('Veuillez sélectionner un niveau'),
+  salle: yup.string().required('Veuillez sélectionner une salle'),
   nom_pere: yup.string(),
   prenom_pere: yup.string(),
   tel_pere: yup.string(),
@@ -126,7 +130,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
             ) : (
               <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
             )}
-            
+
             <button
               onClick={closemodal}
               aria-label="Fermer"
@@ -262,6 +266,54 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 {errors.adresse && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
                     {errors.adresse.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Niveau *</label>
+                <select
+                  {...register('niveau')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.niveau
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                >
+                  <option value="">Sélectionnez un niveau</option>
+                  {niveau.map((niv) => (
+                    <option key={niv.id} value={niv.name}>
+                      {niv.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.niveau && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.niveau.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Salle *</label>
+                <select
+                  {...register('salle')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.salle
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                >
+                  <option value="">Sélectionnez une salle</option>
+                  {salle.map((sal) => (
+                    <option key={sal.id} value={sal.name}>
+                      {sal.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.salle && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.salle.message}
                   </p>
                 )}
               </div>
