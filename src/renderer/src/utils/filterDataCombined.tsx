@@ -13,10 +13,11 @@ export function filterDataCombined<T>(
     })
 
     const matchYear = !filters.annee || filters.annee === 'All' || item['annee'] === filters.annee
-    const matchClasse =!filters.classe || filters.classe === 'All' || item['classe'] === filters.classe
+    const matchSalle = !filters.salle || filters.salle === 'All' || (item['salle'] && item['salle'].toLowerCase() === filters.salle.toLowerCase())
+    const matchNiveau = !filters.niveau || filters.niveau === 'All' || (item['niveau'] && item['niveau'].toLowerCase() === filters.niveau.toLowerCase())
     const matchSexe = !filters.sexe || filters.sexe === 'All' || item['sexe'] === filters.sexe
     const matchMention =!filters.mention || filters.mention === 'All' || item['mention'] === filters.mention
 
-    return searchMatch && matchYear && matchClasse && matchSexe && matchMention
+    return searchMatch && matchYear && matchSalle && matchSexe && matchMention && matchNiveau
   })
 }

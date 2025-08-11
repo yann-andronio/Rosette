@@ -1,6 +1,7 @@
 export type StatusStudentsType = {
   annee_status: string
-  classe: string
+  salle: string
+  niveau: string
   Moyenne_status?: number
   statut?: 'admis' | 'redoublé'
 }
@@ -11,7 +12,8 @@ export type StudentsType = {
   nom: string
   prenom: string
   sexe: string
-  classe: string
+  salle: string
+  niveau:string
   moyenne: number
   annee: string
   mention?: string
@@ -40,7 +42,8 @@ export type StudentsType = {
 
 export type FilterOptions = {
   annee: string | null
-  classe: string | null
+  salle: string | null
+  niveau: string | null
   sexe: string | null
   mention?: string | null
 }

@@ -4,9 +4,11 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 import { FiUserPlus, FiCalendar, FiLayers, FiBookOpen, FiUserCheck } from 'react-icons/fi'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
-import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
+import Addniveaumodal from '@renderer/components/modalsform/Addniveaumodal'
 import Choosestatusmoyennemodalparams from '@renderer/components/modalsform/Choosestatusmoyennemodalparams'
 import Register from '@renderer/auth/register/Register'
+import { MdMeetingRoom } from 'react-icons/md'
+import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -17,8 +19,9 @@ function Parameters(): JSX.Element {
   const buttonsForParamsStudents = [
     { icon: <FiUserPlus size={28} />, label: 'Ajouter un élève', modalName: 'AdUpinfostudentsmodal' },
     { icon: <FiCalendar size={28} />, label: 'Ajouter une année scolaire', modalName: 'Addyearmodal' },
-    { icon: <FiLayers size={28} />, label: 'Ajouter une classe', modalName: 'Addclassemodal' },
-    { icon: <FiBookOpen size={28} />, label: `Réglage d'admission`, modalName: 'Choosestatusmoyennemodalparams' }
+    { icon: <FiLayers size={28} />, label: 'Ajouter une niveau', modalName: 'Addniveaumodal' },
+    { icon: <FiBookOpen size={28} />, label: `Réglage d'admission`, modalName: 'Choosestatusmoyennemodalparams' },
+    { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
   ]
 
   const buttonsForParamsAdmin = [
@@ -77,9 +80,10 @@ function Parameters(): JSX.Element {
       {/* Modals */}
       {modal.AdUpinfostudentsmodal && (<AdUpinfostudentsmodal closemodal={() => closModal('AdUpinfostudentsmodal')} mode="ajoutstudents" />)}
       {modal.Addyearmodal && <Addyearmodal closemodal={() => closModal('Addyearmodal')} />}
-      {modal.Addclassemodal && <Addclassemodal closemodal={() => closModal('Addclassemodal')} />}
+      {modal.Addniveaumodal && <Addniveaumodal closemodal={() => closModal('Addniveaumodal')} />}
       {modal.Choosestatusmoyennemodalparams && (<Choosestatusmoyennemodalparams closemodal={() => closModal('Choosestatusmoyennemodalparams')} />)}
       {modal.registeremploye && (<Register closemodal={() => closModal('registeremploye')} />)}
+      {modal.Addsallemodal && (<Addsallemodal closemodal={() => closModal('Addsallemodal')} />)}
     </div>
   )
 }

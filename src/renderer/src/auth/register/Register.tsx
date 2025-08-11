@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/slice/userSlice'
+import { FiX } from 'react-icons/fi'
 
 type RegisterProps = {
   closemodal: () => void
@@ -50,7 +51,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
             onClick={closemodal}
             className="absolute top-4 right-4 text-gray-500 hover:text-red-500 transition"
           >
-            <FaTimes size={20} />
+            <FiX size={20} />
           </button>
 
           <h2 className="text-3xl font-bold text-center text-[#7A3B3F] mb-6">Inscription</h2>

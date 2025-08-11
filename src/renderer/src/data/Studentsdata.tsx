@@ -8,12 +8,13 @@ export const Studentsdata: StudentsType[] = [
     nom: 'Rakotoson',
     prenom: 'Arnaud',
     sexe: 'Homme',
-    classe: 'CM2',
+    salle: 'T2 3a',
+    niveau: 'Terminale',
     moyenne: 16.4,
-    annee: '2006',
+    annee: '2024',
     mention: 'Très Bien',
     adresse: 'Lot II F 45, Antananarivo',
-    date_naissance: '2012-04-12',
+    date_naissance: '2006-04-12',
     lieu_naissance: 'Antsirabe',
     nom_pere: 'Rakotovao',
     prenom_pere: 'Jean',
@@ -25,46 +26,27 @@ export const Studentsdata: StudentsType[] = [
     prenom_tuteur: 'Patrick',
     tel_tuteur: '0331122334',
     matricule: 'A001',
-    ecole_prec: 'École Sainte-Marie',
+    ecole_prec: 'Lycée Sainte-Marie',
     enfant_prof: 'oui',
     trimestre1: 16.0,
     trimestre2: 17.1,
     trimestre3: 16.2,
     historiqueStatus: [
       {
-        annee_status: '2023',
-        classe: 'CM2',
-        Moyenne_status: 9.8,
+        annee_status: '2022',
+        salle: 'Première A1',
+        niveau: 'Première',
+        Moyenne_status: 15.2,
         statut: 'redoublé'
       },
       {
         annee_status: '2023',
-        classe: 'CM2',
-       
-       
-      },
-      {
-        annee_status: '2023',
-        classe: 'CM2',
-        Moyenne_status: 9.8,
-        statut: 'redoublé'
-      }
-      ,
-      {
-        annee_status: '2023',
-        classe: 'CM2',
-        Moyenne_status: 9.8,
+        salle: 'Première A2',
+        niveau: '3e',
+        Moyenne_status: 15.2,
         statut: 'admis'
       },
-      {
-        annee_status: '2023',
-        classe: 'CM2',
-        Moyenne_status: 9.8,
-        statut: 'redoublé'
-      },
-   
-   
-    
+      { annee_status: '2024', salle: 'Première A1', niveau: '3e' }
     ]
   },
   {
@@ -73,12 +55,13 @@ export const Studentsdata: StudentsType[] = [
     nom: 'Ramiaramanana',
     prenom: 'Lova',
     sexe: 'Femme',
-    classe: 'CM1',
+    salle: 'term 2d',
+    niveau: 'Terminale',
     moyenne: 13.2,
-    annee: '2006',
+    annee: '2024',
     mention: 'Assez Bien',
     adresse: 'Ampasapito, Antananarivo',
-    date_naissance: '2013-08-09',
+    date_naissance: '2007-08-09',
     lieu_naissance: 'Fianarantsoa',
     nom_pere: 'Ramiaramanana',
     prenom_pere: 'Hery',
@@ -90,22 +73,17 @@ export const Studentsdata: StudentsType[] = [
     prenom_tuteur: '',
     tel_tuteur: '',
     matricule: 'A002',
-    ecole_prec: 'École La Lumière',
-    enfant_prof: 'oui',
-    trimestre1: 12,
-    trimestre2: 14,
-    trimestre3: 13,
+    ecole_prec: 'Collège La Lumière',
+    enfant_prof: 'non',
+    trimestre1: 12.0,
+    trimestre2: 14.0,
+    trimestre3: 13.0,
     historiqueStatus: [
       {
         annee_status: '2023',
-        classe: 'CM2',
-        Moyenne_status: 9.8,
-        statut: 'redoublé'
-      },
-      {
-        annee_status: '2024',
-        classe: 'T1',
-        Moyenne_status: 9.8,
+        salle: 'Seconde S2',
+        niveau: '3e',
+        Moyenne_status: 12.5,
         statut: 'admis'
       }
     ]
@@ -116,12 +94,13 @@ export const Studentsdata: StudentsType[] = [
     nom: 'Andrianantenaina',
     prenom: 'Feno',
     sexe: 'Homme',
-    classe: 'CE',
+    salle: 'Seconde C1',
+    niveau: 'Seconde',
     moyenne: 11.5,
-    annee: '2005',
+    annee: '2024',
     mention: 'Passable',
     adresse: 'Ankazomanga, Antananarivo',
-    date_naissance: '2012-11-25',
+    date_naissance: '2008-11-25',
     lieu_naissance: 'Toamasina',
     nom_pere: 'Andrianantenaina',
     prenom_pere: 'Lova',
@@ -133,12 +112,76 @@ export const Studentsdata: StudentsType[] = [
     prenom_tuteur: '',
     tel_tuteur: '',
     matricule: 'A003',
-    ecole_prec: 'École Primaire Ambatomanga',
+    ecole_prec: 'Collège Ambatomanga',
     enfant_prof: 'oui',
     trimestre1: 10.5,
     trimestre2: 12.0,
     trimestre3: 12.0,
     historiqueStatus: [
+      { annee_status: '2023', salle: '3e C', niveau: '3e', Moyenne_status: 11.8, statut: 'admis' }
     ]
+  },
+  {
+    id: 4,
+    photo: '',
+    nom: 'Randrianarisoa',
+    prenom: 'Tiana',
+    sexe: 'Femme',
+    salle: 'T1 2a',
+    niveau: 'Troisième',
+    moyenne: 9.8,
+    annee: '2024',
+    mention: 'Insuffisant',
+    adresse: 'Analamahitsy, Antananarivo',
+    date_naissance: '2009-02-15',
+    lieu_naissance: 'Mahajanga',
+    nom_pere: 'Randrianarisoa',
+    prenom_pere: 'Michel',
+    nom_mere: 'Rakotobe',
+    prenom_mere: 'Clara',
+    tel_pere: '0326655443',
+    tel_mere: '0342233445',
+    nom_tuteur: 'Rakotoarison',
+    prenom_tuteur: 'David',
+    tel_tuteur: '0329988776',
+    matricule: 'A004',
+    ecole_prec: 'Collège Sainte-Anne',
+    enfant_prof: 'non',
+    trimestre1: 9.5,
+    trimestre2: 10.0,
+    trimestre3: 9.9,
+    historiqueStatus: [
+      { annee_status: '2023', salle: '4e B', niveau: '3e', Moyenne_status: 9.4, statut: 'admis' }
+    ]
+  },
+  {
+    id: 5,
+    photo: '',
+    nom: 'Razafindrakoto',
+    prenom: 'Jean-Michel',
+    sexe: 'Homme',
+    salle: 'CM2 A',
+    niveau: 'CM2',
+    moyenne: 17.2,
+    annee: '2024',
+    mention: 'Excellent',
+    adresse: 'Itaosy, Antananarivo',
+    date_naissance: '2012-06-20',
+    lieu_naissance: 'Antananarivo',
+    nom_pere: 'Razafindrakoto',
+    prenom_pere: 'Henri',
+    nom_mere: 'Randriamihaja',
+    prenom_mere: 'Josiane',
+    tel_pere: '0327788990',
+    tel_mere: '0341122334',
+    nom_tuteur: '',
+    prenom_tuteur: '',
+    tel_tuteur: '',
+    matricule: 'A005',
+    ecole_prec: 'École Notre-Dame',
+    enfant_prof: 'oui',
+    trimestre1: 17.0,
+    trimestre2: 17.4,
+    trimestre3: 17.2
   }
 ]

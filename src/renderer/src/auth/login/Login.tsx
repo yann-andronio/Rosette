@@ -1,6 +1,5 @@
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import './login.css'
 import logo from '../../images/logo.jpg'
 import wave from '../../images/Style-Connection.png'
@@ -105,12 +104,12 @@ function Login(): JSX.Element {
               Valider
             </button>
 
-            <div className="mt-3 text-white flex justify-center">
+            {/* <div className="mt-3 text-white flex justify-center">
               <p>Vous n'avez pas de compte?</p>
               <Link to="/register" className="text-white font-semibold hover:underline ml-2">
                 Inscription
               </Link>
-            </div>
+            </div> */}
           </form>
         </div>
         <img className="absolute h-full w-full bottom-0" src={wave} alt="Logo" />

@@ -2,7 +2,7 @@ import { FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
 import profilesary from '../../images/test.png'
 import { useState } from 'react'
-import Statutupdateclasse from '../childmodal/Statutupdateclasse'
+import Statutupdateclasse from '../childmodal/Statutupdatesalle'
 import { set } from 'react-hook-form'
 
 type ShowInfoStudentsProps = {
@@ -61,7 +61,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student.classe} - {student.annee}
+            {student.salle} - {student.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
@@ -199,7 +199,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         <td className="px-4 py-3  text-gray-800 font-medium">
                           {status.annee_status}
                         </td>
-                        <td className="px-4 py-3  text-gray-700">{status.classe}</td>
+                        <td className="px-4 py-3  text-gray-700">{status.salle}</td>
                         <td className="px-4 py-3  text-gray-700">
                           {status?.Moyenne_status ? status.Moyenne_status : ' en cours ...'}
                         </td>
