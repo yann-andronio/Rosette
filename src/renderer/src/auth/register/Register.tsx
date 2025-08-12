@@ -1,10 +1,11 @@
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaUser, FaTimes } from 'react-icons/fa'
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { setUser } from '../../redux/slice/userSlice'
+import axios from 'axios'
+// import { useDispatch } from 'react-redux'
+// import { setUser } from '../../redux/slice/userSlice'
 import { FiX } from 'react-icons/fi'
 
 type RegisterProps = {
@@ -17,10 +18,10 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
 
   const ValidationSchema = yup.object({
     name: yup.string().required('Nom requis'),
-    surname: yup.string().required('Prénom requis'),
+    firstname: yup.string().required('Prénom requis'),
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
     password: yup.string().min(6, 'Au moins 6 caractères').required('Mot de passe requis'),
-    passwordConfirm: yup
+    password_confirmation: yup
       .string()
       .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
       .required('Veuillez confirmer votre mot de passe'),
@@ -34,16 +35,26 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
     reset
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
-  const dispatch = useDispatch()
-  const onSubmit = (data: any) => {
-    dispatch(setUser({ name: data.name, role: data.role }))
-    console.log("", data)
-    reset()
+  // const dispatch = useDispatch()
+  const onSubmit = async (data: any) => {
+    // dispatch(setUser({ name: data.name, role: data.role }))
+    try{
+      await axios.post('http://localhost:8000/api/users-creation', data, {headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}}).then(({data})=> {
+        alert(data.message)
+        reset()
+      }).catch((errors) => alert(errors.response.data.message))
+    }catch (err){
+      alert('Erreur lors de la connexion au serveur')
+    }
+
+
+
+
     closemodal()
   }
 
   return (
-   
+
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
         <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-8 relative overflow-hidden">
           {/* Bouton fermer */}
@@ -81,12 +92,12 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
                     type="text"
                     placeholder="Prénom"
                     className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
-                      errors.surname ? 'border-red-400' : 'border-gray-300'
+                      errors.firstname ? 'border-red-400' : 'border-gray-300'
                     }`}
-                    {...register('surname')}
+                    {...register('firstname')}
                   />
                 </div>
-                {errors.surname && <p className="text-sm text-red-500">{errors.surname.message}</p>}
+                {errors.firstname && <p className="text-sm text-red-500">{errors.firstname.message}</p>}
               </div>
             </div>
 
@@ -129,9 +140,9 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
                 type={showConfirmPassword ? 'text' : 'password'}
                 placeholder="Confirmer le mot de passe"
                 className={`w-full border p-3 pl-10 rounded-lg focus:ring-2 outline-none ${
-                  errors.passwordConfirm ? 'border-red-400' : 'border-gray-300'
+                  errors.password_confirmation ? 'border-red-400' : 'border-gray-300'
                 }`}
-                {...register('passwordConfirm')}
+                {...register('password_confirmation')}
               />
               <button
                 type="button"
@@ -141,8 +152,8 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-            {errors.passwordConfirm && (
-              <p className="text-sm text-red-500">{errors.passwordConfirm.message}</p>
+            {errors.password_confirmation && (
+              <p className="text-sm text-red-500">{errors.password_confirmation.message}</p>
             )}
 
             <select
@@ -164,11 +175,11 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
               S'inscrire
             </button>
 
-         
+
           </form>
         </div>
       </div>
-  
+
   )
 }
 
