@@ -1,8 +1,9 @@
 import { FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
-
-
-
+import profilesary from '../../images/test.png'
+import { useState } from 'react'
+import Statutupdateclasse from '../childmodal/Statutupdatesalle'
+import { set } from 'react-hook-form'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -10,9 +11,31 @@ type ShowInfoStudentsProps = {
 }
 
 const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) => {
+  const [statusBtnClicked, setStatusBtnClicked] = useState<string | null>(null)
+  const [openClassModal, setOpenClassModal] = useState(false)
+  const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
+  const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null) 
+
+ const handleStatusBtnClick = (statut: string, index: number) => {
+   setStatusBtnClicked(statut)
+   setCurrentStatusIndex(index)
+   setOpenClassModal(true)
+ }
+
+   const handleCloseChildModal = () => {
+     setOpenClassModal(false)
+     setStatusBtnClicked(null)
+     setCurrentStatusIndex(null)
+   }
+
+   const handleStatusValidated = (statut: string, index: number) => {
+     setTabStatusWhoAreValide((prev) => [...prev, index])
+     handleCloseChildModal()
+   }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-w-6xl overflow-hidden flex relative">
+      <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
         <button
           onClick={closemodal}
           className="absolute top-4 right-6 rounded-lg p-1 text-gray-600 hover:text-red-600 hover:scale-105 transition-transform"
@@ -146,7 +169,6 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             </section>
           )}
 
-
           {/* Statuts */}
           <section>
             <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
@@ -210,6 +232,13 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
           </section>
         </div>
       </div>
+      {statusBtnClicked && currentStatusIndex !== null && (
+        <Statutupdateclasse
+          closemodal={handleCloseChildModal}
+          statut={statusBtnClicked.toLowerCase() as 'admis' | 'redoublé'}
+          onValidated={(statut) => handleStatusValidated(statut, currentStatusIndex)}
+        />
+      )}
     </div>
   )
 }
