@@ -7,6 +7,8 @@
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/auth/register/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/auth/register/Register.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/config/helpers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/config/helpers.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +32,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "KAN-29-ui-ux-creation-loader-personilise-utilisant-le-code-couleur-de-lap…-rond",
+    "git-widget-placeholder": "dev",
     "last_opened_file_path": "/home/asus/Documents",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

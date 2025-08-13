@@ -3,11 +3,12 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import axios from 'axios'
+
 // import { useDispatch } from 'react-redux'
 // import { setUser } from '../../redux/slice/userSlice'
 import { FiX } from 'react-icons/fi'
 import { FadeLoader } from "react-spinners";
+import { axiosRequest } from '@renderer/config/helpers'
 
 type RegisterProps = {
   closemodal: () => void
@@ -42,7 +43,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
     // dispatch(setUser({ name: data.name, role: data.role }))
     setIsLoading(true)
     try{
-      await axios.post('http://localhost:8000/api/users-creation', data, {headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}}).then(({data})=> {
+      await axiosRequest('POST','users-creation', data, 'none').then(({data})=> {
         alert(data.message)
         setIsLoading(false)
         reset()

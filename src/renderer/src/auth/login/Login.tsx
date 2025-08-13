@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import axios from 'axios'
+import { axiosRequest } from "@renderer/config/helpers";
 import { useNavigate } from 'react-router-dom'
 import { FadeLoader } from "react-spinners";
 
@@ -33,7 +33,7 @@ function Login(): JSX.Element {
   const onSubmit =async (data: any) => {
     setIsLoading(true)
     try{
-      await axios.post('http://localhost:8000/api/users-connexion', data, {headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}}).then(({data}) => {
+      await axiosRequest('POST','users-connexion', data, 'none').then(({data}) => {
         alert(data?.message)
         if(data?.token){
           localStorage.setItem('ACCESS_TOKEN', data?.token)
