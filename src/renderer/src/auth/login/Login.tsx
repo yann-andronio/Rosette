@@ -9,11 +9,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { FadeLoader } from "react-spinners";
+
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
-
+  const [isLoading, setIsLoading] = useState(false)
   const ValidationSchema = yup.object({
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
     password: yup.string().min(6, 'Au moins 6 caractères').required('Mot de passe requis')
@@ -29,6 +31,7 @@ function Login(): JSX.Element {
 
 
   const onSubmit =async (data: any) => {
+    setIsLoading(true)
     try{
       await axios.post('http://localhost:8000/api/users-connexion', data, {headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}}).then(({data}) => {
         alert(data?.message)
@@ -38,10 +41,11 @@ function Login(): JSX.Element {
           reset()
           navigate('/home')
         }
-      })
+      }).catch(error => alert(error.response.data.message)).finally(() => setIsLoading(false))
 
     }catch(error) {
       //aketo ela mi affiche toast we "Serveur deconnecté"
+      alert('Erreur lors de la connexion au serveur')
     }
     // console.log(data)
 
@@ -118,7 +122,7 @@ function Login(): JSX.Element {
               type="submit"
               className="w-full bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
             >
-              Valider
+              {isLoading? <FadeLoader color={'#7A3B3F'}/>:'Valider'}
             </button>
 
             {/* <div className="mt-3 text-white flex justify-center">
