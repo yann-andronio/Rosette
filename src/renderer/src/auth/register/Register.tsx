@@ -7,6 +7,7 @@ import axios from 'axios'
 // import { useDispatch } from 'react-redux'
 // import { setUser } from '../../redux/slice/userSlice'
 import { FiX } from 'react-icons/fi'
+import { FadeLoader } from "react-spinners";
 
 type RegisterProps = {
   closemodal: () => void
@@ -15,7 +16,7 @@ type RegisterProps = {
 function Register({ closemodal }: RegisterProps): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
+  const [isLoading, setIsLoading] = useState(false)
 
   const ValidationSchema = yup.object({
     name: yup.string().required('Nom requis'),
@@ -39,11 +40,14 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
   // const dispatch = useDispatch()
   const onSubmit = async (data: any) => {
     // dispatch(setUser({ name: data.name, role: data.role }))
+    setIsLoading(true)
     try{
       await axios.post('http://localhost:8000/api/users-creation', data, {headers:{'Access-Control-Allow-Origin':'http://localhost:8000'}}).then(({data})=> {
         alert(data.message)
+        setIsLoading(false)
         reset()
-      }).catch((errors) => alert(errors.response.data.message))
+        closemodal()
+      }).catch((errors) => alert(errors.response.data.message)).finally(() => setIsLoading(false))
     }catch (err){
       alert('Erreur lors de la connexion au serveur')
     }
@@ -51,7 +55,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
 
 
 
-    closemodal()
+
   }
 
   return (
@@ -173,7 +177,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
               type="submit"
               className="w-full bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition-all duration-300"
             >
-              S'inscrire
+              {isLoading? <FadeLoader color={'#7A3B3F'}   />:'S\'inscrire'}
             </button>
 
 
