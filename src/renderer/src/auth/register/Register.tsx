@@ -16,6 +16,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+
   const ValidationSchema = yup.object({
     name: yup.string().required('Nom requis'),
     firstname: yup.string().required('Prénom requis'),
