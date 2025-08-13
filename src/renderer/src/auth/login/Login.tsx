@@ -122,7 +122,7 @@ function Login(): JSX.Element {
               type="submit"
               className="w-full bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
             >
-              {isLoading? <FadeLoader color={'#7A3B3F'}/>:'Valider'}
+              {isLoading? <FadeLoader color={'#7A3B3F'} />:'Valider'}
             </button>
 
             {/* <div className="mt-3 text-white flex justify-center">
