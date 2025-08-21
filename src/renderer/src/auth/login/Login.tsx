@@ -34,7 +34,7 @@ function Login(): JSX.Element {
     setIsLoading(true)
     try{
       await axiosRequest('POST','users-connexion', data, 'none').then(({data}) => {
-        alert(data?.message)
+        console.log(data?.message)
         if(data?.token){
           localStorage.setItem('ACCESS_TOKEN', data?.token)
 
