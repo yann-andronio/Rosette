@@ -1,8 +1,15 @@
+export type EcolageType = {
+  mois: string
+  statusecolage: string | null
+  montant: number
+  datePaiement: string
+}
+
 export type StatusStudentsType = {
   annee_status: string
   salle: string
   niveau: string
-  Moyenne_status?: number
+  moyenne_status?: number
   statut?: 'admis' | 'redoublé'
 }
 
@@ -11,9 +18,9 @@ export type StudentsType = {
   photo?: string
   nom: string
   prenom: string
-  sexe: string
+  sexe: 'Homme' | 'Femme'
   salle: string
-  niveau:string
+  niveau: string
   moyenne: number
   annee: string
   mention?: string
@@ -38,16 +45,22 @@ export type StudentsType = {
   trimestre3?: number
 
   historiqueStatus?: StatusStudentsType[]
+  statusecolage?: string | null
+  moisEcolage?: string | null
+  ecolage?: EcolageType[] 
 }
 
 export type FilterOptions = {
-  annee: string | null
-  salle: string | null
-  niveau: string | null
-  sexe: string | null
+  annee?: string | null
+  salle?: string | null
+  niveau?: string | null
+  sexe?: string | null
   mention?: string | null
+  statusecolage?: string | null
+  mois?: string | null
 }
+
 export type MonthType = {
   id: number
-  name: string | null
+  name: string
 }
