@@ -229,7 +229,7 @@ function Studentsecolage(): JSX.Element {
               <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
                 <LuCalendarDays size={28} />
               </div>
-              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une mois</h1>
+              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un mois</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
               {Monthlistedata.map((mois, index) => (
