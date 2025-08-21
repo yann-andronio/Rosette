@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL
 const headers = (token:string) =>  ({headers:{'Access-Control-Allow-Origin':BASE_URL,Authorization:`BEARER ${token}`}})
 
 
-const axiosRequest =async (type:"GET"|"POST"|"DELETE"|"PUT", route:string, data:any, token:string):Promise<any>=> {
+const axiosRequest =async (type:"GET"|"POST"|"DELETE"|"PUT", route:string, data:any, token:string):Promise<any> => {
   if(type === "GET"){
    return await axios.get(`${BASE_URL}/api/${route}`,  headers(token))
   }else if(type === "POST"){

@@ -2,8 +2,8 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
-
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 
 type YearProps = {
@@ -17,13 +17,16 @@ type FormDataAlefa = {
 
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [yearsWithMonths, setYearsWithMonths] = useState<{ year: string; months: number[] }[]>([])
+  const [yearsWithMonths, setYearsWithMonths] = useState<{ annee: string; mois: number[] }[]>([])
+
+  const [historiques, setHistoriques] = useState<{ annee: string; mois: string[] }[]>([])
+
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
   const schema = yup.object({
     yearadd: yup
       .string()
-      .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
+      // .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
       .required('Vous devez saisir une année'),
     selectedMonths: yup
       .array()
@@ -55,24 +58,48 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     setValue('selectedMonths', updated)
   }
 
-  const onSubmit = (data) => {
-    if (!yearsWithMonths.some((y) => y.year === data.yearadd)) {
-      setYearsWithMonths((prev) => [...prev, { year: data.yearadd, months: data.selectedMonths }])
+  const getHistorique = async () => {
+    try{
+      await axiosRequest('GET', 'ac-list', null,'token').then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error?.response?.data?.error))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  useEffect(() => {
+    getHistorique()
+
+  }, [activeTab==='historique'])
+  console.log(historiques)
+
+  const onSubmit = async (data) => {
+    if (!yearsWithMonths.some((y) => y.annee === data.yearadd)) {
+      setYearsWithMonths((prev) => [...prev, { annee: data.yearadd, mois: data.selectedMonths }])
     }
 
     const donneAlefa = {
-      year: data.yearadd,
-      months: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
+      annee: data.yearadd,
+      mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
     }
 
-    console.log('Données :', donneAlefa)
+    try{
+      await axiosRequest('POST', 'ac-creation', donneAlefa, 'token').then(({data}) => console.log(data?.message))
+        .then(() => setActiveTab('historique'))
+        .catch((error) => console.log(error?.response?.data?.message))
+
+
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
 
     reset()
-    setActiveTab('historique')
+
+
   }
 
   const removeYear = (year: string) => {
-    setYearsWithMonths((prev) => prev.filter((y) => y.year !== year))
+    setYearsWithMonths((prev) => prev.filter((y) => y.annee !== year))
   }
 
   return (
@@ -166,27 +193,26 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
           </form>
         ) : (
           <div className="mt-4 max-h-[400px] overflow-auto">
-            {yearsWithMonths.length === 0 ? (
+            {historiques.length === 0 ? (
               <p className="text-center text-gray-500">Aucune année ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {yearsWithMonths.map(({ year, months }, index) => (
+                {historiques.map(({ annee, mois }, index) => (
                   <li
                     key={index}
                     className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
                   >
                     <div>
-                      <p className="font-semibold">Année : {year}</p>
+                      <p className="font-semibold">Année : {annee}</p>
                       <p className="text-sm text-gray-700">
                         Mois :{' '}
-                        {Monthlistedata.filter((m) => months.includes(m.id))
-                          .map((m) => m.name)
-                          .join(', ')}
+                        {mois.map((m, index) => (<span key={index}>{m?.mois+(index !== mois.length - 1?', ':'')}</span>))}
+
                       </p>
                     </div>
                     <button
-                      aria-label={`Supprimer l'année ${year}`}
-                      onClick={() => removeYear(year)}
+                      aria-label={`Supprimer l'année ${annee}`}
+                      onClick={() => removeYear(mois)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
