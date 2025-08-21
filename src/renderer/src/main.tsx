@@ -18,6 +18,7 @@ import Parameters from './pages/parameters/Parameters'
 import { UserContext } from '@renderer/context/UserContext'
 
 import {headers} from './config/helpers'
+import Studentsecolage from './pages/students/studentsecolage/Studentsecolage'
  console.log(headers('token'))
 
 const route = createBrowserRouter([
@@ -28,7 +29,7 @@ const route = createBrowserRouter([
       {
         index: true,
         element: <Login />
-      },
+      }
     ]
   },
   {
@@ -43,9 +44,13 @@ const route = createBrowserRouter([
         path: '/home/StudentsInfo',
         element: <Studentsinfo />
       },
-       {
+      {
         path: '/home/notemanagements',
         element: <Notestudentsmanagement />
+      },
+      {
+        path: '/home/ecolagestudents',
+        element: <Studentsecolage />
       },
       {
         path: '/home/parametre',
