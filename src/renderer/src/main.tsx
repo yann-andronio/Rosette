@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Store from './redux/Store'
 import Login from './auth/login/Login'
-import Register from './auth/register/Register'
+
 import Home from './pages/home/Home'
 import Studentsinfo from './pages/students/studentsinfo/Studentsinfo'
 import { PersistGate } from 'redux-persist/integration/react'
@@ -17,9 +17,8 @@ import Notestudentsmanagement from './pages/students/notestudentsmanagements/Not
 import Parameters from './pages/parameters/Parameters'
 import { UserContext } from '@renderer/context/UserContext'
 
-import {headers} from './config/helpers'
 import Studentsecolage from './pages/students/studentsecolage/Studentsecolage'
- console.log(headers('token'))
+
 
 const route = createBrowserRouter([
   {

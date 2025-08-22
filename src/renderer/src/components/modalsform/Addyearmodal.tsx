@@ -16,10 +16,12 @@ type FormDataAlefa = {
 }
 
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [reload, setReload] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
   const [yearsWithMonths, setYearsWithMonths] = useState<{ annee: string; mois: number[] }[]>([])
 
-  const [historiques, setHistoriques] = useState<{ annee: string; mois: string[] }[]>([])
+  const [historiques, setHistoriques] = useState<{ annee: string, id:number, mois: {mois:string}[] }[]>([])
 
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
@@ -59,9 +61,11 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   }
 
   const getHistorique = async () => {
+    setIsLoading(true)
     try{
       await axiosRequest('GET', 'ac-list', null,'token').then(({data}) => setHistoriques(data))
         .catch(error => console.log(error?.response?.data?.error))
+        .finally(() => setIsLoading(false))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
@@ -70,8 +74,8 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   useEffect(() => {
     getHistorique()
 
-  }, [activeTab==='historique'])
-  console.log(historiques)
+  }, [activeTab==='historique', reload])
+
 
   const onSubmit = async (data) => {
     if (!yearsWithMonths.some((y) => y.annee === data.yearadd)) {
@@ -82,11 +86,12 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
       annee: data.yearadd,
       mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
     }
-
+  setIsLoading(true)
     try{
       await axiosRequest('POST', 'ac-creation', donneAlefa, 'token').then(({data}) => console.log(data?.message))
         .then(() => setActiveTab('historique'))
         .catch((error) => console.log(error?.response?.data?.message))
+        .finally(() => setIsLoading(false))
 
 
     }catch (error){
@@ -98,8 +103,17 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
 
   }
 
-  const removeYear = (year: string) => {
-    setYearsWithMonths((prev) => prev.filter((y) => y.annee !== year))
+  const removeYear = async (id: number) => {
+    setIsLoading(true)
+    setReload((reload) => !reload)
+    try{
+      await axiosRequest('DELETE', `ac-delete/${id}`, null, 'token')
+        .then(({data}) => console.log(data?.message))
+      .catch(error => console.log(error?.response?.data?.error))
+        .finally(() => setIsLoading(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
   }
 
   return (
@@ -197,7 +211,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               <p className="text-center text-gray-500">Aucune année ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ annee, mois }, index) => (
+                {historiques.map(({ annee,id, mois }, index) => (
                   <li
                     key={index}
                     className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
@@ -212,7 +226,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                     </div>
                     <button
                       aria-label={`Supprimer l'année ${annee}`}
-                      onClick={() => removeYear(mois)}
+                      onClick={() => removeYear(id)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
