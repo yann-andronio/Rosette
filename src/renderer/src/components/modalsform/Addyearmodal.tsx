@@ -201,7 +201,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
                 <FiPlus size={18} />
-                Ajouter
+                {isLoading?'Loading...':'Ajouter'}
               </button>
             </div>
           </form>
