@@ -2,28 +2,49 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
-import { years } from '@renderer/data/Filterselectiondata'
-
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
+import { RotatingLines, ThreeDots } from 'react-loader-spinner'
 type ClassModalProps = {
   closemodal: () => void
 }
 
 type FormDataAlefa = {
-  classadd: string
-  selectedyear: string
+  nom_classe: string,
+  ac_id: string,
   ecolage: number
 }
 
 const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [classes, setClasses] = useState<{ classadd: string; year: string; ecolageeee: number }[]>(
+  const [classes, setClasses] = useState<{ nom_classe: string; ac_id: string; ecolage: number }[]>(
     []
   )
 
+  const [isYearsLloading, setIsYearsLloading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [years, setYears] = useState<{id:number, annee:string}[]>([])
+
+
+  const getYears = async ()=> {
+    setIsYearsLloading(true)
+    try{
+      await axiosRequest('GET', 'ac-list-no-month', null, 'token')
+        .then(({data}) => setYears(data))
+        .then(() => setIsYearsLloading(false))
+        .catch(error => console.log(error.response?.data?.message))
+        .finally(() => setIsYearsLloading(false))
+    }catch(error){
+      console.log('le serveur ne repond pas')
+    }
+  }
+
+  useEffect(() => {
+    getYears()
+  }, [activeTab==='historique'])
   const schema = yup.object({
-    classadd: yup.string().required('Vous devez saisir un nom de classe'),
-    selectedyear: yup.string().required('Sélectionnez une année'),
+    nom_classe: yup.string().required('Vous devez saisir un nom de classe'),
+    ac_id: yup.string().required('Sélectionnez une année'),
     ecolage: yup
       .number()
       .typeError('Le montant doit être un nombre')
@@ -40,28 +61,38 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     watch
   } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) })
 
-  const selectedYearforstyle = watch('selectedyear')
+  const selectedYearforstyle = watch('ac_id')
 
-  const onSubmit = (data: FormDataAlefa) => {
-    const supspaceclasse = data.classadd.trim()
+  const onSubmit = async (data: FormDataAlefa) => {
+    const supspaceclasse = data.nom_classe.trim()
 
-    if (!classes.some((c) => c.classadd === supspaceclasse && c.year === data.selectedyear)) {
+    if (!classes.some((c) => c.nom_classe === supspaceclasse && c.ac_id === data.ac_id)) {
       setClasses([
         ...classes,
-        { classadd: supspaceclasse, year: data.selectedyear, ecolageeee: data.ecolage }
+        { nom_classe: supspaceclasse, ac_id: data.ac_id, ecolage: data.ecolage }
       ])
     }
 
     const donneAlefa = {
-      classadd: data.classadd,
-      year: data.selectedyear,
+      nom_classe: data.nom_classe,
+      ac_id: data.ac_id,
       ecolage: data.ecolage
     }
 
-    console.log(' Données  :', donneAlefa)
+    setIsLoading((true))
+    try {
+      await axiosRequest('POST', 'classe-creation', donneAlefa, 'token')
+        .then(({data}) => console.log(data?.message))
+        .then(() => setIsLoading(false))
+        .then(() => setActiveTab('historique'))
+        .catch(error => console.log(error.response?.data?.message))
+        .finally(() =>  setIsLoading(false))
+    }catch(error){
+      console.log('le serveur ne repond pas')
+    }
 
     reset()
-    setActiveTab('historique')
+
   }
 
   return (
@@ -102,15 +133,15 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             <input
               type="text"
               placeholder="Ex: CM2"
-              {...register('classadd')}
+              {...register('nom_classe')}
               className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                errors.classadd
+                errors.nom_classe
                   ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                   : 'border-gray-300 shadow-sm'
               }`}
             />
-            {errors.classadd && (
-              <p className="text-sm text-red-400 mt-1">{errors.classadd.message}</p>
+            {errors.nom_classe && (
+              <p className="text-sm text-red-400 mt-1">{errors.nom_classe.message}</p>
             )}
 
             {/* ecolage  */}
@@ -132,23 +163,36 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
 
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
-              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
+              {isYearsLloading?( <div className='flex w-full justify-center'><RotatingLines
+                visible={true}
+                height="50"
+                width="55"
+                color="grey"
+                strokeColor="#7A3B3F"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              /></div>):( <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
+
                 {years.map((year, index) => (
                   <div
                     key={index}
-                    onClick={() => setValue('selectedyear', year.ans)}
+                    onClick={() => setValue('ac_id', year.annee)}
                     className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
-                      selectedYearforstyle === year.ans
+                      selectedYearforstyle === year.annee
                         ? 'bg-[#895256] text-white border-[#895256]'
                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
                     }`}
                   >
-                    {year.ans}
+                    {year.annee}
                   </div>
                 ))}
-              </div>
-              {errors.selectedyear && (
-                <p className="text-sm text-red-400 mt-1">{errors.selectedyear.message}</p>
+              </div>)}
+
+              {errors.ac_id && (
+                <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>
               )}
             </div>
 
@@ -164,9 +208,18 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} />
-                Ajouter
+                {isLoading?	<ThreeDots
+                  visible={true}
+                  height="20"
+                  width="100"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />: <><FiPlus size={18} /> Ajouter</>}
               </button>
+
             </div>
           </form>
         ) : (
@@ -175,16 +228,16 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
               <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {classes.map(({ classadd, year, ecolageeee }, index) => (
+                {classes.map(({ nom_classe, ac_id, ecolage }, index) => (
                   <li
                     key={index}
                     className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                   >
                     <div className="flex flex-col text-left">
-                      <span className="text-base font-semibold text-gray-800">{classadd}</span>
-                      <span className="text-sm text-gray-500">Année : {year}</span>
+                      <span className="text-base font-semibold text-gray-800">{nom_classe}</span>
+                      <span className="text-sm text-gray-500">Année : {ac_id}</span>
                       <span className="text-sm text-[#895256] font-medium mt-1">
-                        {ecolageeee.toLocaleString()} Ar
+                        {ecolage.toLocaleString()} Ar
                       </span>
                     </div>
                     <button
