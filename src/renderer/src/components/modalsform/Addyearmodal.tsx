@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
+import {ThreeDots} from "react-loader-spinner";
 
 type YearProps = {
   closemodal: () => void
@@ -200,8 +201,17 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} />
-                {isLoading?'Loading...':'Ajouter'}
+
+                {isLoading?	<ThreeDots
+                  visible={true}
+                  height="20"
+                  width="100"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />: <><FiPlus size={18} /> Ajouter</>}
               </button>
             </div>
           </form>

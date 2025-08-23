@@ -9,7 +9,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { axiosRequest } from "@renderer/config/helpers";
 import { useNavigate } from 'react-router-dom'
-import { FadeLoader } from "react-spinners";
+import { ThreeDots } from 'react-loader-spinner'
+
 
 
 function Login(): JSX.Element {
@@ -120,9 +121,18 @@ function Login(): JSX.Element {
 
             <button
               type="submit"
-              className="w-full bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
+              className="w-full flex justify-center items-center bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
             >
-              {isLoading? <FadeLoader color={'#7A3B3F'} />:'Valider'}
+              {isLoading? <ThreeDots
+                visible={true}
+                height="23"
+                width="100"
+                color="pink"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />:'Valider'}
             </button>
 
             {/* <div className="mt-3 text-white flex justify-center">

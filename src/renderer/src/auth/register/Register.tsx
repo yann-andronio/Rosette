@@ -7,7 +7,7 @@ import { useState } from 'react'
 // import { useDispatch } from 'react-redux'
 // import { setUser } from '../../redux/slice/userSlice'
 import { FiX } from 'react-icons/fi'
-import { FadeLoader } from "react-spinners";
+import {ThreeDots} from "react-loader-spinner";
 import { axiosRequest } from '@renderer/config/helpers'
 
 type RegisterProps = {
@@ -176,9 +176,18 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
 
             <button
               type="submit"
-              className="w-full bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition-all duration-300"
+              className="w-full bg-[#7A3B3F] flex justify-center items-center text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition-all duration-300"
             >
-              {isLoading? <FadeLoader color={'#7A3B3F'}   />:'S\'inscrire'}
+              {isLoading? 	<ThreeDots
+                visible={true}
+                height="23"
+                width="100"
+                color="pink"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />:'S\'inscrire'}
             </button>
 
 
