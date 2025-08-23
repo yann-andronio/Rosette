@@ -1,22 +1,28 @@
-import { FiPlus, FiUser, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import logo from '../../images/test.png'
-import { ChangeEvent, FormEvent, useRef, useState } from 'react'
+
+
+import { ChangeEvent, useState } from 'react'
+import { niveau, salle } from '@renderer/data/Filterselectiondata' // adapte le chemin si besoin
+
+
 
 type infostudentsProps = {
   closemodal: () => void
+  mode: 'ajoutstudents' | 'modifstudents'
 }
 
 const schema = yup.object().shape({
-
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
   sexe: yup.string().required('Sexe requis'),
   date_naissance: yup.string().required('Date de naissance requise'),
   lieu_naissance: yup.string().required('Lieu de naissance requis'),
   adresse: yup.string().required('Adresse requise'),
+  niveau: yup.string().required('Veuillez sélectionner un niveau'),
+  salle: yup.string().required('Veuillez sélectionner une salle'),
   nom_pere: yup.string(),
   prenom_pere: yup.string(),
   tel_pere: yup.string(),
@@ -27,14 +33,14 @@ const schema = yup.object().shape({
   prenom_tuteur: yup.string(),
   tel_tuteur: yup.string(),
   matricule: yup.string(),
-  ecole_prec: yup.string()
+  ecole_prec: yup.string(),
+  enfant_prof: yup.string().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
 
-const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
+const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }) => {
   const {
     register,
     handleSubmit,
-
     formState: { errors }
   } = useForm({ resolver: yupResolver(schema) })
 
@@ -44,7 +50,6 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
 
   const change = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files && e.target?.files[0]) {
-  
       const reader = new FileReader()
       const file = e.target?.files[0]
 
@@ -60,17 +65,28 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
   const onSubmit = (data: any) => {
     console.log(data)
     const formdata = new FormData()
-    formdata.append("image", image)
+    formdata.append('image', image)
+    for (const key in data) {
+      formdata.append(key, data[key])
+    }
     console.log(Image)
+
+    if (mode === 'ajoutstudents') {
+      console.log('Ajouter étudiant', data)
+      // req axio
+    } else {
+      console.log('Modifier étudiant', data)
+      // req axios
+    }
+    closemodal()
   }
 
 
-  const [imageforprofil, setImageforprofil] = useState<string | null>(null)
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <div className="bg-white w-[75%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
-        {/* DESIGN DROIT */}
+        {/* DESIGN gauche */}
         <div className="w-1/2 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
           <div className="flex flex-col items-center mb-10">
             <label htmlFor="photo" className="cursor-pointer">
@@ -109,7 +125,14 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
         {/* section formul droite */}
         <div className="w-1/2 p-10 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
+            {mode === 'modifstudents' ? (
+              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">
+                Modifier cet étudiant{' '}
+              </h2>
+            ) : (
+              <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
+            )}
+
             <button
               onClick={closemodal}
               aria-label="Fermer"
@@ -245,6 +268,54 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
                 {errors.adresse && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
                     {errors.adresse.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Niveau *</label>
+                <select
+                  {...register('niveau')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.niveau
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                >
+                  <option value="">Sélectionnez un niveau</option>
+                  {niveau.map((niv) => (
+                    <option key={niv.id} value={niv.name}>
+                      {niv.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.niveau && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.niveau.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Salle *</label>
+                <select
+                  {...register('salle')}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.salle
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                >
+                  <option value="">Sélectionnez une salle</option>
+                  {salle.map((sal) => (
+                    <option key={sal.id} value={sal.name}>
+                      {sal.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.salle && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.salle.message}
                   </p>
                 )}
               </div>
@@ -396,6 +467,39 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
                   placeholder="École précédente"
                 />
               </div>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Est-il enfant de professeur ? *
+                </label>
+                <div className="flex gap-6">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="oui"
+                      {...register('enfant_prof')}
+                      className="accent-[#895256] w-5 h-5"
+                    />
+                    <span className="text-gray-700 text-sm font-medium">Oui</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="non"
+                      {...register('enfant_prof')}
+                      className="accent-[#895256] w-5 h-5"
+                    />
+                    <span className="text-gray-700 text-sm font-medium">Non</span>
+                  </label>
+                </div>
+                {errors.enfant_prof && (
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.enfant_prof.message}
+                  </p>
+                )}
+              </div>
+
+              {}
             </fieldset>
 
             <div className="mb-4">
@@ -403,8 +507,8 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
               >
-                <FiPlus size={22} />
-                Ajouter
+                {mode === 'ajoutstudents' ? <FiPlus size={22} /> : <FiEdit size={22} />}
+                {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}
               </button>
             </div>
           </form>
@@ -414,4 +518,4 @@ const AdUpinfostudents: React.FC<infostudentsProps> = ({ closemodal }) => {
   )
 }
 
-export default AdUpinfostudents
+export default AdUpinfostudentsmodal

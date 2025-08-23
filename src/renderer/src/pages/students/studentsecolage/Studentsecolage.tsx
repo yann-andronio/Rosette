@@ -1,42 +1,60 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
+import { FaUserCircle, FaEdit, FaTrash, FaEye, FaPlusCircle } from 'react-icons/fa'
+import { LuCalendarDays, LuGraduationCap, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
-import {  FilterOptions, StudentsType } from '@renderer/types/Alltypes'
+import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
 import { Studentsdata } from '@renderer/data/Studentsdata'
-import { years , salle, niveau } from '@renderer/data/Filterselectiondata'
+import {  salle, niveau, years } from '@renderer/data/Filterselectiondata'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import { MdMeetingRoom } from 'react-icons/md'
+import { Monthlistedata } from '@renderer/data/Monthlistedata'
+import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
 
-function Studentsinfo(): JSX.Element {
+function Studentsecolage(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<string>('All')
+  const [selectedyears, setselectedyears] = useState<string>('All')
   const [selectedsalle, setselectedsalle] = useState<string>('All')
   const [selectedniveau, setselectedniveau] = useState<string>('All')
   const [selectedSexe, setSelectedSexe] = useState<string>('All')
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', salle: 'All', niveau:'All ' , sexe: 'All' })
+  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('All')
+  const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('All')
+  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({
+    annee: 'All',
+    salle: 'All',
+    niveau: 'All ',
+    sexe: 'All',
+    statusecolage: 'All',
+    mois: 'All'
+  })
   const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
-
 
   // isaka misy changement nle raha filtregna de atao modif selectiondefiltre
   useEffect(() => {
     setSelectedFilters({
-      annee: selectedyear,
+      annee: selectedyears,
       salle: selectedsalle,
-      niveau:selectedniveau,
-      sexe: selectedSexe
+      niveau: selectedniveau,
+      sexe: selectedSexe,
+      statusecolage: selectedstatusecolage,
+      mois: selectedmoisEcolage
     })
-  }, [selectedyear, selectedsalle, selectedSexe , selectedniveau])
+  }, [
+    selectedyears,
+    selectedsalle,
+    selectedSexe,
+    selectedniveau,
+    selectedstatusecolage,
+    selectedmoisEcolage
+  ])
 
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-   setter((prev) => (prev === current ? 'All' : current))
+    setter((prev) => (prev === current ? 'All' : current))
   }
 
   const handleSearcheleves = (dataeleve: string) => {
@@ -44,9 +62,12 @@ function Studentsinfo(): JSX.Element {
   }
 
   // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
-  const filteredData = filterDataCombined(Studentsdata, searcheleves, ['nom', 'prenom', 'salle'], selectedFilters)
- 
-  
+  const filteredData = filterDataCombined(
+    Studentsdata,
+    searcheleves,
+    ['nom', 'prenom', 'salle'],
+    selectedFilters
+  )
 
   const { modal, openModal, closModal } = useMultiModals()
 
@@ -72,9 +93,9 @@ function Studentsinfo(): JSX.Element {
               {years.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.ans, setselectedyear)}
+                  onClick={() => handleselect(year.ans, setselectedyears)}
                   className={`${
-                    selectedyear === year.ans
+                    selectedyears === year.ans
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
@@ -166,6 +187,66 @@ function Studentsinfo(): JSX.Element {
               </button>
             </div>
           </div>
+          {/* Filtre statut d' ecolage  */}
+
+          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuWallet size={28} />
+              </div>
+              <h1 className="text-lg font-semibold text-gray-800">
+                Sélectionnez un Statut d'écolage
+              </h1>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
+              <button
+                onClick={() => handleselect('Complet', setSelectedstatusecolage)}
+                className={`${
+                  selectedstatusecolage === 'Complet'
+                    ? 'bg-[#895256] text-white border-none'
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+              >
+                Complet
+              </button>
+              <button
+                onClick={() => handleselect('Incomplet', setSelectedstatusecolage)}
+                className={`${
+                  selectedstatusecolage === 'Incomplet'
+                    ? 'bg-[#895256] text-white border-none'
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+              >
+                Incomplet
+              </button>
+            </div>
+          </div>
+
+          {/* Filtre mois */}
+          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuCalendarDays size={28} />
+              </div>
+              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un mois</h1>
+            </div>
+            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
+              {Monthlistedata.map((mois, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleselect(mois.name, setselectedmoisEcolage)}
+                  className={`${
+                    selectedmoisEcolage === mois.name
+                      ? 'bg-[#895256] text-white border-none'
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                >
+                  {mois.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
@@ -198,6 +279,7 @@ function Studentsinfo(): JSX.Element {
               <div className="flex-1">Prénom</div>
               <div className="flex-1">Sexe</div>
               <div className="flex-1">salle</div>
+              <div className="flex-1">Statut</div>
               <div className="flex-1">Opération</div>
             </div>
           </div>
@@ -223,20 +305,26 @@ function Studentsinfo(): JSX.Element {
                   <div className="flex-1 text-gray-700">{student.prenom}</div>
                   <div className="flex-1 text-gray-700">{student.sexe}</div>
                   <div className="flex-1 text-gray-700">{student.salle}</div>
+                  <div className="flex-1 ">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${student.statusecolage === 'Complet' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                    >
+                      {student.statusecolage}
+                    </span>
+                  </div>
                   <div className="flex-1">
-                    <div className="flex gap-3 text-[#9f7126] text-lg">
+                    <div className="flex gap-8  text-[#9f7126] text-lg">
                       <FaEye
                         onClick={() => {
                           setSelectedStudent(student)
-                          openModal('showinfostudents')
+                          openModal('Showinfoecolagemodal')
                         }}
                         className="hover:text-black cursor-pointer transition"
                       />
-                      <FaEdit
+                      <FaPlusCircle
                         onClick={() => openModal('AdUpinfostudents')}
                         className="hover:text-black cursor-pointer transition"
                       />
-                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
                     </div>
                   </div>
                 </div>
@@ -281,9 +369,9 @@ function Studentsinfo(): JSX.Element {
           mode="modifstudents"
         />
       )}
-      {modal.showinfostudents && selectedStudent && (
-        <Showinfostudentsmodal
-          closemodal={() => closModal('showinfostudents')}
+      {modal.Showinfoecolagemodal && selectedStudent && (
+        <Showinfoecolagemodal
+          closemodal={() => closModal('Showinfoecolagemodal')}
           student={selectedStudent}
         />
       )}
@@ -291,4 +379,4 @@ function Studentsinfo(): JSX.Element {
   )
 }
 
-export default Studentsinfo
+export default Studentsecolage

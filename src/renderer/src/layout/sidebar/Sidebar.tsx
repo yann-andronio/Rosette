@@ -6,8 +6,8 @@ import { MdWorkOutline } from 'react-icons/md'
 import { IoIosArrowForward } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, NavLink } from 'react-router-dom'
-import logo from '../../images/logo/Logo4.png'
-import { FiSun, FiMoon, FiLogOut } from 'react-icons/fi'
+import logo from '../../images/logo/logo4.png'
+import {FiLogOut } from 'react-icons/fi'
 import { MdSettings } from 'react-icons/md'
 import s from './sidebar.module.css'
 import { HiOutlineInformationCircle } from 'react-icons/hi'
@@ -26,7 +26,7 @@ interface Menu {
 
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-  
+
 
   const menus: Menu[] = [
     {
@@ -49,8 +49,8 @@ const Sidebar = () => {
           path: '/home/notemanagements',
           iconsubmenu: <MdAssignment size={25} />
         },
-        { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
-        { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
+        // { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
+        // { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
         { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> }
       ]
     },
@@ -178,11 +178,14 @@ const Sidebar = () => {
               </li>
             ))}
           </ul>
+
+          
         </div>
         {/* Paramètres sy  deconnexion */}
         <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
           <Link
-            to="/settings"
+            to="/home/parametre"
+            onClick={() => dispatch(setActiveName('Paramètres'))}
             className={` ${closeBar ? 'justify-center' : ''} z-50 flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
             <MdSettings size={25} />

@@ -1,16 +1,41 @@
 import { FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
 import profilesary from '../../images/test.png'
+import { useState } from 'react'
+import Statutupdateclasse from '../childmodal/Statutupdatesalle'
+import { set } from 'react-hook-form'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: StudentsType
 }
 
-const ShowInfoStudents = ({ closemodal, student }: ShowInfoStudentsProps) => {
+const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) => {
+  const [statusBtnClicked, setStatusBtnClicked] = useState<string | null>(null)
+  const [openClassModal, setOpenClassModal] = useState(false)
+  const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
+  const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null) 
+
+ const handleStatusBtnClick = (statut: string, index: number) => {
+   setStatusBtnClicked(statut)
+   setCurrentStatusIndex(index)
+   setOpenClassModal(true)
+ }
+
+   const handleCloseChildModal = () => {
+     setOpenClassModal(false)
+     setStatusBtnClicked(null)
+     setCurrentStatusIndex(null)
+   }
+
+   const handleStatusValidated = (statut: string, index: number) => {
+     setTabStatusWhoAreValide((prev) => [...prev, index])
+     handleCloseChildModal()
+   }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-w-6xl overflow-hidden flex relative">
+      <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
         <button
           onClick={closemodal}
           className="absolute top-4 right-6 rounded-lg p-1 text-gray-600 hover:text-red-600 hover:scale-105 transition-transform"
@@ -36,7 +61,7 @@ const ShowInfoStudents = ({ closemodal, student }: ShowInfoStudentsProps) => {
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student.classe} - {student.annee}
+            {student.salle} - {student.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
@@ -143,10 +168,79 @@ const ShowInfoStudents = ({ closemodal, student }: ShowInfoStudentsProps) => {
               </div>
             </section>
           )}
+
+          {/* Statuts */}
+          <section>
+            <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
+              Historique des statuts
+            </h3>
+
+            {student.historiqueStatus && student.historiqueStatus.length > 0 ? (
+              <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+                <table className="min-w-full bg-white divide-y divide-gray-200">
+                  <thead className="bg-[#895256]">
+                    <tr>
+                      {['Année', 'Classe', 'Moyenne', 'Statut'].map((titleStat) => (
+                        <th
+                          key={titleStat}
+                          className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider"
+                        >
+                          {titleStat}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {student.historiqueStatus.map((status, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-[#faf7f2] transition-colors cursor-default"
+                      >
+                        <td className="px-4 py-3  text-gray-800 font-medium">
+                          {status.annee_status}
+                        </td>
+                        <td className="px-4 py-3  text-gray-700">{status.salle}</td>
+                        <td className="px-4 py-3  text-gray-700">
+                          {status?.Moyenne_status ? status.Moyenne_status : ' en cours ...'}
+                        </td>
+                        <td className="px-4 py-3 ">
+                          <button
+                            onClick={() =>
+                              status.statut &&
+                              !TabStatusWhoAreValide.includes(index) &&
+                              handleStatusBtnClick(status.statut, index)
+                            }
+                            disabled={status.statut ? TabStatusWhoAreValide.includes(index) : false}
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${
+                              status.statut? TabStatusWhoAreValide.includes(index)  ? 'bg-gray-400 cursor-not-allowed' : status.statut.toLowerCase() === 'admis' ? 'bg-green-500': status.statut.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
+                          >
+                            {status.statut
+                              ? status.statut.charAt(0).toUpperCase() + status.statut.slice(1)
+                              : 'en cours...'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 italic">
+                Aucun historique de statut disponible.
+              </p>
+            )}
+          </section>
         </div>
       </div>
+      {statusBtnClicked && currentStatusIndex !== null && (
+        <Statutupdateclasse
+          closemodal={handleCloseChildModal}
+          statut={statusBtnClicked.toLowerCase() as 'admis' | 'redoublé'}
+          onValidated={(statut) => handleStatusValidated(statut, currentStatusIndex)}
+        />
+      )}
     </div>
   )
 }
 
-export default ShowInfoStudents
+export default Showinfostudentsmodal

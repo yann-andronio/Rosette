@@ -6,14 +6,19 @@ import { Provider } from 'react-redux'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Store from './redux/Store'
 import Login from './auth/login/Login'
-import Register from './auth/register/Register'
+
 import Home from './pages/home/Home'
 import Studentsinfo from './pages/students/studentsinfo/Studentsinfo'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './redux/Store'
-import Sidebar from './layout/sidebar/Sidebar'
+// import Sidebar from './layout/sidebar/Sidebar'
 import Dashboard from './pages/dashboard/Dashboard'
 import Notestudentsmanagement from './pages/students/notestudentsmanagements/Notestudentsmanagement'
+import Parameters from './pages/parameters/Parameters'
+import { UserContext } from '@renderer/context/UserContext'
+
+import Studentsecolage from './pages/students/studentsecolage/Studentsecolage'
+
 
 const route = createBrowserRouter([
   {
@@ -23,11 +28,6 @@ const route = createBrowserRouter([
       {
         index: true,
         element: <Login />
-      },
-
-      {
-        path: '/register',
-        element: <Register />
       }
     ]
   },
@@ -42,10 +42,18 @@ const route = createBrowserRouter([
       {
         path: '/home/StudentsInfo',
         element: <Studentsinfo />
-      } , 
+      },
       {
         path: '/home/notemanagements',
         element: <Notestudentsmanagement />
+      },
+      {
+        path: '/home/ecolagestudents',
+        element: <Studentsecolage />
+      },
+      {
+        path: '/home/parametre',
+        element: <Parameters />
       }
     ]
   }
@@ -53,9 +61,11 @@ const route = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={Store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <RouterProvider router={route} />
-      </PersistGate>
+      <UserContext>
+        <PersistGate loading={null} persistor={persistor}>
+          <RouterProvider router={route} />
+        </PersistGate>
+      </UserContext>
     </Provider>
   </React.StrictMode>
 )

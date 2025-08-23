@@ -1,6 +1,5 @@
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import './login.css'
 import logo from '../../images/logo.jpg'
 import wave from '../../images/Style-Connection.png'
@@ -8,12 +7,16 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { axiosRequest } from "@renderer/config/helpers";
 import { useNavigate } from 'react-router-dom'
+import { ThreeDots } from 'react-loader-spinner'
+
+
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
-
+  const [isLoading, setIsLoading] = useState(false)
   const ValidationSchema = yup.object({
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
     password: yup.string().min(6, 'Au moins 6 caractères').required('Mot de passe requis')
@@ -26,10 +29,28 @@ function Login(): JSX.Element {
     reset
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
-  const onSubmit = (data: any) => {
-    console.log(data)
-    navigate('/home')
-    reset()
+
+
+  const onSubmit =async (data: any) => {
+    setIsLoading(true)
+    try{
+      await axiosRequest('POST','users-connexion', data, 'none').then(({data}) => {
+        console.log(data?.message)
+        if(data?.token){
+          localStorage.setItem('ACCESS_TOKEN', data?.token)
+
+          reset()
+          navigate('/home')
+        }
+      }).catch(error => alert(error.response.data.message)).finally(() => setIsLoading(false))
+
+    }catch(error) {
+      //aketo ela mi affiche toast we "Serveur deconnecté"
+      alert('Erreur lors de la connexion au serveur')
+    }
+    // console.log(data)
+
+
   }
 
   return (
@@ -100,17 +121,26 @@ function Login(): JSX.Element {
 
             <button
               type="submit"
-              className="w-full bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
+              className="w-full flex justify-center items-center bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
             >
-              Valider
+              {isLoading? <ThreeDots
+                visible={true}
+                height="23"
+                width="100"
+                color="pink"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />:'Valider'}
             </button>
 
-            <div className="mt-3 text-white flex justify-center">
+            {/* <div className="mt-3 text-white flex justify-center">
               <p>Vous n'avez pas de compte?</p>
               <Link to="/register" className="text-white font-semibold hover:underline ml-2">
                 Inscription
               </Link>
-            </div>
+            </div> */}
           </form>
         </div>
         <img className="absolute h-full w-full bottom-0" src={wave} alt="Logo" />

@@ -1,31 +1,27 @@
-import { FiPlus, FiX } from 'react-icons/fi'
+import { FiEdit, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import logo from '../../images/test.png'
+import { StudentsType } from '@renderer/types/Alltypes'
 
-type notemodalProps = {
+type NotemodalProps = {
   closemodal: () => void
+  student: StudentsType
 }
 
-const Addnotemodal: React.FC<notemodalProps> = ({ closemodal }) => {
- const ValidationSchema = yup.object({
-   nom: yup.string().required('Nom requis'),
-   prenom: yup.string().required('Prénom requis'),
-   classe: yup.string().required('classe requise'),
-   totalcoefficient: yup.string(),
-   trimestre1: yup.string(),
-   trimestre2: yup.string(),
-   trimestre3: yup.string(),
-   moyenne: yup.string()
- })
-
+const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
+  const ValidationSchema = yup.object({
+    trimestre1: yup.string(),
+    trimestre2: yup.string(),  
+    trimestre3: yup.string(),
+    moyenne: yup.string()
+  })
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
   const onSubmit = (data: any) => {
@@ -35,176 +31,141 @@ const Addnotemodal: React.FC<notemodalProps> = ({ closemodal }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-[90%] p-6 animate-fade-in"
-      >
-        <div className="flex items-center justify-center    mb-12">
-          <h2 className=" text-2xl font-bold text-gray-800 flex items-center gap-2">Notes</h2>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+      <div className="bg-white w-[65%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
+        {/* DESIGN GAUCHE */}
+        <div className="w-1/2 bg-[#895256] text-white flex flex-col items-center justify-center p-8">
+          {student.photo ? (
+            <img
+              src={student.photo}
+              alt="Profil"
+              className="w-36 h-36 object-cover rounded-full border-4 border-white mb-6 shadow-md"
+            />
+          ) : (
+            <div className="w-36 h-36 flex items-center justify-center rounded-full bg-[#6b4a52] border-4 border-white mb-6 shadow-lg">
+              <FiUser className="text-white text-[6rem]" />
+            </div>
+          )}
+          <h2 className="text-xl font-semibold text-center">
+            {student.nom} {student.prenom}
+          </h2>
+          <p className="mt-1 text-sm italic opacity-90">{student.salle}</p>
+          
+        </div>
+
+        {/* FORMULAIRE DROIT */}
+        <div className="w-1/2 p-10 flex flex-col justify-between">
+          
           <button
             onClick={closemodal}
-            className="text-white absolute right-25 rounded-lg p-1 bg-red-400 hover:bg-red-500 hover:scale-105  transition"
+            aria-label="Fermer"
+            className="self-end text-gray-600 hover:text-red-600 transition mb-4"
+            type="button"
           >
-            <FiX size={20} />
+            <FiX className="text-3xl" />
           </button>
-        </div>
-        <div className="bigboxform flex gap-10 items-center ">
-          {/* section111 */}
-          <div className="flex-1 ">
-            <div className="champ1 flex flex-col gap-4 ">
-              <div className="sary ">
-                <div className=" flex items-center justify-center bg-white-500">
-                  <img className="w-[75%]" src={logo} alt="Logo" />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* section222222222222222222222222222222222222222 */}
-          <div className="flex-1">
-            <div className="champ2 flex flex-col gap-4 ">
-              <div className="Nom">
-                <label className="block font-medium text-gray-700 mb-1">Nom</label>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="overflow-y-auto pr-3"
+            style={{ maxHeight: '460px' }}
+          >
+            
+            <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
+              
+              <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">Notes</legend>
+
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Trimestre 1</label>
                 <input
                   type="text"
-                  placeholder="rakoto"
-                  {...register('nom')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.nom ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.nom && <p className="text-sm text-red-400 mt-1">{errors.nom.message}</p>}
-              </div>
-
-              <div className="prenom">
-                <label className="block font-medium text-gray-700 mb-1">prenom</label>
-                <input
-                  type="text"
-                  placeholder="kely"
-                  {...register('prenom')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.prenom ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.prenom && (
-                  <p className="text-sm text-red-400 mt-1">{errors.prenom.message}</p>
-                )}
-              </div>
-
-              <div className="classe">
-                <label className="block font-medium text-gray-700 mb-1">classe</label>
-                <select
-                  className={` bg-[#F1F1F1]  text-black w-full p-3 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] transition-all duration-300 outline-none ${errors.trimestre1 ? 'border-red-400' : 'border-gray-300'}`}
-                  {...register('classe')}
-                >
-                  <option value="">Sélectionner un classe</option>
-                  <option value="cm2">CM2</option>
-                  <option value="cm1">CM1</option>
-                </select>
-                {errors.classe && (
-                  <p className="text-sm text-red-400 mt-1">{errors.classe.message}</p>
-                )}
-              </div>
-
-              <div className="totalcoefficient">
-                <label className="block font-medium text-gray-700 mb-1">total coefficient</label>
-                <input
-                  type="number"
-                  placeholder="Tana"
-                  {...register('totalcoefficient')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.totalcoefficient ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-                />
-                {errors.totalcoefficient && (
-                  <p className="text-sm text-red-400 mt-1">{errors.totalcoefficient.message}</p>
-                )}
-              </div>
-            </div>
-          </div>
-          {/* section33333333333333333333333333333333333333 */}
-          <div className="flex-1">
-            <div className="champ3 flex flex-col gap-4 ">
-              <div className="T1">
-                <label className="block font-medium text-gray-700 mb-1">Trimestre 1</label>
-                <input
-                  type="number"
-                  placeholder=""
                   {...register('trimestre1')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.trimestre1 ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.trimestre1
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Ex: 12.5"
                 />
                 {errors.trimestre1 && (
-                  <p className="text-sm text-red-400 mt-1">{errors.trimestre1.message}</p>
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.trimestre1.message}
+                  </p>
                 )}
               </div>
 
-              <div className="T2">
-                <label className="block font-medium text-gray-700 mb-1">Trimestre 2</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Trimestre 2</label>
                 <input
-                  type="number"
-                  placeholder=""
+                  type="text"
                   {...register('trimestre2')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.trimestre2 ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.trimestre2
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Ex: 14"
                 />
                 {errors.trimestre2 && (
-                  <p className="text-sm text-red-400 mt-1">{errors.trimestre2.message}</p>
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.trimestre2.message}
+                  </p>
                 )}
               </div>
 
-              <div className="T3">
-                <label className="block font-medium text-gray-700 mb-1">Trimestre 3</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Trimestre 3</label>
                 <input
-                  type="number"
-                  placeholder=""
+                  type="text"
                   {...register('trimestre3')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.trimestre3 ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.trimestre3
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Ex: 13"
                 />
                 {errors.trimestre3 && (
-                  <p className="text-sm text-red-400 mt-1">{errors.trimestre3.message}</p>
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.trimestre3.message}
+                  </p>
                 )}
               </div>
 
-              <div className="moyennegeneral">
-                <label className="block font-medium text-gray-700 mb-1">Moyenne General</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Moyenne Génerale
+                </label>
                 <input
-                  type="number"
-                  placeholder=""
+                  type="text"
                   {...register('moyenne')}
-                  className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-                    errors.moyenne ? 'border-red-400' : 'border-gray-300'
-                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
+                  className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                    errors.moyenne
+                      ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                      : 'border-gray-300 shadow-sm'
+                  }`}
+                  placeholder="Ex: 13.5"
                 />
                 {errors.moyenne && (
-                  <p className="text-sm text-red-400 mt-1">{errors.moyenne.message}</p>
+                  <p className="text-red-500 text-xs mt-1 italic font-semibold">
+                    {errors.moyenne.message}
+                  </p>
                 )}
               </div>
+            </fieldset>
+
+            <div className="mb-4">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
+              >
+                <FiEdit size={22} />
+                Modifier
+              </button>
             </div>
-          </div>
+          </form>
         </div>
-
-        <div className="flex justify-end gap-3 mt-6">
-          <p
-            onClick={closemodal}
-            className=" cursor-pointer px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-red-500 hover:text-white hover:transition-all transition-all font-medium"
-          >
-            Annuler
-          </p>
-
-          <button
-            type="submit"
-            className={`px-5 py-2 rounded-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition font-semibold flex items-center gap-2`}
-          >
-            <FiPlus size={18} />
-            Ajouter
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   )
 }

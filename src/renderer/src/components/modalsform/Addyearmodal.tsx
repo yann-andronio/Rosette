@@ -1,72 +1,253 @@
-import { FiPlus, FiX } from 'react-icons/fi'
+import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
+import { Monthlistedata } from '@renderer/data/Monthlistedata'
+import {ThreeDots} from "react-loader-spinner";
 
 type YearProps = {
   closemodal: () => void
 }
 
+type FormDataAlefa = {
+  yearadd: string
+  selectedMonths: (number | undefined)[]
+}
+
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [reload, setReload] = useState<boolean>(false)
+  const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
+  const [yearsWithMonths, setYearsWithMonths] = useState<{ annee: string; mois: number[] }[]>([])
 
- const ValidationSchema = yup.object({
-   yearadd: yup.string().min(4, 'Au moins 4 caractères').required('vous devez saisir une anné')
- })
+  const [historiques, setHistoriques] = useState<{ annee: string, id:number, mois: {mois:string}[] }[]>([])
 
- const {
-   register,
-   handleSubmit,
-   formState: { errors },
-   reset
- } = useForm({ resolver: yupResolver(ValidationSchema) })
+  const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
- const onSubmit = (data: any) => {
-   console.log(data)
-   reset()
-   closemodal()
- }
-    
+  const schema = yup.object({
+    yearadd: yup
+      .string()
+      // .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
+      .required('Vous devez saisir une année'),
+    selectedMonths: yup
+      .array()
+      .of(yup.number())
+      .min(1, 'Sélectionnez au moins un mois')
+      .required('Sélectionnez au moins un mois')
+  })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset
+  } = useForm<FormDataAlefa>({
+
+    resolver: yupResolver(schema)
+
+  })
+
+  const handleMonthClick = (id: number) => {
+    let updated: number[]
+    if (selectedMonths.includes(id)) {
+      updated = selectedMonths.filter((mid) => mid !== id)
+    } else {
+      updated = [...selectedMonths, id]
+    }
+    setSelectedMonths(updated)
+    setValue('selectedMonths', updated)
+  }
+
+  const getHistorique = async () => {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', 'ac-list', null,'token').then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error?.response?.data?.error))
+        .finally(() => setIsLoading(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  useEffect(() => {
+    getHistorique()
+
+  }, [activeTab==='historique', reload])
+
+
+  const onSubmit = async (data) => {
+    if (!yearsWithMonths.some((y) => y.annee === data.yearadd)) {
+      setYearsWithMonths((prev) => [...prev, { annee: data.yearadd, mois: data.selectedMonths }])
+    }
+
+    const donneAlefa = {
+      annee: data.yearadd,
+      mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
+    }
+  setIsLoading(true)
+    try{
+      await axiosRequest('POST', 'ac-creation', donneAlefa, 'token').then(({data}) => console.log(data?.message))
+        .then(() => setActiveTab('historique'))
+        .catch((error) => console.log(error?.response?.data?.message))
+        .finally(() => setIsLoading(false))
+
+
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+
+    reset()
+
+
+  }
+
+  const removeYear = async (id: number) => {
+    setIsLoading(true)
+    setReload((reload) => !reload)
+    try{
+      await axiosRequest('DELETE', `ac-delete/${id}`, null, 'token')
+        .then(({data}) => console.log(data?.message))
+      .catch(error => console.log(error?.response?.data?.error))
+        .finally(() => setIsLoading(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in"
-      >
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            Ajouter une année scolaire
-          </h2>
-          <button
-            onClick={closemodal}
-            className="text-white rounded-lg p-1 bg-red-400 hover:bg-red-500 hover:scale-105  transition"
-          >
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('ajouter')
+                reset()
+                setSelectedMonths([])
+              }}
+              className={`text-lg font-semibold transition ${
+                activeTab === 'ajouter' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
+              }`}
+            >
+              Ajouter
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('historique')}
+              className={`text-lg font-semibold transition ${
+                activeTab === 'historique' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
+              }`}
+            >
+              Historique
+            </button>
+          </div>
+          <button onClick={closemodal} className="text-gray-600 hover:text-red-600 transition">
             <FiX size={20} />
           </button>
         </div>
 
-        <input
-          type="text"
-          placeholder="Ex: 2025"
-          {...register('yearadd')}
-          className={`w-full px-4 py-2.5 border border-[#895256]  bg-[#F1F1F1]  ${
-            errors.yearadd ? 'border-red-400' : 'border-gray-300'
-          } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#895256] text-gray-700 placeholder:text-gray-400`}
-        />
-        {errors.yearadd && <p className="text-sm text-red-400 mt-1">{errors.yearadd.message}</p>}
+        {activeTab === 'ajouter' ? (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <input
+              type="text"
+              placeholder="Ex: 2025"
+              {...register('yearadd')}
+              className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                errors.yearadd
+                  ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                  : 'border-gray-300 shadow-sm'
+              }`}
+            />
+            {errors.yearadd && (
+              <p className="text-sm text-red-400 mt-1">{errors.yearadd.message}</p>
+            )}
 
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            onClick={closemodal}
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-red-500 hover:text-white hover:transition-all transition-all font-medium"
-          >
-            Annuler
-          </button>
-          <button className="px-5 py-2 rounded-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition font-semibold flex items-center gap-2">
-            <FiPlus size={18} />
-            Ajouter
-          </button>
-        </div>
-      </form>
+            <div className="mt-6">
+              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez les mois</h2>
+              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4  rounded-xl border-gray-300 bg-white ">
+                {Monthlistedata.map((month) => {
+                  const isSelected = selectedMonths.includes(month.id)
+                  return (
+                    <div
+                      key={month.id}
+                      onClick={() => handleMonthClick(month.id)}
+                      className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border
+                       ${isSelected ? 'bg-[#895256] text-white border-[#895256]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                    >
+                      {month.name}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {errors.selectedMonths && (
+                <p className="text-sm text-red-400 mt-1">{errors.selectedMonths.message}</p>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                type="button"
+                onClick={closemodal}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-red-500 hover:text-white transition-all font-medium"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
+              >
+
+                {isLoading?	<ThreeDots
+                  visible={true}
+                  height="20"
+                  width="100"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />: <><FiPlus size={18} /> Ajouter</>}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="mt-4 max-h-[400px] overflow-auto">
+            {historiques.length === 0 ? (
+              <p className="text-center text-gray-500">Aucune année ajoutée</p>
+            ) : (
+              <ul className="space-y-3">
+                {historiques.map(({ annee,id, mois }, index) => (
+                  <li
+                    key={index}
+                    className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
+                  >
+                    <div>
+                      <p className="font-semibold">Année : {annee}</p>
+                      <p className="text-sm text-gray-700">
+                        Mois :{' '}
+                        {mois.map((m, index) => (<span key={index}>{m?.mois+(index !== mois.length - 1?', ':'')}</span>))}
+
+                      </p>
+                    </div>
+                    <button
+                      aria-label={`Supprimer l'année ${annee}`}
+                      onClick={() => removeYear(id)}
+                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -6,32 +6,40 @@ import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/l
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
-import Addclassemodal from '@renderer/components/modalsform/Addclassemodal'
+import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
 import { Studentsdata } from '@renderer/data/Studentsdata'
-import { FilterOptions } from '@renderer/types/Alltypes'
-import { years , classe } from '@renderer/data/Filterselectiondata'
+import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
+import { years , salle } from '@renderer/data/Filterselectiondata'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
 import { getMentionColor } from '@renderer/utils/getMentionColor'
 import { getMention } from '@renderer/utils/getMention'
+import Addnotemodal from '@renderer/components/modalsform/Addnotemodal'
+import Showinfonotestudents from '@renderer/components/modalsform/Showinfonotestudents'
+import { niveau } from '@renderer/data/Filterselectiondata'
+import { MdMeetingRoom } from 'react-icons/md'
 
 function Notestudentsmanagement(): JSX.Element {
 
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
   const [selectedyear, setselectedyear] = useState<string>('All')
-  const [selectedclasse, setselectedclasse] = useState<string>('All')
+  const [selectedsalle, setselectedsalle] = useState<string>('All')
+    const [selectedniveau, setselectedniveau] = useState<string>('All')
   const [selectedSexe, setSelectedSexe] = useState<string>('All')
   const [selectedmention, setSelectedmention] = useState<string>('All')
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', classe: 'All', sexe: 'All' , mention:"All"})
+  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', salle: 'All', niveau:'All' ,  sexe: 'All', mention: "All" })
+  const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
+
   
   useEffect(() => {
     setSelectedFilters({
-        annee: selectedyear,
-        classe: selectedclasse,
-        sexe: selectedSexe,
-        mention: selectedmention,
+      annee: selectedyear,
+      salle: selectedsalle,
+      niveau: selectedniveau,
+      sexe: selectedSexe,
+      mention: selectedmention
     })
-  }, [selectedyear, selectedclasse, selectedSexe , selectedmention])
+  }, [selectedyear, selectedsalle, selectedSexe, selectedmention, selectedniveau])
 
 
  const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
@@ -60,7 +68,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
      setSearcheleves(dataeleve)
    }
 
-   const filteredData = filterDataCombined( Studentsdatawithmention, searcheleves, ['nom', 'prenom', 'classe'], selectedFilters)
+   const filteredData = filterDataCombined( Studentsdatawithmention, searcheleves, ['nom', 'prenom', 'salle'], selectedFilters)
 
 
   const { modal, openModal, closModal } = useMultiModals()
@@ -73,134 +81,139 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
           {/* filter1111 */}
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuCalendarDays size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuCalendarDays size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
               {years.map((year, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(year.ans, setselectedyear)}
-                  className={`${selectedyear === year.ans ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  className={`${
+                    selectedyear === year.ans
+                      ? 'bg-[#895256] text-white border-none'
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {year.ans}
-                </h1>
+                </button>
               ))}
             </div>
+          </div>
 
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button
-                onClick={() => openModal('addyear')}
-                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
-              >
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
-                <FaTrash />
-              </button>
+          {/* Filtre niveau */}
+          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuGraduationCap size={28} />
+              </div>
+              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une niveau</h1>
+            </div>
+            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
+              {niveau.map((niv, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleselect(niv.name, setselectedniveau)}
+                  className={`${
+                    selectedniveau === niv.name
+                      ? 'bg-[#895256] text-white border-none'
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                >
+                  {niv.name}
+                </button>
+              ))}
             </div>
           </div>
 
           {/* filter222 */}
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuGraduationCap size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <MdMeetingRoom size={28} />
               </div>
-              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une classe</h1>
+              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une salle</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
-              {classe.map((classe, index) => (
-                <h1
+              {salle.map((salle, index) => (
+                <button
                   key={index}
-                  onClick={() => handleselect(classe.name, setselectedclasse)}
-                  className={`${selectedclasse === classe.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  onClick={() => handleselect(salle.name, setselectedsalle)}
+                  className={`${
+                    selectedsalle === salle.name
+                      ? 'bg-[#895256] text-white border-none'
+                      : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {classe.name}
-                </h1>
+                  {salle.name}
+                </button>
               ))}
-            </div>
-
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button
-                onClick={() => openModal('addclass')}
-                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
-              >
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
-                <FaTrash />
-              </button>
             </div>
           </div>
           {/* filter333 */}
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones flex justify-center rounded-lg p-2">
-                <LuUsers size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuUsers size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un sexe</h1>
             </div>
 
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
-              <h1
+              <button
                 onClick={() => handleselect('Homme', setSelectedSexe)}
-                className={`${selectedSexe === 'Homme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                className={`${
+                  selectedSexe === 'Homme'
+                    ? 'bg-[#895256] text-white border-none'
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Homme
-              </h1>
-              <h1
+              </button>
+              <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
-                className={`${selectedSexe === 'Femme' ? 'bg-[#895256] text-white border-none' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center cursor-pointer transition duration-200 `}
+                className={`${
+                  selectedSexe === 'Femme'
+                    ? 'bg-[#895256] text-white border-none'
+                    : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
                 Femme
-              </h1>
+              </button>
             </div>
           </div>
 
           {/* filterrr44444 */}
 
           <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
-            <div className="pb-2 border-b flex flex-row items-center border-gray-300 mb-3">
-              <div className="icones  flex justify-center rounded-lg p-2">
-                <LuAward size={30} />
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <LuAward size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une Mention</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
               {mention.map((mention, index) => (
-                <h1
+                <button
                   key={index}
                   onClick={() => handleselect(mention.name, setSelectedmention)}
-                  className={`${selectedmention === mention.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                  className={`${selectedmention === mention.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
                 >
                   {mention.name}
-                </h1>
+                </button>
               ))}
-            </div>
-
-            <div className="w-full justify-end mt-4 flex gap-2">
-              <button
-                onClick={() => openModal('addclass')}
-                className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200"
-              >
-                <FaEdit />
-              </button>
-              <button className="p-2 rounded-lg w-[20%] flex justify-center shadow-lg bg-[#895256] text-[#ffff] hover:bg-[#733935] transition duration-200">
-                <FaTrash />
-              </button>
             </div>
           </div>
         </div>
 
-        <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center mb-6">
+        <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
           <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
         </div>
 
@@ -230,7 +243,7 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
                 <div className="flex-1">Nom</div>
                 <div className="flex-1">Prénom</div>
                 <div className="flex-1">Sexe</div>
-                <div className="flex-1">Classe</div>
+                <div className="flex-1">salle</div>
                 <div className="flex-1">Moyenne</div>
                 <div className="flex-1">Opération</div>
               </div>
@@ -258,14 +271,26 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
                     <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                     <div className="flex-1 text-gray-700">{student.prenom}</div>
                     <div className="flex-1 text-gray-700">{student.sexe}</div>
-                    <div className="flex-1 text-gray-700">{student.classe}</div>
+                    <div className="flex-1 text-gray-700">{student.salle}</div>
                     <div className={`${getMentionColor(student.moyenne)} flex-1 `}>
                       {student.moyenne}
                     </div>
                     <div className="flex-1">
                       <div className="flex gap-3 text-[#9f7126] text-lg">
-                        <FaEye className="hover:text-black cursor-pointer transition" />
-                        <FaEdit className="hover:text-black cursor-pointer transition" />
+                        <FaEye
+                          onClick={() => {
+                            setSelectedStudent(student)
+                            openModal('Showinfonotestudents')
+                          }}
+                          className="hover:text-black cursor-pointer transition"
+                        />
+                        <FaEdit
+                          onClick={() => {
+                            setSelectedStudent(student)
+                            openModal('Addnotemodal')
+                          }}
+                          className="hover:text-black cursor-pointer transition"
+                        />
                         <FaTrash className="hover:text-red-600 cursor-pointer transition" />
                       </div>
                     </div>
@@ -308,8 +333,15 @@ const Studentsdatawithmention = Studentsdata.map((student) => ({
         }
       </div>
 
-      {modal.addyear && <Addyearmodal closemodal={() => closModal('addyear')} />}
-      {modal.addclass && <Addclassemodal closemodal={() => closModal('addclass')} />}
+      {modal.Showinfonotestudents && selectedStudent && (
+        <Showinfonotestudents
+          closemodal={() => closModal('Showinfonotestudents')}
+          student={selectedStudent}
+        />
+      )}
+      {modal.Addnotemodal && selectedStudent && (
+        <Addnotemodal closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
+      )}
     </div>
   )
 }
