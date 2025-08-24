@@ -17,9 +17,8 @@ type FormDataAlefa = {
 
 const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [classes, setClasses] = useState<{ nom_classe: string; ac_id: string; ecolage: number }[]>(
-    []
-  )
+  const [historiques, setHistoriques] = useState<{ nom_classe: string, ac_id: string, ecolage: number, acs:{annee:string} }[]>([])
+
 
   const [isYearsLloading, setIsYearsLloading] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -39,9 +38,26 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     }
   }
 
+  const getClassesHistorique = async ()=> {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', 'classe-list', null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .then(() => setIsLoading(false))
+        .catch(error => console.log(error.response?.data?.message))
+        .finally(() => setIsLoading(false))
+    }catch(error){
+      console.log('le serveur ne repond pas')
+    }
+  }
+
+
+
   useEffect(() => {
     getYears()
-  }, [activeTab==='historique'])
+    getClassesHistorique()
+
+  }, [activeTab])
   const schema = yup.object({
     nom_classe: yup.string().required('Vous devez saisir un nom de classe'),
     ac_id: yup.string().required('Sélectionnez une année'),
@@ -64,15 +80,6 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const selectedYearforstyle = watch('ac_id')
 
   const onSubmit = async (data: FormDataAlefa) => {
-    const supspaceclasse = data.nom_classe.trim()
-
-    if (!classes.some((c) => c.nom_classe === supspaceclasse && c.ac_id === data.ac_id)) {
-      setClasses([
-        ...classes,
-        { nom_classe: supspaceclasse, ac_id: data.ac_id, ecolage: data.ecolage }
-      ])
-    }
-
     const donneAlefa = {
       nom_classe: data.nom_classe,
       ac_id: data.ac_id,
@@ -94,6 +101,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     reset()
 
   }
+
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -223,34 +231,49 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             </div>
           </form>
         ) : (
-          <div className="mt-4 max-h-64 overflow-auto">
-            {classes.length === 0 ? (
-              <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
-            ) : (
-              <ul className="space-y-3">
-                {classes.map(({ nom_classe, ac_id, ecolage }, index) => (
-                  <li
-                    key={index}
-                    className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
-                  >
-                    <div className="flex flex-col text-left">
-                      <span className="text-base font-semibold text-gray-800">{nom_classe}</span>
-                      <span className="text-sm text-gray-500">Année : {ac_id}</span>
-                      <span className="text-sm text-[#895256] font-medium mt-1">
-                        {ecolage.toLocaleString()} Ar
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => setClasses(classes.filter((_, i) => i !== index))}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+          <>
+          {isYearsLloading?( <div className='flex w-full justify-center'><RotatingLines
+              visible={true}
+              height="50"
+              width="55"
+              color="grey"
+              strokeColor="#7A3B3F"
+              strokeWidth="5"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            /></div>):(
+            <div className="mt-4 max-h-64 overflow-auto">
+              {historiques.length === 0 ? (
+                <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
+              ) : (
+                <ul className="space-y-3">
+                  {historiques.map(({ nom_classe,ecolage, acs  }, index) => (
+                    <li
+                      key={index}
+                      className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                     >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+
+                      <div className="flex flex-col text-left">
+                        <span className="text-base font-semibold text-gray-800">{nom_classe}</span>
+                        <span className="text-sm text-gray-500">Année : {acs?.annee}</span>
+                        <span className="text-sm text-[#895256] font-medium mt-1">
+                        {ecolage} Ar
+                      </span>
+                      </div>
+                      <button
+                        // onClick={() => setClasses(classes.filter((i) => i !== index))}
+                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>)}</>
+
         )}
       </div>
     </div>

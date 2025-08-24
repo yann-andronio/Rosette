@@ -20,7 +20,8 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [reload, setReload] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [yearsWithMonths, setYearsWithMonths] = useState<{ annee: string; mois: number[] }[]>([])
+
+
 
   const [historiques, setHistoriques] = useState<{ annee: string, id:number, mois: {mois:string}[] }[]>([])
 
@@ -79,9 +80,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
 
 
   const onSubmit = async (data) => {
-    if (!yearsWithMonths.some((y) => y.annee === data.yearadd)) {
-      setYearsWithMonths((prev) => [...prev, { annee: data.yearadd, mois: data.selectedMonths }])
-    }
+
 
     const donneAlefa = {
       annee: data.yearadd,
