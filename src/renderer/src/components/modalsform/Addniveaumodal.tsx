@@ -23,8 +23,18 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [isYearsLloading, setIsYearsLloading] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
   const [years, setYears] = useState<{id:number, annee:string}[]>([])
+  const [reload, setReload] = useState(true)
 
-
+const deleteHistorique = async (id:number) => {
+    try{
+      await axiosRequest('DELETE', `classe-delete/${id}`, null, 'token')
+        .then(({data}) => console.log(data?.messsage))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error) {
+      console.log('Le serveur ne repond pas')
+    }
+}
   const getYears = async ()=> {
     setIsYearsLloading(true)
     try{
@@ -57,7 +67,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
     getYears()
     getClassesHistorique()
 
-  }, [activeTab])
+  }, [activeTab, reload])
   const schema = yup.object({
     nom_classe: yup.string().required('Vous devez saisir un nom de classe'),
     ac_id: yup.string().required('Sélectionnez une année'),
@@ -249,7 +259,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                 <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
               ) : (
                 <ul className="space-y-3">
-                  {historiques.map(({ nom_classe,ecolage, acs  }, index) => (
+                  {historiques.map(({ id, nom_classe,ecolage, acs  }, index) => (
                     <li
                       key={index}
                       className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
@@ -263,7 +273,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                       </span>
                       </div>
                       <button
-                        // onClick={() => setClasses(classes.filter((i) => i !== index))}
+                        onClick={() => deleteHistorique(id)}
                         className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                       >
                         <FiTrash2 size={18} />
