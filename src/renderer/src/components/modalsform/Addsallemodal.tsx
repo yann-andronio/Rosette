@@ -2,28 +2,55 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { niveau } from '@renderer/data/Filterselectiondata'
+import { axiosRequest } from '@renderer/config/helpers'
 
 type AddsalleModalProps = {
   closemodal: () => void
 }
 
 type FormDataalefa = {
-  selectedniveau: string
-  addnamesalle: string
+  cl_id: number
+  nom_salle: string
   effectif: number
 }
 
 const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [paramsList, setParamsList] = useState<
-    { niveau: string; addnamesalle: string; effectif: number }[]
-  >([])
+ const [reload, setReload] = useState<boolean>(false)
+const [niveau , setNiveau] =useState<{id:number, nom_classe:string}[]>([])
+  const [historiques, setHistoriques] = useState<{id:number, nom_salle:string, effectif:number, classes:{nom_classe}}[]>([])
 
+  const getNiveau = async () => {
+    try {
+      await axiosRequest('GET', 'classe-list', null, 'token')
+        .then(({data}) => setNiveau(data))
+        .catch(error => console.log(error.response?.data.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+
+  const deleteHistorique = async (id:number)=> {
+    try{
+      await axiosRequest('DELETE', `salle-delete/${id}`, null, 'token')
+        .then(({data}) => console.log(data?.message))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error.response?.data.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+
+  useEffect(() => {
+    getNiveau()
+  }, [activeTab==='ajouter'])
   const schema = yup.object({
-    selectedniveau: yup.string().required('Sélectionnez un niveau'),
-    addnamesalle: yup
+    cl_id: yup.number().required('Sélectionnez un niveau'),
+    nom_salle: yup
       .string()
       .typeError(`Le nom de la salle doit être une chaîne de caractères`)
       .required('Le nom de la salle est requis'),
@@ -44,21 +71,35 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
     watch
   } = useForm<FormDataalefa>({ resolver: yupResolver(schema) })
 
-  const selectedniveauForStyle = watch('selectedniveau')
+  const selectedniveauForStyle = watch('cl_id')
 
-    const onSubmit = (data: FormDataalefa) => {
-    //   miverifie  si efa misy  salle mitovy pour  ce niveau.
-   if (!paramsList.some((c) => c.niveau === data.selectedniveau && c.addnamesalle === data.addnamesalle)) {
-     setParamsList([
-       ...paramsList,
-       { niveau: data.selectedniveau, addnamesalle: data.addnamesalle , effectif: data.effectif },
-     ])
+    const onSubmit =async (data: FormDataalefa) => {
+
+   try{
+     await axiosRequest('POST', 'salle-creation', data, 'token')
+       .then(({data}) => console.log(data.message))
+       .then(() =>  setActiveTab('historique'))
+       .catch(error => console.log(error.response?.data?.message))
+   }catch(error){
+     console.log('Le serveur ne repond pas')
    }
-      console.log(data)
+      // console.log(data)
     reset()
-    setActiveTab('historique')
+
   }
 
+  const getHistorique = async () => {
+    try {
+      await axiosRequest('GET', 'salle-list', null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+useEffect(() => {
+  getHistorique()
+}, [activeTab==='historique', reload])
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
@@ -99,15 +140,15 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
               <input
                 type="text"
                 placeholder="Nom de la salle (ex: Terminale 1A)"
-                {...register('addnamesalle')}
+                {...register('nom_salle')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.addnamesalle
+                  errors.nom_salle
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
               />
-              {errors.addnamesalle && (
-                <p className="text-sm text-red-400 mt-1">{errors.addnamesalle.message}</p>
+              {errors.nom_salle && (
+                <p className="text-sm text-red-400 mt-1">{errors.nom_salle.message}</p>
               )}
             </div>
 
@@ -132,22 +173,22 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
             <div>
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez un niveau</h2>
               <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl  bg-white ">
-                {niveau.map((niv, index) => (
+                {niveau.map(({id, nom_classe}, index) => (
                   <div
                     key={index}
-                    onClick={() => setValue('selectedniveau', niv.name)}
+                    onClick={() => setValue('cl_id', id)}
                     className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
-                      selectedniveauForStyle === niv.name
+                      selectedniveauForStyle === id
                         ? 'bg-[#895256] text-white border-[#895256]'
                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
                     }`}
                   >
-                    {niv.name}
+                    {nom_classe}
                   </div>
                 ))}
               </div>
-              {errors.selectedniveau && (
-                <p className="text-sm text-red-400 mt-1">{errors.selectedniveau.message}</p>
+              {errors.cl_id && (
+                <p className="text-sm text-red-400 mt-1">{errors.cl_id.message}</p>
               )}
             </div>
 
@@ -172,24 +213,24 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
         ) : (
           // Historique
           <div className="mt-4 max-h-64 overflow-auto">
-            {paramsList.length === 0 ? (
+            {historiques.length === 0 ? (
               <p className="text-gray-500 text-center">Aucune salle ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {paramsList.map(({ niveau, addnamesalle, effectif }, index) => (
+                {historiques.map(({ id, nom_salle, effectif , classes}, index) => (
                   <li
                     key={index}
                     className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                   >
                     <div className="flex flex-col text-left">
                       <span className="text-sm text-gray-700 font-medium">
-                        Salle : {addnamesalle}
+                        Salle : {nom_salle}
                       </span>
-                      <span className="text-sm text-[#895256]">Niveau : {niveau}</span>
+                      <span className="text-sm text-[#895256]">Niveau : {classes.nom_classe}</span>
                       <span className="text-xs text-gray-500">Effectif : {effectif} élèves</span>
                     </div>
                     <button
-                      onClick={() => setParamsList(paramsList.filter((_, i) => i !== index))}
+                      onClick={() => deleteHistorique(id)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
