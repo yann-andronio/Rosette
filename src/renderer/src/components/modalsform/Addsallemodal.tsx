@@ -3,8 +3,10 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
-import { niveau } from '@renderer/data/Filterselectiondata'
 import { axiosRequest } from '@renderer/config/helpers'
+import { RotatingLines, ThreeDots } from 'react-loader-spinner'
+import { data } from "autoprefixer";
+
 
 type AddsalleModalProps = {
   closemodal: () => void
@@ -19,14 +21,19 @@ type FormDataalefa = {
 const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
  const [reload, setReload] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isHistoriqueLoading, setIsHistoriqueLoading] = useState<boolean>(false)
 const [niveau , setNiveau] =useState<{id:number, nom_classe:string}[]>([])
   const [historiques, setHistoriques] = useState<{id:number, nom_salle:string, effectif:number, classes:{nom_classe}}[]>([])
 
   const getNiveau = async () => {
+    setIsLoading(true)
     try {
       await axiosRequest('GET', 'classe-list', null, 'token')
         .then(({data}) => setNiveau(data))
-        .catch(error => console.log(error.response?.data.message))
+        .then(() => setIsLoading(false))
+        .catch(error => console.log(error.response?.data?.message))
+        .finally(() => setIsLoading(false))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
@@ -74,12 +81,14 @@ const [niveau , setNiveau] =useState<{id:number, nom_classe:string}[]>([])
   const selectedniveauForStyle = watch('cl_id')
 
     const onSubmit =async (data: FormDataalefa) => {
-
+    setIsLoading(true)
    try{
      await axiosRequest('POST', 'salle-creation', data, 'token')
        .then(({data}) => console.log(data.message))
+       .then(() => setIsLoading(false))
        .then(() =>  setActiveTab('historique'))
        .catch(error => console.log(error.response?.data?.message))
+       .finally(() => setIsLoading(false))
    }catch(error){
      console.log('Le serveur ne repond pas')
    }
@@ -89,10 +98,13 @@ const [niveau , setNiveau] =useState<{id:number, nom_classe:string}[]>([])
   }
 
   const getHistorique = async () => {
+    setIsHistoriqueLoading(true)
     try {
       await axiosRequest('GET', 'salle-list', null, 'token')
         .then(({data}) => setHistoriques(data))
+        .then(() => setIsHistoriqueLoading(false))
         .catch(error => console.log(error.response?.data?.message))
+        .finally(() => setIsHistoriqueLoading(false))
     }catch (error){
       console.log('Le serveur ne repond pas')
     }
@@ -170,7 +182,18 @@ useEffect(() => {
             </div>
 
             {/* select du niveau */}
-            <div>
+            {isLoading?( <div className='flex w-full justify-center'><RotatingLines
+                visible={true}
+                height="50"
+                width="55"
+                color="grey"
+                strokeColor="#7A3B3F"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              /></div>):(<div>
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez un niveau</h2>
               <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl  bg-white ">
                 {niveau.map(({id, nom_classe}, index) => (
@@ -190,7 +213,8 @@ useEffect(() => {
               {errors.cl_id && (
                 <p className="text-sm text-red-400 mt-1">{errors.cl_id.message}</p>
               )}
-            </div>
+            </div>)}
+
 
             {/* Boutons */}
             <div className="flex justify-end gap-3 mt-6">
@@ -205,13 +229,33 @@ useEffect(() => {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} />
-                Ajouter
+                {isLoading?	<ThreeDots
+                  visible={true}
+                  height="20"
+                  width="100"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />: <><FiPlus size={18} /> Ajouter</>}
               </button>
             </div>
           </form>
         ) : (
-          // Historique
+          <>
+          {isHistoriqueLoading?( <div className='flex w-full justify-center'><RotatingLines
+              visible={true}
+              height="50"
+              width="55"
+              color="grey"
+              strokeColor="#7A3B3F"
+              strokeWidth="5"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            /></div>):(
           <div className="mt-4 max-h-64 overflow-auto">
             {historiques.length === 0 ? (
               <p className="text-gray-500 text-center">Aucune salle ajoutée</p>
@@ -239,7 +283,8 @@ useEffect(() => {
                 ))}
               </ul>
             )}
-          </div>
+          </div>)}
+          </>
         )}
       </div>
     </div>
