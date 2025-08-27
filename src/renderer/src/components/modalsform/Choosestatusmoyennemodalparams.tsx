@@ -4,6 +4,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
+import { RotatingLines, ThreeDots } from 'react-loader-spinner'
 
 type ChosseCtausMoyenModalProps = {
   closemodal: () => void
@@ -18,7 +19,10 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
   const [years, setYears] = useState<{id:number, annee:string}[]>([])
     const [historiques, setHistoriques] = useState<{id: number, note: number, acs:{annee}}[]>([])
+  const [isHistoriqueLoading, setIsHistoriqueLoading] = useState<boolean>(false)
   const [reload, setReload] = useState<boolean>(false)
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const schema = yup.object({
     ac_id: yup
       .string()
@@ -42,20 +46,26 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
 
   const selectedYearforstyle = watch('ac_id')
   const getYears = async () => {
+    setIsLoading(true)
     try{
       await axiosRequest('GET', 'ac-list', null, 'token')
         .then(({data}) => setYears(data))
+        .then(() => setIsLoading(false))
         .catch(error => console.log(error.response?.data?.mesage))
+        .finally(() => setIsLoading(false))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getHistoriques = async () => {
+    setIsHistoriqueLoading(true)
     try{
       await axiosRequest('GET', 'admission-list', null, 'token')
         .then(({data}) => setHistoriques(data))
+        .then(() => setIsHistoriqueLoading(false))
         .catch(error => console.log(error.response?.data?.mesage))
+        .finally(() => setIsHistoriqueLoading(false))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
@@ -80,12 +90,14 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
     getHistoriques()
   }, [activeTab==='historique', reload])
   const onSubmit = async (data: FormDataAlefa) => {
-
+setIsLoading(true)
   try{
     await axiosRequest('POST', 'admission-creation', data, 'token')
       .then(({data}) => console.log(data?.message))
       .then(() =>   setActiveTab('historique'))
+      .then(() => setIsLoading(false))
       .catch(error => console.log(error.response?.data?.message))
+      .finally(() => setIsLoading(false))
   }catch(error){
     console.log('Le serveur ne repond pas')
   }
@@ -147,6 +159,18 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
 
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
+              {isLoading?( <div className='flex w-full justify-center'><RotatingLines
+                  visible={true}
+                  height="50"
+                  width="55"
+                  color="grey"
+                  strokeColor="#7A3B3F"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  ariaLabel="rotating-lines-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                /></div>):(
               <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
                 {years.map((year, index) => (
                   <div
@@ -161,7 +185,7 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                     {year.annee}
                   </div>
                 ))}
-              </div>
+              </div>)}
               {errors.ac_id && (
                 <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>
               )}
@@ -179,13 +203,34 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} />
-                Ajouter
+                {isLoading?	<ThreeDots
+                  visible={true}
+                  height="20"
+                  width="100"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />: <><FiPlus size={18} /> Ajouter</>}
               </button>
             </div>
           </form>
         ) : (
           //   historique ajouté
+
+         <> {isHistoriqueLoading?( <div className='flex w-full justify-center'><RotatingLines
+                visible={true}
+                height="50"
+                width="55"
+                color="grey"
+                strokeColor="#7A3B3F"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              /></div>):(
           <div className="mt-4 max-h-64 overflow-auto">
             {historiques.length === 0 ? (
               <p className="text-gray-500 text-center">Aucun paramètre ajouté</p>
@@ -212,7 +257,7 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                 ))}
               </ul>
             )}
-          </div>
+          </div>)}</>
         )}
       </div>
     </div>

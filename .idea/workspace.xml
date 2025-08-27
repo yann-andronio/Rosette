@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -79,7 +78,7 @@
       <workItem from="1756190715693" duration="4324000" />
       <workItem from="1756213470903" duration="736000" />
       <workItem from="1756236637715" duration="1857000" />
-      <workItem from="1756284027492" duration="3821000" />
+      <workItem from="1756284027492" duration="4475000" />
     </task>
     <servers />
   </component>
