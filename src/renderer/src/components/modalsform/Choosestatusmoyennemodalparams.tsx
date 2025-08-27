@@ -2,27 +2,28 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
-import { years } from '@renderer/data/Filterselectiondata'
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
 
 type ChosseCtausMoyenModalProps = {
   closemodal: () => void
 }
 
 type FormDataAlefa = {
-  selectedyear: string
-  moyenneAdmission: number
+  ac_id: string
+  note: number
 }
 
 const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [paramsList, setParamsList] = useState<{ year: string; moyenneAdmission: number }[]>([])
-
+  const [years, setYears] = useState<{id:number, annee:string}[]>([])
+    const [historiques, setHistoriques] = useState<{id: number, note: number, acs:{annee}}[]>([])
+  const [reload, setReload] = useState<boolean>(false)
   const schema = yup.object({
-    selectedyear: yup
+    ac_id: yup
       .string()
       .required('Sélectionnez une année'),
-    moyenneAdmission: yup
+    note: yup
       .number()
       .typeError('La moyenne doit être un nombre')
       .required('La moyenne est requise')
@@ -39,19 +40,57 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
     watch
   } = useForm<FormDataAlefa>({ resolver: yupResolver(schema) })
 
-  const selectedYearforstyle = watch('selectedyear')
-
-  const onSubmit = (data: FormDataAlefa) => {
-    if (!paramsList.some((c) => c.year === data.selectedyear)) {
-      setParamsList([
-        ...paramsList,
-        { year: data.selectedyear, moyenneAdmission: data.moyenneAdmission }
-      ])
+  const selectedYearforstyle = watch('ac_id')
+  const getYears = async () => {
+    try{
+      await axiosRequest('GET', 'ac-list', null, 'token')
+        .then(({data}) => setYears(data))
+        .catch(error => console.log(error.response?.data?.mesage))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
     }
+  }
 
-    console.log('Paramètres :', data)
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', 'admission-list', null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error.response?.data?.mesage))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const deleteHistorique = async (id: number) => {
+
+    try{
+      await axiosRequest('DELETE', `admission-delete/${id}`, null, 'token')
+        .then(({data}) => console.log(data?.message))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error.response?.data?.mesage))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+  useEffect(() => {
+    getYears()
+  }, [activeTab==='ajouter'])
+
+  useEffect(() => {
+    getHistoriques()
+  }, [activeTab==='historique', reload])
+  const onSubmit = async (data: FormDataAlefa) => {
+
+  try{
+    await axiosRequest('POST', 'admission-creation', data, 'token')
+      .then(({data}) => console.log(data?.message))
+      .then(() =>   setActiveTab('historique'))
+      .catch(error => console.log(error.response?.data?.message))
+  }catch(error){
+    console.log('Le serveur ne repond pas')
+  }
     reset()
-    setActiveTab('historique')
+
   }
 
   return (
@@ -94,15 +133,15 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                 type="number"
                 placeholder="Moyenne d’admission (ex: 10)"
                 step="0.01"
-                {...register('moyenneAdmission')}
+                {...register('note')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.moyenneAdmission
+                  errors.note
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
               />
-              {errors.moyenneAdmission && (
-                <p className="text-sm text-red-400 mt-1">{errors.moyenneAdmission.message}</p>
+              {errors.note && (
+                <p className="text-sm text-red-400 mt-1">{errors.note.message}</p>
               )}
             </div>
 
@@ -112,19 +151,19 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                 {years.map((year, index) => (
                   <div
                     key={index}
-                    onClick={() => setValue('selectedyear', year.ans)}
+                    onClick={() => setValue('ac_id', year.annee)}
                     className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
-                      selectedYearforstyle === year.ans
+                      selectedYearforstyle === year.annee
                         ? 'bg-[#895256] text-white border-[#895256]'
                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
                     }`}
                   >
-                    {year.ans}
+                    {year.annee}
                   </div>
                 ))}
               </div>
-              {errors.selectedyear && (
-                <p className="text-sm text-red-400 mt-1">{errors.selectedyear.message}</p>
+              {errors.ac_id && (
+                <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>
               )}
             </div>
 
@@ -148,23 +187,23 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
         ) : (
           //   historique ajouté
           <div className="mt-4 max-h-64 overflow-auto">
-            {paramsList.length === 0 ? (
+            {historiques.length === 0 ? (
               <p className="text-gray-500 text-center">Aucun paramètre ajouté</p>
             ) : (
               <ul className="space-y-3">
-                {paramsList.map(({ year, moyenneAdmission }, index) => (
+                {historiques.map(({id, acs, note }, index) => (
                   <li
                     key={index}
                     className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                   >
                     <div className="flex flex-col text-left">
-                      <span className="text-sm text-gray-500">Année : {year}</span>
+                      <span className="text-sm text-gray-500">Année : {acs.annee}</span>
                       <span className="text-sm text-[#895256] font-medium mt-1">
-                        Moyenne : {moyenneAdmission}
+                        Moyenne : {note}
                       </span>
                     </div>
                     <button
-                      onClick={() => setParamsList(paramsList.filter((_, i) => i !== index))}
+                      onClick={() => deleteHistorique(id)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
