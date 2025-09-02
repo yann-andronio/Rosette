@@ -12,7 +12,9 @@ type ClassModalProps = {
 type FormDataAlefa = {
   nom_classe: string,
   ac_id: string,
-  ecolage: number
+  ecolage: number,
+  kermesse:number,
+  droit:number
 }
 
 const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
@@ -75,7 +77,17 @@ const deleteHistorique = async (id:number) => {
       .number()
       .typeError('Le montant doit être un nombre')
       .required('Le montant est requis')
-      .min(0, 'Le montant ne peut pas être négatif')
+      .min(0, 'Le montant ne peut pas être négatif'),
+    kermesse:yup
+      .number()
+      .typeError('Le montant doit être un nombre')
+      .required('Le montant est requis')
+      .min(0, 'Le montant ne peut pas être négatif'),
+    droit:yup
+      .number()
+      .typeError('Le montant doit être un nombre')
+      .required('Le montant est requis')
+      .min(0, 'Le montant ne peut pas être négatif'),
   })
 
   const {
@@ -93,7 +105,9 @@ const deleteHistorique = async (id:number) => {
     const donneAlefa = {
       nom_classe: data.nom_classe,
       ac_id: data.ac_id,
-      ecolage: data.ecolage
+      ecolage: data.ecolage,
+      droit:data.droit,
+      kermesse:data.kermesse,
     }
 
     setIsLoading((true))
@@ -176,6 +190,42 @@ const deleteHistorique = async (id:number) => {
               />
               {errors.ecolage && (
                 <p className="text-sm text-red-400 mt-1">{errors.ecolage.message}</p>
+              )}
+            </div>
+
+
+            {/* droit  */}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Droit scolaire (ex: 50000 Ar)"
+                {...register('droit')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.droit
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.droit && (
+                <p className="text-sm text-red-400 mt-1">{errors.droit.message}</p>
+              )}
+            </div>
+
+
+            {/* Kermesse  */}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Kermesse scolaire (ex: 50000 Ar)"
+                {...register('kermesse')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.kermesse
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.kermesse && (
+                <p className="text-sm text-red-400 mt-1">{errors.kermesse.message}</p>
               )}
             </div>
 
