@@ -11,7 +11,8 @@ import { MdMeetingRoom } from 'react-icons/md'
 import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
 import { FaUserTie } from 'react-icons/fa'
 import { HiOutlineClipboardList } from 'react-icons/hi'
-import AddEmployeemodal from '@renderer/components/modalsform/AddEmployeemodal'
+import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
+import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -27,8 +28,8 @@ function Parameters(): JSX.Element {
     { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
   ]
  const buttonsForParamsemployers = [
-   { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AddEmployeemodal' },
-   { icon: <HiOutlineClipboardList   size={28} />, label: 'Ajouter une fonction', modalName: 'AddRolemodal' }
+   { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
+   { icon: <HiOutlineClipboardList   size={28} />, label: 'Ajouter une fonction', modalName: 'Addfonctionemployer' }
  ]
 
 
@@ -149,8 +150,9 @@ function Parameters(): JSX.Element {
       )}
       {modal.registeremploye && <Register closemodal={() => closModal('registeremploye')} />}
       {modal.Addsallemodal && <Addsallemodal closemodal={() => closModal('Addsallemodal')} />}
-      {modal.AddEmployeemodal && (
-        <AddEmployeemodal closemodal={() => closModal('AddEmployeemodal')} mode="ajoutemployer" />
+      {modal.Addfonctionemployer && <Addfonctionemployer closemodal={() => closModal('Addfonctionemployer')} />}
+      {modal.AdUpEmployeemodal && (
+        <AdUpEmployeemodal closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer" />
       )}
     </div>
   )

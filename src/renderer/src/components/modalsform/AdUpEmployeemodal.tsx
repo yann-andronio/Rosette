@@ -8,7 +8,6 @@ import { salle } from '@renderer/data/Filterselectiondata'
 
 const fonctionsDisponibles = ['Professeur', 'Surveillant', 'Gardien', 'Administratif']
 const matieresDisponibles = ['Math', 'Physique', 'Chimie', 'Français', 'Anglais', 'Histoire']
-const sallesDisponibles = ['101', '102', '103', '104', '105', '106']
 
 type EmployeeModalProps = {
   closemodal: () => void
@@ -19,6 +18,11 @@ const schema = yup.object().shape({
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
   sexe: yup.string().required('Sexe requis'),
+  adresse: yup.string().required('Adresse requise'),
+  telephone: yup
+    .string()
+    .required('Téléphone requis')
+    .matches(/^[0-9+\s-]+$/, 'Numéro invalide'),
   fonction: yup.string().required('Fonction requise'),
   salaire: yup
     .number()
@@ -33,7 +37,7 @@ const schema = yup.object().shape({
   )
 })
 
-const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) => {
+const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) => {
   const {
     register,
     handleSubmit,
@@ -62,7 +66,9 @@ const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =>
   }
 
   const addMatiere = () => {
-    setValue('matieresSalles', [...watchMatieresSalles, { matiere: '', salle: '' }], {shouldValidate: true})
+    setValue('matieresSalles', [...watchMatieresSalles, { matiere: '', salle: '' }], {
+      shouldValidate: true
+    })
     setErrorMatiere('')
   }
 
@@ -80,20 +86,6 @@ const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =>
       return
     }
     console.log('Données soumises :', data)
-    // const formdata = new FormData()
-    // formdata.append('image', image)
-    // for (const key in data) {
-    //   formdata.append(key, data[key])
-    // }
-    // console.log(Image)
-
-    // if (mode === 'ajoutemployer') {
-    //   console.log('Ajouter étudiant', data)
-    //   // req axio
-    // } else {
-    //   console.log('Modifier étudiant', data)
-    //   // req axios
-    // }
     closemodal()
   }
 
@@ -153,48 +145,58 @@ const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =>
                 Informations générales
               </legend>
 
-              {['nom', 'prenom', 'sexe', 'fonction', 'salaire'].map((field) => (
-                <div className="mb-5" key={field}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {field.charAt(0).toUpperCase() + field.slice(1)} *
-                  </label>
-                  {field === 'sexe' || field === 'fonction' ? (
-                    <select
-                      {...register(field as any)}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors[field as keyof typeof errors] ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}
-                    >
-                      <option value="">{field === 'sexe' ? 'Sélectionnez' : 'Sélectionnez'}</option>
-                      {field === 'sexe' ? (
-                        <>
-                          <option value="Homme">Homme</option>
-                          <option value="Femme">Femme</option>
-                        </>
-                      ) : (
-                        fonctionsDisponibles.map((f) => (
-                          <option key={f} value={f}>
-                            {f}
-                          </option>
-                        ))
-                      )}
-                    </select>
-                  ) : (
-                    <input
-                      type={field === 'salaire' ? 'number' : 'text'}
-                      {...register(field as any)}
-                      placeholder={`Entrez le ${field}`}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors[field as keyof typeof errors] ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}
-                    />
-                  )}
-                  {errors[field as keyof typeof errors] && (
-                    <p className="text-red-500 text-xs mt-1 italic">
-                      {errors[field as keyof typeof errors]?.message?.toString()}
-                    </p>
-                  )}
-                </div>
-              ))}
+              {['nom', 'prenom', 'sexe', 'adresse', 'telephone', 'fonction', 'salaire'].map(
+                (field) => (
+                  <div className="mb-5" key={field}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {field.charAt(0).toUpperCase() + field.slice(1)} *
+                    </label>
+                    {field === 'sexe' || field === 'fonction' ? (
+                      <select
+                        {...register(field as any)}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errors[field as keyof typeof errors]
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
+                      >
+                        <option value="">Sélectionnez</option>
+                        {field === 'sexe' ? (
+                          <>
+                            <option value="Homme">Homme</option>
+                            <option value="Femme">Femme</option>
+                          </>
+                        ) : (
+                          fonctionsDisponibles.map((f) => (
+                            <option key={f} value={f}>
+                              {f}
+                            </option>
+                          ))
+                        )}
+                      </select>
+                    ) : (
+                      <input
+                        type={field === 'salaire' ? 'number' : 'text'}
+                        {...register(field as any)}
+                        placeholder={`Entrez le ${field}`}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errors[field as keyof typeof errors]
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
+                      />
+                    )}
+                    {errors[field as keyof typeof errors] && (
+                      <p className="text-red-500 text-xs mt-1 italic">
+                        {errors[field as keyof typeof errors]?.message?.toString()}
+                      </p>
+                    )}
+                  </div>
+                )
+              )}
             </fieldset>
 
-            {/* Matières & salles uniquement raha  Professeur nle fonction */}
+            {/* Matières & salles uniquement raha professeur nle fonction */}
             <AnimatePresence>
               {watchFonction === 'Professeur' && (
                 <motion.fieldset
@@ -215,11 +217,15 @@ const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =>
                       exit={{ opacity: 0, x: -10 }}
                       className="flex flex-wrap items-start gap-3 mb-4"
                     >
-                      {/* select option hoan  Matière */}
+                      {/* Matière */}
                       <div className="flex-1 min-w-[150px] relative">
                         <select
                           {...register(`matieresSalles.${index}.matiere` as const)}
-                          className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${errors.matieresSalles?.[index]?.matiere ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300'}`}
+                          className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
+                            errors.matieresSalles?.[index]?.matiere
+                              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                              : 'border-gray-300'
+                          }`}
                         >
                           <option value="">Sélectionnez matière</option>
                           {matieresDisponibles.map((m) => (
@@ -228,31 +234,25 @@ const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =>
                             </option>
                           ))}
                         </select>
-                        {errors.matieresSalles?.[index]?.matiere && (
-                          <p className="text-red-500 text-xs mt-1 italic">
-                            {errors.matieresSalles[index]?.matiere?.message}
-                          </p>
-                        )}
                       </div>
 
-                      {/* select option hoan salle   */}
+                      {/* Salle */}
                       <div className="flex-1 min-w-[150px] relative">
                         <select
                           {...register(`matieresSalles.${index}.salle` as const)}
-                          className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${errors.matieresSalles?.[index]?.salle ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300'}`}
+                          className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
+                            errors.matieresSalles?.[index]?.salle
+                              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                              : 'border-gray-300'
+                          }`}
                         >
                           <option value="">Sélectionnez salle</option>
-                          {salle.map((item , index ) => (
-                            <option key={index} value={item.name}>
+                          {salle.map((item, i) => (
+                            <option key={i} value={item.name}>
                               {item.name}
                             </option>
                           ))}
                         </select>
-                        {errors.matieresSalles?.[index]?.salle && (
-                          <p className="text-red-500 text-xs mt-1 italic">
-                            {errors.matieresSalles[index]?.salle?.message}
-                          </p>
-                        )}
                       </div>
 
                       <button
@@ -294,4 +294,4 @@ const AddEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =>
   )
 }
 
-export default AddEmployeemodal
+export default AdUpEmployeemodal

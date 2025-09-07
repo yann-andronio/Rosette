@@ -47,7 +47,7 @@ export type StudentsType = {
   historiqueStatus?: StatusStudentsType[]
   statusecolage?: string | null
   moisEcolage?: string | null
-  ecolage?: EcolageType[] 
+  ecolage?: EcolageType[]
 }
 
 export type FilterOptions = {
@@ -64,3 +64,24 @@ export type MonthType = {
   id: number
   name: string
 }
+
+// type hoan employerr
+
+export type EmployerType = {
+  id: number
+  photo?: string
+  nom: string
+  prenom: string
+  email: string
+  tel: number
+  adresse: string
+  sexe: 'Homme' | 'Femme'
+  fonction: string
+  salaire: number
+  statut: 'Actif' | 'En congé' | 'Suspendu'
+  matieresSalles?: {
+    matiere: string
+    salle: string
+  }[]
+}
+
