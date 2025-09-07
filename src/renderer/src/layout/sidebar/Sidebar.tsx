@@ -60,7 +60,7 @@ const Sidebar = () => {
       subMenus: [
         {
           name: `information d'employer`,
-          path: '/sales/products',
+          path: '/home/EmployeInfo',
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]
