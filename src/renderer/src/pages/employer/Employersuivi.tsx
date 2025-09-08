@@ -8,9 +8,10 @@ import { useFilterData } from '@renderer/hooks/useFilterData'
 import { EmployerType } from '@renderer/types/Alltypes'
 import { EmployersData } from '@renderer/data/EmployersData'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
-import EmployerCardInfo from '../../components/card/EmployerCardInfo'
+import EmployerCardSuivi from '@renderer/components/card/EmployerCardSuivi'
+import Addsuiviemployeemodal from '@renderer/components/modalsform/Addsuiviemployeemodal'
 
-function Employerinfo(): JSX.Element {
+function Employersuivi(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searchEmployes, setSearchEmployes] = useState('')
   const [selectedEmployer, setSelectedEmployer] = useState<EmployerType | null>(
@@ -48,11 +49,10 @@ function Employerinfo(): JSX.Element {
               <div className="flex-1 text-start ml-12">Nom</div>
               <div className="flex-1 text-start">Prénom</div>
               <div className="flex-1 text-start">Fonction</div>
-              {/* <div className="flex-1 text-start">Téléphone</div> */}
               <div className="flex-1 text-start">Actions</div>
             </div>
 
-            <div className="space-y-2 h-[50vh] overflow-y-auto">
+            <div className="space-y-2 h-[52.5vh] overflow-y-auto">
               {filteredData.length === 0 ? (
                 <div className="text-center mt-10 text-gray-600">Aucun employé trouvé</div>
               ) : (
@@ -75,11 +75,10 @@ function Employerinfo(): JSX.Element {
                     </div>
                     <div className="flex-1 text-start text-gray-700">{employer.prenom}</div>
                     <div className="flex-1 text-start text-gray-700">{employer.fonction}</div>
-                    {/* <div className="flex-1 text-start text-gray-700">{employer.tel}</div> */}
 
                     <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
                       <FaEdit
-                        onClick={() => openModal('AdUpEmployeemodal')}
+                        onClick={() => openModal('Addsuiviemployeemodal')}
                         className="hover:text-black cursor-pointer transition"
                       />
                       <FaTrash className="hover:text-red-600 cursor-pointer transition" />
@@ -93,7 +92,7 @@ function Employerinfo(): JSX.Element {
           {/* --- Card mpiasa  --- */}
           {selectedEmployer && (
             <div className="w-full lg:w-[35%]">
-              <EmployerCardInfo employer={selectedEmployer} />
+              <EmployerCardSuivi employer={selectedEmployer} />
             </div>
           )}
         </div>
@@ -128,10 +127,10 @@ function Employerinfo(): JSX.Element {
             </span>
           </button>
 
-          {modal.AdUpEmployeemodal && (
-            <AdUpEmployeemodal
-              closemodal={() => closModal('AdUpEmployeemodal')}
-              mode="modifemplyer"
+          {modal.Addsuiviemployeemodal && selectedEmployer && (
+            <Addsuiviemployeemodal
+              employer={selectedEmployer}
+              closemodal={() => closModal('Addsuiviemployeemodal')}
             />
           )}
         </div>
@@ -140,4 +139,4 @@ function Employerinfo(): JSX.Element {
   )
 }
 
-export default Employerinfo
+export default Employersuivi

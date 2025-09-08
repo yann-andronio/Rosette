@@ -62,6 +62,11 @@ const Sidebar = () => {
           name: `information d'employés`,
           path: '/home/EmployeInfo',
           iconsubmenu: <HiUserCircle size={25} />
+        },
+        {
+          name: `Suivie d'employés`,
+          path: '/home/Employersuivi',
+          iconsubmenu: <HiUserCircle size={25} />
         }
       ]
     }

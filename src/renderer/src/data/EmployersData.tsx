@@ -1,4 +1,4 @@
-import { EmployerType } from "@renderer/types/Alltypes"
+import { EmployerType } from '@renderer/types/Alltypes'
 
 export const EmployersData: EmployerType[] = [
   {
@@ -10,11 +10,20 @@ export const EmployersData: EmployerType[] = [
     adresse: 'Lot II B 123, Antananarivo',
     sexe: 'Homme',
     fonction: 'Professeur',
-    salaire: 3500,
+    salairebase: 3500,
     statut: 'Actif',
+    dateEmbauche: '2020-02-15',
     matieresSalles: [
       { matiere: 'Mathématiques', salle: 'Salle A1' },
       { matiere: 'Physique', salle: 'Salle B2' }
+    ],
+    conges: [
+      { dateDebut: new Date('2025-01-10'), dateFin: new Date('2025-01-15'), motif: 'Congé annuel' },
+      { dateDebut: new Date('2025-06-01'), dateFin: new Date('2025-06-05'), motif: 'Formation' }
+    ],
+    salaires: [
+      { mois: 1, montant: 3500, typePaiement: 'Virement', motif: 'Salaire de base' },
+      { mois: 2, montant: 3500, typePaiement: 'Virement', motif: 'Salaire de base' }
     ]
   },
   {
@@ -26,9 +35,17 @@ export const EmployersData: EmployerType[] = [
     adresse: 'Lot IV D 45, Antananarivo',
     sexe: 'Femme',
     fonction: 'Secrétaire',
-    salaire: 2500,
+    salairebase: 2500,
     statut: 'Actif',
-    matieresSalles: []
+    dateEmbauche: '2019-05-20',
+    matieresSalles: [],
+    conges: [
+      { dateDebut: new Date('2025-03-15'), dateFin: new Date('2025-03-20'), motif: 'Congé annuel' }
+    ],
+    salaires: [
+      { mois: 1, montant: 2500, typePaiement: 'Chèque', motif: 'Salaire de base' },
+      { mois: 2, montant: 2500, typePaiement: 'Chèque', motif: 'Salaire de base' }
+    ]
   },
   {
     id: 3,
@@ -39,9 +56,17 @@ export const EmployersData: EmployerType[] = [
     adresse: 'Lot IIF 78, Antsirabe',
     sexe: 'Homme',
     fonction: 'Gardien',
-    salaire: 2200,
+    salairebase: 2200,
     statut: 'En congé',
-    matieresSalles: []
+    dateEmbauche: '2021-09-10',
+    matieresSalles: [],
+    conges: [
+      { dateDebut: new Date('2025-08-01'), dateFin: new Date('2025-08-10'), motif: 'Congé maladie' }
+    ],
+    salaires: [
+      { mois: 1, montant: 2200, typePaiement: 'Espèce', motif: 'Salaire de base' },
+      { mois: 2, montant: 2200, typePaiement: 'Espèce', motif: 'Salaire de base' }
+    ]
   },
   {
     id: 4,
@@ -52,21 +77,14 @@ export const EmployersData: EmployerType[] = [
     adresse: 'Lot III H 56, Fianarantsoa',
     sexe: 'Femme',
     fonction: 'Professeur',
-    salaire: 3300,
+    salairebase: 3300,
     statut: 'Actif',
-    matieresSalles: [{ matiere: 'Français', salle: 'Salle C1' }]
-  },
-  {
-    id: 5,
-    nom: 'micka',
-    prenom: 'belastik',
-    email: 'belastik.raherimanana@email.com',
-    tel: 336612345,
-    adresse: 'Lot III H 56, tana',
-    sexe: 'Femme',
-    fonction: 'Gardien',
-    salaire: 3300,
-    statut: 'Actif',
-    matieresSalles: []
+    dateEmbauche: '2018-11-05',
+    matieresSalles: [{ matiere: 'Français', salle: 'Salle C1' }],
+    conges: [],
+    salaires: [
+      { mois: 1, montant: 3300, typePaiement: 'Virement', motif: 'Salaire de base' },
+      { mois: 2, montant: 3300, typePaiement: 'Virement', motif: 'Salaire de base' }
+    ]
   }
 ]

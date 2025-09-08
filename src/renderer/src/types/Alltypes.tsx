@@ -1,3 +1,5 @@
+import { CongeType, SalaireEmploye } from "@renderer/components/modalsform/Addsuiviemployeemodal"
+
 export type EcolageType = {
   mois: string
   statusecolage: string | null
@@ -67,21 +69,29 @@ export type MonthType = {
 
 // type hoan employerr
 
+// Définition du type pour le salaire d'un employé
+
+
+// Définition du type principal pour un employé
 export type EmployerType = {
-  id: number
-  photo?: string
-  nom: string
-  prenom: string
-  email: string
-  tel: number
-  adresse: string
-  sexe: 'Homme' | 'Femme'
-  fonction: string
-  salaire: number
-  statut: 'Actif' | 'En congé' | 'Suspendu'
+  id: number;
+  photo?: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  tel: number;
+  adresse: string;
+  sexe: 'Homme' | 'Femme';
+  fonction: string;
+  salairebase?: number;
+  statut: 'Actif' | 'En congé' | 'Suspendu';
   matieresSalles?: {
-    matiere: string
-    salle: string
-  }[]
-}
+    matiere: string;
+    salle: string;
+  }[];
+  dateEmbauche: string;
+  conges?: CongeType[];
+  salaires?: SalaireEmploye[];
+};
+
 

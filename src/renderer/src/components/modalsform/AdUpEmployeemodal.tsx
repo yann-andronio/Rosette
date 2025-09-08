@@ -17,6 +17,7 @@ type EmployeeModalProps = {
 const schema = yup.object().shape({
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
+  email: yup.string().email('Email invalide').required('Email requis'),
   sexe: yup.string().required('Sexe requis'),
   adresse: yup.string().required('Adresse requise'),
   telephone: yup
@@ -145,7 +146,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =
                 Informations générales
               </legend>
 
-              {['nom', 'prenom', 'sexe', 'adresse', 'telephone', 'fonction', 'salaire'].map(
+              {['nom', 'prenom', 'email' , 'sexe', 'adresse', 'telephone', 'fonction', 'salaire'].map(
                 (field) => (
                   <div className="mb-5" key={field}>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

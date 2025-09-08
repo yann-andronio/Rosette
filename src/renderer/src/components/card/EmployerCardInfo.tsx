@@ -13,32 +13,28 @@ interface EmployerCardProps {
   employer: EmployerType
 }
 
-const EmployerCard: FC<EmployerCardProps> = ({ employer }) => {
+const EmployerCardInfo: FC<EmployerCardProps> = ({ employer }) => {
   const getGenderIcon = (sexe: string) => {
     if (sexe === 'Homme') return <BsGenderMale className="text-lg text-[#895256]" />
     if (sexe === 'Femme') return <BsGenderFemale className="text-lg text-[#895256]" />
     return null
   }
 
- const getFunctionIcon = (fonction: string) => {
-   switch (fonction) {
-     case 'Professeur':
-       return <FaChalkboardTeacher className="text-lg text-[#895256]" />
-     default:
-       return <FaBuilding className="text-lg text-[#895256]" />
-   }
- }
-
+  const getFunctionIcon = (fonction: string) => {
+    switch (fonction) {
+      case 'Professeur':
+        return <FaChalkboardTeacher className="text-lg text-[#895256]" />
+      default:
+        return <FaBuilding className="text-lg text-[#895256]" />
+    }
+  }
   return (
     <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300 transform-gpu border border-gray-100 cursor-pointer max-w-md">
-     
+      {/* Header */}
       <div className="flex items-center gap-5 pb-5 border-b border-gray-200">
-        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center ">
+        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
           {employer.photo ? (
-            <img
-              src={employer.photo}
-              className="w-full h-full object-cover"
-            />
+            <img src={employer.photo} className="w-full h-full object-cover" />
           ) : (
             <FaUserCircle className="text-5xl text-gray-400" />
           )}
@@ -55,8 +51,8 @@ const EmployerCard: FC<EmployerCardProps> = ({ employer }) => {
         </div>
       </div>
 
-     
-      <div className="mt-5 space-y-3 text-sm text-gray-700">
+      {/* Contenu scrollable */}
+      <div className="mt-5 space-y-3 text-sm text-gray-700 overflow-y-auto pr-2 max-h-[42vh]">
         <div className="flex items-center gap-3">
           <MdOutlineMail className="text-lg text-[#895256] flex-shrink-0" />
           <span className="font-semibold">Email:</span> {employer.email}
@@ -69,41 +65,40 @@ const EmployerCard: FC<EmployerCardProps> = ({ employer }) => {
           <MdOutlineLocationOn className="text-lg text-[#895256] flex-shrink-0" />
           <span className="font-semibold">Adresse:</span> {employer.adresse}
         </div>
-      </div>
 
-      <div className="mt-5 space-y-3 pt-5 border-t border-gray-200 text-sm text-gray-700">
-        <div className="flex items-center gap-3">
-          <MdOutlineAttachMoney className="text-lg text-[#895256] flex-shrink-0" />
-          <span className="font-semibold">Salaire:</span> {employer.salaire} Ar
-        </div>
-        <div className="flex items-center gap-3">
-          {getGenderIcon(employer.sexe)}
-          <span className="font-semibold">Sexe:</span> {employer.sexe}
-        </div>
-      </div>
-
-      
-      {employer.fonction === 'Professeur' &&
-        employer.matieresSalles &&
-        employer.matieresSalles.length > 0 && (
-          <div className="mt-5 pt-5 border-t border-gray-200 text-sm">
-            <h4 className="flex items-center gap-2 font-bold text-gray-800 mb-2">
-              <FaChalkboardTeacher className="text-xl text-[#895256] flex-shrink-0" /> Matières &
-              Salles
-            </h4>
-            <ul className="space-y-2 text-gray-700">
-              {employer.matieresSalles.map((ms, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
-                  <FaMapMarkerAlt className="text-sm text-[#895256] flex-shrink-0" />
-                  <span className="font-medium">{ms.matiere}</span>
-                  <span className="text-gray-500">en salle {ms.salle}</span>
-                </li>
-              ))}
-            </ul>
+        <div className="pt-5 border-t border-gray-200">
+          <div className="flex items-center gap-3">
+            <MdOutlineAttachMoney className="text-lg text-[#895256] flex-shrink-0" />
+            <span className="font-semibold">Salaire:</span> {employer.salaire} Ar
           </div>
-        )}
+          <div className="flex items-center gap-3 mt-3">
+            {getGenderIcon(employer.sexe)}
+            <span className="font-semibold">Sexe:</span> {employer.sexe}
+          </div>
+        </div>
+
+        {employer.fonction === 'Professeur' &&
+          employer.matieresSalles &&
+          employer.matieresSalles.length > 0 && (
+            <div className="mt-5 pt-5 border-t border-gray-200 text-sm">
+              <h4 className="flex items-center gap-2 font-bold text-gray-800 mb-2">
+                <FaChalkboardTeacher className="text-xl text-[#895256] flex-shrink-0" /> Matières &
+                Salles
+              </h4>
+              <ul className="space-y-2 text-gray-700">
+                {employer.matieresSalles.map((ms, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm">
+                    <FaMapMarkerAlt className="text-sm text-[#895256] flex-shrink-0" />
+                    <span className="font-medium">{ms.matiere}</span>
+                    <span className="text-gray-500">en salle {ms.salle}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+      </div>
     </div>
   )
 }
 
-export default EmployerCard
+export default EmployerCardInfo
