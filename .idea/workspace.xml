@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addniveaumodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addniveaumodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +79,11 @@
       <workItem from="1756213470903" duration="736000" />
       <workItem from="1756236637715" duration="1857000" />
       <workItem from="1756813285124" duration="841000" />
+      <workItem from="1756832122328" duration="4126000" />
+      <workItem from="1757180285472" duration="4090000" />
+      <workItem from="1757239006127" duration="1203000" />
+      <workItem from="1757264175893" duration="1261000" />
+      <workItem from="1757341134808" duration="7007000" />
     </task>
     <servers />
   </component>

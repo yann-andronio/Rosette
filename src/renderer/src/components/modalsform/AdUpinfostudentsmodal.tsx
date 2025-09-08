@@ -2,10 +2,13 @@ import { FiEdit, FiPlus, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { ThreeDots } from 'react-loader-spinner'
 
-
-import { ChangeEvent, useState } from 'react'
-import { niveau, salle } from '@renderer/data/Filterselectiondata' // adapte le chemin si besoin
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { niveau } from '@renderer/data/Filterselectiondata'
+import { axiosRequest } from '@renderer/config/helpers'
+import { Simulate } from "react-dom/test-utils";
+import reset = Simulate.reset; // adapte le chemin si besoin
 
 
 
@@ -17,36 +20,63 @@ type infostudentsProps = {
 const schema = yup.object().shape({
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
-  sexe: yup.string().required('Sexe requis'),
-  date_naissance: yup.string().required('Date de naissance requise'),
-  lieu_naissance: yup.string().required('Lieu de naissance requis'),
+  sexe: yup.number().required('Sexe requis'),
+  dateNaissance: yup.string().required('Date de naissance requise'),
+  lieuNaissance: yup.string().required('Lieu de naissance requis'),
   adresse: yup.string().required('Adresse requise'),
-  niveau: yup.string().required('Veuillez sélectionner un niveau'),
-  salle: yup.string().required('Veuillez sélectionner une salle'),
-  nom_pere: yup.string(),
-  prenom_pere: yup.string(),
-  tel_pere: yup.string(),
-  nom_mere: yup.string(),
-  prenom_mere: yup.string(),
-  tel_mere: yup.string(),
-  nom_tuteur: yup.string(),
-  prenom_tuteur: yup.string(),
-  tel_tuteur: yup.string(),
-  matricule: yup.string(),
-  ecole_prec: yup.string(),
-  enfant_prof: yup.string().required("Veuillez indiquer si l'étudiant est enfant de professeur")
+  cl_id: yup.number().required('Veuillez sélectionner un niveau'),
+  sa_id: yup.number().required('Veuillez sélectionner une salle'),
+  nomPere: yup.string(),
+  prenomPere: yup.string(),
+  telephonePere: yup.string(),
+  nomMere: yup.string(),
+  prenomMere: yup.string(),
+  telephoneMere: yup.string(),
+  nomTuteur: yup.string(),
+  prenomTuteur: yup.string(),
+  telephoneTuteur: yup.string(),
+  // matricule: yup.string(),
+  ecole: yup.string(),
+  enfantProf: yup.number().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
 
 const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm({ resolver: yupResolver(schema) })
 
   // const refs = useRef<string | Blob>('')
   const [imagePreview, setImagePreview] = useState<string | undefined>(undefined)
   const [image, setImage] = useState<Blob | string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [matricule, setMatricule] = useState<string>('')
+  const [reload, setReload] = useState<boolean>(false)
+
+  const [salles, setSalles] = useState<{nom_salle:string, id:number}[]>([])
+  const [niveau, setNiveau] = useState<{nom_classe:string, id:number}[]>([])
+
+const getSalles = async () => {
+    try{
+      await axiosRequest('GET', 'salle-list', null, 'token')
+        .then(({data}) => setSalles(data))
+        .catch(error => console.log(error))
+    }catch(error) {
+      console.log('Le serveur ne repond pas')
+    }
+}
+
+  const getClasses = async () => {
+    try{
+      await axiosRequest('GET', 'classe-list', null, 'token')
+        .then(({data}) => setNiveau(data))
+        .catch(error => console.log(error))
+    }catch(error) {
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
   const change = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files && e.target?.files[0]) {
@@ -62,26 +92,58 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
     }
   }
 
-  const onSubmit = (data: any) => {
+  const onSubmit =async (data: any) => {
     console.log(data)
     const formdata = new FormData()
     formdata.append('image', image)
     for (const key in data) {
       formdata.append(key, data[key])
     }
-    console.log(Image)
+    formdata.append('photo', image)
+    formdata.append('matricule', matricule)
+    console.log(image)
 
     if (mode === 'ajoutstudents') {
-      console.log('Ajouter étudiant', data)
+      setIsLoading(true)
+      try {
+        await axiosRequest('POST', 'etudiant-creation', formdata, 'token')
+          .then(({data}) => console.log(data.message))
+          .then(() => reset())
+          .then(() => setIsLoading(false))
+          .then(() => setReload(!reload))
+          .catch(error => console.log(error.response?.data?.message))
+          .finally(() => setIsLoading(false))
+      }catch(error) {
+         console.log('Le serveur ne repond pas')
+      }
+
+
       // req axio
     } else {
       console.log('Modifier étudiant', data)
       // req axios
     }
-    closemodal()
+    // closemodal()
+
+
   }
 
 
+  const getMatricule = async () => {
+    try{
+      await axiosRequest('GET', 'etudiant-matricule', null, 'token')
+        .then(({data}) => setMatricule(data.matricule))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  useEffect(() => {
+    getMatricule()
+    getSalles()
+    getClasses()
+  }, [reload])
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -125,13 +187,14 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
         {/* section formul droite */}
         <div className="w-1/2 p-10 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-8">
-            {mode === 'modifstudents' ? (
+        {mode === 'modifstudents' ? (
               <h2 className="text-3xl font-bold text-[#895256] tracking-tight">
                 Modifier cet étudiant{' '}
               </h2>
             ) : (
               <h2 className="text-3xl font-bold text-[#895256] tracking-tight">Ajouter Étudiant</h2>
             )}
+
 
             <button
               onClick={closemodal}
@@ -202,8 +265,8 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                   }`}
                 >
                   <option value="">Sélectionnez</option>
-                  <option value="Homme">Homme</option>
-                  <option value="Femme">Femme</option>
+                  <option value={1}>Homme</option>
+                  <option value={0}>Femme</option>
                 </select>
                 {errors.sexe && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
@@ -218,16 +281,16 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="date"
-                  {...register('date_naissance')}
+                  {...register('dateNaissance')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.date_naissance
+                    errors.dateNaissance
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                 />
-                {errors.date_naissance && (
+                {errors.dateNaissance && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.date_naissance.message}
+                    {errors.dateNaissance.message}
                   </p>
                 )}
               </div>
@@ -238,17 +301,17 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('lieu_naissance')}
+                  {...register('lieuNaissance')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.lieu_naissance
+                    errors.lieuNaissance
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Entrez le lieu de naissance"
                 />
-                {errors.lieu_naissance && (
+                {errors.lieuNaissance && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.lieu_naissance.message}
+                    {errors.lieuNaissance.message}
                   </p>
                 )}
               </div>
@@ -275,23 +338,23 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
               <div className="mb-5">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Niveau *</label>
                 <select
-                  {...register('niveau')}
+                  {...register('cl_id')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.niveau
+                    errors.cl_id
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                 >
                   <option value="">Sélectionnez un niveau</option>
                   {niveau.map((niv) => (
-                    <option key={niv.id} value={niv.name}>
-                      {niv.name}
+                    <option key={niv.id} value={niv.id}>
+                      {niv.nom_classe}
                     </option>
                   ))}
                 </select>
-                {errors.niveau && (
+                {errors.cl_id && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.niveau.message}
+                    {errors.cl_id.message}
                   </p>
                 )}
               </div>
@@ -299,23 +362,23 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
               <div className="mb-5">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Salle *</label>
                 <select
-                  {...register('salle')}
+                  {...register('sa_id')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.salle
+                    errors.sa_id
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                 >
                   <option value="">Sélectionnez une salle</option>
-                  {salle.map((sal) => (
-                    <option key={sal.id} value={sal.name}>
-                      {sal.name}
+                  {salles.map((sal) => (
+                    <option key={sal.id} value={sal.id}>
+                      {sal.nom_salle}
                     </option>
                   ))}
                 </select>
-                {errors.salle && (
+                {errors.sa_id && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.salle.message}
+                    {errors.sa_id.message}
                   </p>
                 )}
               </div>
@@ -331,7 +394,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nom du père</label>
                 <input
                   type="text"
-                  {...register('nom_pere')}
+                  {...register('nomPere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Nom du père"
                 />
@@ -343,7 +406,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('prenom_pere')}
+                  {...register('prenomPere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Prénom du père"
                 />
@@ -355,7 +418,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="tel"
-                  {...register('tel_pere')}
+                  {...register('telephonePere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Téléphone du père"
                 />
@@ -367,7 +430,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('nom_mere')}
+                  {...register('nomMere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Nom de la mère"
                 />
@@ -379,7 +442,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('prenom_mere')}
+                  {...register('prenomMere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Prénom de la mère"
                 />
@@ -391,7 +454,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="tel"
-                  {...register('tel_mere')}
+                  {...register('telephoneMere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Téléphone de la mère"
                 />
@@ -409,7 +472,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('nom_tuteur')}
+                  {...register('nomTuteur')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Nom du tuteur"
                 />
@@ -421,7 +484,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('prenom_tuteur')}
+                  {...register('prenomTuteur')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Prénom du tuteur"
                 />
@@ -433,7 +496,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="tel"
-                  {...register('tel_tuteur')}
+                  {...register('telephoneTuteur')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Téléphone du tuteur"
                 />
@@ -450,9 +513,10 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 <label className="block text-sm font-medium text-gray-700 mb-2">Matricule</label>
                 <input
                   type="text"
-                  {...register('matricule')}
+                  disabled={true}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Matricule"
+                  defaultValue={matricule}
                 />
               </div>
 
@@ -462,7 +526,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 </label>
                 <input
                   type="text"
-                  {...register('ecole_prec')}
+                  {...register('ecole')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="École précédente"
                 />
@@ -476,8 +540,8 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                   <label className="flex items-center space-x-2">
                     <input
                       type="radio"
-                      value="oui"
-                      {...register('enfant_prof')}
+                      value={1}
+                      {...register('enfantProf')}
                       className="accent-[#895256] w-5 h-5"
                     />
                     <span className="text-gray-700 text-sm font-medium">Oui</span>
@@ -485,16 +549,16 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                   <label className="flex items-center space-x-2">
                     <input
                       type="radio"
-                      value="non"
-                      {...register('enfant_prof')}
+                      value={0}
+                      {...register('enfantProf')}
                       className="accent-[#895256] w-5 h-5"
                     />
                     <span className="text-gray-700 text-sm font-medium">Non</span>
                   </label>
                 </div>
-                {errors.enfant_prof && (
+                {errors.enfantProf && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.enfant_prof.message}
+                    {errors.enfantProf.message}
                   </p>
                 )}
               </div>
@@ -507,8 +571,18 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }
                 type="submit"
                 className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
               >
-                {mode === 'ajoutstudents' ? <FiPlus size={22} /> : <FiEdit size={22} />}
-                {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}
+                {isLoading? <ThreeDots
+                  visible={true}
+                  height="23"
+                  width="100"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />:<>          {mode === 'ajoutstudents' ? <FiPlus size={22} /> : <FiEdit size={22} />}
+                  {mode === 'ajoutstudents' ? 'Ajouter' : 'Modifier'}</>}
+
               </button>
             </div>
           </form>
