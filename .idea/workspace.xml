@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/utils/filterDataCombined.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/utils/filterDataCombined.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +86,8 @@
       <workItem from="1757264175893" duration="1261000" />
       <workItem from="1757341134808" duration="7327000" />
       <workItem from="1757369031058" duration="178000" />
-      <workItem from="1757407921847" duration="2359000" />
+      <workItem from="1757407921847" duration="4618000" />
+      <workItem from="1757414416922" duration="4714000" />
     </task>
     <servers />
   </component>
@@ -101,7 +104,26 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/KAN-58-ui-ux-creation-de-la-page-employeinfo" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="text">
+                    <value>
+                      <list>
+                        <option value="58" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>

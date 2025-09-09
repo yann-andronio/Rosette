@@ -36,7 +36,7 @@ function Studentsinfo(): JSX.Element {
   }, [selectedyear, selectedsalle, selectedSexe , selectedniveau])
 
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-   setter((prev) => (prev === current ? 'All' : current))
+    setter((prev) => (prev === current ? 'All' : current))
   }
 
   const handleSearcheleves = (dataeleve: string) => {
@@ -45,8 +45,8 @@ function Studentsinfo(): JSX.Element {
 
   // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
   const filteredData = filterDataCombined(Studentsdata, searcheleves, ['nom', 'prenom', 'salle'], selectedFilters)
- 
-  
+
+
 
   const { modal, openModal, closModal } = useMultiModals()
 
@@ -202,7 +202,7 @@ function Studentsinfo(): JSX.Element {
             </div>
           </div>
 
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-1.5">
             {filteredData.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (

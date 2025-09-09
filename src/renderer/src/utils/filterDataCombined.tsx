@@ -20,12 +20,12 @@ export function filterDataCombined<T extends { ecolage?: EcolageType[] }>(
     const matchStatus = !filters.statusecolage || filters.statusecolage === 'All' || item['statusecolage'] === filters.statusecolage
 
     // Filtrer selon le mois et le statut d'écolage
-   const matchMois = !filters.mois || filters.mois === 'All'? true: item.ecolage?.some((e) => {
-          if (e.mois !== filters.mois) return false
-          if (filters.statusecolage && e.statusecolage !== filters.statusecolage) return false
-          return true
-   })
-    
+    const matchMois = !filters.mois || filters.mois === 'All'? true: item.ecolage?.some((e) => {
+      if (e.mois !== filters.mois) return false
+      if (filters.statusecolage && e.statusecolage !== filters.statusecolage) return false
+      return true
+    })
+
     return ( searchMatch && matchYear && matchSalle && matchSexe && matchMention && matchNiveau && matchStatus && matchMois
     )
   })
