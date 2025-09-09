@@ -18,6 +18,8 @@ import Parameters from './pages/parameters/Parameters'
 import { UserContext } from '@renderer/context/UserContext'
 
 import Studentsecolage from './pages/students/studentsecolage/Studentsecolage'
+import Employerinfo from './pages/employer/Employerinfo'
+import Employersuivi from './pages/employer/Employersuivi'
 
 
 const route = createBrowserRouter([
@@ -54,6 +56,14 @@ const route = createBrowserRouter([
       {
         path: '/home/parametre',
         element: <Parameters />
+      },
+      {
+        path: '/home/EmployeInfo',
+        element: <Employerinfo />
+      },
+      {
+        path: '/home/Employersuivi',
+        element: <Employersuivi />
       }
     ]
   }

@@ -59,8 +59,13 @@ const Sidebar = () => {
       icon: <MdWorkOutline size={25} />,
       subMenus: [
         {
-          name: `information d'employer`,
-          path: '/sales/products',
+          name: `information d'employés`,
+          path: '/home/EmployeInfo',
+          iconsubmenu: <HiUserCircle size={25} />
+        },
+        {
+          name: `Suivie d'employés`,
+          path: '/home/Employersuivi',
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]

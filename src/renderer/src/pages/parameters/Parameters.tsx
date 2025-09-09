@@ -9,6 +9,10 @@ import Choosestatusmoyennemodalparams from '@renderer/components/modalsform/Choo
 import Register from '@renderer/auth/register/Register'
 import { MdMeetingRoom } from 'react-icons/md'
 import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
+import { FaUserTie } from 'react-icons/fa'
+import { HiOutlineClipboardList } from 'react-icons/hi'
+import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
+import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -23,6 +27,11 @@ function Parameters(): JSX.Element {
     { icon: <FiBookOpen size={28} />, label: `Réglage d'admission`, modalName: 'Choosestatusmoyennemodalparams' },
     { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
   ]
+ const buttonsForParamsemployers = [
+   { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
+   { icon: <HiOutlineClipboardList   size={28} />, label: 'Ajouter une fonction', modalName: 'Addfonctionemployer' }
+ ]
+
 
   const buttonsForParamsAdmin = [
     { icon: <FiUserCheck size={28} />, label: 'Ajouter un administrateur', modalName: 'registeremploye' },
@@ -102,6 +111,27 @@ function Parameters(): JSX.Element {
             </span>
           </button>
         </div>
+
+        {/* Section administrateurs */}
+        <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2 mt-12">
+          <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
+          Paramètres Employé
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {buttonsForParamsemployers.map((item, index) => (
+            <button
+              key={index}
+              onClick={handleOpenModal(item.modalName)}
+              className="bg-white border cursor-pointer border-[#e5e5e5] hover:scale-[1.03] transition-all duration-300 shadow-md rounded-2xl p-6 flex flex-col items-center gap-4 hover:shadow-xl hover:bg-[#f9f4f1] group"
+            >
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white shadow-md group-hover:rotate-12 transition-transform duration-300">
+                {item.icon}
+              </div>
+              <span className="text-lg text-[#333] font-semibold text-center">{item.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Modals */}
@@ -120,6 +150,10 @@ function Parameters(): JSX.Element {
       )}
       {modal.registeremploye && <Register closemodal={() => closModal('registeremploye')} />}
       {modal.Addsallemodal && <Addsallemodal closemodal={() => closModal('Addsallemodal')} />}
+      {modal.Addfonctionemployer && <Addfonctionemployer closemodal={() => closModal('Addfonctionemployer')} />}
+      {modal.AdUpEmployeemodal && (
+        <AdUpEmployeemodal closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer" />
+      )}
     </div>
   )
 }

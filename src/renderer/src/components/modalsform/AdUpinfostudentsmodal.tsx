@@ -4,11 +4,13 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ThreeDots } from 'react-loader-spinner'
 
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { niveau } from '@renderer/data/Filterselectiondata'
+
+import { ChangeEvent, useEffect,  useState } from 'react'
+
 import { axiosRequest } from '@renderer/config/helpers'
 import { Simulate } from "react-dom/test-utils";
 import reset = Simulate.reset; // adapte le chemin si besoin
+
 
 
 
@@ -147,7 +149,7 @@ const getSalles = async () => {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-      <div className="bg-white w-[75%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
+      <div className="bg-white w-[75%] h-[650px] rounded-2xl flex shadow-2xl overflow-hidden">
         {/* DESIGN gauche */}
         <div className="w-1/2 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
           <div className="flex flex-col items-center mb-10">

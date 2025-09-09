@@ -202,7 +202,7 @@ function Studentsinfo(): JSX.Element {
             </div>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
             {filteredData.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (

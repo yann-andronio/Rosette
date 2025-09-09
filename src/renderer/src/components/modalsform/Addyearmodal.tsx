@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
-import {ThreeDots} from "react-loader-spinner";
+import { ThreeDots } from 'react-loader-spinner'
 
 type YearProps = {
   closemodal: () => void
@@ -21,9 +21,9 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const [reload, setReload] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
 
-
-
-  const [historiques, setHistoriques] = useState<{ annee: string, id:number, mois: {mois:string}[] }[]>([])
+  const [historiques, setHistoriques] = useState<
+    { annee: string; id: number; mois: { mois: string }[] }[]
+  >([])
 
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
@@ -46,9 +46,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     setValue,
     reset
   } = useForm<FormDataAlefa>({
-
     resolver: yupResolver(schema)
-
   })
 
   const handleMonthClick = (id: number) => {
@@ -64,54 +62,48 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
 
   const getHistorique = async () => {
     setIsLoading(true)
-    try{
-      await axiosRequest('GET', 'ac-list', null,'token').then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error?.response?.data?.error))
+    try {
+      await axiosRequest('GET', 'ac-list', null, 'token')
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error?.response?.data?.error))
         .finally(() => setIsLoading(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getHistorique()
-
-  }, [activeTab==='historique', reload])
-
+  }, [activeTab === 'historique', reload])
 
   const onSubmit = async (data) => {
-
-
     const donneAlefa = {
       annee: data.yearadd,
       mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
     }
-  setIsLoading(true)
-    try{
-      await axiosRequest('POST', 'ac-creation', donneAlefa, 'token').then(({data}) => console.log(data?.message))
+    setIsLoading(true)
+    try {
+      await axiosRequest('POST', 'ac-creation', donneAlefa, 'token')
+        .then(({ data }) => console.log(data?.message))
         .then(() => setActiveTab('historique'))
         .catch((error) => console.log(error?.response?.data?.message))
         .finally(() => setIsLoading(false))
-
-
-    }catch (error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
 
     reset()
-
-
   }
 
   const removeYear = async (id: number) => {
     setIsLoading(true)
     setReload((reload) => !reload)
-    try{
+    try {
       await axiosRequest('DELETE', `ac-delete/${id}`, null, 'token')
-        .then(({data}) => console.log(data?.message))
-      .catch(error => console.log(error?.response?.data?.error))
+        .then(({ data }) => console.log(data?.message))
+        .catch((error) => console.log(error?.response?.data?.error))
         .finally(() => setIsLoading(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -200,17 +192,22 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-
-                {isLoading?	<ThreeDots
-                  visible={true}
-                  height="20"
-                  width="100"
-                  color="pink"
-                  radius="9"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                />: <><FiPlus size={18} /> Ajouter</>}
+                {isLoading ? (
+                  <ThreeDots
+                    visible={true}
+                    height="20"
+                    width="100"
+                    color="pink"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  <>
+                    <FiPlus size={18} /> Ajouter
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -220,7 +217,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               <p className="text-center text-gray-500">Aucune année ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ annee,id, mois }, index) => (
+                {historiques.map(({ annee, id, mois }, index) => (
                   <li
                     key={index}
                     className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
@@ -229,8 +226,11 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                       <p className="font-semibold">Année : {annee}</p>
                       <p className="text-sm text-gray-700">
                         Mois :{' '}
-                        {mois.map((m, index) => (<span key={index}>{m?.mois+(index !== mois.length - 1?', ':'')}</span>))}
-
+                        {mois.map((m, index) => (
+                          <span key={index}>
+                            {m?.mois + (index !== mois.length - 1 ? ', ' : '')}
+                          </span>
+                        ))}
                       </p>
                     </div>
                     <button
