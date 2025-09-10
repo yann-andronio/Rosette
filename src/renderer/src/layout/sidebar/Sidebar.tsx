@@ -16,6 +16,7 @@ import { BiStats } from 'react-icons/bi'
 import { RiScales3Line } from 'react-icons/ri'
 import { BsCash } from 'react-icons/bs'
 import { HiUserCircle } from 'react-icons/hi'
+import { FaHistory } from 'react-icons/fa'
 
 interface Menu {
   name: string
@@ -69,6 +70,12 @@ const Sidebar = () => {
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]
+    },
+    {
+      name: 'Historique',
+      path: '/home/Historique',
+      icon: <FaHistory size={21} />,
+      subMenus: []
     }
   ]
   const dispatch = useDispatch()

@@ -20,6 +20,7 @@ import { UserContext } from '@renderer/context/UserContext'
 import Studentsecolage from './pages/students/studentsecolage/Studentsecolage'
 import Employerinfo from './pages/employer/Employerinfo'
 import Employersuivi from './pages/employer/Employersuivi'
+import Historique from './pages/historiques/Historique'
 
 
 const route = createBrowserRouter([
@@ -64,6 +65,10 @@ const route = createBrowserRouter([
       {
         path: '/home/Employersuivi',
         element: <Employersuivi />
+      },
+      {
+        path: '/home/Historique',
+        element: <Historique />
       }
     ]
   }
