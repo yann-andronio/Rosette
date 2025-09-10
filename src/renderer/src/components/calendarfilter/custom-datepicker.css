@@ -1,0 +1,173 @@
+/* Styles pour le conteneur principal */
+/* .react-datepicker-popper {
+    z-index: 1000;
+} */
+
+/* important zao ty  */
+.react-datepicker {
+    background-color: white;
+    /* Un gris clair pour le fond */
+    border-radius: 1.5rem;
+    border: 1px solid #e2e8f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Styles pour les sélecteurs de date */
+.date-input-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-input-wrapper {
+    background-color: white;
+    /* Ajustement du padding pour mieux s'aligner avec le bouton */
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid #cbd5e0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* .date-input-wrapper .date-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #4a5568;
+} */
+
+/* .react-datepicker__input-container {
+    display: none;
+     Cache l'input du datepicker 
+} */
+
+/* Styles pour l'en-tête du calendrier (mois et année) */
+/* important koa ty  */
+.react-datepicker__header {
+    background-color: transparent;
+    border-bottom: none;
+}
+
+/* important koa ty  */
+.react-datepicker__current-month,
+.react-datepicker__day-names {
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+/* important koa ty  */
+.react-datepicker__day-names {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.875rem;
+    color: #718096;
+}
+
+/* important koa ty  */
+.react-datepicker__day-name {
+    /* width: 2.25rem; normal */
+    width: 2.25rem;
+}
+
+/* Styles pour les flèches de navigation */
+/* important koa ty  */
+.react-datepicker__navigation--previous,
+.react-datepicker__navigation--next {
+    top: 1.5rem;
+    border: none;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.react-datepicker__navigation--previous::before,
+.react-datepicker__navigation--next::before {
+    border-color: #a0aec0;
+    border-width: 2px 2px 0 0;
+}
+
+/* Styles pour les jours du calendrier */
+/* important koa ty  */
+.react-datepicker__month {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+    padding: 0.5rem;
+}
+
+/* important koa ty tsy mahazo modifiena   */
+.react-datepicker__week {
+    display: contents;
+    /* Nécessaire pour la grille */
+}
+
+/* important koa ty ********************************** */
+.react-datepicker__day {
+    width: 2.25rem;
+    height: 2.25rem;
+    line-height: 2.25rem;
+    text-align: center;
+    border-radius: 9999px;
+    /* Cercle */
+    transition: all 0.2s;
+    color: #4a5568;
+}
+
+/* Style des jours de la plage sélectionnée */
+/* important koa ty */
+.react-datepicker__day--in-range {
+    background-color: #f7e4e6;
+    /* Fond rose clair */
+    border-radius: 0 !important;
+    /* Pas de coins ronds à l'intérieur de la plage */
+}
+
+/* Style pour la date de début */
+.react-datepicker__day--range-start {
+    background-color: #895256 !important;
+    color: white !important;
+    border-top-left-radius: 9999px !important;
+    border-bottom-left-radius: 9999px !important;
+}
+
+/* Style pour la date de fin */
+.react-datepicker__day--range-end {
+    background-color: #895256 !important;
+    color: white !important;
+    border-top-right-radius: 9999px !important;
+    border-bottom-right-radius: 9999px !important;
+}
+
+/* Style des jours au survol */
+.react-datepicker__day:hover {
+    background-color: #e2e8f0;
+}
+
+/* Style du jour unique sélectionné (si la plage est un seul jour) */
+.react-datepicker__day--selected {
+    background-color: #895256 !important;
+    color: white !important;
+    border-radius: 9999px !important;
+}
+
+/* Jours hors du mois courant */
+.react-datepicker__day--outside-month {
+    color: #a0aec0;
+}
+
+/* Jours désactivés */
+.react-datepicker__day--disabled {
+    color: #cbd5e0;
+}
+
+/* Conteneur personnalisé pour les inputs */
+.date-range-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-picker-custom-input {
+    display: none;
+    /* Cacher l'input par défaut de react-datepicker */
+}
