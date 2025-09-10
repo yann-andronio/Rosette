@@ -14,7 +14,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
   const [statusBtnClicked, setStatusBtnClicked] = useState<string | null>(null)
   const [openClassModal, setOpenClassModal] = useState(false)
   const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
-  const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null) 
+  const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null)
 
  const handleStatusBtnClick = (statut: string, index: number) => {
    setStatusBtnClicked(statut)
@@ -48,7 +48,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
         <div className="w-1/3 bg-[#895256] text-white flex flex-col items-center justify-center p-8">
           {student.photo ? (
             <img
-              src={student.photo}
+              src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
               alt="Profil"
               className="w-40 h-40 object-cover rounded-full border-4 border-white mb-6 shadow-md"
             />
@@ -61,7 +61,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student.salle} - {student.annee}
+            {student.nom_salle} - {student.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
@@ -79,14 +79,15 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
               <p>
                 <span className="font-medium">Sexe :</span> {student.sexe}
               </p>
-              {student.date_naissance && (
+
+              {student.dateNaissance &&(
                 <p>
-                  <span className="font-medium">Date de naissance :</span> {student.date_naissance}
+                  <span className="font-medium">Date de naissance :</span> {student.dateNaissance}
                 </p>
               )}
-              {student.lieu_naissance && (
+              {student.lieuNaissance && (
                 <p>
-                  <span className="font-medium">Lieu de naissance :</span> {student.lieu_naissance}
+                  <span className="font-medium">Lieu de naissance :</span> {student.lieuNaissance}
                 </p>
               )}
               {student.adresse && (
@@ -94,49 +95,49 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                   <span className="font-medium">Adresse :</span> {student.adresse}
                 </p>
               )}
-              {student.ecole_prec && (
+              {student.ecole && (
                 <p>
-                  <span className="font-medium">École précédente :</span> {student.ecole_prec}
+                  <span className="font-medium">École précédente :</span> {student.ecole}
                 </p>
               )}
             </div>
           </section>
 
           {/* Parents */}
-          {(student.nom_pere || student.nom_mere) && (
+          {(student.nomPere || student.nomMere) && (
             <section>
               <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
                 Informations parentales
               </h3>
               <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base">
-                {student.nom_pere && (
+                {student.nomPere && (
                   <p>
-                    <span className="font-medium">Nom du père :</span> {student.nom_pere}
+                    <span className="font-medium">Nom du père :</span> {student.nomPere}
                   </p>
                 )}
-                {student.prenom_pere && (
+                {student.prenomPere && (
                   <p>
-                    <span className="font-medium">Prénom du père :</span> {student.prenom_pere}
+                    <span className="font-medium">Prénom du père :</span> {student.prenomPere}
                   </p>
                 )}
-                {student.tel_pere && (
+                {student.telephone_pere && (
                   <p>
-                    <span className="font-medium">Téléphone du père :</span> {student.tel_pere}
+                    <span className="font-medium">Téléphone du père :</span> {student.telephone_mere}
                   </p>
                 )}
-                {student.nom_mere && (
+                {student.nomMere && (
                   <p>
-                    <span className="font-medium">Nom de la mère :</span> {student.nom_mere}
+                    <span className="font-medium">Nom de la mère :</span> {student.nomMere}
                   </p>
                 )}
-                {student.prenom_mere && (
+                {student.prenomMere && (
                   <p>
-                    <span className="font-medium">Prénom de la mère :</span> {student.prenom_mere}
+                    <span className="font-medium">Prénom de la mère :</span> {student.prenomMere}
                   </p>
                 )}
-                {student.tel_mere && (
+                {student.telephone_mere && (
                   <p>
-                    <span className="font-medium">Téléphone de la mère :</span> {student.tel_mere}
+                    <span className="font-medium">Téléphone de la mère :</span> {student.telephone_mere}
                   </p>
                 )}
               </div>
@@ -144,25 +145,25 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
           )}
 
           {/* Tuteur */}
-          {(student.nom_tuteur || student.tel_tuteur) && (
+          {(student.nomTuteur || student.telephone_tuteur) && (
             <section>
               <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
                 Tuteur légal
               </h3>
               <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base">
-                {student.nom_tuteur && (
+                {student.nomTuteur && (
                   <p>
-                    <span className="font-medium">Nom du tuteur :</span> {student.nom_tuteur}
+                    <span className="font-medium">Nom du tuteur :</span> {student.nomTuteur}
                   </p>
                 )}
-                {student.prenom_tuteur && (
+                {student.prenomTuteur && (
                   <p>
-                    <span className="font-medium">Prénom du tuteur :</span> {student.prenom_tuteur}
+                    <span className="font-medium">Prénom du tuteur :</span> {student.prenomTuteur}
                   </p>
                 )}
-                {student.tel_tuteur && (
+                {student.telephone_tuteur && (
                   <p>
-                    <span className="font-medium">Téléphone du tuteur :</span> {student.tel_tuteur}
+                    <span className="font-medium">Téléphone du tuteur :</span> {student.telephone_tuteur}
                   </p>
                 )}
               </div>
@@ -175,7 +176,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
               Historique des statuts
             </h3>
 
-            {student.historiqueStatus && student.historiqueStatus.length > 0 ? (
+            {student.sousetudiants && student.sousetudiants.length > 0 ? (
               <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
                 <table className="min-w-full bg-white divide-y divide-gray-200">
                   <thead className="bg-[#895256]">
@@ -191,35 +192,37 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {student.historiqueStatus.map((status, index) => (
+                    {student?.sousetudiants?.map((status, index) => (
                       <tr
                         key={index}
                         className="hover:bg-[#faf7f2] transition-colors cursor-default"
                       >
                         <td className="px-4 py-3  text-gray-800 font-medium">
-                          {status.annee_status}
+                          {status.annee.annee}
                         </td>
-                        <td className="px-4 py-3  text-gray-700">{status.salle}</td>
+                        <td className="px-4 py-3  text-gray-700">{status.classe.nom_classe}</td>
                         <td className="px-4 py-3  text-gray-700">
                           {status?.Moyenne_status ? status.Moyenne_status : ' en cours ...'}
                         </td>
                         <td className="px-4 py-3 ">
                           <button
                             onClick={() =>
-                              status.statut &&
+                              status.status_admissions &&
                               !TabStatusWhoAreValide.includes(index) &&
-                              handleStatusBtnClick(status.statut, index)
+                              handleStatusBtnClick(status.status_admissions, index)
                             }
-                            disabled={status.statut ? TabStatusWhoAreValide.includes(index) : false}
+                            disabled={status.status_admissions =='cours'? true : false}
                             className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${
-                              status.statut? TabStatusWhoAreValide.includes(index)  ? 'bg-gray-400 cursor-not-allowed' : status.statut.toLowerCase() === 'admis' ? 'bg-green-500': status.statut.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
+                              status.status_admissions? status.status_admissions =='cours' ? 'bg-gray-400 cursor-not-allowed' : status.status_admissions?.toLowerCase() === 'admis' ? 'bg-green-500': status.status_admissions?.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
                           >
-                            {status.statut
-                              ? status.statut.charAt(0).toUpperCase() + status.statut.slice(1)
+                            {status.status_admissions
+                              ? status.status_admissions.charAt(0).toUpperCase() + status.status_admissions?.slice(1)
                               : 'en cours...'}
                           </button>
                         </td>
                       </tr>
+
+
                     ))}
                   </tbody>
                 </table>

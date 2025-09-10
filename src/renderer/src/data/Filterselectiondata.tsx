@@ -12,7 +12,7 @@ export const years = [
 export const niveau = [
   { id: 1, name: 'CP1' },
   { id: 2, name: 'CP2' },
-  { id: 2, name: 'CE1' },
+  { id: 13, name: 'CE1' },
   { id: 3, name: 'CE2' },
   { id: 4, name: 'CM1' },
   { id: 5, name: 'CM2' },

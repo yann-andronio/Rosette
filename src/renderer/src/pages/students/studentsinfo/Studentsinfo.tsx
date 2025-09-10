@@ -5,46 +5,180 @@ import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
+
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
-import { filterDataCombined } from '@renderer/utils/filterDataCombined'
-import {  FilterOptions, StudentsType } from '@renderer/types/Alltypes'
-import { Studentsdata } from '@renderer/data/Studentsdata'
+
+import {  StudentsType } from '@renderer/types/Alltypes'
+
 import { years , salle, niveau } from '@renderer/data/Filterselectiondata'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import { MdMeetingRoom } from 'react-icons/md'
+import { axiosRequest } from "@renderer/config/helpers";
+export type Etudiant = {
+
+  id: number;
+  ecolage: { id: number; payé: boolean; mois: string; created_at: string }[];
+  nom: string;
+  prenom: string;
+  sexe: number;
+  dateNaissance: string;
+  lieuNaissance: string;
+  adresse: string;
+  nomPere: string | null;
+  nomMere: string | null;
+  telephonePere: string | null;
+  telephoneMere: string | null;
+  prenomMere: string | null;
+  prenomPere: string | null;
+  nomTuteur: string | null;
+  prenomTuteur: string | null;
+  telephoneTuteur: string | null;
+  matricule: string;
+  ecole: string;
+  photo: string;
+  created_at: string;
+  updated_at: string;
+  enfantProf: number;
+  sousetudiants: {
+    id: number;
+    cl_id: number;
+    sa_id: number;
+    ac_id: number;
+    et_id: number;
+    note1: number | null;
+    note2: number | null;
+    note3: number | null;
+    created_at: string;
+    updated_at: string;
+    status_admissions: string;
+    classe: {
+      id: number;
+      nom_classe: string;
+      ecolage: number;
+      ac_id: number;
+      created_at: string;
+      updated_at: string;
+      droit: number;
+      kermesse: number;
+    };
+    salle: {
+      id: number;
+      nom_salle: string;
+      effectif: number;
+      cl_id: number;
+      ac_id: number;
+      created_at: string;
+      updated_at: string;
+    };
+    annee: {
+      id: number;
+      annee: string;
+      created_at: string;
+      updated_at: string;
+    };
+  }[];
+};
 
 function Studentsinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<string>('All')
-  const [selectedsalle, setselectedsalle] = useState<string>('All')
-  const [selectedniveau, setselectedniveau] = useState<string>('All')
-  const [selectedSexe, setSelectedSexe] = useState<string>('All')
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({ annee: 'All', salle: 'All', niveau:'All ' , sexe: 'All' })
+  const [selectedyear, setselectedyear] = useState<string>('0')
+  const [selectedsalle, setselectedsalle] = useState<string>('0')
+  const [selectedniveau, setselectedniveau] = useState<string>('0')
+  const [selectedSexe, setSelectedSexe] = useState<string>('0')
+  const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
+  const [classes, setClasses] = useState<{id:number, nom_classe:string}[]>([])
+  const [salles, setSalles] = useState<{id:number, nom_salle:string}[]>([])
   const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
+    const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [lines, setLines] = useState<number>(15)
+console.log(selectedsalle)
+const getClasse = async () => {
+    try{
+      await axiosRequest('GET', 'classe-list', null, 'token')
+        .then(({data}) => setClasses(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+}
 
+  const getSalle = async () => {
+    try{
+      await axiosRequest('GET', 'salle-list', null, 'token')
+        .then(({data}) => setSalles(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
-  // isaka misy changement nle raha filtregna de atao modif selectiondefiltre
+  const getAcs = async () => {
+    try{
+      await axiosRequest('GET', 'ac-list', null, 'token')
+        .then(({data}) => setAcs(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
   useEffect(() => {
-    setSelectedFilters({
-      annee: selectedyear,
-      salle: selectedsalle,
-      niveau:selectedniveau,
-      sexe: selectedSexe
-    })
-  }, [selectedyear, selectedsalle, selectedSexe , selectedniveau])
+    getAcs()
+    getClasse()
+    getSalle()
+  }, [])
 
+const nextPage = (page:number) =>{
+    setCurrentPage(page)
+}
+
+
+
+
+const getEtudiants = async ()=>  {
+    try{
+      await axiosRequest('GET', `etudiant-list?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`, null , 'token')
+        .then(({data}) => setStudents((data)))
+        .catch(error => console.log(error.response.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+}
+
+
+
+const precedent = (current) => {
+    if(current > 1){
+      setCurrentPage(current - 1)
+    }
+}
+
+  const suivant = (current) => {
+    if(current < students.last_page){
+      setCurrentPage(current + 1)
+    }
+  }
+
+  useEffect(() => {
+    getEtudiants()
+  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves])
+
+  const pagination:number[] = []
+  for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
+    pagination.push(i)
+  }
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-    setter((prev) => (prev === current ? 'All' : current))
+    setter((prev) => (prev === current ? '0' : current))
   }
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
   }
 
-  // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
-  const filteredData = filterDataCombined(Studentsdata, searcheleves, ['nom', 'prenom', 'salle'], selectedFilters)
+  // // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
+  // const filteredData = filterDataCombined(students, searcheleves, ['nom', 'prenom'], selectedFilters)
 
 
 
@@ -69,17 +203,17 @@ function Studentsinfo(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {years.map((year, index) => (
+              {acs.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.ans, setselectedyear)}
+                  onClick={() => handleselect(year.id.toString(), setselectedyear)}
                   className={`${
-                    selectedyear === year.ans
+                    selectedyear == year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {year.ans}
+                  {year.annee}
                 </button>
               ))}
             </div>
@@ -94,17 +228,17 @@ function Studentsinfo(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une niveau</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {niveau.map((niv, index) => (
+              {classes.map((niv, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(niv.name, setselectedniveau)}
+                  onClick={() => handleselect(niv.id.toString(), setselectedniveau)}
                   className={`${
-                    selectedniveau === niv.name
+                    selectedniveau == niv.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {niv.name}
+                  {niv.nom_classe}
                 </button>
               ))}
             </div>
@@ -119,17 +253,17 @@ function Studentsinfo(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une salle</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {salle.map((sl, index) => (
+              {salles.map((sl, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(sl.name, setselectedsalle)}
+                  onClick={() => handleselect(sl.id.toString(), setselectedsalle)}
                   className={`${
-                    selectedsalle === sl.name
+                    selectedsalle === sl.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {sl.name}
+                  {sl.nom_salle}
                 </button>
               ))}
             </div>
@@ -178,14 +312,14 @@ function Studentsinfo(): JSX.Element {
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
-                <option>05</option>
-                <option>10</option>
-                <option>20</option>
+              <select name='lines' onChange={(e) => setLines(e.target.value)}  className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+                <option value={15}>15</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
-              Total élèves : <span className="font-bold">2000</span>
+              Total élèves : <span className="font-bold">{students?.total}</span>
             </div>
           </div>
         </div>
@@ -203,10 +337,10 @@ function Studentsinfo(): JSX.Element {
           </div>
 
           <div className="space-y-1.5">
-            {filteredData.length === 0 ? (
+            {students?.data?.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (
-              filteredData.map((student, index) => (
+              students?.data?.map((student, index) => (
                 <div
                   key={index}
                   className={`flex px-6 py-2 rounded-lg items-center ${
@@ -215,19 +349,24 @@ function Studentsinfo(): JSX.Element {
                 >
                   <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
                     <div className="image bg-[#895256] p-2 rounded-lg">
-                      <FaUserCircle className="text-3xl text-[#ffff]" />
+                      {/*<FaUserCircle className="text-3xl text-[#ffff]" />*/}
+                      <img
+                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
+                        alt="Profil"
+                        className="rounded-sm w-10 h-10"
+                      />
                     </div>
                   </div>
 
-                  <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
-                  <div className="flex-1 text-gray-700">{student.prenom}</div>
-                  <div className="flex-1 text-gray-700">{student.sexe}</div>
-                  <div className="flex-1 text-gray-700">{student.salle}</div>
+                  <div className="flex-1 font-semibold text-gray-800">{student?.nom}</div>
+                  <div className="flex-1 text-gray-700">{student?.prenom}</div>
+                  <div className="flex-1 text-gray-700">{student?.sexe === 1?'Homme':'Femme'}</div>
+                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle}</div>
                   <div className="flex-1">
                     <div className="flex gap-3 text-[#9f7126] text-lg">
                       <FaEye
                         onClick={() => {
-                          setSelectedStudent(student)
+                          setSelectedStudent({...student, nom_salle:student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle, nom_classe:student?.sousetudiants[student?.sousetudiants.length - 1].classe.nom_classe, annee:'test', enfant_prof:student.enfantProf})
                           openModal('showinfostudents')
                         }}
                         className="hover:text-black cursor-pointer transition"
@@ -246,18 +385,19 @@ function Studentsinfo(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => precedent(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
             Précédent
           </button>
           <div className="flex gap-2 mt-3 md:mt-0">
-            {[1, 2, 3, 4, 5].map((page) => (
+            {pagination.map((page) => (
               <button
                 key={page}
+                onClick={() => nextPage(page)}
                 className={`px-3 py-1 rounded-full font-medium ${
-                  page === 1
+                  page === currentPage
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
                 }`}
@@ -266,7 +406,7 @@ function Studentsinfo(): JSX.Element {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => suivant(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
