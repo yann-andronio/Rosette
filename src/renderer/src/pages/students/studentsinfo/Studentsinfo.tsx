@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+  import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
@@ -61,14 +61,14 @@ function Studentsinfo(): JSX.Element {
       <div className="px-20 py-8">
         <div className="bigboxfilter grid grid-cols-3 gap-6 w-full lg:flex-row justify-center">
           {/* Filtre Année */}
-          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+          <div className="filter z-0 p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
             <div className=" flex items-center mb-4">
               <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
                 <LuCalendarDays size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
-            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
+            <div className="grid grid-cols-3 z-0 gap-3 overflow-y-auto max-h-[100px] pr-2">
               {years.map((year, index) => (
                 <button
                   key={index}
