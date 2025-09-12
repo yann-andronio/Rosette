@@ -69,7 +69,7 @@ const EmployerCardInfo: FC<EmployerCardProps> = ({ employer }) => {
         <div className="pt-5 border-t border-gray-200">
           <div className="flex items-center gap-3">
             <MdOutlineAttachMoney className="text-lg text-[#895256] flex-shrink-0" />
-            <span className="font-semibold">Salaire:</span> {employer.salaire} Ar
+            <span className="font-semibold">Salaire de base :</span> {employer.salairebase} Ar
           </div>
           <div className="flex items-center gap-3 mt-3">
             {getGenderIcon(employer.sexe)}

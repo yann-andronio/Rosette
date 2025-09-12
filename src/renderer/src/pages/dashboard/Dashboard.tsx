@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
-import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins } from 'react-icons/fa'
+import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins, FaIcons, FaPlus } from 'react-icons/fa'
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md'
 import { Bar, Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js'
@@ -10,13 +10,14 @@ import { Calendarfilter } from '@renderer/components/calendarfilter/Calendarfilt
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { CardDashboard } from '../../components/card/CardDashboard'
 import { max } from 'date-fns'
+import Operationmodal from '@renderer/components/modalsform/Operationmodal'
 
 
 const dashboardCardsData = [
   { title: 'Étudiants', value: '1,240', icon: FaUserGraduate },
   { title: 'Enseignants', value: '85', icon: FaChalkboardTeacher },
   { title: 'Employés', value: '45', icon: FaUsers },
-  { title: 'Argent actuel', value: '12,540', icon: FaMoneyBillWave },
+  { title: `Argent d'écolage`, value: '12,540', icon: FaMoneyBillWave },
   { title: 'Solde de droit', value: '12,540', icon: FaWallet },
   { title: 'Solde de kermess', value: '8,200', icon: FaCoins }
 ]
@@ -82,7 +83,6 @@ const optionsPie = {
 
 export default function Dashboard(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
-  const { modal } = useMultiModals()
   const [selectedYear, setSelectedYear] = useState('2024')
   const [range, setRange] = useState(3) 
   
@@ -115,6 +115,8 @@ export default function Dashboard(): JSX.Element {
     ]
   }
 
+   const { modal, openModal, closModal } = useMultiModals()
+
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
@@ -125,6 +127,16 @@ export default function Dashboard(): JSX.Element {
           {dashboardCardsData.map((card, index) => (
             <CardDashboard key={index} item={card} />
           ))}
+          <div
+            onClick={() => openModal('OperationModal')}
+            className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
+          >
+            <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
+              <FaPlus size={22} />
+            </div>
+
+            <p className="text-lg text-white font-semibold text-center">Ajouter une Operation</p>
+          </div>
         </div>
 
         {/* Graphique principal + calendrier */}
@@ -165,7 +177,6 @@ export default function Dashboard(): JSX.Element {
           <Calendarfilter />
         </div>
 
-       
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
           {/* Résumé benefice et perte en actuel  iniani iniany , magnano maj isan andro , ko tsisy perte de atao 0 */}
           <div className="bg-white shadow-xl rounded-2xl p-6 flex flex-col justify-between lg:col-span-2">
@@ -197,6 +208,8 @@ export default function Dashboard(): JSX.Element {
           </div>
         </div>
       </div>
+
+      {modal.OperationModal && <Operationmodal closemodal={() => closModal('OperationModal')} />}
     </div>
   )
 }

@@ -201,7 +201,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         </td>
                         <td className="px-4 py-3  text-gray-700">{status.salle}</td>
                         <td className="px-4 py-3  text-gray-700">
-                          {status?.Moyenne_status ? status.Moyenne_status : ' en cours ...'}
+                          {status?.moyenne_status ? status.moyenne_status : ' en cours ...'}
                         </td>
                         <td className="px-4 py-3 ">
                           <button
