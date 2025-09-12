@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
-import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave } from 'react-icons/fa'
+import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins } from 'react-icons/fa'
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md'
 import { Bar, Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js'
@@ -16,7 +16,9 @@ const dashboardCardsData = [
   { title: 'Étudiants', value: '1,240', icon: FaUserGraduate },
   { title: 'Enseignants', value: '85', icon: FaChalkboardTeacher },
   { title: 'Employés', value: '45', icon: FaUsers },
-  { title: 'Argent actuel', value: '12,540 €', icon: FaMoneyBillWave }
+  { title: 'Argent actuel', value: '12,540', icon: FaMoneyBillWave },
+  { title: 'Solde de droit', value: '12,540', icon: FaWallet },
+  { title: 'Solde de kermess', value: '8,200', icon: FaCoins }
 ]
 
 // ---- Mois jiaby ---- //
@@ -51,7 +53,7 @@ const optionsBar = {
           return value + ' Ar' 
         }
       },
-      title: { display: true, text: 'Montant (€)' }
+      title: { display: true, text: 'Montant (Ar)' }
     }
   }
 }
