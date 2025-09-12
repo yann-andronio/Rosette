@@ -1,16 +1,11 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
-
-import {  StudentsType } from '@renderer/types/Alltypes'
-
-import { years , salle, niveau } from '@renderer/data/Filterselectiondata'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from "@renderer/config/helpers";
@@ -91,13 +86,12 @@ function Studentsinfo(): JSX.Element {
   const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
   const [classes, setClasses] = useState<{id:number, nom_classe:string}[]>([])
   const [salles, setSalles] = useState<{id:number, nom_salle:string}[]>([])
-  const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
+  const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
     const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
   const [et_id, setEt_id] = useState<number|null>(null)
   const [reload, setReload] = useState<boolean>(false)
-  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 const getClasse = async () => {
 
     try{
@@ -183,25 +177,6 @@ const precedent = (current) => {
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
-  }
-
-  // // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
-  // const filteredData = filterDataCombined(students, searcheleves, ['nom', 'prenom'], selectedFilters)
-
-  const deleteStudent = async (id:number) => {
-    setIsDeleting(true)
-    try{
-      await axiosRequest('DELETE', `etudiant/${id}`,null, 'token')
-        .then(({data}) => console.log(data.message))
-        .then(() => setIsDeleting(false))
-        .then(() => setReload(!reload))
-        .catch(error => console.log(error.response?.data?.messsage))
-        .finally(() => setIsDeleting(false))
-    }catch(error){
-      console.log('Le serveur ne repond pas')
-    }
-
-
   }
 
 
@@ -413,16 +388,9 @@ const precedent = (current) => {
                         }}
                         className="hover:text-black cursor-pointer transition"
                       />
-                      {isDeleting?(<Oval
-                        visible={true}
-                        height="25"
-                        width="25"
-                        color="#895256"
-                        strokeWidth="5"
-                        ariaLabel="oval-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                      />):<FaTrash onClick={() => deleteStudent(student.id)} className="hover:text-red-600 cursor-pointer transition" />}
+
+
+                      <Trash id={student.id} reload={reload} refresh={setReload}/>
                     </div>
                   </div>
                 </div>
@@ -479,5 +447,34 @@ const precedent = (current) => {
     </div>
   )
 }
+const Trash:React.FC<{id:number, reload:boolean, refresh:(boolean) => void}> = ({id, reload, refresh}) => {
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
+  const deleteStudent = async (id:number) => {
+    setIsDeleting(true)
+    try{
+      await axiosRequest('DELETE', `etudiant/${id}`,null, 'token')
+        .then(({data}) => console.log(data.message))
+        .then(() => setIsDeleting(false))
+        .then(() => refresh(!reload))
+        .catch(error => console.log(error.response?.data?.messsage))
+        .finally(() => setIsDeleting(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
 
+
+  }
+  return <>
+    {isDeleting?(<Oval
+      visible={true}
+      height="25"
+      width="25"
+      color="#895256"
+      strokeWidth="5"
+      ariaLabel="oval-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+    />):<FaTrash onClick={() => deleteStudent(id)} className="hover:text-red-600 cursor-pointer transition" />}
+  </>
+}
 export default Studentsinfo
