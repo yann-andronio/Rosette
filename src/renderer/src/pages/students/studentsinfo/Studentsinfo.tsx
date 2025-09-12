@@ -14,6 +14,7 @@ import { years , salle, niveau } from '@renderer/data/Filterselectiondata'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from "@renderer/config/helpers";
+import { Oval, RotatingLines } from 'react-loader-spinner'
 export type Etudiant = {
 
   id: number;
@@ -86,6 +87,7 @@ function Studentsinfo(): JSX.Element {
   const [selectedsalle, setselectedsalle] = useState<string>('0')
   const [selectedniveau, setselectedniveau] = useState<string>('0')
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
   const [classes, setClasses] = useState<{id:number, nom_classe:string}[]>([])
   const [salles, setSalles] = useState<{id:number, nom_salle:string}[]>([])
@@ -93,8 +95,11 @@ function Studentsinfo(): JSX.Element {
     const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
-console.log(selectedsalle)
+  const [et_id, setEt_id] = useState<number|null>(null)
+  const [reload, setReload] = useState<boolean>(false)
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 const getClasse = async () => {
+
     try{
       await axiosRequest('GET', 'classe-list', null, 'token')
         .then(({data}) => setClasses(data))
@@ -138,10 +143,13 @@ const nextPage = (page:number) =>{
 
 
 const getEtudiants = async ()=>  {
+    setIsLoading(true)
     try{
       await axiosRequest('GET', `etudiant-list?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`, null , 'token')
         .then(({data}) => setStudents((data)))
+        .then(() => setIsLoading(false))
         .catch(error => console.log(error.response.data?.message))
+        .finally(() => setIsLoading(false))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
@@ -163,7 +171,7 @@ const precedent = (current) => {
 
   useEffect(() => {
     getEtudiants()
-  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves])
+  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves, reload])
 
   const pagination:number[] = []
   for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
@@ -180,6 +188,21 @@ const precedent = (current) => {
   // // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
   // const filteredData = filterDataCombined(students, searcheleves, ['nom', 'prenom'], selectedFilters)
 
+  const deleteStudent = async (id:number) => {
+    setIsDeleting(true)
+    try{
+      await axiosRequest('DELETE', `etudiant/${id}`,null, 'token')
+        .then(({data}) => console.log(data.message))
+        .then(() => setIsDeleting(false))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error.response?.data?.messsage))
+        .finally(() => setIsDeleting(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+
+
+  }
 
 
   const { modal, openModal, closModal } = useMultiModals()
@@ -337,7 +360,18 @@ const precedent = (current) => {
           </div>
 
           <div className="space-y-1.5">
-            {students?.data?.length === 0 ? (
+            {isLoading?<div className='flex w-full justify-center'><RotatingLines
+              visible={true}
+              height="50"
+              width="55"
+              color="grey"
+              strokeColor="#7A3B3F"
+              strokeWidth="5"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            /></div>:<>    {students?.data?.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (
               students?.data?.map((student, index) => (
@@ -361,7 +395,7 @@ const precedent = (current) => {
                   <div className="flex-1 font-semibold text-gray-800">{student?.nom}</div>
                   <div className="flex-1 text-gray-700">{student?.prenom}</div>
                   <div className="flex-1 text-gray-700">{student?.sexe === 1?'Homme':'Femme'}</div>
-                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle}</div>
+                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1]?.salle?.nom_salle}</div>
                   <div className="flex-1">
                     <div className="flex gap-3 text-[#9f7126] text-lg">
                       <FaEye
@@ -372,15 +406,29 @@ const precedent = (current) => {
                         className="hover:text-black cursor-pointer transition"
                       />
                       <FaEdit
-                        onClick={() => openModal('AdUpinfostudents')}
+                        onClick={() => {
+                          openModal('AdUpinfostudents')
+                            setEt_id(student.id)
+
+                        }}
                         className="hover:text-black cursor-pointer transition"
                       />
-                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                      {isDeleting?(<Oval
+                        visible={true}
+                        height="25"
+                        width="25"
+                        color="#895256"
+                        strokeWidth="5"
+                        ariaLabel="oval-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />):<FaTrash onClick={() => deleteStudent(student.id)} className="hover:text-red-600 cursor-pointer transition" />}
                     </div>
                   </div>
                 </div>
               ))
-            )}
+            )}</>}
+
           </div>
         </div>
 
@@ -417,6 +465,7 @@ const precedent = (current) => {
 
       {modal.AdUpinfostudents && (
         <AdUpinfostudentsmodal
+          id={et_id?et_id:null}
           closemodal={() => closModal('AdUpinfostudents')}
           mode="modifstudents"
         />

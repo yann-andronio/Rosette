@@ -8,15 +8,16 @@ import { ThreeDots } from 'react-loader-spinner'
 import { ChangeEvent, useEffect,  useState } from 'react'
 
 import { axiosRequest } from '@renderer/config/helpers'
-import { Simulate } from "react-dom/test-utils";
-import reset = Simulate.reset; // adapte le chemin si besoin
+
+
 
 
 
 
 type infostudentsProps = {
   closemodal: () => void
-  mode: 'ajoutstudents' | 'modifstudents'
+  mode: 'ajoutstudents' | 'modifstudents',
+  id?:number|null
 }
 
 const schema = yup.object().shape({
@@ -42,20 +43,44 @@ const schema = yup.object().shape({
   enfantProf: yup.number().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
 
-const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode }) => {
+const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode, id }) => {
+  const [preStudent, setPrestudent] = useState<{ nom: string,
+    prenom: string,
+    sexe: number,
+    photo:string,
+    dateNaissance: string,
+    lieuNaissance: string,
+    adresse: string,
+    cl_id: number,
+    sa_id: number,
+    nomPere: string,
+    prenomPere:string,
+    telephonePere: string,
+    nomMere: string,
+    prenomMere: string,
+    telephoneMere: string,
+    nomTuteur: string,
+    prenomTuteur: string,
+    telephoneTuteur: string,
+    matricule:string,
+    ecole: string,
+    sousetudiants:{cl_id:number, sa_id:number}[]
+    enfantProf: number}|undefined>(undefined)
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors }
   } = useForm({ resolver: yupResolver(schema) })
-
   // const refs = useRef<string | Blob>('')
   const [imagePreview, setImagePreview] = useState<string | undefined>(undefined)
   const [image, setImage] = useState<Blob | string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [matricule, setMatricule] = useState<string>('')
   const [reload, setReload] = useState<boolean>(false)
+
+
 
   const [salles, setSalles] = useState<{nom_salle:string, id:number}[]>([])
   const [niveau, setNiveau] = useState<{nom_classe:string, id:number}[]>([])
@@ -95,7 +120,7 @@ const getSalles = async () => {
   }
 
   const onSubmit =async (data: any) => {
-    console.log(data)
+
     const formdata = new FormData()
     formdata.append('image', image)
     for (const key in data) {
@@ -103,7 +128,6 @@ const getSalles = async () => {
     }
     formdata.append('photo', image)
     formdata.append('matricule', matricule)
-    console.log(image)
 
     if (mode === 'ajoutstudents') {
       setIsLoading(true)
@@ -122,14 +146,55 @@ const getSalles = async () => {
 
       // req axio
     } else {
-      console.log('Modifier étudiant', data)
-      // req axios
+    const form = new FormData()
+      form.append('photo', image)
+      setIsLoading(true)
+      form.append('image', image)
+      for (const key in data) {
+        form.append(key, data[key])
+      }
+      form.append('photo', image)
+      form.append('matricule', matricule)
+
+
+
+      try {
+        await axiosRequest('POST', `etudiant/${id}`, form, 'token')
+          .then(({data}) => console.log(data.message))
+      //     .then(() => reset())
+          .then(() => setIsLoading(false))
+          .then(() => setReload(!reload))
+          .catch(error => console.log(error.response?.data?.message))
+          .finally(() => setIsLoading(false))
+      }catch(error) {
+        console.log('Le serveur ne repond pas')
+      }
+
+      closemodal()
     }
-    // closemodal()
+
 
 
   }
 
+
+
+  const getPreStudent = async () => {
+    try{
+      await axiosRequest('GET', `etudiant/${id}`, null, 'token')
+        .then(({data}) =>{
+          setPrestudent(data)
+          reset({...data,
+            cl_id: data?.sousetudiants?.[data.sousetudiants.length - 1]?.cl_id,
+              sa_id: data?.sousetudiants?.[data.sousetudiants.length - 1]?.sa_id
+          })
+        })
+        .catch(error => console.log(error.response?.data?.message))
+
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
   const getMatricule = async () => {
     try{
@@ -145,7 +210,17 @@ const getSalles = async () => {
     getMatricule()
     getSalles()
     getClasses()
+
   }, [reload])
+
+  useEffect(() => {
+    getPreStudent()
+
+
+  }, [mode==='modifstudents']);
+
+
+
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -168,11 +243,15 @@ const getSalles = async () => {
                   alt="Photo étudiante"
                   className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
                 />
-              ) : (
+              ) : <>{mode == 'modifstudents' ?   <img
+                src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${preStudent?.photo}`}
+                alt="Photo étudiante"
+                className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
+              />:(
                 <div className="w-40 h-40 flex items-center justify-center rounded-full bg-[#6b4a52] border-4 border-white mb-10 shadow-lg">
                   <FiUser className="text-white text-[7rem]" />
                 </div>
-              )}
+              )}</>}
             </label>
 
             <span className="text-sm text-white">Cliquez pour choisir une photo</span>
@@ -222,6 +301,8 @@ const getSalles = async () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nom *</label>
                 <input
                   type="text"
+
+
                   {...register('nom')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
                     errors.nom
@@ -241,6 +322,7 @@ const getSalles = async () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Prénom *</label>
                 <input
                   type="text"
+
                   {...register('prenom')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
                     errors.prenom
@@ -283,6 +365,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="date"
+
                   {...register('dateNaissance')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
                     errors.dateNaissance
@@ -303,6 +386,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('lieuNaissance')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
                     errors.lieuNaissance
@@ -322,6 +406,7 @@ const getSalles = async () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Adresse *</label>
                 <input
                   type="text"
+
                   {...register('adresse')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
                     errors.adresse
@@ -349,7 +434,7 @@ const getSalles = async () => {
                 >
                   <option value="">Sélectionnez un niveau</option>
                   {niveau.map((niv) => (
-                    <option key={niv.id} value={niv.id}>
+                    <option  key={niv.id} value={niv.id}>
                       {niv.nom_classe}
                     </option>
                   ))}
@@ -373,7 +458,7 @@ const getSalles = async () => {
                 >
                   <option value="">Sélectionnez une salle</option>
                   {salles.map((sal) => (
-                    <option key={sal.id} value={sal.id}>
+                    <option  key={sal.id} value={sal.id}>
                       {sal.nom_salle}
                     </option>
                   ))}
@@ -396,6 +481,7 @@ const getSalles = async () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nom du père</label>
                 <input
                   type="text"
+
                   {...register('nomPere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Nom du père"
@@ -408,6 +494,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('prenomPere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Prénom du père"
@@ -420,6 +507,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="tel"
+
                   {...register('telephonePere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Téléphone du père"
@@ -432,6 +520,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('nomMere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Nom de la mère"
@@ -444,6 +533,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('prenomMere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Prénom de la mère"
@@ -456,6 +546,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="tel"
+
                   {...register('telephoneMere')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Téléphone de la mère"
@@ -474,6 +565,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('nomTuteur')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Nom du tuteur"
@@ -486,6 +578,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('prenomTuteur')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Prénom du tuteur"
@@ -498,6 +591,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="tel"
+
                   {...register('telephoneTuteur')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Téléphone du tuteur"
@@ -518,7 +612,7 @@ const getSalles = async () => {
                   disabled={true}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="Matricule"
-                  defaultValue={matricule}
+                  defaultValue={mode === 'modifstudents' ?preStudent?.matricule:matricule}
                 />
               </div>
 
@@ -528,6 +622,7 @@ const getSalles = async () => {
                 </label>
                 <input
                   type="text"
+
                   {...register('ecole')}
                   className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300"
                   placeholder="École précédente"
@@ -541,21 +636,23 @@ const getSalles = async () => {
                 <div className="flex gap-6">
                   <label className="flex items-center space-x-2">
                     <input
+
                       type="radio"
                       value={1}
                       {...register('enfantProf')}
                       className="accent-[#895256] w-5 h-5"
                     />
-                    <span className="text-gray-700 text-sm font-medium">Oui</span>
+                    <span className={`text-gray-700 text-sm font-medium ${getValues('enfantProf')==1?'underline decoration-[#895256]':''}`}>Oui</span>
                   </label>
                   <label className="flex items-center space-x-2">
                     <input
                       type="radio"
+
                       value={0}
                       {...register('enfantProf')}
-                      className="accent-[#895256] w-5 h-5"
+                      className=" accent-[#895256] w-5 h-5"
                     />
-                    <span className="text-gray-700 text-sm font-medium">Non</span>
+                    <span className={`text-gray-700 text-sm font-medium ${getValues('enfantProf')==0?'underline decoration-[#895256]':''}`}>Non</span>
                   </label>
                 </div>
                 {errors.enfantProf && (

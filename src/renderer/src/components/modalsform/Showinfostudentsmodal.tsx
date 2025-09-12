@@ -61,7 +61,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student.nom_salle} - {student.annee}
+            {student?.sousetudiants[student?.sousetudiants?.length - 1]?.salle.nom_salle} - {student?.sousetudiants[student?.sousetudiants?.length - 1]?.annee.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>

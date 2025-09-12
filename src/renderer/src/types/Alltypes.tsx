@@ -47,7 +47,7 @@ export type StudentsType = {
   note2?: number
   note3?: number
 
-  sousetudiants?: StatusStudentsType[]
+  sousetudiants: StatusStudentsType[]
   statusecolage?: string | null
   moisEcolage?: string | null
   ecolage?: EcolageType[]
