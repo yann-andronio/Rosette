@@ -169,7 +169,7 @@ const Sidebar = () => {
                 {menu.subMenus.length > 0 && (
                   <ul
                     id={`dropdown-${menu.name.toLowerCase()}`}
-                    className={` py-2 space-y-2 ${closeBar ? s.menukely2 : 'hidden'}  `}
+                    className={` py-2 space-y-2 ${closeBar ? 'bg-[#895256] rounded-lg shadow-lg' : 'hidden'}  `}
                   >
                     {menu.subMenus.map((subMenu, subIndex) => (
                       <li
@@ -179,7 +179,7 @@ const Sidebar = () => {
                         <NavLink
                           onClick={() => dispatch(setActiveName(subMenu.name))}
                           to={subMenu.path}
-                          className={` flex items-center p-2 pl-11 w-full text-base font-normal `}
+                          className={` flex items-center p-2  justify-center w-full text-base font-normal `}
                         >
                           {subMenu.iconsubmenu}
                         </NavLink>
@@ -190,8 +190,6 @@ const Sidebar = () => {
               </li>
             ))}
           </ul>
-
-          
         </div>
         {/* Paramètres sy  deconnexion */}
         <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
