@@ -4,7 +4,6 @@ import { RootState } from '../../redux/Store'
 import { useDispatch } from 'react-redux'
 import { toggleCloseBar } from '../../redux/slice/activeLinkSlice'
 import { AiOutlineMenu } from 'react-icons/ai'
-import { IoNotificationsOutline } from 'react-icons/io5'
 
 
 
@@ -23,16 +22,10 @@ const Navbar: React.FC = () => {
           <h1 className="text-lg font-semibold">{activeName}</h1>
         </div>
         <div className="infouser flex items-center gap-3">
-          <div className="relative cursor-pointer">
-            <IoNotificationsOutline size={25} className="text-gray-700 dark:text-black" />
-
-            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-              3
-            </span>
-          </div>
-
-          <div className="sary">
-            <p className="h-12 w-12 rounded-full bg-yellow-300"></p>
+          <div className="flex items-center">
+            <p className="h-12 w-12 rounded-full text-white bg-[#895256] flex items-center justify-center text-lg font-bold">
+              {user.name ? user.name.charAt(0).toUpperCase() : ''}
+            </p>
           </div>
 
           <div className="nameandfonction flex flex-col ">
