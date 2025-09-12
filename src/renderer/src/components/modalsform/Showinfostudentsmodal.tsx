@@ -1,9 +1,10 @@
-import { FiUser, FiX } from 'react-icons/fi'
+import { FiPlus, FiPrinter, FiSlash, FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
 import profilesary from '../../images/test.png'
 import { useState } from 'react'
 import Statutupdateclasse from '../childmodal/Statutupdatesalle'
 import { set } from 'react-hook-form'
+import CertScolaire from '../certificats/CertScolaire'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -33,6 +34,18 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
      handleCloseChildModal()
    }
 
+  
+   const handlePrint = () => {
+     const printContents = document.getElementById('certificat-a-imprimer')?.innerHTML
+     if (!printContents) return
+     const originalContents = document.body.innerHTML
+     document.body.innerHTML = printContents
+     window.print()
+     document.body.innerHTML = originalContents
+     window.location.reload() // miverigna mi reactualiser page
+   }
+
+ 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
@@ -174,6 +187,24 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
               Historique des statuts
             </h3>
+            <div className="flex flex-wrap gap-3 mb-4">
+              {/* btn Suspendre */}
+              <button
+                type="button"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#895256] hover:bg-[#733935] text-white text-sm font-medium transition"
+              >
+                <FiSlash size={16} /> Suspendre
+              </button>
+
+              {/* btn Imprimer Certificat scolarité */}
+              <button
+                type="button"
+                onClick={() => handlePrint()}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#895256] hover:bg-[#733935] text-white text-sm font-medium transition"
+              >
+                <FiPrinter size={16} /> Imprimer Certificat
+              </button>
+            </div>
 
             {student.historiqueStatus && student.historiqueStatus.length > 0 ? (
               <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
@@ -212,7 +243,16 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                             }
                             disabled={status.statut ? TabStatusWhoAreValide.includes(index) : false}
                             className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${
-                              status.statut? TabStatusWhoAreValide.includes(index)  ? 'bg-gray-400 cursor-not-allowed' : status.statut.toLowerCase() === 'admis' ? 'bg-green-500': status.statut.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
+                              status.statut
+                                ? TabStatusWhoAreValide.includes(index)
+                                  ? 'bg-gray-400 cursor-not-allowed'
+                                  : status.statut.toLowerCase() === 'admis'
+                                    ? 'bg-green-500'
+                                    : status.statut.toLowerCase() === 'redoublé'
+                                      ? 'bg-red-500'
+                                      : 'bg-gray-400'
+                                : 'bg-gray-400'
+                            }`}
                           >
                             {status.statut
                               ? status.statut.charAt(0).toUpperCase() + status.statut.slice(1)
@@ -239,6 +279,11 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
           onValidated={(statut) => handleStatusValidated(statut, currentStatusIndex)}
         />
       )}
+
+      {/* avony ato nle impression  */}
+      <div className="hidden">
+        <CertScolaire student={student} />
+      </div>
     </div>
   )
 }

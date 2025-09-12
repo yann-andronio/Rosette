@@ -1,0 +1,6 @@
+@page {
+    /* Empêche les navigateurs d'ajouter les en-têtes/pieds de page */
+    margin: 0;
+    padding: 0 5%;
+}
+
