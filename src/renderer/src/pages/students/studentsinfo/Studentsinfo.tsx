@@ -44,6 +44,7 @@ export type Etudiant = {
     note1: number | null;
     note2: number | null;
     note3: number | null;
+    noteTotal:number | null
     created_at: string;
     updated_at: string;
     status_admissions: string;
@@ -375,7 +376,7 @@ const precedent = (current) => {
                     <div className="flex gap-3 text-[#9f7126] text-lg">
                       <FaEye
                         onClick={() => {
-                          setSelectedStudent({...student, nom_salle:student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle, nom_classe:student?.sousetudiants[student?.sousetudiants.length - 1].classe.nom_classe, annee:'test', enfant_prof:student.enfantProf})
+                          setSelectedStudent({...student, nom_salle:student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle, nom_classe:student?.sousetudiants[student?.sousetudiants.length - 1].classe.nom_classe, noteTotal:student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal, annee:'test', enfant_prof:student.enfantProf})
                           openModal('showinfostudents')
                         }}
                         className="hover:text-black cursor-pointer transition"

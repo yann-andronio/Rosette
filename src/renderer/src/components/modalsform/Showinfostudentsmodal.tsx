@@ -1,9 +1,9 @@
 import { FiUser, FiX } from 'react-icons/fi'
 import { StudentsType } from '@renderer/types/Alltypes'
-import profilesary from '../../images/test.png'
+
 import { useState } from 'react'
 import Statutupdateclasse from '../childmodal/Statutupdatesalle'
-import { set } from 'react-hook-form'
+
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -77,7 +77,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             </h3>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base">
               <p>
-                <span className="font-medium">Sexe :</span> {student.sexe}
+                <span className="font-medium">Sexe :</span> {student.sexe==1?'Homme':'Femme'}
               </p>
 
               {student.dateNaissance &&(
@@ -202,7 +202,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         </td>
                         <td className="px-4 py-3  text-gray-700">{status.classe.nom_classe}</td>
                         <td className="px-4 py-3  text-gray-700">
-                          {status?.Moyenne_status ? status.Moyenne_status : ' en cours ...'}
+                          {status?.noteTotal != null ? status.noteTotal : ' en cours ...'}
                         </td>
                         <td className="px-4 py-3 ">
                           <button

@@ -5,10 +5,9 @@ import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
-import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
+
 import { Studentsdata } from '@renderer/data/Studentsdata'
-import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
+import {  StudentsType } from '@renderer/types/Alltypes'
 import { years, salle } from '@renderer/data/Filterselectiondata'
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
 import { getMentionColor } from '@renderer/utils/getMentionColor'
@@ -17,36 +16,55 @@ import Addnotemodal from '@renderer/components/modalsform/Addnotemodal'
 import Showinfonotestudents from '@renderer/components/modalsform/Showinfonotestudents'
 import { niveau } from '@renderer/data/Filterselectiondata'
 import { MdMeetingRoom } from 'react-icons/md'
+import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
+import { axiosRequest } from '@renderer/config/helpers'
 
 function Notestudentsmanagement(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyear, setselectedyear] = useState<string>('All')
-  const [selectedsalle, setselectedsalle] = useState<string>('All')
-  const [selectedniveau, setselectedniveau] = useState<string>('All')
-  const [selectedSexe, setSelectedSexe] = useState<string>('All')
+  const [selectedyear, setselectedyear] = useState<string>('0')
+  const [selectedsalle, setselectedsalle] = useState<string>('0')
+  const [selectedniveau, setselectedniveau] = useState<string>('0')
+  const [selectedSexe, setSelectedSexe] = useState<string>('0')
   const [selectedmention, setSelectedmention] = useState<string>('All')
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({
-    annee: 'All',
-    salle: 'All',
-    niveau: 'All',
-    sexe: 'All',
-    mention: 'All'
-  })
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
-
-  useEffect(() => {
-    setSelectedFilters({
-      annee: selectedyear,
-      salle: selectedsalle,
-      niveau: selectedniveau,
-      sexe: selectedSexe,
-      mention: selectedmention
-    })
-  }, [selectedyear, selectedsalle, selectedSexe, selectedmention, selectedniveau])
-
+  const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [lines, setLines] = useState<number>(15)
+  const [reload, setReload] = useState<boolean>(false)
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-    setter((prev) => (prev === current ? 'All' : current))
+    setter((prev) => (prev === current ? '0' : current))
+  }
+
+
+  const precedent = (current) => {
+    if(current > 1){
+      setCurrentPage(current - 1)
+    }
+  }
+
+  const suivant = (current) => {
+    if(current < students.last_page){
+      setCurrentPage(current + 1)
+    }
+  }
+
+  const nextPage = (page:number) =>{
+    setCurrentPage(page)
+  }
+
+  const getEtudiants = async ()=>  {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', `etudiant-list?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`, null , 'token')
+        .then(({data}) => setStudents((data)))
+        .then(() => setIsLoading(false))
+        .catch(error => console.log(error.response.data?.message))
+        .finally(() => setIsLoading(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
   }
 
   const mention = [
@@ -58,22 +76,19 @@ function Notestudentsmanagement(): JSX.Element {
     { id: 6, name: 'Honorable' }
   ]
 
-  const Studentsdatawithmention = Studentsdata.map((student) => ({
-    ...student,
-    mention: getMention(student.moyenne)
-  }))
+
+
+  useEffect(() => {
+    getEtudiants()
+  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves, reload])
+  const pagination:number[] = []
+  for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
+    pagination.push(i)
+  }
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
   }
-
-  const filteredData = filterDataCombined(
-    Studentsdatawithmention,
-    searcheleves,
-    ['nom', 'prenom', 'salle'],
-    selectedFilters
-  )
-
   const { modal, openModal, closModal } = useMultiModals()
   return (
     <div
@@ -227,13 +242,13 @@ function Notestudentsmanagement(): JSX.Element {
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
               <select className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
-                <option>05</option>
-                <option>10</option>
-                <option>20</option>
+                <option>15</option>
+                <option>25</option>
+                <option>50</option>
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
-              Total élèves : <span className="font-bold">2000</span>
+              Total élèves : <span className="font-bold">{students.total}</span>
             </div>
           </div>
         </div>
@@ -252,10 +267,10 @@ function Notestudentsmanagement(): JSX.Element {
           </div>
           {/* miscroll i ngiah une fois le max est atteint */}
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-            {filteredData.length === 0 ? (
+            {students.data.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (
-              filteredData.map((student, index) => (
+              students.data.map((student, index) => (
                 <div
                   key={student.id}
                   className={`flex px-6 py-2 rounded-lg items-center ${
@@ -263,17 +278,19 @@ function Notestudentsmanagement(): JSX.Element {
                   }  hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
                 >
                   <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
-                    <div className="image bg-[#895256] p-2 rounded-lg">
-                      <FaUserCircle className="text-3xl text-[#ffff]" />
-                    </div>
+                    <img
+                      src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
+                      alt="Profil"
+                      className="rounded-sm w-10 h-10"
+                    />
                   </div>
 
                   <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                   <div className="flex-1 text-gray-700">{student.prenom}</div>
-                  <div className="flex-1 text-gray-700">{student.sexe}</div>
-                  <div className="flex-1 text-gray-700">{student.salle}</div>
-                  <div className={`${getMentionColor(student.moyenne)} flex-1 `}>
-                    {student.moyenne}
+                  <div className="flex-1 text-gray-700">{student.sexe==1?'Homme':'Femme'}</div>
+                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle}</div>
+                  <div className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal)} flex-1 `}>
+                    {getMention(student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal)}
                   </div>
                   <div className="flex-1">
                     <div className="flex gap-3 text-[#9f7126] text-lg">
@@ -301,18 +318,19 @@ function Notestudentsmanagement(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => precedent(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
             Précédent
           </button>
           <div className="flex gap-2 mt-3 md:mt-0">
-            {[1, 2, 3, 4, 5].map((page) => (
+            {pagination.map((page) => (
               <button
                 key={page}
+                onClick={() => nextPage(page)}
                 className={`px-3 py-1 rounded-full font-medium ${
-                  page === 1
+                  page === currentPage
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
                 }`}
@@ -321,7 +339,7 @@ function Notestudentsmanagement(): JSX.Element {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => suivant(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
