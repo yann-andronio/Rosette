@@ -1,15 +1,15 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaUserCircle, FaEdit, FaTrash, FaEye } from 'react-icons/fa'
+import {  FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
-import { Studentsdata } from '@renderer/data/Studentsdata'
-import {  StudentsType } from '@renderer/types/Alltypes'
+
+
 import { years, salle } from '@renderer/data/Filterselectiondata'
-import { filterDataCombined } from '@renderer/utils/filterDataCombined'
+
 import { getMentionColor } from '@renderer/utils/getMentionColor'
 import { getMention } from '@renderer/utils/getMention'
 import Addnotemodal from '@renderer/components/modalsform/Addnotemodal'
@@ -28,7 +28,7 @@ function Notestudentsmanagement(): JSX.Element {
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
   const [selectedmention, setSelectedmention] = useState<string>('All')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
+  const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
   const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
@@ -37,7 +37,9 @@ function Notestudentsmanagement(): JSX.Element {
     setter((prev) => (prev === current ? '0' : current))
   }
 
-
+  const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
+  const [classes, setClasses] = useState<{id:number, nom_classe:string}[]>([])
+  const [salles, setSalles] = useState<{id:number, nom_salle:string}[]>([])
   const precedent = (current) => {
     if(current > 1){
       setCurrentPage(current - 1)
@@ -76,7 +78,43 @@ function Notestudentsmanagement(): JSX.Element {
     { id: 6, name: 'Honorable' }
   ]
 
+  const getClasse = async () => {
 
+    try{
+      await axiosRequest('GET', 'classe-list', null, 'token')
+        .then(({data}) => setClasses(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const getSalle = async () => {
+    try{
+      await axiosRequest('GET', 'salle-list', null, 'token')
+        .then(({data}) => setSalles(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const getAcs = async () => {
+    try{
+      await axiosRequest('GET', 'ac-list', null, 'token')
+        .then(({data}) => setAcs(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+
+  useEffect(() => {
+    getAcs()
+    getClasse()
+    getSalle()
+  }, [])
 
   useEffect(() => {
     getEtudiants()
@@ -107,17 +145,17 @@ function Notestudentsmanagement(): JSX.Element {
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
-              {years.map((year, index) => (
+              {acs.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.ans, setselectedyear)}
+                  onClick={() => handleselect(year.id.toString(), setselectedyear)}
                   className={`${
-                    selectedyear === year.ans
+                    selectedyear === year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {year.ans}
+                  {year.annee}
                 </button>
               ))}
             </div>
@@ -132,17 +170,17 @@ function Notestudentsmanagement(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une niveau</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {niveau.map((niv, index) => (
+              {classes.map((niv, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(niv.name, setselectedniveau)}
+                  onClick={() => handleselect(niv.id.toString(), setselectedniveau)}
                   className={`${
-                    selectedniveau === niv.name
+                    selectedniveau === niv.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {niv.name}
+                  {niv.nom_classe}
                 </button>
               ))}
             </div>
@@ -158,17 +196,17 @@ function Notestudentsmanagement(): JSX.Element {
             </div>
 
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
-              {salle.map((salle, index) => (
+              {salles.map((salle, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(salle.name, setselectedsalle)}
+                  onClick={() => handleselect(salle.id.toString(), setselectedsalle)}
                   className={`${
-                    selectedsalle === salle.name
+                    selectedsalle === salle.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {salle.name}
+                  {salle.nom_salle}
                 </button>
               ))}
             </div>

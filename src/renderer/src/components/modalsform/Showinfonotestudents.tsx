@@ -1,9 +1,10 @@
 import { FiUser, FiX } from 'react-icons/fi'
-import { StudentsType } from '@renderer/types/Alltypes'
+
+import { Etudiant } from "@renderer/pages/students/studentsinfo/Studentsinfo";
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
-  student: StudentsType
+  student: Etudiant
 }
 
 const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) => {
@@ -22,7 +23,7 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
         <div className="w-1/3 bg-[#895256] text-white flex flex-col items-center justify-center p-8">
           {student.photo ? (
             <img
-              src={student.photo}
+              src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
               alt="Profil"
               className="w-36 h-36 object-cover rounded-full border-4 border-white mb-6 shadow-md"
             />
@@ -34,7 +35,7 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
           <h2 className="text-xl font-semibold text-center">
             {student.nom} {student.prenom}
           </h2>
-          <p className="mt-1 text-sm italic opacity-90">{student.salle}</p>
+          <p className="mt-1 text-sm italic opacity-90">{student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle}</p>
         </div>
 
         {/* Section droite - Infos */}
@@ -51,26 +52,26 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
               <span className="font-medium">Prénom :</span> {student.prenom}
             </p>
             <p>
-              <span className="font-medium">Classe :</span> {student.salle}
+              <span className="font-medium">Classe :</span> {student?.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe}
             </p>
-            {student.trimestre1 && (
+            {student.sousetudiants[student?.sousetudiants.length - 1].note1 && (
               <p>
-                <span className="font-medium">Trimestre 1 :</span> {student.trimestre1}
+                <span className="font-medium">Trimestre 1 :</span> {student?.sousetudiants[student.sousetudiants.length - 1].note1}
               </p>
             )}
-            {student.trimestre2 && (
+            {student.sousetudiants[student?.sousetudiants.length - 1].note2 && (
               <p>
-                <span className="font-medium">Trimestre 2 :</span> {student.trimestre2}
+                <span className="font-medium">Trimestre 2 :</span> {student?.sousetudiants[student.sousetudiants.length - 1].note2}
               </p>
             )}
-            {student.trimestre3 && (
+            {student.sousetudiants[student?.sousetudiants.length - 1].note3 && (
               <p>
-                <span className="font-medium">Trimestre 3 :</span> {student.trimestre3}
+                <span className="font-medium">Trimestre 3 :</span> {student.sousetudiants[student.sousetudiants.length - 1].note3}
               </p>
             )}
-            {student.moyenne && (
+            {student.sousetudiants[student?.sousetudiants.length - 1].noteTotal && (
               <p>
-                <span className="font-medium">Moyenne Génerale :</span> {student.moyenne}
+                <span className="font-medium">Moyenne Génerale :</span> {student.sousetudiants[student.sousetudiants.length - 1].noteTotal}
               </p>
             )}
           </div>

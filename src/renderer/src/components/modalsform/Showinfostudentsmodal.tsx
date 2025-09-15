@@ -202,7 +202,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         </td>
                         <td className="px-4 py-3  text-gray-700">{status.classe.nom_classe}</td>
                         <td className="px-4 py-3  text-gray-700">
-                          {status?.noteTotal != null ? status.noteTotal : ' en cours ...'}
+                          {status?.noteTotal != null ? status?.noteTotal : ' en cours ...'}
                         </td>
                         <td className="px-4 py-3 ">
                           <button
