@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfonotestudents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfonotestudents.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/utils/getMentionColor.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/utils/getMentionColor.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +99,7 @@
       <workItem from="1757668166445" duration="7557000" />
       <workItem from="1757683917224" duration="1616000" />
       <workItem from="1757788306306" duration="12791000" />
-      <workItem from="1757958628244" duration="3194000" />
+      <workItem from="1757958628244" duration="13065000" />
     </task>
     <servers />
   </component>

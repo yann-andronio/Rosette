@@ -5,20 +5,13 @@ import {  FaEdit, FaTrash, FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-
-
-
-import { years, salle } from '@renderer/data/Filterselectiondata'
-
 import { getMentionColor } from '@renderer/utils/getMentionColor'
 import { getMention } from '@renderer/utils/getMention'
 import Addnotemodal from '@renderer/components/modalsform/Addnotemodal'
 import Showinfonotestudents from '@renderer/components/modalsform/Showinfonotestudents'
-import { niveau } from '@renderer/data/Filterselectiondata'
 import { MdMeetingRoom } from 'react-icons/md'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { axiosRequest } from '@renderer/config/helpers'
-
 function Notestudentsmanagement(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
@@ -59,7 +52,7 @@ function Notestudentsmanagement(): JSX.Element {
   const getEtudiants = async ()=>  {
     setIsLoading(true)
     try{
-      await axiosRequest('GET', `etudiant-list?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`, null , 'token')
+      await axiosRequest('GET', `etudiant-list_note?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`, null , 'token')
         .then(({data}) => setStudents((data)))
         .then(() => setIsLoading(false))
         .catch(error => console.log(error.response.data?.message))
@@ -128,6 +121,7 @@ function Notestudentsmanagement(): JSX.Element {
     setSearcheleves(dataeleve)
   }
   const { modal, openModal, closModal } = useMultiModals()
+
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
@@ -326,7 +320,7 @@ function Notestudentsmanagement(): JSX.Element {
                   <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                   <div className="flex-1 text-gray-700">{student.prenom}</div>
                   <div className="flex-1 text-gray-700">{student.sexe==1?'Homme':'Femme'}</div>
-                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle}</div>
+                  <div className="flex-1 text-gray-700">{student?.sousetudiants[0].salle.nom_salle}</div>
                   <div className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal)} flex-1 `}>
                     {getMention(student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal)}
                   </div>
