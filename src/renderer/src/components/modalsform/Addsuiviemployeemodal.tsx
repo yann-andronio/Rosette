@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { EmployerType } from '@renderer/types/Alltypes'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 
-// Définition des types pour les formulaires
+
  export type SalaireEmploye = {
   montant: number
   typePaiement: string
@@ -26,7 +26,7 @@ import { Monthlistedata } from '@renderer/data/Monthlistedata'
   nouveauStatut: string
 }
 
-// Définition des schémas de validation avec Yup
+
 const salarySchema = yup.object().shape({
   montant: yup
     .number()
