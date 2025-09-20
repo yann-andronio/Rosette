@@ -1,13 +1,12 @@
 import { FiUser, FiX } from 'react-icons/fi'
-import { StudentsType } from '@renderer/types/Alltypes'
-
 import { useState } from 'react'
 import Statutupdateclasse from '../childmodal/Statutupdatesalle'
+import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
-  student: StudentsType
+  student: Etudiant
 }
 
 const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) => {
@@ -15,7 +14,8 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
   const [openClassModal, setOpenClassModal] = useState(false)
   const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null)
-
+  const [setId, setSetId] = useState<number>()
+  const [etId, setEtId] = useState<number>()
  const handleStatusBtnClick = (statut: string, index: number) => {
    setStatusBtnClicked(statut)
    setCurrentStatusIndex(index)
@@ -206,13 +206,16 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         </td>
                         <td className="px-4 py-3 ">
                           <button
-                            onClick={() =>
-                              status.status_admissions &&
-                              !TabStatusWhoAreValide.includes(index) &&
-                              handleStatusBtnClick(status.status_admissions, index)
+                            onClick={() =>{
+                              if(status.status_admissions){
+                                handleStatusBtnClick(status.status_admissions, index)
+                                setSetId(status.id)
+                                setEtId(student.id)
+                              }
                             }
-                            disabled={status.status_admissions =='cours'? true : false}
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${
+                            }
+                            disabled={status.status_admissions =='cours'||status.transfert==1? true : false}
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${status.transfert==1?"cursor-not-allowed":""} ${
                               status.status_admissions? status.status_admissions =='cours' ? 'bg-gray-400 cursor-not-allowed' : status.status_admissions?.toLowerCase() === 'admis' ? 'bg-green-500': status.status_admissions?.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
                           >
                             {status.status_admissions
@@ -237,6 +240,8 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
       </div>
       {statusBtnClicked && currentStatusIndex !== null && (
         <Statutupdateclasse
+          setid={setId}
+          etid={etId}
           closemodal={handleCloseChildModal}
           statut={statusBtnClicked.toLowerCase() as 'admis' | 'redoublé'}
           onValidated={(statut) => handleStatusValidated(statut, currentStatusIndex)}

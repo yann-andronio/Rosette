@@ -48,6 +48,7 @@ export type Etudiant = {
     created_at: string;
     updated_at: string;
     status_admissions: string;
+    transfert:number;
     classe: {
       id: number;
       nom_classe: string;

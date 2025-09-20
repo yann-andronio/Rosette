@@ -12,6 +12,7 @@ import Showinfonotestudents from '@renderer/components/modalsform/Showinfonotest
 import { MdMeetingRoom } from 'react-icons/md'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { axiosRequest } from '@renderer/config/helpers'
+import { RotatingLines } from 'react-loader-spinner'
 function Notestudentsmanagement(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
@@ -19,7 +20,7 @@ function Notestudentsmanagement(): JSX.Element {
   const [selectedsalle, setselectedsalle] = useState<string>('0')
   const [selectedniveau, setselectedniveau] = useState<string>('0')
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
-  const [selectedmention, setSelectedmention] = useState<string>('All')
+  const [selectedmention, setSelectedmention] = useState<string>('0')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
   const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
@@ -52,7 +53,7 @@ function Notestudentsmanagement(): JSX.Element {
   const getEtudiants = async ()=>  {
     setIsLoading(true)
     try{
-      await axiosRequest('GET', `etudiant-list_note?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`, null , 'token')
+      await axiosRequest('GET', `etudiant-list_note?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&mention=${selectedmention}`, null , 'token')
         .then(({data}) => setStudents((data)))
         .then(() => setIsLoading(false))
         .catch(error => console.log(error.response.data?.message))
@@ -111,7 +112,7 @@ function Notestudentsmanagement(): JSX.Element {
 
   useEffect(() => {
     getEtudiants()
-  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves, reload])
+  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves, reload, selectedmention])
   const pagination:number[] = []
   for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
     pagination.push(i)
@@ -273,10 +274,10 @@ function Notestudentsmanagement(): JSX.Element {
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
-                <option>15</option>
-                <option>25</option>
-                <option>50</option>
+              <select onChange={(e) => setLines(e.target.value)} className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+                <option value={15}>15</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
@@ -299,6 +300,18 @@ function Notestudentsmanagement(): JSX.Element {
           </div>
           {/* miscroll i ngiah une fois le max est atteint */}
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+            {isLoading?<div className='flex w-full justify-center'><RotatingLines
+                visible={true}
+                height="50"
+                width="55"
+                color="grey"
+                strokeColor="#7A3B3F"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              /></div>:<>
             {students.data.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (
@@ -320,9 +333,9 @@ function Notestudentsmanagement(): JSX.Element {
                   <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                   <div className="flex-1 text-gray-700">{student.prenom}</div>
                   <div className="flex-1 text-gray-700">{student.sexe==1?'Homme':'Femme'}</div>
-                  <div className="flex-1 text-gray-700">{student?.sousetudiants[0].salle.nom_salle}</div>
-                  <div className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal)} flex-1 `}>
-                    {getMention(student?.sousetudiants[student?.sousetudiants.length - 1].noteTotal)}
+                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1]?.salle?.nom_salle}</div>
+                  <div className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal)} flex-1 `}>
+                    {getMention(student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal)}
                   </div>
                   <div className="flex-1">
                     <div className="flex gap-3 text-[#9f7126] text-lg">
@@ -345,7 +358,7 @@ function Notestudentsmanagement(): JSX.Element {
                   </div>
                 </div>
               ))
-            )}
+            )}</>}
           </div>
         </div>
 
@@ -387,7 +400,7 @@ function Notestudentsmanagement(): JSX.Element {
         />
       )}
       {modal.Addnotemodal && selectedStudent && (
-        <Addnotemodal closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
+        <Addnotemodal reload={reload} setReload={setReload} closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
       )}
     </div>
   )

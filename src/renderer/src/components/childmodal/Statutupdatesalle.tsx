@@ -3,36 +3,47 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { salle } from '@renderer/data/Filterselectiondata'
+import { axiosRequest } from '@renderer/config/helpers'
 
 type ClassModalProps = {
   closemodal: () => void
   statut: 'admis' | 'redoublé'
   onValidated: (statut: string) => void
+  setid:number|undefined
+  etid:number|undefined
 }
 
 type FormData = {
-  selectedClass: string
+  sa_id: number
 }
 
-const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onValidated }) => {
+const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onValidated, setid, etid }) => {
   const schema = yup.object({
-    selectedClass: yup.string().required('Veuillez sélectionner une salle.')
+    sa_id: yup.number().required('Veuillez sélectionner une salle.')
   })
 
   const {
-    register,
+
     handleSubmit,
     formState: { errors },
     setValue,
     watch
   } = useForm<FormData>({ resolver: yupResolver(schema) })
 
-  const selectedClassForStyle = watch('selectedClass')
+  const selectedClassForStyle = watch('sa_id')
 
-  const onSubmit = (data: FormData) => {
-      console.log(`Élève ${statut} vers la salle :`, data.selectedClass)
-       onValidated(statut)
-    closemodal()
+  const onSubmit = async (data: FormData) => {
+
+    onValidated(statut)
+    try{
+        await axiosRequest('POST', 'etudiant-recreation',{...data, setid:setid, etid:etid}, 'token' )
+            .then(({data}) => console.log(data.message))
+          .catch(err => console.log(err.response?.data?.error))
+    }catch (error){
+        console.log('Le serveur ne repond pas')
+    }
+
+
   }
 
   return (
@@ -55,17 +66,17 @@ const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onVa
             {salle.map((cl, index) => (
               <div
                 key={index}
-                onClick={() => setValue('selectedClass', cl.name, { shouldValidate: true })}
+                onClick={() => setValue('sa_id', index, { shouldValidate: true })}
                 className={`text-center cursor-pointer rounded-lg px-4 py-2 select-none font-medium text-sm transition-all duration-200 border
-                  ${ selectedClassForStyle === cl.name  ? 'bg-[#895256] text-white border-[#895256]'  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100' }
+                  ${ selectedClassForStyle === index  ? 'bg-[#895256] text-white border-[#895256]'  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100' }
                 `}
               >
                 {cl.name}
               </div>
             ))}
           </div>
-          {errors.selectedClass && (
-            <p className="text-sm text-red-500 mt-1">{errors.selectedClass.message}</p>
+          {errors.sa_id && (
+            <p className="text-sm text-red-500 mt-1">{errors.sa_id.message}</p>
           )}
 
           <div className="flex justify-end gap-3 mt-6">

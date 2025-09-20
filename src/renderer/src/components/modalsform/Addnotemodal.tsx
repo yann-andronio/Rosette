@@ -2,19 +2,23 @@ import { FiEdit, FiUser, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { StudentsType } from '@renderer/types/Alltypes'
+import { Etudiant } from "@renderer/pages/students/studentsinfo/Studentsinfo";
+import { useEffect } from "react";
+import { axiosRequest } from "@renderer/config/helpers";
 
 type NotemodalProps = {
   closemodal: () => void
-  student: StudentsType
+  setReload:() => void
+  reload:boolean
+  student: Etudiant
 }
 
-const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
+const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student, reload, setReload }) => {
   const ValidationSchema = yup.object({
-    trimestre1: yup.string(),
-    trimestre2: yup.string(),  
-    trimestre3: yup.string(),
-    moyenne: yup.string()
+    note1: yup.number(),
+    note2: yup.number(),
+    note3: yup.number(),
+    noteTotal: yup.number()
   })
 
   const {
@@ -24,20 +28,31 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
     reset,
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
-  const onSubmit = (data: any) => {
-    console.log(data)
-    reset()
-    closemodal()
+  const onSubmit =async (data: any) => {
+
+    try{
+      await axiosRequest('PUT', `etudiant-note/${student.sousetudiants[student.sousetudiants.length - 1].id}`, data, 'token')
+        .then(({data}) => console.log(data.message))
+        .then(() => setReload(!reload))
+        .then(() => closemodal())
+        .catch(error => console.log(error?.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
   }
 
+
+  useEffect(() => {
+    reset({note1:student.sousetudiants[student.sousetudiants.length -1].note1, note2:student.sousetudiants[student.sousetudiants.length -1].note2, note3:student.sousetudiants[student.sousetudiants.length -1].note3, noteTotal:student.sousetudiants[student.sousetudiants.length -1].noteTotal})
+  }, []);
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <div className="bg-white w-[65%] h-[550px] rounded-2xl flex shadow-2xl overflow-hidden">
         {/* DESIGN GAUCHE */}
         <div className="w-1/2 bg-[#895256] text-white flex flex-col items-center justify-center p-8">
-          {student.photo ? (
+          {student?.photo ? (
             <img
-              src={student.photo}
+              src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
               alt="Profil"
               className="w-36 h-36 object-cover rounded-full border-4 border-white mb-6 shadow-md"
             />
@@ -49,13 +64,13 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
           <h2 className="text-xl font-semibold text-center">
             {student.nom} {student.prenom}
           </h2>
-          <p className="mt-1 text-sm italic opacity-90">{student.salle}</p>
-          
+          <p className="mt-1 text-sm italic opacity-90">{student.sousetudiants[student.sousetudiants.length -1].salle.nom_salle}</p>
+
         </div>
 
         {/* FORMULAIRE DROIT */}
         <div className="w-1/2 p-10 flex flex-col justify-between">
-          
+
           <button
             onClick={closemodal}
             aria-label="Fermer"
@@ -70,26 +85,26 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
             className="overflow-y-auto pr-3"
             style={{ maxHeight: '460px' }}
           >
-            
+
             <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
-              
+
               <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">Notes</legend>
 
               <div className="mb-5">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Trimestre 1</label>
                 <input
                   type="text"
-                  {...register('trimestre1')}
+                  {...register('note1')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.trimestre1
+                    errors.note1
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Ex: 12.5"
                 />
-                {errors.trimestre1 && (
+                {errors.note1 && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.trimestre1.message}
+                    {errors.note1.message}
                   </p>
                 )}
               </div>
@@ -98,17 +113,17 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Trimestre 2</label>
                 <input
                   type="text"
-                  {...register('trimestre2')}
+                  {...register('note2')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.trimestre2
+                    errors.note2
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Ex: 14"
                 />
-                {errors.trimestre2 && (
+                {errors.note2 && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.trimestre2.message}
+                    {errors.note2.message}
                   </p>
                 )}
               </div>
@@ -117,17 +132,17 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Trimestre 3</label>
                 <input
                   type="text"
-                  {...register('trimestre3')}
+                  {...register('note3')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.trimestre3
+                    errors.note3
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Ex: 13"
                 />
-                {errors.trimestre3 && (
+                {errors.note3 && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.trimestre3.message}
+                    {errors.note3.message}
                   </p>
                 )}
               </div>
@@ -138,17 +153,17 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student }) => {
                 </label>
                 <input
                   type="text"
-                  {...register('moyenne')}
+                  {...register('noteTotal')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.moyenne
+                    errors.noteTotal
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Ex: 13.5"
                 />
-                {errors.moyenne && (
+                {errors.noteTotal && (
                   <p className="text-red-500 text-xs mt-1 italic font-semibold">
-                    {errors.moyenne.message}
+                    {errors.noteTotal.message}
                   </p>
                 )}
               </div>

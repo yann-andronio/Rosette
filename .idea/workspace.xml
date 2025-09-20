@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/childmodal/Statutupdatesalle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/childmodal/Statutupdatesalle.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addnotemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addnotemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +56,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-WS-252.25557.126" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-WS-252.26199.162" />
       </set>
     </attachedChunks>
   </component>
@@ -99,7 +102,12 @@
       <workItem from="1757668166445" duration="7557000" />
       <workItem from="1757683917224" duration="1616000" />
       <workItem from="1757788306306" duration="12791000" />
-      <workItem from="1757958628244" duration="13065000" />
+      <workItem from="1757958628244" duration="13938000" />
+      <workItem from="1758042828130" duration="3702000" />
+      <workItem from="1758051006390" duration="4530000" />
+      <workItem from="1758091275286" duration="6000" />
+      <workItem from="1758172745143" duration="20547000" />
+      <workItem from="1758368937622" duration="3833000" />
     </task>
     <servers />
   </component>
