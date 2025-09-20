@@ -22,8 +22,8 @@ export const EmployersData: EmployerType[] = [
       { dateDebut: new Date('2025-06-01'), dateFin: new Date('2025-06-05'), motif: 'Formation' }
     ],
     salaires: [
-      { mois: 1, montant: 3500, typePaiement: 'Virement', motif: 'Salaire de base' },
-      { mois: 2, montant: 3500, typePaiement: 'Virement', motif: 'Salaire de base' }
+      { mois: 1, montant: 3500, typePaiement: 'Avance', motif: 'Salaire de base' },
+      { mois: 2, montant: 3500, typePaiement: 'Salaire complet', motif: 'Salaire de base' }
     ]
   },
   {

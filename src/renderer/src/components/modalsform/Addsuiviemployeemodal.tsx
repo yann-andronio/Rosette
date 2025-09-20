@@ -1,18 +1,19 @@
-import { useState, useEffect } from 'react'
-import { FiX, FiEdit2, FiTrash2, FiPlus, FiSave } from 'react-icons/fi'
-import { FaMoneyBillWave, FaCalendarAlt, FaUserCheck, FaCheck, FaTimes } from 'react-icons/fa'
+import { useState, useEffect, useRef } from 'react'
+import { FiX, FiEdit2, FiTrash2, FiSave } from 'react-icons/fi'
+import { FaMoneyBillWave, FaCalendarAlt, FaUserCheck, FaCheck, FaTimes, FaPrint } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { EmployerType } from '@renderer/types/Alltypes'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
+import Recuepayementemploye from '../recue/Recuepayementemploye'
 
 // Définition des types pour les formulaires
  export type SalaireEmploye = {
   montant: number
   typePaiement: string
-  motif: string
+  motif?: string
   mois: number
 }
 
@@ -26,7 +27,7 @@ import { Monthlistedata } from '@renderer/data/Monthlistedata'
   nouveauStatut: string
 }
 
-// Définition des schémas de validation avec Yup
+
 const salarySchema = yup.object().shape({
   montant: yup
     .number()
@@ -34,7 +35,7 @@ const salarySchema = yup.object().shape({
     .required('Le montant est requis.')
     .positive('Le montant doit être positif.'),
   typePaiement: yup.string().required('Le type de paiement est requis.'),
-  motif: yup.string().required('Le motif est requis.'),
+  motif: yup.string().optional(),
   mois: yup
     .number()
     .required('Veuillez sélectionner un mois.')
@@ -129,6 +130,24 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
     console.log('Soumission du formulaire de statut:', data)
     resetStatus()
   }
+
+
+const [selectedPayment, setSelectedPayment] = useState<SalaireEmploye | null>(null)
+const printRef = useRef<HTMLDivElement>(null)
+const handlePrint = (paiement: SalaireEmploye) => {
+  setSelectedPayment(paiement)
+  setTimeout(() => {
+    if (!printRef.current) return
+    const printContents = printRef.current.innerHTML
+    if (!printContents) return
+    const originalContents = document.body.innerHTML
+    document.body.innerHTML = printContents
+    window.print()
+    document.body.innerHTML = originalContents
+    window.location.reload()
+  }, 200)
+}
+
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
@@ -310,6 +329,13 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                             <span className="font-semibold text-gray-800">
                               {formatNumber(item.montant)} Ar
                             </span>
+                            <button
+                              onClick={() => handlePrint(item)}
+                              className="p-1 rounded-md hover:bg-gray-100"
+                              title="Imprimer le reçu"
+                            >
+                              <FaPrint className="text-gray-600" />
+                            </button>
                             <button className="p-1 rounded-md hover:bg-gray-100">
                               <FiEdit2 className="text-blue-500" />
                             </button>
@@ -496,6 +522,15 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
             )}
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* avony ato nle impression  */}
+      <div className="hidden">
+        {selectedPayment && (
+          <div ref={printRef}>
+            <Recuepayementemploye employer={employer} salaire={selectedPayment} />
+          </div>
+        )}
       </div>
     </div>
   )

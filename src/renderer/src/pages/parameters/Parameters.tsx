@@ -13,6 +13,7 @@ import { FaUserTie } from 'react-icons/fa'
 import { HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
+import { useRef } from 'react'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -35,8 +36,24 @@ function Parameters(): JSX.Element {
 
   const buttonsForParamsAdmin = [
     { icon: <FiUserCheck size={28} />, label: 'Ajouter un administrateur', modalName: 'registeremploye' },
- 
   ]
+
+
+
+
+   const fileInputRef = useRef<HTMLInputElement>(null)
+
+   const handleClick = () => {
+     fileInputRef.current?.click()
+   }
+
+   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+     const file = event.target.files?.[0]
+     if (file) {
+       console.log('Fichier importé :', file.name)
+      
+     }
+   }
 
   return (
     <div
@@ -92,15 +109,24 @@ function Parameters(): JSX.Element {
             </button>
           ))}
 
-          {/* btn d' export et import de file */}
-          <button className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group">
+         
+          <div onClick={handleClick}
+            className="cursor-pointer border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group"
+          >
             <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
               <FiUploadCloud size={28} />
             </div>
             <span className="text-lg font-medium text-gray-700 group-hover:text-[#9f7126]">
               Importer une base de données
             </span>
-          </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept=".csv, .xlsx, .json" // type na fichier accepten ngiah
+            />
+          </div>
 
           <button className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group">
             <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
@@ -150,7 +176,9 @@ function Parameters(): JSX.Element {
       )}
       {modal.registeremploye && <Register closemodal={() => closModal('registeremploye')} />}
       {modal.Addsallemodal && <Addsallemodal closemodal={() => closModal('Addsallemodal')} />}
-      {modal.Addfonctionemployer && <Addfonctionemployer closemodal={() => closModal('Addfonctionemployer')} />}
+      {modal.Addfonctionemployer && (
+        <Addfonctionemployer closemodal={() => closModal('Addfonctionemployer')} />
+      )}
       {modal.AdUpEmployeemodal && (
         <AdUpEmployeemodal closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer" />
       )}

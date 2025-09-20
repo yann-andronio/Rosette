@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaCheckCircle, FaTimesCircle, FaWallet, FaCalendarAlt, FaSchool } from 'react-icons/fa'
 import { FiX } from 'react-icons/fi'
 import { StudentsType, EcolageType } from '@renderer/types/Alltypes'

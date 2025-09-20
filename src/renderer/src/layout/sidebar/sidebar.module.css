@@ -89,6 +89,7 @@ content: '';
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     border-top: 10px solid #ffffff;
+    z-index: 1000;
 }
 li:hover .menukely2 {
     display: flex;

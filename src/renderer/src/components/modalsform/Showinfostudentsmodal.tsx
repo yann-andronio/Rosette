@@ -1,7 +1,11 @@
-import { FiUser, FiX } from 'react-icons/fi'
+
+import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
+
+
+import {  FiPrinter, FiSlash, FiUser, FiX } from 'react-icons/fi'
 import { useState } from 'react'
 import Statutupdateclasse from '../childmodal/Statutupdatesalle'
-import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
+import CertScolaire from '../certificats/CertScolaire'
 
 
 type ShowInfoStudentsProps = {
@@ -33,6 +37,18 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
      handleCloseChildModal()
    }
 
+  
+   const handlePrint = () => {
+     const printContents = document.getElementById('certificat-a-imprimer')?.innerHTML
+     if (!printContents) return
+     const originalContents = document.body.innerHTML
+     document.body.innerHTML = printContents
+     window.print()
+     document.body.innerHTML = originalContents
+     window.location.reload() // miverigna mi reactualiser page
+   }
+
+ 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
@@ -175,6 +191,24 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
               Historique des statuts
             </h3>
+            <div className="flex flex-wrap gap-3 mb-4">
+              {/* btn Suspendre */}
+              <button
+                type="button"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#895256] hover:bg-[#733935] text-white text-sm font-medium transition"
+              >
+                <FiSlash size={16} /> Suspendre
+              </button>
+
+              {/* btn Imprimer Certificat scolarité */}
+              <button
+                type="button"
+                onClick={() => handlePrint()}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#895256] hover:bg-[#733935] text-white text-sm font-medium transition"
+              >
+                <FiPrinter size={16} /> Imprimer Certificat
+              </button>
+            </div>
 
             {student.sousetudiants && student.sousetudiants.length > 0 ? (
               <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
@@ -202,7 +236,9 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         </td>
                         <td className="px-4 py-3  text-gray-700">{status.classe.nom_classe}</td>
                         <td className="px-4 py-3  text-gray-700">
+
                           {status?.noteTotal != null ? status?.noteTotal : ' en cours ...'}
+
                         </td>
                         <td className="px-4 py-3 ">
                           <button
@@ -213,10 +249,12 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                                 setEtId(student.id)
                               }
                             }
+
                             }
                             disabled={status.status_admissions =='cours'||status.transfert==1? true : false}
                             className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${status.transfert==1?"cursor-not-allowed":""} ${
                               status.status_admissions? status.status_admissions =='cours' ? 'bg-gray-400 cursor-not-allowed' : status.status_admissions?.toLowerCase() === 'admis' ? 'bg-green-500': status.status_admissions?.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
+
                           >
                             {status.status_admissions
                               ? status.status_admissions.charAt(0).toUpperCase() + status.status_admissions?.slice(1)
@@ -247,6 +285,11 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
           onValidated={(statut) => handleStatusValidated(statut, currentStatusIndex)}
         />
       )}
+
+      {/* avony ato nle impression  */}
+      <div className="hidden">
+        <CertScolaire student={student} />
+      </div>
     </div>
   )
 }
