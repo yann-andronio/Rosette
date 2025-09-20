@@ -77,7 +77,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
      
       <div className="flex justify-between mt-8">
         <div className="text-center">
-          <p className="font-semibold">Fait à Antananarivo, le {datePaiement}</p>
+          <p className="font-semibold">Fait à Mananara Avaratra, le {datePaiement}</p>
         </div>
       </div>
 
