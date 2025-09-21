@@ -6,6 +6,7 @@ import {  FiPrinter, FiSlash, FiUser, FiX } from 'react-icons/fi'
 import { useState } from 'react'
 import Statutupdateclasse from '../childmodal/Statutupdatesalle'
 import CertScolaire from '../certificats/CertScolaire'
+import { axiosRequest } from '@renderer/config/helpers'
 
 
 type ShowInfoStudentsProps = {
@@ -37,7 +38,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
      handleCloseChildModal()
    }
 
-  
+
    const handlePrint = () => {
      const printContents = document.getElementById('certificat-a-imprimer')?.innerHTML
      if (!printContents) return
@@ -48,7 +49,18 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
      window.location.reload() // miverigna mi reactualiser page
    }
 
- 
+   const suspendre = async (id: number) => {
+      try{
+        await axiosRequest('PUT', `etudiant-suspendre/${id}`, null, 'token')
+          .then(({data}) => console.log(data.message))
+          .then(() => closemodal())
+          .catch(err => console.log(err?.response?.data?.error))
+      }catch(error){
+        console.log('Le serveur ne repond pas')
+      }
+   }
+
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
@@ -194,8 +206,9 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             <div className="flex flex-wrap gap-3 mb-4">
               {/* btn Suspendre */}
               <button
+                onClick={() => suspendre(student.id)}
                 type="button"
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#895256] hover:bg-[#733935] text-white text-sm font-medium transition"
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${student?.sousetudiants[student.sousetudiants.length -1]?.status_admissions=='suspendu'?'bg-[#f0f0f0] hover:cursor-not-allowed':'bg-[#895256] hover:bg-[#733935]'}  text-white text-sm font-medium transition`}
               >
                 <FiSlash size={16} /> Suspendre
               </button>

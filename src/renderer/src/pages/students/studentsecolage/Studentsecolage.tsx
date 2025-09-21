@@ -9,67 +9,139 @@ import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostude
 import { filterDataCombined } from '@renderer/utils/filterDataCombined'
 import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
 import { Studentsdata } from '@renderer/data/Studentsdata'
-import {  salle, niveau, years } from '@renderer/data/Filterselectiondata'
-import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import { MdMeetingRoom } from 'react-icons/md'
-import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
+import { axiosRequest } from '@renderer/config/helpers'
+import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
+import { RotatingLines } from 'react-loader-spinner'
 
 function Studentsecolage(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
-  const [selectedyears, setselectedyears] = useState<string>('All')
-  const [selectedsalle, setselectedsalle] = useState<string>('All')
-  const [selectedniveau, setselectedniveau] = useState<string>('All')
-  const [selectedSexe, setSelectedSexe] = useState<string>('All')
-  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('All')
-  const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('All')
+  const [selectedyears, setselectedyears] = useState<string>('0')
+  const [selectedsalle, setselectedsalle] = useState<string>('0')
+  const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
+  const [classes, setClasses] = useState<{id:number, nom_classe:string}[]>([])
+  const [salles, setSalles] = useState<{id:number, nom_salle:string}[]>([])
+  const [selectedniveau, setselectedniveau] = useState<string>('0')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [macs, setMacs] = useState<{id:number, mois:string}[]>([])
+  const [selectedSexe, setSelectedSexe] = useState<string>('0')
+  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('0')
+  const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('0')
+  const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
   const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({
-    annee: 'All',
-    salle: 'All',
+    annee: '0',
+    salle: '0',
     niveau: 'All ',
     sexe: 'All',
-    statusecolage: 'All',
+    statusecolage: '0',
     mois: 'All'
   })
-  const [selectedStudent, setSelectedStudent] = useState<StudentsType | null>(null)
 
-  // isaka misy changement nle raha filtregna de atao modif selectiondefiltre
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [lines, setLines] = useState<number>(15)
+  const [reload, setReload] = useState<boolean>(false)
+
+  const getEtudiants = async ()=>  {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`, null , 'token')
+        .then(({data}) => setStudents((data)))
+        .then(() => setIsLoading(false))
+        .catch(error => console.log(error.response.data?.message))
+        .finally(() => setIsLoading(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const precedent = (current) => {
+    if(current > 1){
+      setCurrentPage(current - 1)
+    }
+  }
+
+  const suivant = (current) => {
+    if(current < students.last_page){
+      setCurrentPage(current + 1)
+    }
+  }
+
   useEffect(() => {
-    setSelectedFilters({
-      annee: selectedyears,
-      salle: selectedsalle,
-      niveau: selectedniveau,
-      sexe: selectedSexe,
-      statusecolage: selectedstatusecolage,
-      mois: selectedmoisEcolage
-    })
-  }, [
-    selectedyears,
-    selectedsalle,
-    selectedSexe,
-    selectedniveau,
-    selectedstatusecolage,
-    selectedmoisEcolage
-  ])
+    getEtudiants()
+  }, [currentPage, lines, selectedSexe, selectedyears, selectedniveau, selectedsalle, searcheleves, reload, selectedstatusecolage, selectedmoisEcolage])
+
+  const pagination:number[] = []
+  for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
+    pagination.push(i)
+  }
+  const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
+
 
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-    setter((prev) => (prev === current ? 'All' : current))
+    setter((prev) => (prev === current ? '0' : current))
   }
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
   }
 
-  // const searchKeys: (keyof StudentsType)[] = ['nom', 'prenom', 'salle']
-  const filteredData = filterDataCombined(
-    Studentsdata,
-    searcheleves,
-    ['nom', 'prenom', 'salle'],
-    selectedFilters
-  )
+
 
   const { modal, openModal, closModal } = useMultiModals()
+
+  const getAcs = async () => {
+    try{
+      await axiosRequest('GET', 'ac-list', null, 'token')
+        .then(({data}) => setAcs(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const getClasse = async () => {
+
+    try{
+      await axiosRequest('GET', `classe-list_year/${selectedyears}`, null, 'token')
+        .then(({data}) => setClasses(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const getMac = async () => {
+
+    try{
+      await axiosRequest('GET', `mac-list_year/${selectedyears}`, null, 'token')
+        .then(({data}) => setMacs(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  const getSalle = async () => {
+    try{
+      await axiosRequest('GET', `salle-list_year/${selectedyears}`, null, 'token')
+        .then(({data}) => setSalles(data))
+        .catch(error => console.log(error.response?.data?.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+  const nextPage = (page:number) =>{
+    setCurrentPage(page)
+  }
+  useEffect(() => {
+    getAcs()
+    getClasse()
+    getSalle()
+    getMac()
+  }, [selectedyears])
+
 
   return (
     <div
@@ -90,17 +162,17 @@ function Studentsecolage(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une année</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {years.map((year, index) => (
+              {acs.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.ans, setselectedyears)}
+                  onClick={() => handleselect(year.id.toString(), setselectedyears)}
                   className={`${
-                    selectedyears === year.ans
+                    selectedyears === year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {year.ans}
+                  {year.annee}
                 </button>
               ))}
             </div>
@@ -115,17 +187,17 @@ function Studentsecolage(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une niveau</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {niveau.map((niv, index) => (
+              {classes.map((niv, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(niv.name, setselectedniveau)}
+                  onClick={() => handleselect(niv.id.toString(), setselectedniveau)}
                   className={`${
-                    selectedniveau === niv.name
+                    selectedniveau === niv.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {niv.name}
+                  {niv.nom_classe}
                 </button>
               ))}
             </div>
@@ -140,17 +212,17 @@ function Studentsecolage(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez une salle</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {salle.map((sl, index) => (
+              {salles.map((sl, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(sl.name, setselectedsalle)}
+                  onClick={() => handleselect(sl.id.toString(), setselectedsalle)}
                   className={`${
-                    selectedsalle === sl.name
+                    selectedsalle === sl.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {sl.name}
+                  {sl.nom_salle}
                 </button>
               ))}
             </div>
@@ -232,17 +304,17 @@ function Studentsecolage(): JSX.Element {
               <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un mois</h1>
             </div>
             <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2">
-              {Monthlistedata.map((mois, index) => (
+              {macs.map((mois, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(mois.name, setselectedmoisEcolage)}
+                  onClick={() => handleselect(mois.mois, setselectedmoisEcolage)}
                   className={`${
-                    selectedmoisEcolage === mois.name
+                    selectedmoisEcolage === mois.mois
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
-                  {mois.name}
+                  {mois.mois}
                 </button>
               ))}
             </div>
@@ -259,10 +331,10 @@ function Studentsecolage(): JSX.Element {
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
-                <option>05</option>
-                <option>10</option>
-                <option>20</option>
+              <select onChange={(e) => setLines(e.target.value)} className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+                <option value={15}>15</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
@@ -283,12 +355,23 @@ function Studentsecolage(): JSX.Element {
               <div className="flex-1">Opération</div>
             </div>
           </div>
-
+          {isLoading?<div className='flex w-full justify-center'><RotatingLines
+              visible={true}
+              height="50"
+              width="55"
+              color="grey"
+              strokeColor="#7A3B3F"
+              strokeWidth="5"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            /></div>:<>
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-            {filteredData.length === 0 ? (
+            {students?.data.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
             ) : (
-              filteredData.map((student, index) => (
+              students?.data.map((student, index) => (
                 <div
                   key={index}
                   className={`flex px-6 py-2 rounded-lg items-center ${
@@ -304,12 +387,12 @@ function Studentsecolage(): JSX.Element {
                   <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                   <div className="flex-1 text-gray-700">{student.prenom}</div>
                   <div className="flex-1 text-gray-700">{student.sexe}</div>
-                  <div className="flex-1 text-gray-700">{student.salle}</div>
+                  <div className="flex-1 text-gray-700">{student.sousetudiants[student.sousetudiants.length -1]?.salle?.nom_salle}</div>
                   <div className="flex-1 ">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${student.statusecolage === 'Complet' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(et => et.payé == 1) == true? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
-                      {student.statusecolage}
+                      {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(et => et.payé == 1) == true?'Complet':'Incomplet'}
                     </span>
                   </div>
                   <div className="flex-1">
@@ -330,22 +413,23 @@ function Studentsecolage(): JSX.Element {
                 </div>
               ))
             )}
-          </div>
+          </div></>}
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => precedent(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
             Précédent
           </button>
           <div className="flex gap-2 mt-3 md:mt-0">
-            {[1, 2, 3, 4, 5].map((page) => (
+            {pagination.map((page) => (
               <button
                 key={page}
+                onClick={() => nextPage(page)}
                 className={`px-3 py-1 rounded-full font-medium ${
-                  page === 1
+                  page === currentPage
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
                 }`}
@@ -354,7 +438,7 @@ function Studentsecolage(): JSX.Element {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => suivant(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;

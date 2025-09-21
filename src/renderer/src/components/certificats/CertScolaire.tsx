@@ -7,14 +7,14 @@ const CertScolaire = ({ student }) => {
   const {
     nom = '',
     prenom = '',
-    salle = '',
+    nom_salle = '',
     annee = '',
     matricule = 'N/A',
-    date_naissance = '',
-    nom_pere = '',
-    prenom_pere = '',
-    nom_mere = '',
-    prenom_mere = '',
+    dateNaissance = '',
+    nomPere = '',
+    prenomPere = '',
+    nomMere = '',
+    prenomMere = '',
     adresse = ''
   } = student || {}
 
@@ -60,7 +60,7 @@ const CertScolaire = ({ student }) => {
           jusqu'à ce jour.
         </p>
         <p>
-          En classe de : <span className="border-b border-dotted border-black px-1">{salle}</span>
+          En classe de : <span className="border-b border-dotted border-black px-1">{nom_salle}</span>
           pour l'année scolaire :
           <span className="border-b border-dotted border-black px-1">{annee}</span>
         </p>
@@ -70,18 +70,18 @@ const CertScolaire = ({ student }) => {
         </p>
         <p>
           Date de naissance :
-          <span className="border-b border-dotted border-black px-1">{date_naissance}</span>
+          <span className="border-b border-dotted border-black px-1">{dateNaissance}</span>
         </p>
         <p>
           Fils ou fille de :
           <span className="border-b border-dotted border-black px-1">
-            {nom_pere + '  ' + prenom_pere}
+            {nomPere + '  ' + prenomPere}
           </span>
         </p>
         <p>
           Et de :
           <span className="border-b border-dotted border-black px-1">
-            {nom_mere + '  ' + prenom_mere}
+            {nomMere + '  ' + prenomMere}
           </span>
         </p>
         <p>
@@ -100,13 +100,13 @@ const CertScolaire = ({ student }) => {
           <span className="border-b border-dotted border-black px-1">{dateImpression}</span>
         </p>
         <p className="mt-1">Le Directeur</p>
-       
+
         <div className="mt-28">
           <p>MANANJARA Ludovic Lai</p>
         </div>
       </div>
 
-     
+
       <div className="mt-2">
         <p>Ce présent certificat lui est délivré pour servir et valoir ce que de droit</p>
         <div className="flex mt-4 justify-between items-end">

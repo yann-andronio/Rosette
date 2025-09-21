@@ -2,8 +2,9 @@ import { FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { salle } from '@renderer/data/Filterselectiondata'
 import { axiosRequest } from '@renderer/config/helpers'
+import { useEffect, useState } from 'react'
+import { RotatingLines } from 'react-loader-spinner'
 
 type ClassModalProps = {
   closemodal: () => void
@@ -22,6 +23,8 @@ const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onVa
     sa_id: yup.number().required('Veuillez sélectionner une salle.')
   })
 
+  const [salles, setSalles] = useState<{nom_salle:string, id:number}[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const {
 
     handleSubmit,
@@ -46,6 +49,25 @@ const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onVa
 
   }
 
+  const getSalles = async () => {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', 'salle-list_last', null, 'token')
+        .then(({data}) => setSalles(data))
+        .then(() => setIsLoading(false))
+        .catch(err => console.log(err.response?.data?.error))
+        .finally(() => setIsLoading(false))
+    }catch(error) {
+      console.log('Le serveur ne repond pas')
+    }
+
+
+  }
+
+  useEffect(() => {
+
+    getSalles()
+  }, [])
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
@@ -62,19 +84,31 @@ const Statutupdatesalle: React.FC<ClassModalProps> = ({ closemodal, statut, onVa
           <h3 className="mb-2 font-medium text-gray-800">
             Sélectionnez la salle {statut === 'admis' ? 'd’admission' : 'de redoublement'}
           </h3>
-          <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto rounded-x p-4 bg-white">
-            {salle.map((cl, index) => (
+          {isLoading?(	<RotatingLines
+            visible={true}
+            height="50"
+            width="55"
+            color="grey"
+            strokeColor="#7A3B3F"
+            strokeWidth="5"
+            animationDuration="0.75"
+            ariaLabel="rotating-lines-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+          />):<>   <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto rounded-x p-4 bg-white">
+            {salles.map((cl, index) => (
               <div
                 key={index}
-                onClick={() => setValue('sa_id', index, { shouldValidate: true })}
+                onClick={() => setValue('sa_id', cl.id, { shouldValidate: true })}
                 className={`text-center cursor-pointer rounded-lg px-4 py-2 select-none font-medium text-sm transition-all duration-200 border
-                  ${ selectedClassForStyle === index  ? 'bg-[#895256] text-white border-[#895256]'  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100' }
+                  ${ selectedClassForStyle === cl.id  ? 'bg-[#895256] text-white border-[#895256]'  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100' }
                 `}
               >
-                {cl.name}
+                {cl.nom_salle}
               </div>
             ))}
-          </div>
+          </div></>}
+
           {errors.sa_id && (
             <p className="text-sm text-red-500 mt-1">{errors.sa_id.message}</p>
           )}

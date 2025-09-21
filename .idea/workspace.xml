@@ -6,11 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/calendarfilter/Calendarfilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/calendarfilter/Calendarfilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/calendarfilter/custom-datepicker.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/calendarfilter/custom-datepicker.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/card/CardDashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/card/CardDashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/certificats/CertScolaire.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/certificats/CertScolaire.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/certificats/cert.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/certificats/cert.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/childmodal/Statutupdatesalle.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/childmodal/Statutupdatesalle.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addnotemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addnotemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Operationmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Operationmodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfoecolagemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfoecolagemodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementecolage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementecolage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/historiques/Historique.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/historiques/Historique.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsecolage/Studentsecolage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsecolage/Studentsecolage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +115,7 @@
       <workItem from="1758051006390" duration="4530000" />
       <workItem from="1758091275286" duration="6000" />
       <workItem from="1758172745143" duration="20547000" />
-      <workItem from="1758368937622" duration="3833000" />
+      <workItem from="1758368937622" duration="29259000" />
     </task>
     <servers />
   </component>
@@ -148,5 +156,17 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx</url>
+          <line>92</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
