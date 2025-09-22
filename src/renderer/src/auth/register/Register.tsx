@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { FiX } from 'react-icons/fi'
 import {ThreeDots} from "react-loader-spinner";
 import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 type RegisterProps = {
   closemodal: () => void
@@ -43,12 +44,17 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
     // dispatch(setUser({ name: data.name, role: data.role }))
     setIsLoading(true)
     try{
-      await axiosRequest('POST','users-creation', data, 'none').then(({data})=> {
-        alert(data.message)
-        setIsLoading(false)
-        reset()
-        closemodal()
-      }).catch((errors) => alert(errors.response.data.message)).finally(() => setIsLoading(false))
+      await axiosRequest('POST', 'users-creation', data, 'none')
+        .then(({ data }) => {
+          toast.success(data?.message || 'inscriptions réussi ✅')
+          setIsLoading(false)
+          reset()
+          closemodal()
+        })
+        .catch((errors) =>
+          toast.error(errors?.response?.data?.message || `Erreur lors de l' inscription ❌`)
+        )
+        .finally(() => setIsLoading(false))
     }catch (err){
       alert('Erreur lors de la connexion au serveur')
     }
@@ -180,8 +186,8 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
             >
               {isLoading? 	<ThreeDots
                 visible={true}
-                height="23"
-                width="100"
+                height="20"
+                width="50"
                 color="pink"
                 radius="9"
                 ariaLabel="three-dots-loading"

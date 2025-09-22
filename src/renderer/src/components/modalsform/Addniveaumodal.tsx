@@ -8,7 +8,6 @@ import { RotatingLines, ThreeDots } from 'react-loader-spinner'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
-import { id } from 'date-fns/locale'
 type ClassModalProps = {
   closemodal: () => void
 }
@@ -40,7 +39,9 @@ const deleteHistorique = async (id:number) => {
       await axiosRequest('DELETE', `classe-delete/${id}`, null, 'token')
         .then(({ data }) => toast.success(data?.message || 'Classe supprimée ✅'))
         .then(() => setReload(!reload))
-        .catch((error) => console.log(error.response?.data?.message))
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la suppression ❌')
+        )
     }catch(error) {
       console.log('Le serveur ne repond pas')
     }

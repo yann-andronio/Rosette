@@ -14,7 +14,7 @@ import { HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
 import { useRef } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
+import {  ToastContainer } from 'react-toastify'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
