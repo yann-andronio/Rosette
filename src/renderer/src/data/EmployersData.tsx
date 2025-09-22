@@ -22,8 +22,8 @@ export const EmployersData: EmployerType[] = [
       { dateDebut: new Date('2025-06-01'), dateFin: new Date('2025-06-05'), motif: 'Formation' }
     ],
     salaires: [
-      { mois: 1, montant: 3500, typePaiement: 'Avance', motif: 'Salaire de base' },
-      { mois: 2, montant: 3500, typePaiement: 'Salaire complet', motif: 'Salaire de base' }
+      { mois: [1,2,3], montant: 3500, typePaiement: 'Avance', motif: 'Salaire de base' },
+      { mois: [2], montant: 3500, typePaiement: 'Salaire complet', motif: 'Salaire de base' }
     ]
   },
   {
@@ -43,8 +43,8 @@ export const EmployersData: EmployerType[] = [
       { dateDebut: new Date('2025-03-15'), dateFin: new Date('2025-03-20'), motif: 'Congé annuel' }
     ],
     salaires: [
-      { mois: 1, montant: 2500, typePaiement: 'Chèque', motif: 'Salaire de base' },
-      { mois: 2, montant: 2500, typePaiement: 'Chèque', motif: 'Salaire de base' }
+      { mois: [1], montant: 2500, typePaiement: 'Chèque', motif: 'Salaire de base' },
+      { mois: [2], montant: 2500, typePaiement: 'Chèque', motif: 'Salaire de base' }
     ]
   },
   {
@@ -64,8 +64,8 @@ export const EmployersData: EmployerType[] = [
       { dateDebut: new Date('2025-08-01'), dateFin: new Date('2025-08-10'), motif: 'Congé maladie' }
     ],
     salaires: [
-      { mois: 1, montant: 2200, typePaiement: 'Espèce', motif: 'Salaire de base' },
-      { mois: 2, montant: 2200, typePaiement: 'Espèce', motif: 'Salaire de base' }
+      { mois: [1], montant: 2200, typePaiement: 'Espèce', motif: 'Salaire de base' },
+      { mois: [2], montant: 2200, typePaiement: 'Espèce', motif: 'Salaire de base' }
     ]
   },
   {
@@ -83,8 +83,8 @@ export const EmployersData: EmployerType[] = [
     matieresSalles: [{ matiere: 'Français', salle: 'Salle C1' }],
     conges: [],
     salaires: [
-      { mois: 1, montant: 3300, typePaiement: 'Virement', motif: 'Salaire de base' },
-      { mois: 2, montant: 3300, typePaiement: 'Virement', motif: 'Salaire de base' }
+      { mois: [1], montant: 3300, typePaiement: 'Virement', motif: 'Salaire de base' },
+      { mois: [2], montant: 3300, typePaiement: 'Virement', motif: 'Salaire de base' }
     ]
   }
 ]
