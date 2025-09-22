@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import { ThreeDots } from 'react-loader-spinner'
+import {toast} from "react-toastify"
+import useMultiModals from '@renderer/hooks/useMultiModals'
 
 type YearProps = {
   closemodal: () => void
@@ -76,24 +78,33 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     getHistorique()
   }, [activeTab === 'historique', reload])
 
-  const onSubmit = async (data) => {
-    const donneAlefa = {
-      annee: data.yearadd,
-      mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
-    }
-    setIsLoading(true)
-    try {
-      await axiosRequest('POST', 'ac-creation', donneAlefa, 'token')
-        .then(({ data }) => console.log(data?.message))
-        .then(() => setActiveTab('historique'))
-        .catch((error) => console.log(error?.response?.data?.message))
-        .finally(() => setIsLoading(false))
-    } catch (error) {
-      console.log('Le serveur ne repond pas')
-    }
+ const onSubmit = async (data) => {
+   const donneAlefa = {
+     annee: data.yearadd,
+     mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
+   }
 
-    reset()
-  }
+   setIsLoading(true)
+
+   try {
+     await axiosRequest('POST', 'ac-creation', donneAlefa, 'token')
+       .then(({ data }) => {
+         console.log(data?.message)
+         toast.success(data?.message || 'Création réussie ✅')
+       })
+       .then(() => setActiveTab('historique'))
+       .catch((error) => {
+         console.log(error?.response?.data?.message)
+         toast.error(error?.response?.data?.message || 'Erreur lors de la création ❌')
+       })
+       .finally(() => setIsLoading(false))
+   } catch (error) {
+     console.log('Le serveur ne répond pas')
+     toast.error('Le serveur ne répond pas ❌')
+   }
+
+   reset()
+ }
 
   const removeYear = async (id: number) => {
     setIsLoading(true)
@@ -108,6 +119,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     }
   }
 
+  const { openModal, modal, closModal } = useMultiModals()
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
