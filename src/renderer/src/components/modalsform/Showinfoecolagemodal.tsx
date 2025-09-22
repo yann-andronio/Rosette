@@ -3,17 +3,31 @@ import { FaCheckCircle, FaTimesCircle, FaWallet, FaCalendarAlt, FaSchool } from 
 
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { FiX } from 'react-icons/fi'
+import { axiosRequest } from "@renderer/config/helpers";
 
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: Etudiant
+  fresh:(boolean) => void
+  reload:boolean
 }
 
-const Showinfoecolagemodal = ({ closemodal, student }: ShowInfoStudentsProps) => {
+const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoStudentsProps) => {
 
 
   const eleveNom = `${student.prenom} ${student.nom}`
+const pay = async (id:number, cost:number) => {
+    try{
+      await axiosRequest('PUT', `ecolage-pay/${id}`, {cost:cost, eleve: eleveNom, classe:student.sousetudiants[student.sousetudiants.length -1].classe.nom_classe, salle:student.sousetudiants[student.sousetudiants.length -1].salle.nom_salle, annee:student.sousetudiants[student.sousetudiants.length -1].annee.annee, ac_id:student.sousetudiants[student.sousetudiants.length -1].annee.id, prof:student.enfantProf}, 'token')
+        .then(({data}) => console.log(data?.message))
+        .then(() => fresh(!reload))
+        .then(() => closemodal())
+        // .catch(error => console.log(error))
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
@@ -59,14 +73,21 @@ const Showinfoecolagemodal = ({ closemodal, student }: ShowInfoStudentsProps) =>
                   <span>{item.payé==1?item.updated_at:'Non payé'}</span>
                 </div>
               </div>
-
-              <span
-                className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white text-center ${
-                  item.payé === 1 ? 'bg-green-600' : 'bg-gray-400'
+              {item.payé?<span
+                className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
+                  item.payé === 1 ? 'bg-green-600 cursor-not-allowed' : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
                 }`}
               >
                 {item.payé==1?"Payé":"Non Payé"}
-              </span>
+              </span>:<span
+                onClick={() => pay(item.id, student.sousetudiants[student.sousetudiants.length -1]?.classe?.ecolage)}
+                className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
+                  item.payé === 1 ? 'bg-green-600 cursor-not-allowed' : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
+                }`}
+              >
+                {item.payé==1?"Payé":"Non Payé"}
+              </span>}
+
             </div>
           ))}
         </div>

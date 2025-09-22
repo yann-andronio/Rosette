@@ -455,6 +455,8 @@ function Studentsecolage(): JSX.Element {
       )}
       {modal.Showinfoecolagemodal && selectedStudent && (
         <Showinfoecolagemodal
+          reload={reload}
+          fresh={setReload}
           closemodal={() => closModal('Showinfoecolagemodal')}
           student={selectedStudent}
         />
