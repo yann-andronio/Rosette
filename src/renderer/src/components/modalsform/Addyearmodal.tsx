@@ -21,16 +21,14 @@ type FormDataAlefa = {
 
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isDeletingLoader, setIsDeletingLoader] = useState<boolean>(false)
   const [reload, setReload] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<
-    { annee: string; id: number; mois: { mois: string }[] }[]
-  >([])
+  const [historiques, setHistoriques] = useState<{ annee: string; id: number; mois: { mois: string }[] }[]>([])
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
-  const [yearToDelete, setYearToDelete] = useState<{ id: number; annee: string } | null>(null)
 
+  const [yearToDelete, setYearToDelete] = useState<{ id: number; annee: string } | null>(null)
   const { openModal, modal, closModal } = useMultiModals()
+  const [isDeletingLoader, setIsDeletingLoader] = useState<boolean>(false)
 
   const schema = yup.object({
     yearadd: yup.string().required('Vous devez saisir une année'),
@@ -206,7 +204,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                   <ThreeDots
                     visible={true}
                     height="20"
-                    width="100"
+                    width="50"
                     color="pink"
                     radius="9"
                     ariaLabel="three-dots-loading"
