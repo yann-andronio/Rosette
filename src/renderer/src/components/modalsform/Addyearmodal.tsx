@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import { ThreeDots } from 'react-loader-spinner'
-import {toast} from "react-toastify"
+import { toast } from 'react-toastify'
 import useMultiModals from '@renderer/hooks/useMultiModals'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 
 type YearProps = {
   closemodal: () => void
@@ -20,20 +21,19 @@ type FormDataAlefa = {
 
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isDeletingLoader, setIsDeletingLoader] = useState<boolean>(false)
   const [reload, setReload] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-
   const [historiques, setHistoriques] = useState<
     { annee: string; id: number; mois: { mois: string }[] }[]
   >([])
-
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
+  const [yearToDelete, setYearToDelete] = useState<{ id: number; annee: string } | null>(null)
+
+  const { openModal, modal, closModal } = useMultiModals()
 
   const schema = yup.object({
-    yearadd: yup
-      .string()
-      // .matches(/^\d{4}$/, "L'année doit contenir exactement 4 chiffres")
-      .required('Vous devez saisir une année'),
+    yearadd: yup.string().required('Vous devez saisir une année'),
     selectedMonths: yup
       .array()
       .of(yup.number())
@@ -52,12 +52,9 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   })
 
   const handleMonthClick = (id: number) => {
-    let updated: number[]
-    if (selectedMonths.includes(id)) {
-      updated = selectedMonths.filter((mid) => mid !== id)
-    } else {
-      updated = [...selectedMonths, id]
-    }
+    const updated = selectedMonths.includes(id)
+      ? selectedMonths.filter((mid) => mid !== id)
+      : [...selectedMonths, id]
     setSelectedMonths(updated)
     setValue('selectedMonths', updated)
   }
@@ -78,48 +75,59 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     getHistorique()
   }, [activeTab === 'historique', reload])
 
- const onSubmit = async (data) => {
-   const donneAlefa = {
-     annee: data.yearadd,
-     mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
-   }
+  const onSubmit = async (data) => {
+    const donneAlefa = {
+      annee: data.yearadd,
+      mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
+    }
 
-   setIsLoading(true)
-
-   try {
-     await axiosRequest('POST', 'ac-creation', donneAlefa, 'token')
-       .then(({ data }) => {
-         console.log(data?.message)
-         toast.success(data?.message || 'Création réussie ✅')
-       })
-       .then(() => setActiveTab('historique'))
-       .catch((error) => {
-         console.log(error?.response?.data?.message)
-         toast.error(error?.response?.data?.message || 'Erreur lors de la création ❌')
-       })
-       .finally(() => setIsLoading(false))
-   } catch (error) {
-     console.log('Le serveur ne répond pas')
-     toast.error('Le serveur ne répond pas ❌')
-   }
-
-   reset()
- }
+    setIsLoading(true)
+    try {
+      await axiosRequest('POST', 'ac-creation', donneAlefa, 'token')
+        .then(({ data }) => toast.success(data?.message || 'Création réussie ✅'))
+        .then(() => setActiveTab('historique'))
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la création ❌')
+        )
+        .finally(() => setIsLoading(false))
+    } catch (error) {
+      console.log('Le serveur ne répond pas')
+      toast.error('Le serveur ne répond pas ❌')
+    }
+    reset()
+  }
 
   const removeYear = async (id: number) => {
     setIsLoading(true)
-    setReload((reload) => !reload)
     try {
       await axiosRequest('DELETE', `ac-delete/${id}`, null, 'token')
-        .then(({ data }) => console.log(data?.message))
-        .catch((error) => console.log(error?.response?.data?.error))
+        .then(({ data }) => toast.success(data?.message || 'Année supprimée ✅'))
         .finally(() => setIsLoading(false))
+      setReload((r) => !r)
     } catch (error) {
       console.log('Le serveur ne repond pas')
+      toast.error('Le serveur ne répond pas ❌')
+      setIsLoading(false)
     }
   }
 
-  const { openModal, modal, closModal } = useMultiModals()
+  const handleclickDelete = (id: number, annee: string) => {
+    setYearToDelete({ id, annee })
+    openModal('confirmDelete')
+  }
+
+ const handleConfirmDelete = async () => {
+   if (!yearToDelete) return
+   setIsDeletingLoader(true)
+   try {
+     await removeYear(yearToDelete.id)
+   } finally {
+     setIsDeletingLoader(false)
+     setYearToDelete(null)
+    //  closModal('confirmDelete')
+   }
+ }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
@@ -132,18 +140,14 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                 reset()
                 setSelectedMonths([])
               }}
-              className={`text-lg font-semibold transition ${
-                activeTab === 'ajouter' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
-              }`}
+              className={`text-lg font-semibold transition ${activeTab === 'ajouter' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'}`}
             >
               Ajouter
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('historique')}
-              className={`text-lg font-semibold transition ${
-                activeTab === 'historique' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'
-              }`}
+              className={`text-lg font-semibold transition ${activeTab === 'historique' ? 'text-[#895256]' : 'text-gray-400 hover:text-[#895256]'}`}
             >
               Historique
             </button>
@@ -159,11 +163,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               type="text"
               placeholder="Ex: 2025"
               {...register('yearadd')}
-              className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                errors.yearadd
-                  ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                  : 'border-gray-300 shadow-sm'
-              }`}
+              className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors.yearadd ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}
             />
             {errors.yearadd && (
               <p className="text-sm text-red-400 mt-1">{errors.yearadd.message}</p>
@@ -171,22 +171,20 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
 
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez les mois</h2>
-              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4  rounded-xl border-gray-300 bg-white ">
+              <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
                 {Monthlistedata.map((month) => {
                   const isSelected = selectedMonths.includes(month.id)
                   return (
                     <div
                       key={month.id}
                       onClick={() => handleMonthClick(month.id)}
-                      className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border
-                       ${isSelected ? 'bg-[#895256] text-white border-[#895256]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                      className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${isSelected ? 'bg-[#895256] text-white border-[#895256]' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
                     >
                       {month.name}
                     </div>
                   )
                 })}
               </div>
-
               {errors.selectedMonths && (
                 <p className="text-sm text-red-400 mt-1">{errors.selectedMonths.message}</p>
               )}
@@ -247,7 +245,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                     </div>
                     <button
                       aria-label={`Supprimer l'année ${annee}`}
-                      onClick={() => removeYear(id)}
+                      onClick={() => handleclickDelete(id, annee)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -259,6 +257,16 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
           </div>
         )}
       </div>
+
+      {modal.confirmDelete && yearToDelete && (
+        <ConfirmDeleteModal
+          title="Supprimer l'année"
+          message={`Voulez-vous vraiment supprimer l'année ${yearToDelete.annee} ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }
