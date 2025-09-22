@@ -184,15 +184,14 @@ useEffect(() => {
             {/* select du niveau */}
             {isLoading?( <div className='flex w-full justify-center'><RotatingLines
                 visible={true}
-                height="50"
+             
                 width="55"
-                color="grey"
+               
                 strokeColor="#7A3B3F"
                 strokeWidth="5"
                 animationDuration="0.75"
                 ariaLabel="rotating-lines-loading"
-                wrapperStyle={{}}
-                wrapperClass=""
+            
               /></div>):(<div>
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez un niveau</h2>
               <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl  bg-white ">
@@ -246,15 +245,12 @@ useEffect(() => {
           <>
           {isHistoriqueLoading?( <div className='flex w-full justify-center'><RotatingLines
               visible={true}
-              height="50"
               width="55"
-              color="grey"
               strokeColor="#7A3B3F"
               strokeWidth="5"
               animationDuration="0.75"
               ariaLabel="rotating-lines-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
+           
             /></div>):(
           <div className="mt-4 max-h-64 overflow-auto">
             {historiques.length === 0 ? (
