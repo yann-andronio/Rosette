@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
-import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins, FaIcons, FaPlus } from 'react-icons/fa'
+import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins, FaIcons, FaPlus, FaMinus } from 'react-icons/fa'
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md'
 import { Bar, Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js'
@@ -9,8 +9,8 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Le
 import { Calendarfilter } from '@renderer/components/calendarfilter/Calendarfilter'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { CardDashboard } from '../../components/card/CardDashboard'
-import { max } from 'date-fns'
-import Operationmodal from '@renderer/components/modalsform/Operationmodal'
+import Operationretirermodal from '@renderer/components/modalsform/Operationretirermodal'
+import Operationajoutmodal from '@renderer/components/modalsform/Operationajoutmodal'
 
 
 const dashboardCardsData = [
@@ -128,7 +128,7 @@ export default function Dashboard(): JSX.Element {
             <CardDashboard key={index} item={card} />
           ))}
           <div
-            onClick={() => openModal('OperationModal')}
+            onClick={() => openModal('Operationajoutmodal')}
             className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
           >
             <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
@@ -136,6 +136,17 @@ export default function Dashboard(): JSX.Element {
             </div>
 
             <p className="text-lg text-white font-semibold text-center">Ajouter une Operation</p>
+          </div>
+
+          <div
+            onClick={() => openModal('Operationretirermodal')}
+            className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
+          >
+            <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
+              <FaMinus size={22} />
+            </div>
+
+            <p className="text-lg text-white font-semibold text-center">Retirer une Operation</p>
           </div>
         </div>
 
@@ -209,7 +220,12 @@ export default function Dashboard(): JSX.Element {
         </div>
       </div>
 
-      {modal.OperationModal && <Operationmodal closemodal={() => closModal('OperationModal')} />}
+      {modal.Operationretirermodal && (
+        <Operationretirermodal closemodal={() => closModal('Operationretirermodal')} />
+      )}
+      {modal.Operationajoutmodal && (
+        <Operationajoutmodal closemodal={() => closModal('Operationajoutmodal')} />
+      )}
     </div>
   )
 }
