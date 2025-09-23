@@ -4,7 +4,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ChangeEvent, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { salle } from '@renderer/data/Filterselectiondata'
+
 
 const fonctionsDisponibles = ['Professeur', 'Surveillant', 'Gardien', 'Administratif']
 const matieresDisponibles = ['Math', 'Physique', 'Chimie', 'Français', 'Anglais', 'Histoire']
@@ -146,55 +146,62 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =
                 Informations générales
               </legend>
 
-              {['nom', 'prenom', 'email' , 'sexe', 'adresse', 'telephone', 'fonction', 'salaire'].map(
-                (field) => (
-                  <div className="mb-5" key={field}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {field.charAt(0).toUpperCase() + field.slice(1)} *
-                    </label>
-                    {field === 'sexe' || field === 'fonction' ? (
-                      <select
-                        {...register(field as any)}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errors[field as keyof typeof errors]
-                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                            : 'border-gray-300 shadow-sm'
-                        }`}
-                      >
-                        <option value="">Sélectionnez</option>
-                        {field === 'sexe' ? (
-                          <>
-                            <option value="Homme">Homme</option>
-                            <option value="Femme">Femme</option>
-                          </>
-                        ) : (
-                          fonctionsDisponibles.map((f) => (
-                            <option key={f} value={f}>
-                              {f}
-                            </option>
-                          ))
-                        )}
-                      </select>
-                    ) : (
-                      <input
-                        type={field === 'salaire' ? 'number' : 'text'}
-                        {...register(field as any)}
-                        placeholder={`Entrez le ${field}`}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errors[field as keyof typeof errors]
-                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                            : 'border-gray-300 shadow-sm'
-                        }`}
-                      />
-                    )}
-                    {errors[field as keyof typeof errors] && (
-                      <p className="text-red-500 text-xs mt-1 italic">
-                        {errors[field as keyof typeof errors]?.message?.toString()}
-                      </p>
-                    )}
-                  </div>
-                )
-              )}
+              {[
+                'nom',
+                'prenom',
+                'email',
+                'sexe',
+                'adresse',
+                'telephone',
+                'fonction',
+                'salaire'
+              ].map((field) => (
+                <div className="mb-5" key={field}>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {field.charAt(0).toUpperCase() + field.slice(1)} *
+                  </label>
+                  {field === 'sexe' || field === 'fonction' ? (
+                    <select
+                      {...register(field as any)}
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errors[field as keyof typeof errors]
+                          ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                          : 'border-gray-300 shadow-sm'
+                      }`}
+                    >
+                      <option value="">Sélectionnez</option>
+                      {field === 'sexe' ? (
+                        <>
+                          <option value="Homme">Homme</option>
+                          <option value="Femme">Femme</option>
+                        </>
+                      ) : (
+                        fonctionsDisponibles.map((f) => (
+                          <option key={f} value={f}>
+                            {f}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  ) : (
+                    <input
+                      type={field === 'salaire' ? 'number' : 'text'}
+                      {...register(field as any)}
+                      placeholder={`Entrez le ${field}`}
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errors[field as keyof typeof errors]
+                          ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                          : 'border-gray-300 shadow-sm'
+                      }`}
+                    />
+                  )}
+                  {errors[field as keyof typeof errors] && (
+                    <p className="text-red-500 text-xs mt-1 italic">
+                      {errors[field as keyof typeof errors]?.message?.toString()}
+                    </p>
+                  )}
+                </div>
+              ))}
             </fieldset>
 
             {/* Matières & salles uniquement raha professeur nle fonction */}
@@ -239,21 +246,16 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode }) =
 
                       {/* Salle */}
                       <div className="flex-1 min-w-[150px] relative">
-                        <select
+                        <input
+                          type="text"
                           {...register(`matieresSalles.${index}.salle` as const)}
+                          placeholder="Entrez le nom de la sall"
                           className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
                             errors.matieresSalles?.[index]?.salle
                               ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                               : 'border-gray-300'
                           }`}
-                        >
-                          <option value="">Sélectionnez salle</option>
-                          {salle.map((item, i) => (
-                            <option key={i} value={item.name}>
-                              {item.name}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </div>
 
                       <button
