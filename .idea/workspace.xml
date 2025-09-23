@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfoecolagemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfoecolagemodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsecolage/Studentsecolage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsecolage/Studentsecolage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +103,8 @@
       <workItem from="1758091275286" duration="6000" />
       <workItem from="1758172745143" duration="20547000" />
       <workItem from="1758368937622" duration="29582000" />
-      <workItem from="1758529763136" duration="5603000" />
+      <workItem from="1758529763136" duration="13526000" />
+      <workItem from="1758610574301" duration="6000" />
     </task>
     <servers />
   </component>
