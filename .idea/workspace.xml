@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardInfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardInfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpEmployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpEmployeemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employerinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employerinfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/types/Alltypes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/types/Alltypes.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +110,10 @@
       <workItem from="1758368937622" duration="29582000" />
       <workItem from="1758529763136" duration="13526000" />
       <workItem from="1758610574301" duration="6000" />
+      <workItem from="1758627083169" duration="2688000" />
+      <workItem from="1758652057017" duration="10383000" />
+      <workItem from="1758732809170" duration="6245000" />
+      <workItem from="1758741980369" duration="3793000" />
     </task>
     <servers />
   </component>

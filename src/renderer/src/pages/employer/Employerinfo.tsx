@@ -1,31 +1,81 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import { useFilterData } from '@renderer/hooks/useFilterData'
 import { EmployerType } from '@renderer/types/Alltypes'
-import { EmployersData } from '@renderer/data/EmployersData'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import EmployerCardInfo from '../../components/card/EmployerCardInfo'
+import { axiosRequest } from '@renderer/config/helpers'
+import { RotatingLines } from "react-loader-spinner";
 
 function Employerinfo(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searchEmployes, setSearchEmployes] = useState('')
+  const [workers, setWorkkers] = useState<{ per_page:number, total:number,  last_page:number, data:EmployerType[]}>({last_page:1, data:[], total:0, per_page:0})
+  const [w_id, setW_id] = useState<number>()
   const [selectedEmployer, setSelectedEmployer] = useState<EmployerType | null>(
-    EmployersData.length > 0 ? EmployersData[0] : null
+    workers.data.length > 0 ? workers.data[0] : null
   )
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
+  const [reload, setReload] = useState<boolean>(false)
+
+
+  const getWorkers = async () => {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', `worker-list?q=${searchEmployes}`, null, 'token')
+        .then(({data}) => setWorkkers(data))
+        .then(() => setIsLoading(false))
+        .catch(error => console.log(error.response.data.error))
+        .finally(() => setIsLoading(false))
+    }catch(err){
+      console.log('Le serveur ne repond pas')
+    }
+
+}
+
+  useEffect(() => {
+    getWorkers()
+  }, [searchEmployes,reload])
   const handleSearchEmployes = (search: string) => setSearchEmployes(search)
-  const filteredData = useFilterData(EmployersData, searchEmployes, [
-    'nom',
-    'prenom',
-    'fonction',
-    'matieresSalles'
-  ])
+
   const { modal, openModal, closModal } = useMultiModals()
-  console.log(selectedEmployer)
+
+  const nextPage = (page:number) =>{
+    setCurrentPage(page)
+  }
+
+
+  const precedent = (current) => {
+    if(current > 1){
+      setCurrentPage(current - 1)
+    }
+  }
+
+  const suivant = (current) => {
+    if(current < workers.last_page){
+      setCurrentPage(current + 1)
+    }
+  }
+  const pagination:number[] = []
+  for(let i:number=1; i<=Math.ceil(workers?.total / workers.per_page); i++){
+    pagination.push(i)
+  }
+
+  const deletes = async (id:number) => {
+    try{
+      await axiosRequest('DELETE', `worker/${id}`, null,'token')
+        .then(({data}) => console.log(data.message))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error.response.data.error))
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
   return (
     <div
@@ -37,7 +87,7 @@ function Employerinfo(): JSX.Element {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearchEmployes} />
           <div className="bg-white text-[#212529] shadow px-4 py-2 rounded-lg text-sm font-medium">
-            Total employés : <span className="font-bold">{EmployersData.length}</span>
+            Total employés : <span className="font-bold">{workers.data.length}</span>
           </div>
         </div>
 
@@ -53,10 +103,21 @@ function Employerinfo(): JSX.Element {
             </div>
 
             <div className="space-y-2 h-[50vh] overflow-y-auto">
-              {filteredData.length === 0 ? (
+              {isLoading?<div className='flex w-full justify-center'><RotatingLines
+                  visible={true}
+                  height="50"
+                  width="55"
+                  color="grey"
+                  strokeColor="#7A3B3F"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  ariaLabel="rotating-lines-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                /></div>:<>{workers.data?.length === 0 ? (
                 <div className="text-center mt-10 text-gray-600">Aucun employé trouvé</div>
               ) : (
-                filteredData.map((employer, index) => (
+                workers.data?.map((employer, index) => (
                   <div
                     key={employer.id}
                     onClick={() => setSelectedEmployer(employer)}
@@ -74,19 +135,23 @@ function Employerinfo(): JSX.Element {
                       {employer.nom}
                     </div>
                     <div className="flex-1 text-start text-gray-700">{employer.prenom}</div>
-                    <div className="flex-1 text-start text-gray-700">{employer.fonction}</div>
+                    <div className="flex-1 text-start text-gray-700">{employer?.profs?.profession}</div>
                     {/* <div className="flex-1 text-start text-gray-700">{employer.tel}</div> */}
 
                     <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
                       <FaEdit
-                        onClick={() => openModal('AdUpEmployeemodal')}
+                        onClick={() => {
+                          openModal('AdUpEmployeemodal')
+                          setW_id(employer.id)
+                        } }
                         className="hover:text-black cursor-pointer transition"
                       />
-                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                      <FaTrash onClick={() => deletes(employer.id)} className="hover:text-red-600 cursor-pointer transition" />
                     </div>
                   </div>
                 ))
-              )}
+              )}</>}
+
             </div>
           </div>
 
@@ -101,17 +166,18 @@ function Employerinfo(): JSX.Element {
         {/* pagination */}
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => precedent(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
             Précédent
           </button>
           <div className="flex gap-2 mt-3 md:mt-0">
-            {[1, 2, 3, 4, 5].map((page) => (
+            {pagination.map((page) => (
               <button
                 key={page}
-                className={`px-3 py-1 rounded-full font-medium ${
+                onClick={() => nextPage(page)}
+                className={`px-3 py-1 rounded-full font-medium cursor-pointer ${
                   page === 1
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
@@ -121,7 +187,7 @@ function Employerinfo(): JSX.Element {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => suivant(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
@@ -132,6 +198,9 @@ function Employerinfo(): JSX.Element {
             <AdUpEmployeemodal
               closemodal={() => closModal('AdUpEmployeemodal')}
               mode="modifemplyer"
+              id={w_id}
+              reload={reload}
+              fresh={setReload}
             />
           )}
         </div>

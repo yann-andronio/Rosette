@@ -406,7 +406,7 @@ const precedent = (current) => {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button onClick={() => precedent(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => precedent(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
@@ -417,7 +417,7 @@ const precedent = (current) => {
               <button
                 key={page}
                 onClick={() => nextPage(page)}
-                className={`px-3 py-1 rounded-full font-medium ${
+                className={`px-3 py-1 rounded-full font-medium cursor-pointer ${
                   page === currentPage
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
@@ -427,7 +427,7 @@ const precedent = (current) => {
               </button>
             ))}
           </div>
-          <button onClick={() => suivant(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => suivant(currentPage)} className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;

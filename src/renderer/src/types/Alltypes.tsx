@@ -80,17 +80,18 @@ export type EmployerType = {
   nom: string;
   prenom: string;
   email: string;
-  tel: number;
+  telephone: number;
+  status:string;
   adresse: string;
-  sexe: 'Homme' | 'Femme';
-  fonction: string;
-  salairebase?: number;
-  statut: 'Actif' | 'En congé' | 'Suspendu';
-  matieresSalles?: {
+  sexe: 1 | 0;
+  profs: {id:number, profession:string};
+  salaire_base?: number;
+  statut: 'actif' | 'congé' | 'suspendu';
+  matiere?: {
     matiere: string;
     salle: string;
   }[];
-  dateEmbauche: string;
+  created_at: string;
   conges?: CongeType[];
   salaires?: SalaireEmploye[];
 };
