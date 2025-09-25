@@ -89,7 +89,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student?.sousetudiants[student?.sousetudiants?.length - 1]?.salle.nom_salle} - {student?.sousetudiants[student?.sousetudiants?.length - 1]?.annee.annee}
+            {student?.sousetudiants[student?.sousetudiants?.length - 1]?.salle?.nom_salle} - {student?.sousetudiants[student?.sousetudiants?.length - 1]?.annee?.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
@@ -208,7 +208,7 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
               <button
                 onClick={() => suspendre(student.id)}
                 type="button"
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${student?.sousetudiants[student.sousetudiants.length -1]?.status_admissions=='suspendu'?'bg-[#f0f0f0] hover:cursor-not-allowed':'bg-[#895256] hover:bg-[#733935]'}  text-white text-sm font-medium transition`}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${student?.sousetudiants[student?.sousetudiants?.length -1]?.status_admissions=='suspendu'?'bg-[#f0f0f0] hover:cursor-not-allowed':'bg-[#895256] hover:bg-[#733935]'}  text-white text-sm font-medium transition`}
               >
                 <FiSlash size={16} /> Suspendre
               </button>
@@ -245,9 +245,9 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         className="hover:bg-[#faf7f2] transition-colors cursor-default"
                       >
                         <td className="px-4 py-3  text-gray-800 font-medium">
-                          {status.annee.annee}
+                          {status?.annee?.annee}
                         </td>
-                        <td className="px-4 py-3  text-gray-700">{status.classe.nom_classe}</td>
+                        <td className="px-4 py-3  text-gray-700">{status?.classe?.nom_classe}</td>
                         <td className="px-4 py-3  text-gray-700">
 
                           {status?.noteTotal != null ? status?.noteTotal : ' en cours ...'}

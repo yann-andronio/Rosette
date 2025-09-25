@@ -125,8 +125,8 @@ function Login(): JSX.Element {
             >
               {isLoading? <ThreeDots
                 visible={true}
-                height="23"
-                width="100"
+                height="20"
+                width="50"
                 color="pink"
                 radius="9"
                 ariaLabel="three-dots-loading"

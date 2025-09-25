@@ -1,19 +1,30 @@
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import logo from '../../images/logo.jpg'
 
+type Salaire = {
+  mois: number[]
+  montant: number
+  typePaiement: string
+  motif?: string
+}
+
 type RecueProps = {
-  employer: any
-  salaire: {
-    mois: number
-    montant: number
-    typePaiement: string
-    motif?: string
+  employer: {
+    nom: string
+    prenom: string
+    fonction?: string
+    dateEmbauche?: string | Date
   }
+  salaire: Salaire
 }
 
 export default function Recuepayementemploye({ employer, salaire }: RecueProps) {
-  const formatNumber = (num?: number) =>num ? num.toLocaleString('fr-FR', { minimumFractionDigits: 0 }) : '-'
-  const moisLabel = Monthlistedata.find((m) => m.id === salaire.mois)?.name || `Mois ${salaire.mois || '-'}`
+
+  const formatNumber = (num?: number) => num ? num.toLocaleString('fr-FR', { minimumFractionDigits: 0 }) : '-'
+  const moisLabel =salaire.mois && salaire.mois.length > 0? salaire.mois.map((id) => Monthlistedata.find((m) => m.id === id)?.name || `Mois ${id}`)
+          .join(', ')
+      : '-'
+
   const datePaiement = new Date().toLocaleDateString('fr-FR')
 
   return (
@@ -22,18 +33,18 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
       className="p-8 text-sm text-gray-800 w-full max-w-[800px] mx-auto border border-gray-200 rounded-xl bg-white"
       style={{ fontFamily: 'Arial, sans-serif' }}
     >
-     
+      {/* Header */}
       <div className="flex justify-between items-center mb-6 border-b pb-4">
         <img src={logo} alt="Logo" className="w-24 h-auto" />
         <div className="text-center">
           <h1 className="text-xl font-bold text-gray-900">REÇU DE SALAIRE</h1>
           <p className="text-xs text-gray-600">Entreprise La Rosette II</p>
           <p className="text-xs text-gray-600">Adresse : Mananara</p>
-          <p className="text-xs text-gray-600">NIF : 123456789</p>
+          <p className="text-xs text-gray-600">NIF : 6011809898</p>
         </div>
       </div>
 
-   
+      {/* Informations de l'employé */}
       <div className="mb-4">
         <h2 className="font-semibold mb-2 text-gray-700">Informations de l'employé</h2>
         <p>
@@ -51,7 +62,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
         </p>
       </div>
 
-   
+      {/* Détails du paiement */}
       <div className="mb-4">
         <h2 className="font-semibold mb-2 text-gray-700">Détails du paiement</h2>
         <table className="w-full text-sm border border-gray-300 text-center">
@@ -74,7 +85,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
         </table>
       </div>
 
-     
+      {/* Signature */}
       <div className="flex justify-between mt-8">
         <div className="text-center">
           <p className="font-semibold">Fait à Mananara Avaratra, le {datePaiement}</p>

@@ -3,11 +3,9 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ThreeDots } from 'react-loader-spinner'
-
-
 import { ChangeEvent, useEffect,  useState } from 'react'
-
 import { axiosRequest } from '@renderer/config/helpers'
+import { toast }from "react-toastify"
 
 
 
@@ -119,63 +117,66 @@ const getSalles = async () => {
     }
   }
 
-  const onSubmit =async (data: any) => {
-
-    const formdata = new FormData()
-    formdata.append('image', image)
-    for (const key in data) {
-      formdata.append(key, data[key])
-    }
-    formdata.append('photo', image)
-    formdata.append('matricule', matricule)
-
-    if (mode === 'ajoutstudents') {
-      setIsLoading(true)
-      try {
-        await axiosRequest('POST', 'etudiant-creation', formdata, 'token')
-          .then(({data}) => console.log(data.message))
-          .then(() => reset())
-          .then(() => setIsLoading(false))
-          .then(() => setReload(!reload))
-          .catch(error => console.log(error.response?.data?.message))
-          .finally(() => setIsLoading(false))
-      }catch(error) {
-         console.log('Le serveur ne repond pas')
-      }
-
-
-      // req axio
-    } else {
-    const form = new FormData()
-      form.append('photo', image)
-      setIsLoading(true)
-      form.append('image', image)
-      for (const key in data) {
-        form.append(key, data[key])
-      }
-      form.append('photo', image)
-      form.append('matricule', matricule)
-
-
-
-      try {
-        await axiosRequest('POST', `etudiant/${id}`, form, 'token')
-          .then(({data}) => console.log(data.message))
-      //     .then(() => reset())
-          .then(() => setIsLoading(false))
-          .then(() => setReload(!reload))
-          .catch(error => console.log(error.response?.data?.message))
-          .finally(() => setIsLoading(false))
-      }catch(error) {
-        console.log('Le serveur ne repond pas')
-      }
-
-      closemodal()
-    }
-
-
-
+ const onSubmit = async (data: any) => {
+  const formdata = new FormData();
+  formdata.append("image", image);
+  for (const key in data) {
+    formdata.append(key, data[key]);
   }
+  formdata.append("photo", image);
+  formdata.append("matricule", matricule);
+
+  if (mode === "ajoutstudents") {
+    setIsLoading(true);
+    try {
+      await axiosRequest("POST", "etudiant-creation", formdata, "token")
+        .then(({ data }) => {
+          console.log(data.message)
+          // toast araika
+          toast.success('Étudiant ajouté avec succès ✅')
+        })
+        .then(() => reset())
+        .then(() => setReload(!reload))
+        .catch((error) => {
+          toast.error(error.response?.data?.message || "Erreur lors de l'ajout ❌");
+        })
+        .finally(() => setIsLoading(false));
+    } catch (error) {
+      toast.error('Le serveur ne répond pas ❌')
+    }
+  } else {
+    const form = new FormData();
+    form.append("photo", image);
+    form.append("image", image);
+    for (const key in data) {
+      form.append(key, data[key]);
+    }
+    form.append("matricule", matricule);
+
+    setIsLoading(true);
+    try {
+      await axiosRequest("POST", `etudiant/${id}`, form, "token")
+        .then(({ data }) => {
+          console.log(data.message)
+          // toast araika
+          toast.success('Étudiant modifié avec succès ✅')
+        })
+        .then(() => setReload(!reload))
+        .catch((error) => {
+          console.log(error.response?.data?.message)
+          // toast araika
+          toast.error(error.response?.data?.message || 'Erreur lors de la modification ❌')
+        })
+        .finally(() => setIsLoading(false));
+    } catch (error) {
+      console.log('Le serveur ne répond pas')
+      // toast araika
+      toast.error('Le serveur ne répond pas ❌')
+    }
+
+    closemodal();
+  }
+};
 
 
 

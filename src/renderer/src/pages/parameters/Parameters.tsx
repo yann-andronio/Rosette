@@ -14,6 +14,7 @@ import { HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
 import { useRef } from 'react'
+import {  ToastContainer } from 'react-toastify'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -68,7 +69,6 @@ function Parameters(): JSX.Element {
             Gérez les éléments clés de votre établissement ici
           </p>
         </div>
-
         {/* Section etudiants */}
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
@@ -88,13 +88,11 @@ function Parameters(): JSX.Element {
             </button>
           ))}
         </div>
-
         {/* Section administrateurs */}
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
           Paramètres Administrateurs
         </h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {buttonsForParamsAdmin.map((item, index) => (
             <button
@@ -109,8 +107,8 @@ function Parameters(): JSX.Element {
             </button>
           ))}
 
-         
-          <div onClick={handleClick}
+          <div
+            onClick={handleClick}
             className="cursor-pointer border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group"
           >
             <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
@@ -137,13 +135,11 @@ function Parameters(): JSX.Element {
             </span>
           </button>
         </div>
-
         {/* Section administrateurs */}
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2 mt-12">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
           Paramètres Employé
         </h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {buttonsForParamsemployers.map((item, index) => (
             <button
@@ -158,6 +154,16 @@ function Parameters(): JSX.Element {
             </button>
           ))}
         </div>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
 
       {/* Modals */}

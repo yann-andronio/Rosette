@@ -5,6 +5,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { RotatingLines, ThreeDots } from 'react-loader-spinner'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 type ClassModalProps = {
   closemodal: () => void
 }
@@ -19,7 +22,7 @@ type FormDataAlefa = {
 
 const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{ nom_classe: string, ac_id: string, ecolage: number, acs:{annee:string} }[]>([])
+  const [historiques, setHistoriques] = useState<{ id:number, nom_classe: string, ac_id: string, ecolage: number, acs:{annee:string} }[]>([])
 
 
   const [isYearsLloading, setIsYearsLloading] = useState<boolean>(false)
@@ -27,12 +30,18 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [years, setYears] = useState<{id:number, annee:string}[]>([])
   const [reload, setReload] = useState(true)
 
+  const [classeToDelete, setclasseToDelete] = useState<{ id: number, nom_classe: string } | null>(null)
+   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+  const { openModal, modal, closModal } = useMultiModals()
+
 const deleteHistorique = async (id:number) => {
     try{
       await axiosRequest('DELETE', `classe-delete/${id}`, null, 'token')
-        .then(({data}) => console.log(data?.messsage))
+        .then(({ data }) => toast.success(data?.message || 'Classe supprimée ✅'))
         .then(() => setReload(!reload))
-        .catch(error => console.log(error.response?.data?.message))
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la suppression ❌')
+        )
     }catch(error) {
       console.log('Le serveur ne repond pas')
     }
@@ -113,11 +122,13 @@ const deleteHistorique = async (id:number) => {
     setIsLoading((true))
     try {
       await axiosRequest('POST', 'classe-creation', donneAlefa, 'token')
-        .then(({data}) => console.log(data?.message))
+        .then(({ data }) => toast.success(data?.message || 'Classe ajoutée ✅'))
         .then(() => setIsLoading(false))
         .then(() => setActiveTab('historique'))
-        .catch(error => console.log(error.response?.data?.message))
-        .finally(() =>  setIsLoading(false))
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la création ❌')
+        )
+        .finally(() => setIsLoading(false))
     }catch(error){
       console.log('le serveur ne repond pas')
     }
@@ -126,6 +137,24 @@ const deleteHistorique = async (id:number) => {
 
   }
 
+
+ const handleclickDelete = (id: number, nom_classe: string) => {
+   setclasseToDelete({ id, nom_classe })
+   openModal('confirmDelete')
+ }
+  
+
+   const handleConfirmDelete = async () => {
+     if (!classeToDelete) return
+     setIsDeletingLoader(true)
+     try {
+       await deleteHistorique(classeToDelete.id)
+     } finally {
+       setIsDeletingLoader(false)
+       setclasseToDelete(null)
+       //  closModal('confirmDelete')
+     }
+   }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -193,7 +222,6 @@ const deleteHistorique = async (id:number) => {
               )}
             </div>
 
-
             {/* droit  */}
             <div className="mt-4">
               <input
@@ -206,11 +234,8 @@ const deleteHistorique = async (id:number) => {
                     : 'border-gray-300 shadow-sm'
                 }`}
               />
-              {errors.droit && (
-                <p className="text-sm text-red-400 mt-1">{errors.droit.message}</p>
-              )}
+              {errors.droit && <p className="text-sm text-red-400 mt-1">{errors.droit.message}</p>}
             </div>
-
 
             {/* Kermesse  */}
             <div className="mt-4">
@@ -231,37 +256,40 @@ const deleteHistorique = async (id:number) => {
 
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
-              {isYearsLloading?( <div className='flex w-full justify-center'><RotatingLines
-                visible={true}
-                height="50"
-                width="55"
-                color="grey"
-                strokeColor="#7A3B3F"
-                strokeWidth="5"
-                animationDuration="0.75"
-                ariaLabel="rotating-lines-loading"
-                wrapperStyle={{}}
-                wrapperClass=""
-              /></div>):( <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
-
-                {years.map((year, index) => (
-                  <div
-                    key={index}
-                    onClick={() => setValue('ac_id', year.annee)}
-                    className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
-                      selectedYearforstyle === year.annee
-                        ? 'bg-[#895256] text-white border-[#895256]'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                    }`}
-                  >
-                    {year.annee}
-                  </div>
-                ))}
-              </div>)}
-
-              {errors.ac_id && (
-                <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>
+              {isYearsLloading ? (
+                <div className="flex w-full justify-center">
+                  <RotatingLines
+                    visible={true}
+                  
+                    width="55"
+                  
+                    strokeColor="#7A3B3F"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    ariaLabel="rotating-lines-loading"
+                  
+                 
+                  />
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
+                  {years.map((year, index) => (
+                    <div
+                      key={index}
+                      onClick={() => setValue('ac_id', year.annee)}
+                      className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
+                        selectedYearforstyle === year.annee
+                          ? 'bg-[#895256] text-white border-[#895256]'
+                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      {year.annee}
+                    </div>
+                  ))}
+                </div>
               )}
+
+              {errors.ac_id && <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>}
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
@@ -276,66 +304,87 @@ const deleteHistorique = async (id:number) => {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                {isLoading?	<ThreeDots
-                  visible={true}
-                  height="20"
-                  width="100"
-                  color="pink"
-                  radius="9"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                />: <><FiPlus size={18} /> Ajouter</>}
+                {isLoading ? (
+                  <ThreeDots
+                    visible={true}
+                    height="20"
+                    width="50"
+                    color="pink"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  <>
+                    <FiPlus size={18} /> Ajouter
+                  </>
+                )}
               </button>
-
             </div>
           </form>
         ) : (
           <>
-          {isYearsLloading?( <div className='flex w-full justify-center'><RotatingLines
-              visible={true}
-              height="50"
-              width="55"
-              color="grey"
-              strokeColor="#7A3B3F"
-              strokeWidth="5"
-              animationDuration="0.75"
-              ariaLabel="rotating-lines-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-            /></div>):(
-            <div className="mt-4 max-h-64 overflow-auto">
-              {historiques.length === 0 ? (
-                <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
-              ) : (
-                <ul className="space-y-3">
-                  {historiques.map(({ id, nom_classe,ecolage, acs  }, index) => (
-                    <li
-                      key={index}
-                      className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
-                    >
-
-                      <div className="flex flex-col text-left">
-                        <span className="text-base font-semibold text-gray-800">{nom_classe}</span>
-                        <span className="text-sm text-gray-500">Année : {acs?.annee}</span>
-                        <span className="text-sm text-[#895256] font-medium mt-1">
-                        {ecolage} Ar
-                      </span>
-                      </div>
-                      <button
-                        onClick={() => deleteHistorique(id)}
-                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+            {isYearsLloading ? (
+              <div className="flex w-full justify-center">
+                <RotatingLines
+                  visible={true}
+              
+                  width="50"
+                
+                  strokeColor="#7A3B3F"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  ariaLabel="rotating-lines-loading"
+               
+                
+                />
+              </div>
+            ) : (
+              <div className="mt-4 max-h-64 overflow-auto">
+                {historiques.length === 0 ? (
+                  <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {historiques.map(({ id, nom_classe, ecolage, acs }, index) => (
+                      <li
+                        key={index}
+                        className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                       >
-                        <FiTrash2 size={18} />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>)}</>
-
+                        <div className="flex flex-col text-left">
+                          <span className="text-base font-semibold text-gray-800">
+                            {nom_classe}
+                          </span>
+                          <span className="text-sm text-gray-500">Année : {acs?.annee}</span>
+                          <span className="text-sm text-[#895256] font-medium mt-1">
+                            {ecolage} Ar
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleclickDelete(id , nom_classe)}
+                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                        >
+                          <FiTrash2 size={18} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {modal.confirmDelete && classeToDelete && (
+        <ConfirmDeleteModal
+          title="Supprimer la classe"
+          message={`Voulez-vous vraiment supprimer la classe de ${classeToDelete.nom_classe} ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }

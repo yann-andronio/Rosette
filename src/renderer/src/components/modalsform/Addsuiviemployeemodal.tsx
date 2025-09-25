@@ -9,13 +9,13 @@ import { EmployerType } from '@renderer/types/Alltypes'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import Recuepayementemploye from '../recue/Recuepayementemploye'
 
-// Définition des types pour les formulaires
+
  export type SalaireEmploye = {
-  montant: number
-  typePaiement: string
-  motif?: string
-  mois: number
-}
+   montant: number
+   typePaiement: string
+   motif?: string
+   mois: number[]
+ }
 
  export type CongeType = {
   dateDebut: Date
@@ -37,9 +37,10 @@ const salarySchema = yup.object().shape({
   typePaiement: yup.string().required('Le type de paiement est requis.'),
   motif: yup.string().optional(),
   mois: yup
-    .number()
-    .required('Veuillez sélectionner un mois.')
-    .min(1, 'Veuillez sélectionner un mois valide.')
+    .array()
+    .of(yup.number())
+    .min(1, 'Sélectionnez au moins un mois')
+    .required('Sélectionnez au moins un mois')
 })
 
 const congeSchema = yup.object().shape({
@@ -67,7 +68,7 @@ type SuiviEmployerModalProps = {
 
 export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmployerModalProps) {
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
+  const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
 
   const {
@@ -76,7 +77,7 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
     formState: { errors: errorsSalary },
     reset: resetSalary,
     setValue: setValueSalary
-  } = useForm<SalaireEmploye>({ resolver: yupResolver(salarySchema) })
+  } = useForm<SalaireEmploye>({ resolver: yupResolver(salarySchema as any) })
 
   const {
     register: registerConge,
@@ -103,8 +104,12 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
 
   const handleMonthClick = (id: number) => {
-    setSelectedMonth(id)
-    setValueSalary('mois', id, { shouldValidate: true })
+    const updated = selectedMonths.includes(id)
+      ? selectedMonths.filter((mid) => mid !== id)
+      : [...selectedMonths, id]
+
+    setSelectedMonths(updated)
+    setValueSalary('mois', updated, { shouldValidate: true }) 
   }
 
   // Réinitialiser le formulaire lorsque l'onglet change
@@ -112,13 +117,13 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
     resetSalary()
     resetConge()
     resetStatus()
-    setSelectedMonth(null)
+    setSelectedMonths([])
   }, [activeTab, resetSalary, resetConge, resetStatus])
 
   const onSalarySubmit = (data: SalaireEmploye) => {
     console.log('Soumission du formulaire de salaire:', data)
     resetSalary()
-    setSelectedMonth(null)
+    setSelectedMonths([])
   }
 
   const onCongeSubmit = (data: CongeType) => {
@@ -277,7 +282,7 @@ const handlePrint = (paiement: SalaireEmploye) => {
                   <h2 className="mt-4 mb-2 font-semibold text-gray-800">Sélectionnez un mois</h2>
                   <div className="grid grid-cols-3 gap-2 p-3 rounded-lg border-gray-200 bg-white shadow-inner">
                     {Monthlistedata.map((month) => {
-                      const isSelected = selectedMonth === month.id
+                    const isSelected = selectedMonths.includes(month.id)
                       return (
                         <div
                           key={month.id}
