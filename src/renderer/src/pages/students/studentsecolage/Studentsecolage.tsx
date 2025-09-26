@@ -348,7 +348,9 @@ function Studentsecolage(): JSX.Element {
             </div>
           </div>
           {isLoading?<div className='flex w-full justify-center'><RotatingLines
-              visible={true}      
+            visible={true}     
+            
+            width='50'
               strokeColor="#7A3B3F"
               strokeWidth="5"
               animationDuration="0.75"
