@@ -1,17 +1,34 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
-import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins, FaIcons, FaPlus } from 'react-icons/fa'
+import {
+  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaUsers,
+  FaMoneyBillWave,
+  FaWallet,
+  FaCoins,
+  FaIcons,
+  FaPlus,
+  FaMinus
+} from 'react-icons/fa'
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md'
 import { Bar, Pie } from 'react-chartjs-2'
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend
+} from 'chart.js'
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend)
 import { Calendarfilter } from '@renderer/components/calendarfilter/Calendarfilter'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { CardDashboard } from '../../components/card/CardDashboard'
-import { max } from 'date-fns'
-import Operationmodal from '@renderer/components/modalsform/Operationmodal'
-
+import Operationretirermodal from '@renderer/components/modalsform/Operationretirermodal'
+import Operationajoutmodal from '@renderer/components/modalsform/Operationajoutmodal'
 
 const dashboardCardsData = [
   { title: 'Étudiants', value: '1,240', icon: FaUserGraduate },
@@ -23,17 +40,30 @@ const dashboardCardsData = [
 ]
 
 // ---- Mois jiaby ---- //
-const FullMonth = [ 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
+const FullMonth = [
+  'Jan',
+  'Fév',
+  'Mar',
+  'Avr',
+  'Mai',
+  'Juin',
+  'Juil',
+  'Août',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Déc'
+]
 
 // ---- Revenus sy  Dépenses data jusqu au mois de decembre ---- //
 const revenus = [
-  200000000, 250000000, 300000000, 280000000, 320000000, 350000000, 150000000,
-  180000000, 210000000, 240000000, 300000000, 400000000
+  200000000, 250000000, 300000000, 280000000, 320000000, 350000000, 150000000, 180000000, 210000000,
+  240000000, 300000000, 400000000
 ]
 
 const depenses = [
-  35000000, 38000000, 40000000, 37000000, 42000000, 45000000, 200000000, 190000000,
-  150000000, 160000000, 180000000, 220000000
+  35000000, 38000000, 40000000, 37000000, 42000000, 45000000, 200000000, 190000000, 150000000,
+  160000000, 180000000, 220000000
 ]
 // ---- Bénéfices calculés ---- //
 const benefices = revenus.map((rev, i) => rev - depenses[i])
@@ -51,7 +81,7 @@ const optionsBar = {
       ticks: {
         stepSize: 50000000, // Intervalle entre chaque graduation
         callback: function (value) {
-          return value + ' Ar' 
+          return value + ' Ar'
         }
       },
       title: { display: true, text: 'Montant (Ar)' }
@@ -80,12 +110,11 @@ const optionsPie = {
   plugins: { legend: { position: 'top' as const } }
 }
 
-
 export default function Dashboard(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [selectedYear, setSelectedYear] = useState('2024')
-  const [range, setRange] = useState(3) 
-  
+  const [range, setRange] = useState(3)
+
   const visibleLabels = FullMonth.slice(0, range)
 
   // decoupage des données selon le le range na filtre tsisy dikany
@@ -115,7 +144,7 @@ export default function Dashboard(): JSX.Element {
     ]
   }
 
-   const { modal, openModal, closModal } = useMultiModals()
+  const { modal, openModal, closModal } = useMultiModals()
 
   return (
     <div
@@ -128,7 +157,7 @@ export default function Dashboard(): JSX.Element {
             <CardDashboard key={index} item={card} />
           ))}
           <div
-            onClick={() => openModal('OperationModal')}
+            onClick={() => openModal('Operationajoutmodal')}
             className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
           >
             <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
@@ -136,6 +165,17 @@ export default function Dashboard(): JSX.Element {
             </div>
 
             <p className="text-lg text-white font-semibold text-center">Ajouter une Operation</p>
+          </div>
+
+          <div
+            onClick={() => openModal('Operationretirermodal')}
+            className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
+          >
+            <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
+              <FaMinus size={22} />
+            </div>
+
+            <p className="text-lg text-white font-semibold text-center">Retirer une Operation</p>
           </div>
         </div>
 
@@ -209,7 +249,12 @@ export default function Dashboard(): JSX.Element {
         </div>
       </div>
 
-      {modal.OperationModal && <Operationmodal closemodal={() => closModal('OperationModal')} />}
+      {modal.Operationretirermodal && (
+        <Operationretirermodal closemodal={() => closModal('Operationretirermodal')} />
+      )}
+      {modal.Operationajoutmodal && (
+        <Operationajoutmodal closemodal={() => closModal('Operationajoutmodal')} />
+      )}
     </div>
   )
 }
