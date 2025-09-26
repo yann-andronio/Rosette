@@ -43,7 +43,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           <div className="text-xs text-right space-y-1 pt-1 text-gray-800">
             <div className="flex items-center justify-end gap-1">
               <FaMapMarkerAlt size={10} className="text-gray-600" />
-              <span> Mananara 501, Madagascar</span>
+              <span> Mananara 511, Madagascar</span>
             </div>
             <div className="flex items-center justify-end gap-1">
               <FaPhone size={10} className="text-gray-600" />
@@ -136,7 +136,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
         </p>
 
         <p className="text-sm mb-10 text-right">
-          Fait à <span className="font-semibold">Antananarivo</span>, le{' '}
+          Fait à <span className="font-semibold">Mananara</span>, le{' '}
           <span className="font-semibold">{formattedDatePaiement}</span>.
         </p>
 
