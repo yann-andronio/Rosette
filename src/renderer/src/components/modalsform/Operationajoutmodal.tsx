@@ -53,12 +53,17 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
   })
 
   const onSubmit = (data: FormValues) => {
-    //   Ops = operation laolo aii
+   
+    console.log('Form data alefa :', data)
+
+   
     const newOps = [
       { type: "Solde d'écolage", montant: data.solde_ecolage },
       { type: 'Solde de dépôt', montant: data.solde_depot },
       { type: 'Solde de kermess', montant: data.solde_kermess }
     ].filter((op) => op.montant > 0)
+
+    console.log('Opérations générées :', newOps)
 
     if (newOps.length === 0) {
       seterrorkely('Veuillez saisir au moins un montant supérieur à 0')
@@ -66,18 +71,29 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
     }
     seterrorkely(null)
 
-    setHistoriques((prev) => [
-      ...prev,
-      { id: Date.now(), motif: data.motif, ops: newOps, date: new Date().toLocaleString() }
-    ])
+    const newHistorique = {
+      id: Date.now(),
+      motif: data.motif,
+      ops: newOps,
+      date: new Date().toLocaleString()
+    }
+
+   
+    console.log('Historique complet miboaka :', newHistorique)
+
+    setHistoriques((prev) => [...prev, newHistorique])
     setActiveTab('historique')
     reset()
   }
 
+
   const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="flex items-center justify-center text-white gap-3 mb-5">
+        <h1 className="text-2xl font-bold">soloy titre fa tsy aiko</h1>
+      </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
