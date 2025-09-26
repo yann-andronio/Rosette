@@ -118,7 +118,7 @@ export default function Statmodal({ closemodal }: OperationProps) {
         ) : (
           <div className="space-y-4">
             {historiques.length === 0 ? (
-              <p className="text-center text-gray-500">Aucune matière enregistrée</p>
+              <p className="text-center text-gray-500">Aucune STAT enregistrée</p>
             ) : (
               <ul className="space-y-3">
                 {historiques.map(({ id, STAT, date }) => (

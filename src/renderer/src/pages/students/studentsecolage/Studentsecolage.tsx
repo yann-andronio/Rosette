@@ -1,19 +1,18 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { FaUserCircle, FaEdit, FaTrash, FaEye, FaPlusCircle } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
-import { filterDataCombined } from '@renderer/utils/filterDataCombined'
 import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
-import { Studentsdata } from '@renderer/data/Studentsdata'
 import { MdMeetingRoom } from 'react-icons/md'
 import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
+import { Target } from 'framer-motion'
 
 function Studentsecolage(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -30,14 +29,7 @@ function Studentsecolage(): JSX.Element {
   const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('0')
   const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('0')
   const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
-  const [selectedFilters, setSelectedFilters] = useState<FilterOptions>({
-    annee: '0',
-    salle: '0',
-    niveau: 'All ',
-    sexe: 'All',
-    statusecolage: '0',
-    mois: 'All'
-  })
+
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
@@ -331,7 +323,7 @@ function Studentsecolage(): JSX.Element {
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select onChange={(e) => setLines(e.target.value)} className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+              <select onChange={(e:ChangeEvent<HTMLSelectElement>) => setLines(Number(e.target.value))} className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
                 <option value={15}>15</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -356,16 +348,11 @@ function Studentsecolage(): JSX.Element {
             </div>
           </div>
           {isLoading?<div className='flex w-full justify-center'><RotatingLines
-              visible={true}
-              height="50"
-              width="55"
-              color="grey"
+              visible={true}      
               strokeColor="#7A3B3F"
               strokeWidth="5"
               animationDuration="0.75"
-              ariaLabel="rotating-lines-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
+              ariaLabel="rotating-lines-loading"          
             /></div>:<>
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
             {students?.data.length === 0 ? (

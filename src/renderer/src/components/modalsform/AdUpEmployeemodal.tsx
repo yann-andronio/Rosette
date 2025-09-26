@@ -54,7 +54,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
     defaultValues: { matiere: [] }
   })
 
-  const watchFonction = watch('p_id')
+  const watchFonction = watch('p_id').toString()
   const watchMatieresSalles = watch('matiere') || []
   const [imagePreview, setImagePreview] = useState<string | undefined>(undefined)
   const [image, setImage] = useState<Blob | string>('')

@@ -118,7 +118,7 @@ export default function Nifmodal({ closemodal }: OperationProps) {
         ) : (
           <div className="space-y-4">
             {historiques.length === 0 ? (
-              <p className="text-center text-gray-500">Aucune matière enregistrée</p>
+              <p className="text-center text-gray-500">Aucune NIF enregistrée</p>
             ) : (
               <ul className="space-y-3">
                 {historiques.map(({ id, NIF, date }) => (

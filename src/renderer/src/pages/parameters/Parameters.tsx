@@ -13,7 +13,7 @@ import { FaUserTie } from 'react-icons/fa'
 import { HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import {  ToastContainer } from 'react-toastify'
 import Addmatieremodal from '@renderer/components/modalsform/Addmatieremodal'
 import Nifmodal from '@renderer/components/modalsform/Nifmodal'
@@ -22,6 +22,7 @@ import Statmodal from '@renderer/components/modalsform/Statmodal'
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const { openModal, modal, closModal } = useMultiModals()
+    const [reload, setReload] = useState<boolean>(false)
 
   const handleOpenModal = (modalName: string) => () => openModal(modalName)
 
@@ -214,7 +215,7 @@ function Parameters(): JSX.Element {
       )}
       {modal.Addmatieremodal && <Addmatieremodal closemodal={() => closModal('Addmatieremodal')} />}
       {modal.AdUpEmployeemodal && (
-        <AdUpEmployeemodal closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer" />
+        <AdUpEmployeemodal reload={reload} fresh={setReload}  closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer"  />
       )}
       {modal.Nifmodal && <Nifmodal closemodal={() => closModal('Nifmodal')} />}
       {modal.Statmodal && <Statmodal closemodal={() => closModal('Statmodal')} />}
