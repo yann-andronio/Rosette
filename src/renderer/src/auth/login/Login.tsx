@@ -7,11 +7,10 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import { axiosRequest } from "@renderer/config/helpers";
+import { axiosRequest } from '@renderer/config/helpers'
 import { useNavigate } from 'react-router-dom'
 import { ThreeDots } from 'react-loader-spinner'
-
-
+import { toast } from 'react-toastify'
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
@@ -29,28 +28,28 @@ function Login(): JSX.Element {
     reset
   } = useForm({ resolver: yupResolver(ValidationSchema) })
 
-
-
-  const onSubmit =async (data: any) => {
+  const onSubmit = async (data: any) => {
     setIsLoading(true)
-    try{
-      await axiosRequest('POST','users-connexion', data, 'none').then(({data}) => {
-        console.log(data?.message)
-        if(data?.token){
-          localStorage.setItem('ACCESS_TOKEN', data?.token)
-
-          reset()
-          navigate('/home')
-        }
-      }).catch(error => alert(error.response.data.message)).finally(() => setIsLoading(false))
-
-    }catch(error) {
+    try {
+      await axiosRequest('POST', 'users-connexion', data, 'none')
+        .then(({ data }) => {
+          console.log(data?.message)
+          if (data?.token) {
+            localStorage.setItem('ACCESS_TOKEN', data?.token)
+            toast.success('Connexion réussie !')
+            reset()
+            setTimeout(() => {
+              navigate('/home')
+            }, 500)
+          }
+        })
+        .catch((error) => alert(error.response.data.message))
+        .finally(() => setIsLoading(false))
+    } catch (error) {
       //aketo ela mi affiche toast we "Serveur deconnecté"
       alert('Erreur lors de la connexion au serveur')
     }
     // console.log(data)
-
-
   }
 
   return (
@@ -123,16 +122,20 @@ function Login(): JSX.Element {
               type="submit"
               className="w-full flex justify-center items-center bg-[#7A3B3F] text-white p-3 rounded-lg hover:bg-[#5E2B2F] transition"
             >
-              {isLoading? <ThreeDots
-                visible={true}
-                height="20"
-                width="50"
-                color="pink"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{}}
-                wrapperClass=""
-              />:'Valider'}
+              {isLoading ? (
+                <ThreeDots
+                  visible={true}
+                  height="20"
+                  width="50"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              ) : (
+                'Valider'
+              )}
             </button>
 
             {/* <div className="mt-3 text-white flex justify-center">
