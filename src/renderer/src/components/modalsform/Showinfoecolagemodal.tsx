@@ -80,7 +80,7 @@ const pay = async (id:number, cost:number) => {
                 {item.payé === 1 ? (
                   <div className="flex gap-5">
                     <FaPrint
-                      className="text-gray-600"
+                      className="text-gray-600 cursor-pointer hover:text-blue-500"
                       onClick={() =>
                         handlePrint({
                           eleve: eleveNom,
