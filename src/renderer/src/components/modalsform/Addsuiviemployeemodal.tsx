@@ -373,9 +373,9 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                             >
                               <FaPrint className="text-gray-600" />
                             </button>
-                            <button className="p-1 rounded-md hover:bg-gray-100">
+                            {/* <button className="p-1 rounded-md hover:bg-gray-100">
                               <FiEdit2 className="text-blue-500" />
-                            </button>
+                            </button> */}
                             <button className="p-1 rounded-md hover:bg-gray-100">
                               <FiTrash2 className="text-red-500" />
                             </button>
