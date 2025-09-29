@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import { FiUserPlus, FiCalendar, FiLayers, FiBookOpen, FiUserCheck, FiUploadCloud, FiDownloadCloud } from 'react-icons/fi'
+import { FiUserPlus, FiCalendar, FiLayers, FiBookOpen, FiUserCheck, FiUploadCloud, FiDownloadCloud, FiCreditCard, FiBarChart2 } from 'react-icons/fi'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addniveaumodal from '@renderer/components/modalsform/Addniveaumodal'
@@ -10,15 +10,19 @@ import Register from '@renderer/auth/register/Register'
 import { MdMeetingRoom } from 'react-icons/md'
 import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
 import { FaUserTie } from 'react-icons/fa'
-import { HiOutlineClipboardList } from 'react-icons/hi'
+import { HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import {  ToastContainer } from 'react-toastify'
+import Addmatieremodal from '@renderer/components/modalsform/Addmatieremodal'
+import Nifmodal from '@renderer/components/modalsform/Nifmodal'
+import Statmodal from '@renderer/components/modalsform/Statmodal'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const { openModal, modal, closModal } = useMultiModals()
+    const [reload, setReload] = useState<boolean>(false)
 
   const handleOpenModal = (modalName: string) => () => openModal(modalName)
 
@@ -29,14 +33,19 @@ function Parameters(): JSX.Element {
     { icon: <FiBookOpen size={28} />, label: `Réglage d'admission`, modalName: 'Choosestatusmoyennemodalparams' },
     { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
   ]
- const buttonsForParamsemployers = [
-   { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
-   { icon: <HiOutlineClipboardList   size={28} />, label: 'Ajouter une fonction', modalName: 'Addfonctionemployer' }
+  const buttonsForParamsemployers = [
+    { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
+    { icon: <HiOutlineClipboardList size={28} />, label: 'Ajouter une fonction', modalName: 'Addfonctionemployer' },
+   { icon: <HiOutlineBookOpen    size={28} />, label: 'Ajouter une matière', modalName: 'Addmatieremodal' }
  ]
 
 
   const buttonsForParamsAdmin = [
     { icon: <FiUserCheck size={28} />, label: 'Ajouter un administrateur', modalName: 'registeremploye' },
+  ]
+  const buttonsForCongigNifStat = [
+    { icon: <FiCreditCard size={28} />, label: 'Configuration NIF', modalName: 'Nifmodal' },
+    { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' }
   ]
 
 
@@ -155,15 +164,26 @@ function Parameters(): JSX.Element {
           ))}
         </div>
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-        />
+        <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2 mt-12">
+          <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
+          Configuration de Nif et Stat
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {buttonsForCongigNifStat.map((item, index) => (
+            <button
+              key={index}
+              onClick={handleOpenModal(item.modalName)}
+              className="bg-white border cursor-pointer border-[#e5e5e5] hover:scale-[1.03] transition-all duration-300 shadow-md rounded-2xl p-6 flex flex-col items-center gap-4 hover:shadow-xl hover:bg-[#f9f4f1] group"
+            >
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white shadow-md group-hover:rotate-12 transition-transform duration-300">
+                {item.icon}
+              </div>
+              <span className="text-lg text-[#333] font-semibold text-center">{item.label}</span>
+            </button>
+          ))}
+        </div>
+
+      
       </div>
 
       {/* Modals */}
@@ -185,9 +205,12 @@ function Parameters(): JSX.Element {
       {modal.Addfonctionemployer && (
         <Addfonctionemployer closemodal={() => closModal('Addfonctionemployer')} />
       )}
+      {modal.Addmatieremodal && <Addmatieremodal closemodal={() => closModal('Addmatieremodal')} />}
       {modal.AdUpEmployeemodal && (
-        <AdUpEmployeemodal closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer" />
+        <AdUpEmployeemodal reload={reload} fresh={setReload}  closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer"  />
       )}
+      {modal.Nifmodal && <Nifmodal closemodal={() => closModal('Nifmodal')} />}
+      {modal.Statmodal && <Statmodal closemodal={() => closModal('Statmodal')} />}
     </div>
   )
 }

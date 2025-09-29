@@ -37,7 +37,7 @@ const schema = yup.object({
 })
 
 export default function OperationModal({ closemodal }: OperationProps) {
-  const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
+  const [activeTab, setActiveTab] = useState<'retirer' | 'historique'>('retirer')
   const [historiques, setHistoriques] = useState<{ id: number; motif: string; ops: { type: string; montant: number }[]; date: string }[]>([])
   const [errorkely, seterrorkely] = useState<string | null>(null)
 
@@ -51,42 +51,53 @@ export default function OperationModal({ closemodal }: OperationProps) {
     defaultValues: { motif: '', solde_ecolage: 0, solde_depot: 0, solde_kermess: 0 }
   })
 
-    const onSubmit = (data: FormValues) => {
-    //   Ops = operation laolo aii
-    const newOps = [
-      { type: "Solde d'écolage", montant: data.solde_ecolage },
-      { type: 'Solde de dépôt', montant: data.solde_depot },
-      { type: 'Solde de kermess', montant: data.solde_kermess }
-    ].filter((op) => op.montant > 0)
+ const onSubmit = (data: FormValues) => {
+   console.log('Form data alefa  hoan retrait :', data)
 
-    if (newOps.length === 0) {
-      seterrorkely('Veuillez saisir au moins un montant supérieur à 0')
-      return
-    }
-    seterrorkely(null)
+   const newOps = [
+     { type: "Solde d'écolage", montant: data.solde_ecolage },
+     { type: 'Solde de dépôt', montant: data.solde_depot },
+     { type: 'Solde de kermess', montant: data.solde_kermess }
+   ].filter((op) => op.montant > 0)
 
-    setHistoriques((prev) => [
-      ...prev,
-      { id: Date.now(), motif: data.motif, ops: newOps, date: new Date().toLocaleString() }
-    ])
-    setActiveTab('historique')
-    reset()
-  }
+   console.log('Opérations générées :', newOps)
+
+   if (newOps.length === 0) {
+     seterrorkely('Veuillez saisir au moins un montant supérieur à 0')
+     return
+   }
+   seterrorkely(null)
+
+   const newHistorique = {
+     id: Date.now(),
+     motif: data.motif,
+     ops: newOps,
+     date: new Date().toLocaleString()
+   }
+
+   console.log('Historique complet miboaka :', newHistorique)
+
+   setHistoriques((prev) => [...prev, newHistorique])
+   setActiveTab('historique')
+   reset()
+ }
 
   const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="flex items-center justify-center text-white gap-3 mb-5">
+        <h1 className="text-2xl font-bold">soloy titre fa tsy aiko</h1>
+      </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
-            
-            {['ajouter', 'historique'].map((tab) => (
+            {['retirer', 'historique'].map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => {
-                  setActiveTab(tab as 'ajouter' | 'historique')
+                  setActiveTab(tab as 'retirer' | 'historique')
                   reset()
                 }}
                 className={`text-lg font-semibold transition ${
@@ -103,9 +114,8 @@ export default function OperationModal({ closemodal }: OperationProps) {
         </div>
 
         {/* Formulairess */}
-        {activeTab === 'ajouter' ? (
+        {activeTab === 'retirer' ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-         
             <div>
               <label className="font-semibold">Motif</label>
               <input
@@ -198,7 +208,7 @@ export default function OperationModal({ closemodal }: OperationProps) {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} /> Ajouter
+                <FiPlus size={18} /> retirer
               </button>
             </div>
           </form>

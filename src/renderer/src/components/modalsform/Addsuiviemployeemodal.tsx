@@ -1,6 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { FiX, FiEdit2, FiTrash2, FiSave } from 'react-icons/fi'
-import { FaMoneyBillWave, FaCalendarAlt, FaUserCheck, FaCheck, FaTimes, FaPrint } from 'react-icons/fa'
+import {
+  FaMoneyBillWave,
+  FaCalendarAlt,
+  FaUserCheck,
+  FaCheck,
+  FaTimes,
+  FaPrint
+} from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
@@ -9,24 +16,22 @@ import { EmployerType } from '@renderer/types/Alltypes'
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import Recuepayementemploye from '../recue/Recuepayementemploye'
 
+export type SalaireEmploye = {
+  montant: number
+  typePaiement: string
+  motif?: string
+  mois: number[]
+}
 
- export type SalaireEmploye = {
-   montant: number
-   typePaiement: string
-   motif?: string
-   mois: number[]
- }
-
- export type CongeType = {
+export type CongeType = {
   dateDebut: Date
   dateFin: Date
   motif: string
 }
 
- export type StatusFormInputs = {
+export type StatusFormInputs = {
   nouveauStatut: string
 }
-
 
 const salarySchema = yup.object().shape({
   montant: yup
@@ -70,7 +75,6 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
-
   const {
     register: registerSalary,
     handleSubmit: handleSubmitSalary,
@@ -109,7 +113,7 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
       : [...selectedMonths, id]
 
     setSelectedMonths(updated)
-    setValueSalary('mois', updated, { shouldValidate: true }) 
+    setValueSalary('mois', updated, { shouldValidate: true })
   }
 
   // Réinitialiser le formulaire lorsque l'onglet change
@@ -136,24 +140,29 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
     resetStatus()
   }
 
+  const [selectedPayment, setSelectedPayment] = useState<SalaireEmploye | null>(null)
+  const printRef = useRef<HTMLDivElement>(null)
+  const handlePrint = (paiement: SalaireEmploye) => {
+    setSelectedPayment(paiement)
+    setTimeout(() => {
+      if (!printRef.current) return
+      const printContents = printRef.current.innerHTML
+      if (!printContents) return
+      const originalContents = document.body.innerHTML
+      document.body.innerHTML = printContents
+      window.print()
+      document.body.innerHTML = originalContents
+      window.location.reload()
+    }, 200)
+  }
 
-const [selectedPayment, setSelectedPayment] = useState<SalaireEmploye | null>(null)
-const printRef = useRef<HTMLDivElement>(null)
-const handlePrint = (paiement: SalaireEmploye) => {
-  setSelectedPayment(paiement)
-  setTimeout(() => {
-    if (!printRef.current) return
-    const printContents = printRef.current.innerHTML
-    if (!printContents) return
-    const originalContents = document.body.innerHTML
-    document.body.innerHTML = printContents
-    window.print()
-    document.body.innerHTML = originalContents
-    window.location.reload()
-  }, 200)
-}
 
+  const [Selectedyearfilter, setSelectedyearfilter] = useState<number | null>(null)
 
+  const handleyearclick = (id: number) => {
+    setSelectedyearfilter(id)
+    console.log("le filtre de years selectionner est ", id)
+  }
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
       <div className="bg-white w-full max-w-2xl h-[640px] rounded-2xl shadow-xl flex flex-col overflow-hidden">
@@ -188,11 +197,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as 'salaire' | 'conge' | 'statut')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
-                activeTab === tab.id
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab.id
                   ? 'bg-white text-[#895256] shadow-md'
                   : 'text-gray-600 hover:bg-gray-200'
-              }`}
+                }`}
             >
               {tab.icon}
               {tab.label}
@@ -227,11 +235,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                         type="number"
                         placeholder="Ex: 500000"
                         {...registerSalary('montant')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errorsSalary.montant
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.montant
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                        }`}
+                          }`}
                       />
                       {errorsSalary.montant && (
                         <p className="text-red-500 text-xs mt-1">{errorsSalary.montant.message}</p>
@@ -244,11 +251,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                       </label>
                       <select
                         {...registerSalary('typePaiement')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errorsSalary.typePaiement
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.typePaiement
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                        }`}
+                          }`}
                       >
                         <option value="">Sélectionner</option>
                         <option value="avance">Avance</option>
@@ -268,11 +274,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                       placeholder="Exemple : avance pour urgence médicale..."
                       rows={2}
                       {...registerSalary('motif')}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                        errorsSalary.motif
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.motif
                           ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                           : 'border-gray-300 shadow-sm'
-                      }`}
+                        }`}
                     ></textarea>
                     {errorsSalary.motif && (
                       <p className="text-red-500 text-xs mt-1">{errorsSalary.motif.message}</p>
@@ -282,17 +287,16 @@ const handlePrint = (paiement: SalaireEmploye) => {
                   <h2 className="mt-4 mb-2 font-semibold text-gray-800">Sélectionnez un mois</h2>
                   <div className="grid grid-cols-3 gap-2 p-3 rounded-lg border-gray-200 bg-white shadow-inner">
                     {Monthlistedata.map((month) => {
-                    const isSelected = selectedMonths.includes(month.id)
+                      const isSelected = selectedMonths.includes(month.id)
                       return (
                         <div
                           key={month.id}
                           onClick={() => handleMonthClick(month.id)}
                           className={`text-sm font-medium text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
-                              ${
-                                isSelected
-                                  ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
-                                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                              }`}
+                              ${isSelected
+                              ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
+                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                            }`}
                         >
                           {month.name}
                         </div>
@@ -309,6 +313,34 @@ const handlePrint = (paiement: SalaireEmploye) => {
                     <FiSave /> Enregistrer
                   </button>
                 </form>
+
+                {/* filtre de historique par mois */}
+
+                <div className="flex flex-col items-center p-4">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Historique par année</h3>
+
+                  <div
+                    className="flex border-b max-w-full border-gray-200 bg-whitemax-w-full overflow-x-auto pb-2 "
+                  >
+                    {[ '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'].map((item, index) => {
+                      const isSelected = Selectedyearfilter === index
+                      return (
+                        <div
+                          key={index}
+                          onClick={() => handleyearclick(index)}
+                          className={`flex-shrink-0 text-base font-semibold text-gray-500 px-5 py-2.5 cursor-pointer transition-all duration-300 relative 
+                          ${isSelected ? 'text-[#895256]' : 'hover:bg-gray-50 hover:text-gray-700'}`}
+                        >
+                          {item}
+
+                          {isSelected && (
+                            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#895256] rounded-t-sm" />
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
 
                 {/* Historique */}
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
@@ -341,9 +373,9 @@ const handlePrint = (paiement: SalaireEmploye) => {
                             >
                               <FaPrint className="text-gray-600" />
                             </button>
-                            <button className="p-1 rounded-md hover:bg-gray-100">
+                            {/* <button className="p-1 rounded-md hover:bg-gray-100">
                               <FiEdit2 className="text-blue-500" />
-                            </button>
+                            </button> */}
                             <button className="p-1 rounded-md hover:bg-gray-100">
                               <FiTrash2 className="text-red-500" />
                             </button>
@@ -383,11 +415,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                       <input
                         type="date"
                         {...registerConge('dateDebut')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errorsConge.dateDebut
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsConge.dateDebut
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                        }`}
+                          }`}
                       />
                       {errorsConge.dateDebut && (
                         <p className="text-red-500 text-xs mt-1">{errorsConge.dateDebut.message}</p>
@@ -398,11 +429,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                       <input
                         type="date"
                         {...registerConge('dateFin')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errorsConge.dateFin
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsConge.dateFin
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                        }`}
+                          }`}
                       />
                       {errorsConge.dateFin && (
                         <p className="text-red-500 text-xs mt-1">{errorsConge.dateFin.message}</p>
@@ -415,11 +445,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                       type="text"
                       placeholder="Ex: Maladie, personnel..."
                       {...registerConge('motif')}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                        errorsConge.motif
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsConge.motif
                           ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                           : 'border-gray-300 shadow-sm'
-                      }`}
+                        }`}
                     />
                     {errorsConge.motif && (
                       <p className="text-red-500 text-xs mt-1">{errorsConge.motif.message}</p>
@@ -494,11 +523,10 @@ const handlePrint = (paiement: SalaireEmploye) => {
                     <label className="text-sm font-medium text-gray-600 mb-1">Nouveau statut</label>
                     <select
                       {...registerStatus('nouveauStatut')}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                        errorsStatus.nouveauStatut
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsStatus.nouveauStatut
                           ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                           : 'border-gray-300 shadow-sm'
-                      }`}
+                        }`}
                     >
                       <option value="">Sélectionner</option>
                       <option>Actif</option>

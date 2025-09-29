@@ -21,6 +21,7 @@ import Studentsecolage from './pages/students/studentsecolage/Studentsecolage'
 import Employerinfo from './pages/employer/Employerinfo'
 import Employersuivi from './pages/employer/Employersuivi'
 import Historique from './pages/historiques/Historique'
+import { ToastContainer } from 'react-toastify'
 
 
 const route = createBrowserRouter([
@@ -79,6 +80,15 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <UserContext>
         <PersistGate loading={null} persistor={persistor}>
           <RouterProvider router={route} />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+          />
         </PersistGate>
       </UserContext>
     </Provider>

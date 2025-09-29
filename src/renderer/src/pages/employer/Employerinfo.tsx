@@ -105,15 +105,10 @@ function Employerinfo(): JSX.Element {
             <div className="space-y-2 h-[50vh] overflow-y-auto">
               {isLoading?<div className='flex w-full justify-center'><RotatingLines
                   visible={true}
-                  height="50"
-                  width="55"
-                  color="grey"
                   strokeColor="#7A3B3F"
                   strokeWidth="5"
                   animationDuration="0.75"
                   ariaLabel="rotating-lines-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
                 /></div>:<>{workers.data?.length === 0 ? (
                 <div className="text-center mt-10 text-gray-600">Aucun employé trouvé</div>
               ) : (
