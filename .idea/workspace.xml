@@ -5,24 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/ConfirmDeleteModal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/auth/register/Register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/auth/register/Register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addniveaumodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addniveaumodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addyearmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addyearmodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Choosestatusmoyennemodalparams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Showinfostudentsmodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/data/EmployersData.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/data/EmployersData.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/parameters/Parameters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/parameters/Parameters.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/calendarfilter/Calendarfilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/calendarfilter/Calendarfilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/card/CardDashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/card/CardDashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpEmployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpEmployeemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/dashboard/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/dashboard/Dashboard.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,24 +28,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging dev",
-    "last_opened_file_path": "/home/asus/Documents",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/home/asus/Documents/Rosette/node_modules/prettier",
-    "ts.external.directory.path": "/media/nvme/Documents/Rosette/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/asus/Documents&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/home/asus/Documents/Rosette/node_modules/prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/media/nvme/Documents/Rosette/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/renderer/src" />
@@ -127,6 +114,10 @@
       <workItem from="1758732809170" duration="6245000" />
       <workItem from="1758741980369" duration="3958000" />
       <workItem from="1758784798692" duration="2079000" />
+      <workItem from="1758834573633" duration="232000" />
+      <workItem from="1758881484411" duration="1444000" />
+      <workItem from="1758897746967" duration="9347000" />
+      <workItem from="1759055901453" duration="24687000" />
     </task>
     <servers />
   </component>

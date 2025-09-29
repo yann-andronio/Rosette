@@ -6,9 +6,9 @@ import { FaCalendarAlt, FaFilter } from 'react-icons/fa'
 import 'react-datepicker/dist/react-datepicker.css'
 import './custom-datepicker.css'
 
-export function Calendarfilter(): JSX.Element {
-  const [startDate, setStartDate] = useState<Date | null>(new Date())
-  const [endDate, setEndDate] = useState<Date | null>(new Date())
+export function Calendarfilter({setDebut, setFin}:{setDebut:(date) => void, setFin:(date) => void}): JSX.Element {
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
   const [inputStart, setInputStart] = useState(format(startDate!, 'dd-MM-yyyy'))
   const [inputEnd, setInputEnd] = useState(format(endDate!, 'dd-MM-yyyy'))
 
@@ -21,9 +21,8 @@ export function Calendarfilter(): JSX.Element {
     const parsedEnd = parse(tempEnd, 'dd-MM-yyyy', new Date())
     if (isValid(parsedStart)) setStartDate(parsedStart)
     if (isValid(parsedEnd)) setEndDate(parsedEnd)
-    
-    console.log("date de debut", parsedStart, )
-    console.log("date de fin", parsedEnd)
+    setDebut(new Date(parsedStart).toLocaleDateString('en-CA'))
+    setFin(new Date(parsedEnd).toLocaleDateString('en-CA'))
   }
 
   // Synchronisation nle inputs affichés avec le calendrier
@@ -36,9 +35,9 @@ export function Calendarfilter(): JSX.Element {
 
   return (
     <div className="flex flex-col  justify-center items-center bg-white rounded-3xl shadow-lg    ">
-   
+
       <div className="flex items-center gap-4  p-4">
-    
+
         <div className="date-input-container">
           <div className="date-input-wrapper">
             <input
@@ -60,7 +59,7 @@ export function Calendarfilter(): JSX.Element {
           </div>
         </div>
 
-    
+
       </div>
 
       {/* Calendrier */}

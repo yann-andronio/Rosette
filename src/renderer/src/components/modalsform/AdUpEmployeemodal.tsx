@@ -100,9 +100,6 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
         if(key != "matiere"){
           formData.append(key, data[key])
         }
-
-
-
       }
 
       formData.append('matiere', JSON.stringify(data.matiere))

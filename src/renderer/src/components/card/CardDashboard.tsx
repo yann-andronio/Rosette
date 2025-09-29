@@ -1,10 +1,11 @@
 // break-all mi se permetre le texte mandeha a la ligne
 import React from 'react'
 import { IconType } from 'react-icons'
+import { FaUserGraduate, FaChalkboardTeacher, FaUsers, FaMoneyBillWave, FaWallet, FaCoins, FaPlus } from 'react-icons/fa'
 
 interface CardData {
   title: string
-  value: string
+  value: number
   icon: IconType
 }
 
@@ -12,8 +13,29 @@ interface CardDashboardProps {
   item: CardData
 }
 
+const getIcon = (icon) => {
+  switch (icon){
+    case 'FaUserGraduate': return FaUserGraduate
+    break
+    case 'FaChalkboardTeacher': return FaChalkboardTeacher
+    break
+    case 'FaUsers': return FaUsers
+    break
+    case 'FaMoneyBillWave': return FaMoneyBillWave
+    break
+    case 'FaWallet': return FaWallet
+    break
+    case 'FaCoins': return FaCoins
+    break
+    case 'FaPlus': return FaPlus
+    break
+    default:return FaWallet
+  }
+}
+
+
 export const CardDashboard: React.FC<CardDashboardProps> = ({ item }) => {
-  const Icon = item.icon
+  const Icon = getIcon(item.icon)
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all border border-gray-200">
