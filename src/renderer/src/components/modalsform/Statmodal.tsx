@@ -2,28 +2,39 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 type OperationProps = { closemodal: () => void }
 
 interface FormValues {
-  STAT: string
+  ident: string
 }
 
 const schema = yup.object({
-  STAT: yup.string().required('Le STAT est requis')
+  ident: yup.string().required('Le stat est requis')
 })
 
-type HistoriqueItem = {
-  id: number
-  STAT: string
-  date: string
-}
+
 
 export default function Statmodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<HistoriqueItem[]>([])
+  const [historiques, setHistoriques] = useState<{ident:string, id:number,created_at}[]>([])
+  const [reload, setReload] = useState<boolean>(false)
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', 'identify', null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error))
+    }catch(e){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
+  useEffect(() => {
+    getHistoriques()
+  }, [activeTab, reload])
   const {
     register,
     handleSubmit,
@@ -31,26 +42,31 @@ export default function Statmodal({ closemodal }: OperationProps) {
     formState: { errors }
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    defaultValues: { STAT: '' }
+    defaultValues: { ident: '' }
   })
 
-  const onSubmit = (data: FormValues) => {
-    console.log('Form data alefa :', data)
-
-    const newHistorique: HistoriqueItem = {
-      id: Date.now(),
-      STAT: data.STAT,
-      date: new Date().toLocaleString()
+  const onSubmit = async (data: FormValues) => {
+    try{
+      await axiosRequest('POST', 'identify', data, 'token')
+        .then(({data}) => toast.success(data.message))
+        .then(() =>    reset())
+        .then(() => setActiveTab('historique'))
+        .catch(error => toast.error(error.response.data.message))
+    }catch(err){
+      console.error('Le serveur ne repond pas')
     }
-
-    console.log('Historique complet miboaka :', newHistorique)
-
-    setHistoriques((prev) => [...prev, newHistorique])
-    setActiveTab('historique')
-    reset()
   }
 
-  const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
+  const removeHistorique = async (id:number) => {
+    try{
+      await axiosRequest('DELETE', `identify/${id}`, id, 'token')
+        .then(({data}) => toast.success(data.message))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error))
+    }catch(e){
+      console.log("Le serveur ne repond pas")
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -86,16 +102,16 @@ export default function Statmodal({ closemodal }: OperationProps) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <input
-                {...register('STAT')}
+                {...register('ident')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.STAT
+                  errors.ident
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
                 placeholder="Ex: Mathématiques"
               />
-              {errors.STAT && (
-                <p className="text-sm text-red-600 font-medium mt-1">{errors.STAT.message}</p>
+              {errors.ident && (
+                <p className="text-sm text-red-600 font-medium mt-1">{errors.ident.message}</p>
               )}
             </div>
 
@@ -121,15 +137,15 @@ export default function Statmodal({ closemodal }: OperationProps) {
               <p className="text-center text-gray-500">Aucune STAT enregistrée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ id, STAT, date }) => (
+                {historiques.map(({ id, ident, created_at }) => (
                   <li
                     key={id}
                     className="bg-gray-100 p-4 rounded-lg flex justify-between items-start hover:bg-gray-200 transition"
                   >
                     <div>
-                      <p className="font-semibold">Matière : {STAT}</p>
-                      <p className="text-xs text-gray-500 mb-1">Date : {date}</p>
-                 
+                      <p className="font-semibold">STAT : {ident}</p>
+                      <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
+
                     </div>
                     <button
                       onClick={() => removeHistorique(id)}

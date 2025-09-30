@@ -330,7 +330,7 @@ function Studentsecolage(): JSX.Element {
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
-              Total élèves : <span className="font-bold">2000</span>
+              Total élèves : <span className="font-bold">{students.total}</span>
             </div>
           </div>
         </div>
@@ -348,13 +348,13 @@ function Studentsecolage(): JSX.Element {
             </div>
           </div>
           {isLoading?<div className='flex w-full justify-center'><RotatingLines
-            visible={true}     
-            
+            visible={true}
+
             width='50'
               strokeColor="#7A3B3F"
               strokeWidth="5"
               animationDuration="0.75"
-              ariaLabel="rotating-lines-loading"          
+              ariaLabel="rotating-lines-loading"
             /></div>:<>
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
             {students?.data.length === 0 ? (

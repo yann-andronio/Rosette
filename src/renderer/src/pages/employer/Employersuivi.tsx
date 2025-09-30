@@ -47,7 +47,7 @@ function Employersuivi(): JSX.Element {
             <div className="flex px-4 py-2 bg-[#895256] text-white rounded-lg font-semibold text-sm mb-2">
               <div className="w-12">Photo</div>
               <div className="flex-1 text-start ml-12">Nom</div>
-              <div className="flex-1 text-start">Prénom</div>
+              <div className="flex-1 text-start">Prénoms</div>
               <div className="flex-1 text-start">Fonction</div>
               <div className="flex-1 text-start">Actions</div>
             </div>

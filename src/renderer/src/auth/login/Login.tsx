@@ -33,17 +33,19 @@ function Login(): JSX.Element {
     try {
       await axiosRequest('POST', 'users-connexion', data, 'none')
         .then(({ data }) => {
-          console.log(data?.message)
           if (data?.token) {
             localStorage.setItem('ACCESS_TOKEN', data?.token)
-            toast.success('Connexion réussie !')
+            toast.success(data?.message)
+            // toast.success('Connexion réussie !')
             reset()
             setTimeout(() => {
               navigate('/home')
             }, 500)
+          }else{
+            toast.error(data?.message)
           }
         })
-        .catch((error) => alert(error.response.data.message))
+        .catch((error) => toast.error(error.response.data.message))
         .finally(() => setIsLoading(false))
     } catch (error) {
       //aketo ela mi affiche toast we "Serveur deconnecté"
