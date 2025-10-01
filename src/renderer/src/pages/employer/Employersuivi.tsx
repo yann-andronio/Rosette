@@ -1,32 +1,71 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import { useFilterData } from '@renderer/hooks/useFilterData'
+
 import { EmployerType } from '@renderer/types/Alltypes'
-import { EmployersData } from '@renderer/data/EmployersData'
-import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
+
+
 import EmployerCardSuivi from '@renderer/components/card/EmployerCardSuivi'
 import Addsuiviemployeemodal from '@renderer/components/modalsform/Addsuiviemployeemodal'
+import { axiosRequest } from '@renderer/config/helpers'
 
 function Employersuivi(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searchEmployes, setSearchEmployes] = useState('')
+  const [workers, setWorkkers] = useState<{ per_page:number, total:number,  last_page:number, data:EmployerType[]}>({last_page:1, data:[], total:0, per_page:0})
+  const [w_id, setW_id] = useState<number>()
   const [selectedEmployer, setSelectedEmployer] = useState<EmployerType | null>(
-    EmployersData.length > 0 ? EmployersData[0] : null
+    workers.data.length > 0 ? workers.data[0] : null
   )
 
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const [reload, setReload] = useState<boolean>(false)
+
+  const nextPage = (page:number) =>{
+    setCurrentPage(page)
+  }
+
+
+  const precedent = (current) => {
+    if(current > 1){
+      setCurrentPage(current - 1)
+    }
+  }
+
+  const suivant = (current) => {
+    if(current < workers.last_page){
+      setCurrentPage(current + 1)
+    }
+  }
+  const pagination:number[] = []
+  for(let i:number=1; i<=Math.ceil(workers?.total / workers.per_page); i++){
+    pagination.push(i)
+  }
+
+  const getWorkers = async () => {
+    setIsLoading(true)
+    try{
+      await axiosRequest('GET', `worker-list?q=${searchEmployes}`, null, 'token')
+        .then(({data}) => setWorkkers(data))
+        .then(() => setIsLoading(false))
+        .catch(error => console.log(error.response.data.error))
+        .finally(() => setIsLoading(false))
+    }catch(err){
+      console.log('Le serveur ne repond pas')
+    }
+
+  }
+  useEffect(() => {
+    getWorkers()
+  }, [searchEmployes,reload])
   const handleSearchEmployes = (search: string) => setSearchEmployes(search)
-  const filteredData = useFilterData(EmployersData, searchEmployes, [
-    'nom',
-    'prenom',
-    'fonction',
-    'matieresSalles'
-  ])
   const { modal, openModal, closModal } = useMultiModals()
-  console.log(selectedEmployer)
+
 
   return (
     <div
@@ -38,7 +77,7 @@ function Employersuivi(): JSX.Element {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearchEmployes} />
           <div className="bg-white text-[#212529] shadow px-4 py-2 rounded-lg text-sm font-medium">
-            Total employés : <span className="font-bold">{EmployersData.length}</span>
+            Total employés : <span className="font-bold">{workers.total}</span>
           </div>
         </div>
 
@@ -53,10 +92,10 @@ function Employersuivi(): JSX.Element {
             </div>
 
             <div className="space-y-2 h-[52.5vh] overflow-y-auto">
-              {filteredData.length === 0 ? (
+              {workers.data.length === 0 ? (
                 <div className="text-center mt-10 text-gray-600">Aucun employé trouvé</div>
               ) : (
-                filteredData.map((employer, index) => (
+                workers.data.map((employer, index) => (
                   <div
                     key={employer.id}
                     onClick={() => setSelectedEmployer(employer)}
@@ -65,16 +104,23 @@ function Employersuivi(): JSX.Element {
                     } hover:bg-gray-50 hover:border-l-4 border-[#895256] hover:shadow-lg transition duration-300`}
                   >
                     <div className="w-12 h-12 flex items-start justify-center mr-3">
-                      <div className="bg-[#895256] p-2 rounded-full">
-                        <FaUserCircle className="text-2xl text-white" />
-                      </div>
+                      {employer.photo ? (
+                        <img src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="bg-[#895256] p-2 rounded-full">
+                        <FaUserCircle className="text-5xl text-gray-400" />
+                        </div>
+                      )}
+
+
+
                     </div>
 
                     <div className="flex-1 font-semibold text-start pl-9 text-gray-800">
                       {employer.nom}
                     </div>
                     <div className="flex-1 text-start text-gray-700">{employer.prenom}</div>
-                    <div className="flex-1 text-start text-gray-700">{employer.fonction}</div>
+                    <div className="flex-1 text-start text-gray-700">{employer.profs.profession}</div>
 
                     <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
                       <FaEdit
@@ -100,17 +146,18 @@ function Employersuivi(): JSX.Element {
         {/* pagination */}
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => precedent(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
             Précédent
           </button>
           <div className="flex gap-2 mt-3 md:mt-0">
-            {[1, 2, 3, 4, 5].map((page) => (
+            {pagination.map((page) => (
               <button
                 key={page}
-                className={`px-3 py-1 rounded-full font-medium ${
+                onClick={() => nextPage(page)}
+                className={`px-3 py-1 rounded-full font-medium cursor-pointer ${
                   page === 1
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
@@ -120,12 +167,13 @@ function Employersuivi(): JSX.Element {
               </button>
             ))}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button onClick={() => suivant(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
             </span>
           </button>
+
 
           {modal.Addsuiviemployeemodal && selectedEmployer && (
             <Addsuiviemployeemodal

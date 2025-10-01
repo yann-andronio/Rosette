@@ -6,11 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardInfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardInfo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardSuivi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardSuivi.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpEmployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpEmployeemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addfonctionemployer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addfonctionemployer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addmatieremodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addmatieremodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Nifmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Nifmodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Statmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Statmodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employerinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employerinfo.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employersuivi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employersuivi.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsecolage/Studentsecolage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsecolage/Studentsecolage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +126,8 @@
       <workItem from="1758881484411" duration="1444000" />
       <workItem from="1758897746967" duration="9347000" />
       <workItem from="1759055901453" duration="24687000" />
-      <workItem from="1759218269284" duration="726000" />
+      <workItem from="1759218269284" duration="10551000" />
+      <workItem from="1759262797835" duration="16722000" />
     </task>
     <servers />
   </component>

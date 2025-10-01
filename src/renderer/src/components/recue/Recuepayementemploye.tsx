@@ -12,8 +12,8 @@ type RecueProps = {
   employer: {
     nom: string
     prenom: string
-    fonction?: string
-    dateEmbauche?: string | Date
+    profs?: {profession:string}
+    created_at?: string | Date
   }
   salaire: Salaire
 }
@@ -21,10 +21,7 @@ type RecueProps = {
 export default function Recuepayementemploye({ employer, salaire }: RecueProps) {
 
   const formatNumber = (num?: number) => num ? num.toLocaleString('fr-FR', { minimumFractionDigits: 0 }) : '-'
-  const moisLabel =salaire.mois && salaire.mois.length > 0? salaire.mois.map((id) => Monthlistedata.find((m) => m.id === id)?.name || `Mois ${id}`)
-          .join(', ')
-      : '-'
-
+  const moisLabel =salaire.mois
   const datePaiement = new Date().toLocaleDateString('fr-FR')
 
   return (
@@ -52,13 +49,13 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
           {employer.nom && employer.prenom ? `${employer.nom} ${employer.prenom}` : '-'}
         </p>
         <p>
-          <span className="font-semibold">Fonction :</span> {employer.fonction || '-'}
+          <span className="font-semibold">Fonction :</span> {employer?.profs.profession || '-'}
         </p>
         <p>
           <span className="font-semibold">Date d'embauche :</span>{' '}
-          {employer.dateEmbauche
-            ? new Date(employer.dateEmbauche).toLocaleDateString('fr-FR')
-            : '-'}
+          {employer.created_at}
+
+
         </p>
       </div>
 
@@ -78,7 +75,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
             <tr>
               <td className="border px-2 py-1">{moisLabel}</td>
               <td className="border px-2 py-1">{formatNumber(salaire.montant)}</td>
-              <td className="border px-2 py-1">{salaire.typePaiement || '-'}</td>
+              <td className="border px-2 py-1">{salaire.type==1?'Salaire Complet':"Avance sur Salaire"}</td>
               <td className="border px-2 py-1">{salaire.motif || '-'}</td>
             </tr>
           </tbody>

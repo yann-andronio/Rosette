@@ -108,7 +108,7 @@ export default function Statmodal({ closemodal }: OperationProps) {
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
-                placeholder="Ex: Mathématiques"
+                placeholder="Ex: TEST/1234"
               />
               {errors.ident && (
                 <p className="text-sm text-red-600 font-medium mt-1">{errors.ident.message}</p>

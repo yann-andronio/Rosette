@@ -121,9 +121,13 @@ function Employerinfo(): JSX.Element {
                     } hover:bg-gray-50 hover:border-l-4 border-[#895256] hover:shadow-lg transition duration-300`}
                   >
                     <div className="w-12 h-12 flex items-start justify-center mr-3">
-                      <div className="bg-[#895256] p-2 rounded-full">
-                        <FaUserCircle className="text-2xl text-white" />
-                      </div>
+                      {employer.photo ? (
+                        <img src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="bg-[#895256] p-2 rounded-full">
+                          <FaUserCircle className="text-5xl text-gray-400" />
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex-1 font-semibold text-start pl-9 text-gray-800">

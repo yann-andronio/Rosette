@@ -15,32 +15,36 @@ const EmployerDetailsCard: FC<EmployerDetailsCardProps> = ({ employer }) => {
     setActiveSection(activeSection === section ? null : section)
   }
 
-  const getStatusDisplay = (statut: 'Actif' | 'En congé' | 'Suspendu') => {
+  const getStatusDisplay = (statut: string) => {
     switch (statut) {
-      case 'Actif':
+      case "actif":
         return {
           text: 'text-green-600',
           bg: 'bg-green-100',
           icon: <MdVerifiedUser className="text-green-600 text-lg" />
         }
-      case 'En congé':
+      case 'congé':
         return {
           text: 'text-yellow-600',
           bg: 'bg-yellow-100',
           icon: <MdWorkOff className="text-yellow-600 text-lg" />
         }
-      case 'Suspendu':
+
+      case 'suspendu':
         return {
           text: 'text-red-600',
           bg: 'bg-red-100',
           icon: <MdOutlinePauseCircle className="text-red-600 text-lg" />
         }
+
       default:
         return { text: 'text-gray-600', bg: 'bg-gray-100', icon: null }
     }
   }
 
-  const status = getStatusDisplay(employer.statut)
+
+
+  const status = getStatusDisplay(employer.status)
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 max-w-md w-full transition-all duration-300 hover:shadow-xl">
@@ -52,10 +56,10 @@ const EmployerDetailsCard: FC<EmployerDetailsCardProps> = ({ employer }) => {
           </h2>
           <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${status.bg}`}>
             {status.icon}
-            <span className={`font-semibold text-xs ${status.text}`}>{employer.statut}</span>
+            <span className={`font-semibold text-xs ${status.text}`}>{employer.status}</span>
           </div>
         </div>
-        <p className="text-sm text-gray-500 mt-1">{employer.fonction}</p>
+        <p className="text-sm text-gray-500 mt-1">{employer.profs.profession}</p>
       </div>
 
       <div className="p-6 space-y-4">

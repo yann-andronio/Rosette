@@ -63,6 +63,16 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
   const [profession, setProfession] = useState<{id:number, profession:string}[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [preWorker, setPreWorker] = useState<EmployerType>()
+  const [historiques, setHistoriques] = useState<{nom:string, id:number,created_at}[]>([])
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', 'domaines', null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error))
+    }catch(e){
+      console.log('Le serveur ne repond pas')
+    }
+  }
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0]
@@ -173,10 +183,12 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
       console.log('Le serveur ne repond pas')
     }
   }
-
+  useEffect(() => {
+    getHistoriques()
+  }, [])
   useEffect(() => {
     getWorker()
-  }, [mode=='ajoutemployer']);
+  }, [mode=='modifemplyer']);
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <div className="bg-white w-[80%] h-[650px] rounded-2xl flex shadow-2xl overflow-hidden">
@@ -338,9 +350,9 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
                           }`}
                         >
                           <option value="">Sélectionnez matière</option>
-                          {matieresDisponibles.map((m) => (
-                            <option key={m} value={m}>
-                              {m}
+                          {historiques.map((m) => (
+                            <option key={m.id} value={m.nom}>
+                              {m.nom}
                             </option>
                           ))}
                         </select>

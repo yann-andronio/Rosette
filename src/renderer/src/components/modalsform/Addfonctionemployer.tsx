@@ -2,25 +2,37 @@ import { FiPlus, FiX, FiTrash2 } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ThreeDots } from 'react-loader-spinner'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 type AddFunctionProps = {
   closemodal: () => void
 }
 
 type FormData = {
-  fonction: string
+  profession: string
 }
 
 const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{ fonction: string }[]>([])
+  const [historiques, setHistoriques] = useState<{profession:string, id:number}[]>([])
+  const [reload, setReload] = useState<boolean>(false)
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', 'profession-list', null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error))
+    }catch(e){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
 
   const schema = yup.object({
-    fonction: yup.string().required('Vous devez saisir une fonction')
+    profession: yup.string().required('Vous devez saisir une fonction')
   })
 
   const {
@@ -31,15 +43,33 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   })
-
-  const onSubmit = (data: FormData) => {
-    setHistoriques((prev) => [...prev, { fonction: data.fonction }])
-    reset()
-    setActiveTab('historique')
+  useEffect(() => {
+    getHistoriques()
+  }, [reload, activeTab=='historique'])
+  const onSubmit =async (data: FormData) => {
+    setIsLoading(true)
+    try{
+      await axiosRequest('POST', 'profession-creation', data, 'token')
+        .then(({data}) => toast.success(data.message))
+        .then(() => setIsLoading(false))
+        .then(() => reset())
+        .then(() =>  setActiveTab('historique') )
+        .catch(error => toast.error(error?.reponse.data.message))
+        .finally(() => setIsLoading(false))
+    }catch (err){
+      console.log('Le serveur ne repond pas')
+    }
   }
 
-  const removeFunction = (index: number) => {
-    setHistoriques((prev) => prev.filter((_, i) => i !== index))
+  const removeHistorique = async (id:number) => {
+    try{
+      await axiosRequest('DELETE', `profession/${id}`, id, 'token')
+        .then(({data}) => toast.success(data.message))
+        .then(() => setReload(!reload))
+        .catch(error => console.log(error))
+    }catch(e){
+      console.log("Le serveur ne repond pas")
+    }
   }
 
   return (
@@ -79,14 +109,14 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
             <input
               type="text"
               placeholder="Ex: Professeur"
-              {...register('fonction')}
+              {...register('profession')}
               className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                errors.fonction
+                errors.profession
                   ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                   : 'border-gray-300 shadow-sm'
               }`}
             />
-            {errors.fonction && <p className="text-sm text-red-400">{errors.fonction.message}</p>}
+            {errors.profession && <p className="text-sm text-red-400">{errors.profession.message}</p>}
 
             <div className="flex justify-end gap-3 mt-6">
               <button
@@ -121,10 +151,10 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
                     key={index}
                     className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
                   >
-                    <span className="font-semibold">{item.fonction}</span>
+                    <span className="font-semibold">{item.profession}</span>
                     <button
-                      aria-label={`Supprimer la fonction ${item.fonction}`}
-                      onClick={() => removeFunction(index)}
+                      aria-label={`Supprimer la fonction ${item.profession}`}
+                      onClick={() => removeHistorique(item.id)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />

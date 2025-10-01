@@ -131,15 +131,15 @@ const getSalles = async () => {
     try {
       await axiosRequest("POST", "etudiant-creation", formdata, "token")
         .then(({ data }) => {
-          console.log(data.message)
-          // toast araika
+
+
           toast.success('Étudiant ajouté avec succès ✅')
         })
         .then(() => reset())
         .then(() => setReload(!reload))
-        .catch((error) => {
-          toast.error(error.response?.data?.message || "Erreur lors de l'ajout ❌");
-        })
+        .catch((error) =>  toast.error(error.response?.data?.message))
+
+
         .finally(() => setIsLoading(false));
     } catch (error) {
       toast.error('Le serveur ne répond pas ❌')
@@ -157,19 +157,19 @@ const getSalles = async () => {
     try {
       await axiosRequest("POST", `etudiant/${id}`, form, "token")
         .then(({ data }) => {
-          console.log(data.message)
+
           // toast araika
           toast.success('Étudiant modifié avec succès ✅')
         })
         .then(() => setReload(!reload))
         .catch((error) => {
-          console.log(error.response?.data?.message)
+
           // toast araika
-          toast.error(error.response?.data?.message || 'Erreur lors de la modification ❌')
+          toast.error(error.response.data.message)
         })
         .finally(() => setIsLoading(false));
     } catch (error) {
-      console.log('Le serveur ne répond pas')
+
       // toast araika
       toast.error('Le serveur ne répond pas ❌')
     }

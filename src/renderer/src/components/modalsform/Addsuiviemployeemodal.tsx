@@ -13,14 +13,16 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { EmployerType } from '@renderer/types/Alltypes'
-import { Monthlistedata } from '@renderer/data/Monthlistedata'
+
 import Recuepayementemploye from '../recue/Recuepayementemploye'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 export type SalaireEmploye = {
   montant: number
-  typePaiement: string
+  type: number
   motif?: string
-  mois: number[]
+  mois: string[]
 }
 
 export type CongeType = {
@@ -39,11 +41,11 @@ const salarySchema = yup.object().shape({
     .typeError('Le montant doit être un nombre.')
     .required('Le montant est requis.')
     .positive('Le montant doit être positif.'),
-  typePaiement: yup.string().required('Le type de paiement est requis.'),
+  type: yup.number().required('Le type de paiement est requis.'),
   motif: yup.string().optional(),
   mois: yup
     .array()
-    .of(yup.number())
+    .of(yup.string())
     .min(1, 'Sélectionnez au moins un mois')
     .required('Sélectionnez au moins un mois')
 })
@@ -73,7 +75,30 @@ type SuiviEmployerModalProps = {
 
 export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmployerModalProps) {
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
-  const [selectedMonths, setSelectedMonths] = useState<number[]>([])
+  const [moissalaires, setMoissalaires] = useState<{id:number, mois:string, payé:number,reste:0}[]>([])
+  const [filtres, setFiltres] = useState<{id:number, annee:string}[]>([])
+  const getFiltres = async () => {
+    try{
+      await axiosRequest('GET', 'ac-list', null, 'token')
+        .then(({data}) => setFiltres(data))
+        .catch(err => console.log(err.response.data.message))
+    }catch (e){
+      console.log(e)
+    }
+  }
+  const getMoissalaires = async () => {
+      try{
+        await axiosRequest('GET', `moissalaires/${employer.id}`, null, 'token')
+          .then(({data}) => setMoissalaires(data))
+          .catch(error => console.log(error.response.data.message))
+      }catch (err){
+        console.log(err)
+      }
+
+  }
+
+
+  const [selectedMonths, setSelectedMonths] = useState<string[]>([])
 
   const {
     register: registerSalary,
@@ -103,14 +128,29 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
     { id: 'statut', label: 'Statut', icon: <FaUserCheck className="text-base" /> }
   ]
 
-  const salaryHistory = employer.salaires || []
+
   const congeHistory = employer.conges || []
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
+  const [historiques, setHistoriques] = useState<{id:number,montant:number, mois:string, type:number}[]>([])
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', `archives/${employer.id}`, null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error.response.data.message))
+    }catch (err){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
-  const handleMonthClick = (id: number) => {
-    const updated = selectedMonths.includes(id)
-      ? selectedMonths.filter((mid) => mid !== id)
-      : [...selectedMonths, id]
+  useEffect(() => {
+    getMoissalaires()
+    getFiltres()
+    getHistoriques()
+  }, [])
+  const handleMonthClick = (mois: string) => {
+    const updated = selectedMonths.includes(mois)
+      ? selectedMonths.filter((mid) => mid !== mois)
+      : [...selectedMonths, mois]
 
     setSelectedMonths(updated)
     setValueSalary('mois', updated, { shouldValidate: true })
@@ -124,10 +164,15 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
     setSelectedMonths([])
   }, [activeTab, resetSalary, resetConge, resetStatus])
 
-  const onSalarySubmit = (data: SalaireEmploye) => {
-    console.log('Soumission du formulaire de salaire:', data)
-    resetSalary()
-    setSelectedMonths([])
+  const onSalarySubmit = async (data: SalaireEmploye) => {
+    const datas = {...data, w_id:employer.id}
+    try{
+      await axiosRequest('POST', 'worker-pay', datas, 'token')
+        .then(({data}) => console.log(data.message))
+        .catch((err) => console.log(err.response.data.message))
+    }catch (err){
+      console.log('Le serveur ne repond pas')
+    }
   }
 
   const onCongeSubmit = (data: CongeType) => {
@@ -178,7 +223,7 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                 {employer.nom} {employer.prenom}
               </h2>
               <p className="text-xs opacity-90">
-                {employer.fonction} | Salaire de base : {formatNumber(employer.salairebase ?? 0)} Ar
+                {employer.profs.profession} | Salaire de base : {formatNumber(employer.salaire_base ?? 0)} Ar
               </p>
             </div>
           </div>
@@ -250,19 +295,19 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                         Type de paiement
                       </label>
                       <select
-                        {...registerSalary('typePaiement')}
+                        {...registerSalary('type')}
                         className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.typePaiement
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
                           }`}
                       >
                         <option value="">Sélectionner</option>
-                        <option value="avance">Avance</option>
-                        <option value="complet">Salaire complet</option>
+                        <option value={0}>Avance</option>
+                        <option value={1}>Salaire complet</option>
                       </select>
-                      {errorsSalary.typePaiement && (
+                      {errorsSalary.type && (
                         <p className="text-red-500 text-xs mt-1">
-                          {errorsSalary.typePaiement.message}
+                          {errorsSalary.type.message}
                         </p>
                       )}
                     </div>
@@ -286,21 +331,38 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                   {/* Sélection des mois  */}
                   <h2 className="mt-4 mb-2 font-semibold text-gray-800">Sélectionnez un mois</h2>
                   <div className="grid grid-cols-3 gap-2 p-3 rounded-lg border-gray-200 bg-white shadow-inner">
-                    {Monthlistedata.map((month) => {
-                      const isSelected = selectedMonths.includes(month.id)
-                      return (
-                        <div
-                          key={month.id}
-                          onClick={() => handleMonthClick(month.id)}
-                          className={`text-sm font-medium text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
+                    {moissalaires.map((month) => {
+                      const isSelected = selectedMonths.includes(month.mois)
+                      if(month.payé == 1||month.reste==0){
+                        return (
+
+                          <div
+                            key={month.id}
+
+                            className={`text-sm font-medium cursor-not-allowed text-center rounded-lg px-2 py-2  transition-all duration-200 border
                               ${isSelected
                               ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
-                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                              : 'bg-green-500 text-gray-100  hover:bg-green-400-100'
                             }`}
+                          >
+                            {month.mois}
+                          </div>
+                        )
+                      }else{
+                        return (
+                        <div
+                          key={month.id}
+                          onClick={() => handleMonthClick(month.mois)}
+                          className={`text-sm font-medium  text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
+                              ${isSelected
+                            ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                          }`}
                         >
-                          {month.name}
-                        </div>
-                      )
+                          {month.mois}
+                        </div>)
+                      }
+
                     })}
                   </div>
                   {errorsSalary.mois && (
@@ -322,17 +384,16 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                   <div
                     className="flex border-b max-w-full border-gray-200 bg-whitemax-w-full overflow-x-auto pb-2 "
                   >
-                    {[ '2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'].map((item, index) => {
-                      const isSelected = Selectedyearfilter === index
+                    {filtres.map((item, index) => {
+                      const isSelected = Selectedyearfilter === item.id
                       return (
                         <div
                           key={index}
-                          onClick={() => handleyearclick(index)}
-                          className={`flex-shrink-0 text-base font-semibold text-gray-500 px-5 py-2.5 cursor-pointer transition-all duration-300 relative 
+                          onClick={() => handleyearclick(item.id)}
+                          className={`flex-shrink-0 text-base font-semibold text-gray-500 px-5 py-2.5 cursor-pointer transition-all duration-300 relative
                           ${isSelected ? 'text-[#895256]' : 'hover:bg-gray-50 hover:text-gray-700'}`}
                         >
-                          {item}
-
+                          {item.annee}
                           {isSelected && (
                             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#895256] rounded-t-sm" />
                           )}
@@ -347,9 +408,9 @@ export default function SuiviEmployerModal({ closemodal, employer }: SuiviEmploy
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-md font-bold text-gray-700">Historique des paiements</h3>
                   </div>
-                  {salaryHistory.length > 0 ? (
+                  {historiques.length > 0 ? (
                     <ul className="space-y-2">
-                      {salaryHistory.map((item, index) => (
+                      {historiques.map((item, index) => (
                         <li
                           key={index}
                           className="flex justify-between items-center px-3 py-2 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 transition-colors"

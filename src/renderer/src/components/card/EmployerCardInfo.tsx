@@ -79,7 +79,7 @@ const EmployerCardInfo: FC<EmployerCardProps> = ({ employer }) => {
           </div>
         </div>
 
-        {employer.profs.profession === 'Professeur' &&
+        {employer.profs.id === 1 &&
           employer.matiere &&
           employer.matiere.length > 0 && (
             <div className="mt-5 pt-5 border-t border-gray-200 text-sm">
