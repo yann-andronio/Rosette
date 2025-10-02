@@ -11,7 +11,8 @@ import { EmployerType } from '@renderer/types/Alltypes'
 import EmployerCardSuivi from '@renderer/components/card/EmployerCardSuivi'
 import Addsuiviemployeemodal from '@renderer/components/modalsform/Addsuiviemployeemodal'
 import { axiosRequest } from '@renderer/config/helpers'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
+import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 
 function Employersuivi(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -69,6 +70,38 @@ function Employersuivi(): JSX.Element {
   }, [searchEmployes,reload])
   const handleSearchEmployes = (search: string) => setSearchEmployes(search)
   const { modal, openModal, closModal } = useMultiModals()
+
+
+    const deletes = async (id: number) => {
+      try {
+        await axiosRequest('DELETE', `worker/${id}`, null, 'token')
+          .then(({ data }) => toast.success(data.message))
+          .then(() => setReload(!reload))
+          .catch((error) => toast.error(error.response.data.error))
+      } catch (error) {
+        console.log('Le serveur ne repond pas')
+      }
+  }
+  
+    const [employerToDelete, setEmployerToDelete] = useState<{id: number, nom_employer: string} | null>(null)
+    const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+
+    const handleclickDelete = (id: number, nom_employer: string) => {
+      setEmployerToDelete({ id, nom_employer })
+      openModal('confirmDelete')
+    }
+
+    const handleConfirmDelete = async () => {
+      if (!employerToDelete) return
+      setIsDeletingLoader(true)
+      try {
+        await deletes(employerToDelete.id)
+      } finally {
+        setIsDeletingLoader(false)
+        setEmployerToDelete(null)
+        closModal('confirmDelete')
+      }
+    }
 
 
   return (
@@ -133,7 +166,10 @@ function Employersuivi(): JSX.Element {
                         onClick={() => openModal('Addsuiviemployeemodal')}
                         className="hover:text-black cursor-pointer transition"
                       />
-                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                      <FaTrash
+                        onClick={() => handleclickDelete(employer.id, employer.nom)}
+                        className="hover:text-red-600 cursor-pointer transition"
+                      />
                     </div>
                   </div>
                 ))
@@ -195,6 +231,16 @@ function Employersuivi(): JSX.Element {
             />
           )}
         </div>
+
+        {modal.confirmDelete && employerToDelete && (
+          <ConfirmDeleteModal
+            title="Supprimer la classe"
+            message={`Voulez-vous vraiment l'emplyer ${employerToDelete.nom_employer} ?`}
+            onConfirm={handleConfirmDelete}
+            closemodal={() => closModal('confirmDelete')}
+            isDeletingLoader={isDeletingLoader}
+          />
+        )}
       </div>
 
       <ToastContainer
