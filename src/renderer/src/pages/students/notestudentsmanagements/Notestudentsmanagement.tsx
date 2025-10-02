@@ -303,9 +303,9 @@ function Notestudentsmanagement(): JSX.Element {
             </div>
           </div>
           {/* miscroll i ngiah une fois le max est atteint */}
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+          <div className={`space-y-2 max-h-[60vh] ${isLoading ? "overflow-hidden" : "overflow-y-auto"} `}>
             {isLoading ? (
-              <div className="flex w-full justify-center">
+              <div className=" py-2 flex w-full justify-center">
                 <RotatingLines
                   visible={true}
                   width="50"
