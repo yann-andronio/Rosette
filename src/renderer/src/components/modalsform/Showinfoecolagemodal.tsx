@@ -4,7 +4,8 @@ import { FiX } from 'react-icons/fi'
 import { axiosRequest } from "@renderer/config/helpers";
 import { useRef, useState } from 'react';
 import Recuepayementecolage from '../recue/Recuepayementecolage';
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+
 
 
 type ShowInfoStudentsProps = {

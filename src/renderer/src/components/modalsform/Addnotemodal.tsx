@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Etudiant } from "@renderer/pages/students/studentsinfo/Studentsinfo";
 import { useEffect } from "react";
 import { axiosRequest } from "@renderer/config/helpers";
+import {toast} from "react-toastify";
 
 type NotemodalProps = {
   closemodal: () => void
@@ -32,7 +33,7 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student, reload, 
 
     try{
       await axiosRequest('PUT', `etudiant-note/${student.sousetudiants[student.sousetudiants.length - 1].id}`, data, 'token')
-        .then(({data}) => console.log(data.message))
+        .then(({data}) => toast.success(data.message))
         .then(() => setReload(!reload))
         .then(() => closemodal())
         .catch(error => console.log(error?.response?.data?.message))

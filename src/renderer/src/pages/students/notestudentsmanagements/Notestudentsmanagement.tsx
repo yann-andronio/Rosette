@@ -13,6 +13,7 @@ import { MdMeetingRoom } from 'react-icons/md'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { axiosRequest } from '@renderer/config/helpers'
 import { RotatingLines } from 'react-loader-spinner'
+import { ToastContainer } from 'react-toastify'
 function Notestudentsmanagement(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
@@ -274,7 +275,10 @@ function Notestudentsmanagement(): JSX.Element {
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select onChange={(e) => setLines(e.target.value)} className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+              <select
+                onChange={(e) => setLines(e.target.value)}
+                className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200"
+              >
                 <option value={15}>15</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -300,69 +304,87 @@ function Notestudentsmanagement(): JSX.Element {
           </div>
           {/* miscroll i ngiah une fois le max est atteint */}
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-            {isLoading?<div className='flex w-full justify-center'><RotatingLines
-                visible={true}
-               
-                width="50"
-               
-                strokeColor="#7A3B3F"
-                strokeWidth="5"
-                animationDuration="0.75"
-                ariaLabel="rotating-lines-loading"
-             
-              /></div>:<>
-            {students.data.length === 0 ? (
-              <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
+            {isLoading ? (
+              <div className="flex w-full justify-center">
+                <RotatingLines
+                  visible={true}
+                  width="50"
+                  strokeColor="#7A3B3F"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  ariaLabel="rotating-lines-loading"
+                />
+              </div>
             ) : (
-              students.data.map((student, index) => (
-                <div
-                  key={student.id}
-                  className={`flex px-6 py-2 rounded-lg items-center ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                  }  hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
-                >
-                  <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
-                    <img
-                      src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
-                      alt="Profil"
-                      className="rounded-sm w-10 h-10"
-                    />
-                  </div>
+              <>
+                {students.data.length === 0 ? (
+                  <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
+                ) : (
+                  students.data.map((student, index) => (
+                    <div
+                      key={student.id}
+                      className={`flex px-6 py-2 rounded-lg items-center ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+                      }  hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
+                    >
+                      <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
+                        <img
+                          src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
+                          alt="Profil"
+                          className="rounded-sm w-10 h-10"
+                        />
+                      </div>
 
-                  <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
-                  <div className="flex-1 text-gray-700">{student.prenom}</div>
-                  <div className="flex-1 text-gray-700">{student.sexe==1?'Homme':'Femme'}</div>
-                  <div className="flex-1 text-gray-700">{student?.sousetudiants[student?.sousetudiants.length - 1]?.salle?.nom_salle}</div>
-                  <div className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal)} flex-1 `}>
-                    {getMention(student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex gap-3 text-[#9f7126] text-lg">
-                      <FaEye
-                        onClick={() => {
-                          setSelectedStudent(student)
-                          openModal('Showinfonotestudents')
-                        }}
-                        className="hover:text-black cursor-pointer transition"
-                      />
-                      <FaEdit
-                        onClick={() => {
-                          setSelectedStudent(student)
-                          openModal('Addnotemodal')
-                        }}
-                        className="hover:text-black cursor-pointer transition"
-                      />
-                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                      <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
+                      <div className="flex-1 text-gray-700">{student.prenom}</div>
+                      <div className="flex-1 text-gray-700">
+                        {student.sexe == 1 ? 'Homme' : 'Femme'}
+                      </div>
+                      <div className="flex-1 text-gray-700">
+                        {
+                          student?.sousetudiants[student?.sousetudiants.length - 1]?.salle
+                            ?.nom_salle
+                        }
+                      </div>
+                      <div
+                        className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal)} flex-1 `}
+                      >
+                        {getMention(
+                          student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex gap-3 text-[#9f7126] text-lg">
+                          <FaEye
+                            onClick={() => {
+                              setSelectedStudent(student)
+                              openModal('Showinfonotestudents')
+                            }}
+                            className="hover:text-black cursor-pointer transition"
+                          />
+                          <FaEdit
+                            onClick={() => {
+                              setSelectedStudent(student)
+                              openModal('Addnotemodal')
+                            }}
+                            className="hover:text-black cursor-pointer transition"
+                          />
+                          <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))
-            )}</>}
+                  ))
+                )}
+              </>
+            )}
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button onClick={() => precedent(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button
+            onClick={() => precedent(currentPage)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
@@ -383,13 +405,26 @@ function Notestudentsmanagement(): JSX.Element {
               </button>
             ))}
           </div>
-          <button onClick={() => suivant(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button
+            onClick={() => suivant(currentPage)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
             </span>
           </button>
         </div>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
 
       {modal.Showinfonotestudents && selectedStudent && (
@@ -399,7 +434,12 @@ function Notestudentsmanagement(): JSX.Element {
         />
       )}
       {modal.Addnotemodal && selectedStudent && (
-        <Addnotemodal reload={reload} setReload={()=>setReload} closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
+        <Addnotemodal
+          reload={reload}
+          setReload={() => setReload}
+          closemodal={() => closModal('Addnotemodal')}
+          student={selectedStudent}
+        />
       )}
     </div>
   )
