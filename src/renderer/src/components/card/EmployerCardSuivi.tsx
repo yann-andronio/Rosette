@@ -1,14 +1,41 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FaCalendarAlt, FaMoneyBillWave, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { MdWorkOff, MdVerifiedUser, MdOutlinePauseCircle } from 'react-icons/md'
 import { motion, AnimatePresence } from 'framer-motion'
 import { EmployerType } from '@renderer/types/Alltypes'
+import { axiosRequest } from '@renderer/config/helpers'
 
 interface EmployerDetailsCardProps {
   employer: EmployerType
+
 }
 
-const EmployerDetailsCard: FC<EmployerDetailsCardProps> = ({ employer }) => {
+const EmployerDetailsCard: FC<EmployerDetailsCardProps> = ({ employer}) => {
+  const [historiques, setHistoriques] = useState<{id:number,montant:number, mois:string, type:number}[]>([])
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', `archives/${employer.id}?year=null`, null, 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error.response.data.message))
+    }catch (err){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+  const [archconge, setArchconge] = useState<{id:number, debut:string, fin:string, status:number, motif:string}[]>([])
+  const getConges = async () => {
+    try{
+      await axiosRequest('GET', `conge/${employer.id}`, null, 'token')
+        .then(({data}) => setArchconge(data))
+        .catch(err => console.log(err.response.data.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
+
+  useEffect(() => {
+    getConges()
+    getHistoriques()
+  }, [employer])
   const [activeSection, setActiveSection] = useState<'salaires' | 'conges' | null>(null)
 
   const toggleSection = (section: 'salaires' | 'conges') => {
@@ -92,9 +119,9 @@ const EmployerDetailsCard: FC<EmployerDetailsCardProps> = ({ employer }) => {
               className="overflow-hidden"
             >
               <div className="py-2 max-h-[26vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-                {employer.salaires && employer.salaires.length > 0 ? (
+                {historiques && historiques.length > 0 ? (
                   <ul className="space-y-2 text-gray-700 text-sm">
-                    {employer.salaires.map((s, i) => (
+                    {historiques.map((s, i) => (
                       <li
                         key={i}
                         className="flex justify-between items-center bg-gray-50 hover:bg-gray-100 p-3 rounded-lg shadow-sm transition"
@@ -145,17 +172,17 @@ const EmployerDetailsCard: FC<EmployerDetailsCardProps> = ({ employer }) => {
               className="overflow-hidden"
             >
               <div className="py-2 max-h-[26vh] overflow-y-auto   ">
-                {employer.conges && employer.conges.length > 0 ? (
+                {archconge && archconge.length > 0 ? (
                   <ul className="space-y-2 text-gray-700 text-sm">
-                    {employer.conges.map((c, i) => (
+                    {archconge.map((c, i) => (
                       <li
                         key={i}
                         className="bg-gray-50 hover:bg-gray-100 p-3 rounded-lg shadow-sm transition"
                       >
                         <div className="flex justify-between items-center">
                           <span className="font-medium text-gray-800">
-                            Du {new Date(c.dateDebut).toLocaleDateString('fr-FR')} au{' '}
-                            {new Date(c.dateFin).toLocaleDateString('fr-FR')}
+                            Du {c.debut} au{' '}
+                            {c.fin}
                           </span>
                           {c.motif && (
                             <span className="text-xs italic text-gray-500 ml-2">{c.motif}</span>

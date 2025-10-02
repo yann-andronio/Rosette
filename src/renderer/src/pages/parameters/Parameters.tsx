@@ -14,15 +14,18 @@ import { HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
 import { useRef, useState } from 'react'
-import {  ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import Addmatieremodal from '@renderer/components/modalsform/Addmatieremodal'
 import Nifmodal from '@renderer/components/modalsform/Nifmodal'
 import Statmodal from '@renderer/components/modalsform/Statmodal'
+import { axiosRequest } from '@renderer/config/helpers'
+import { Triangle } from 'react-loader-spinner'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const { openModal, modal, closModal } = useMultiModals()
     const [reload, setReload] = useState<boolean>(false)
+  const [isBackup, setIsBAckup] = useState<boolean>(false)
 
   const handleOpenModal = (modalName: string) => () => openModal(modalName)
 
@@ -57,12 +60,36 @@ function Parameters(): JSX.Element {
      fileInputRef.current?.click()
    }
 
-   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const handleFileChange =async (event: React.ChangeEvent<HTMLInputElement>) => {
      const file = event.target.files?.[0]
      if (file) {
-       console.log('Fichier importé :', file.name)
-      
+       if(confirm('Voulez-vous vraiment importer cette sauvegarde?')){
+         setIsBAckup(true)
+         try{
+           await axiosRequest('POST', 'import', {db:file.name}, 'token')
+             .then(({data}) => toast.success(data.message))
+             .then(() => setIsBAckup(false))
+             .catch(error => toast.error(error.response.data.message))
+             .finally(() => setIsBAckup(false))
+         }catch(error){
+           console.log('Le serveur ne repond pas')
+         }
+       }
+
      }
+   }
+
+   const exporter = async () => {
+    try{
+      setIsBAckup(true)
+      await axiosRequest('GET', 'export', null, 'token')
+        .then(() => toast.success('Sauvegarde reussi'))
+        .then(() => setIsBAckup(false))
+        .catch(error => toast.error(error.response.data.message))
+        .finally(() => setIsBAckup(false))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
    }
 
   return (
@@ -131,11 +158,11 @@ function Parameters(): JSX.Element {
               ref={fileInputRef}
               onChange={handleFileChange}
               className="hidden"
-              accept=".csv, .xlsx, .json" // type na fichier accepten ngiah
+              accept=".sql" // type na fichier accepten ngiah
             />
           </div>
 
-          <button className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group">
+          <button onClick={() => exporter()} className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group">
             <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
               <FiDownloadCloud size={28} />
             </div>
@@ -183,7 +210,7 @@ function Parameters(): JSX.Element {
           ))}
         </div>
 
-      
+
       </div>
 
       {/* Modals */}
@@ -211,6 +238,15 @@ function Parameters(): JSX.Element {
       )}
       {modal.Nifmodal && <Nifmodal closemodal={() => closModal('Nifmodal')} />}
       {modal.Statmodal && <Statmodal closemodal={() => closModal('Statmodal')} />}
+      {isBackup &&       <Triangle
+        visible={true}
+        height="280"
+        width="280"
+        color="#895256"
+        ariaLabel="triangle-loading"
+        wrapperStyle={{}}
+        wrapperClass="absolute top-1/2 left-1/2"/>}
+
     </div>
   )
 }

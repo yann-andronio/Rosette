@@ -17,9 +17,12 @@ function Employersuivi(): JSX.Element {
   const [searchEmployes, setSearchEmployes] = useState('')
   const [workers, setWorkkers] = useState<{ per_page:number, total:number,  last_page:number, data:EmployerType[]}>({last_page:1, data:[], total:0, per_page:0})
   const [w_id, setW_id] = useState<number>()
+
   const [selectedEmployer, setSelectedEmployer] = useState<EmployerType | null>(
     workers.data.length > 0 ? workers.data[0] : null
   )
+
+
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -138,7 +141,8 @@ function Employersuivi(): JSX.Element {
           {/* --- Card mpiasa  --- */}
           {selectedEmployer && (
             <div className="w-full lg:w-[35%]">
-              <EmployerCardSuivi employer={selectedEmployer} />
+              <EmployerCardSuivi  employer={selectedEmployer} />
+
             </div>
           )}
         </div>
@@ -178,6 +182,8 @@ function Employersuivi(): JSX.Element {
           {modal.Addsuiviemployeemodal && selectedEmployer && (
             <Addsuiviemployeemodal
               employer={selectedEmployer}
+              reloads={reload}
+              setReloads={setReload}
               closemodal={() => closModal('Addsuiviemployeemodal')}
             />
           )}
