@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { ThreeDots } from 'react-loader-spinner'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 
 type AddFunctionProps = {
   closemodal: () => void
@@ -15,25 +16,27 @@ type FormData = {
   profession: string
 }
 
+interface HistoriqueItem {
+  profession: string
+  id: number
+}
+
+interface FonctionToDelet {
+  id: number
+  profession: string
+}
+
+const schema = yup.object({
+  profession: yup.string().required('Vous devez saisir une fonction')
+})
+
 const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{profession:string, id:number}[]>([])
+  const [historiques, setHistoriques] = useState<HistoriqueItem[]>([])
   const [reload, setReload] = useState<boolean>(false)
-  const getHistoriques = async () => {
-    try{
-      await axiosRequest('GET', 'profession-list', null, 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error))
-    }catch(e){
-      console.log('Le serveur ne repond pas')
-    }
-  }
-
-
-  const schema = yup.object({
-    profession: yup.string().required('Vous devez saisir une fonction')
-  })
+  const [fonctionToDelet, setFonctionToDelet] = useState<FonctionToDelet | null>(null)
+  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
 
   const {
     register,
@@ -43,33 +46,67 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   })
-  useEffect(() => {
-    getHistoriques()
-  }, [reload, activeTab=='historique'])
-  const onSubmit =async (data: FormData) => {
-    setIsLoading(true)
-    try{
-      await axiosRequest('POST', 'profession-creation', data, 'token')
-        .then(({data}) => toast.success(data.message))
-        .then(() => setIsLoading(false))
-        .then(() => reset())
-        .then(() =>  setActiveTab('historique') )
-        .catch(error => toast.error(error?.reponse.data.message))
-        .finally(() => setIsLoading(false))
-    }catch (err){
-      console.log('Le serveur ne repond pas')
+
+  const getHistoriques = async () => {
+    try {
+      await axiosRequest('GET', 'profession-list', null, 'token')
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error))
+    } catch (e) {
+      console.log('Le serveur ne répond pas')
     }
   }
 
-  const removeHistorique = async (id:number) => {
-    try{
-      await axiosRequest('DELETE', `profession/${id}`, id, 'token')
-        .then(({data}) => toast.success(data.message))
-        .then(() => setReload(!reload))
-        .catch(error => console.log(error))
-    }catch(e){
-      console.log("Le serveur ne repond pas")
+  useEffect(() => {
+    getHistoriques()
+  }, [reload, activeTab])
+
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true)
+    try {
+      await axiosRequest('POST', 'profession-creation', data, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => reset())
+        .then(() => setActiveTab('historique'))
+        .catch((error) => toast.error(error?.response?.data?.message || "Erreur lors de l'ajout"))
+        .finally(() => setIsLoading(false))
+    } catch (err) {
+      console.error('Le serveur ne répond pas', err)
+      setIsLoading(false)
     }
+  }
+
+  const removeHistorique = async (id: number) => {
+    try {
+      await axiosRequest('DELETE', `profession/${id}`, null, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => setReload(!reload))
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la suppression')
+        )
+    } catch (e) {
+      console.log('Le serveur ne répond pas')
+    }
+  }
+
+  const handleclickDelete = (id: number, profession: string) => {
+    setFonctionToDelet({ id, profession })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!fonctionToDelet) return
+
+    setIsDeletingLoader(true)
+    try {
+      await removeHistorique(fonctionToDelet.id)
+    } finally {
+      setIsDeletingLoader(false)
+      setFonctionToDelet(null)
+    }
+  }
+
+  const handleCloseDeleteModal = () => {
+    setFonctionToDelet(null)
   }
 
   return (
@@ -116,7 +153,9 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
                   : 'border-gray-300 shadow-sm'
               }`}
             />
-            {errors.profession && <p className="text-sm text-red-400">{errors.profession.message}</p>}
+            {errors.profession && (
+              <p className="text-sm text-red-400">{errors.profession.message}</p>
+            )}
 
             <div className="flex justify-end gap-3 mt-6">
               <button
@@ -128,10 +167,10 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
+                className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center justify-center gap-2"
               >
                 {isLoading ? (
-                  <ThreeDots visible={true} height="20" width="100" color="pink" radius="9" />
+                  <ThreeDots visible={true} height="20" width="100" color="white" radius="9" />
                 ) : (
                   <>
                     <FiPlus size={18} /> Ajouter
@@ -146,15 +185,15 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
               <p className="text-center text-gray-500">Aucune fonction ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map((item, index) => (
+                {historiques.map((item) => (
                   <li
-                    key={index}
+                    key={item.id}
                     className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
                   >
                     <span className="font-semibold">{item.profession}</span>
                     <button
                       aria-label={`Supprimer la fonction ${item.profession}`}
-                      onClick={() => removeHistorique(item.id)}
+                      onClick={() => handleclickDelete(item.id, item.profession)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -166,6 +205,16 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
           </div>
         )}
       </div>
+
+      {fonctionToDelet && (
+        <ConfirmDeleteModal
+          title="Supprimer la fonction"
+          message={`Voulez-vous vraiment supprimer la fonction "${fonctionToDelet.profession}" ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={handleCloseDeleteModal}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }

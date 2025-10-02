@@ -5,6 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 
 type OperationProps = { closemodal: () => void }
 
@@ -68,6 +70,28 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
       console.log("Le serveur ne repond pas")
     }
   }
+
+
+    const [matiereToDelet, setmatiereToDelet] = useState<{ id: number; nom: string } | null>(null)
+    const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+    const { openModal, modal, closModal } = useMultiModals()
+
+   const handleclickDelete = (id: number, nom: string) => {
+     setmatiereToDelet({ id, nom })
+     openModal('confirmDelete')
+   }
+
+   const handleConfirmDelete = async () => {
+     if (!matiereToDelet) return
+     setIsDeletingLoader(true)
+     try {
+       await removeHistorique(matiereToDelet.id)
+     } finally {
+       setIsDeletingLoader(false)
+       setmatiereToDelet(null)
+       //  closModal('confirmDelete')
+     }
+   }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -147,10 +171,10 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
                     <div>
                       <p className="font-semibold">Matière : {nom}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
-                      {/* J'ai supprimé la liste 'ops' car elle contenait le montant */}
+                   
                     </div>
                     <button
-                      onClick={() => removeHistorique(id)}
+                      onClick={() => handleclickDelete(id , nom)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -162,6 +186,18 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
           </div>
         )}
       </div>
+
+
+       {modal.confirmDelete && matiereToDelet && (
+        <ConfirmDeleteModal
+          title="Supprimer la classe"
+          message={`Voulez-vous vraiment supprimer la matière de ${matiereToDelet.nom} ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
+  
     </div>
   )
 }
