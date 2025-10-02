@@ -13,6 +13,7 @@ import Addsuiviemployeemodal from '@renderer/components/modalsform/Addsuiviemplo
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast, ToastContainer } from 'react-toastify'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
+import { RotatingLines } from 'react-loader-spinner'
 
 function Employersuivi(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -129,51 +130,63 @@ function Employersuivi(): JSX.Element {
             </div>
 
             <div className="space-y-2 h-[52.5vh] overflow-y-auto">
-              {workers.data.length === 0 ? (
-                <div className="text-center mt-10 text-gray-600">Aucun employé trouvé</div>
-              ) : (
-                workers.data.map((employer, index) => (
-                  <div
-                    key={employer.id}
-                    onClick={() => setSelectedEmployer(employer)}
-                    className={`flex items-center px-4 py-2 rounded-lg cursor-pointer ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                    } hover:bg-gray-50 hover:border-l-4 border-[#895256] hover:shadow-lg transition duration-300`}
-                  >
-                    <div className="w-12 h-12 flex items-start justify-center mr-3">
-                      {employer.photo ? (
-                        <img
-                          src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`}
-                          className="w-full h-full object-cover"
+
+              {isLoading ? (
+                <div className="flex w-full h-full items-center justify-center">
+                  <RotatingLines
+                    visible={true}
+                    strokeColor="#7A3B3F"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    ariaLabel="rotating-lines-loading"
+                  />
+                </div>
+              ) : <>
+                {workers.data.length === 0 ? (
+                  <div className="text-center mt-10 text-gray-600">Aucun employé trouvé</div>
+                ) : (
+                  workers.data.map((employer, index) => (
+                    <div
+                      key={employer.id}
+                      onClick={() => setSelectedEmployer(employer)}
+                      className={`flex items-center px-4 py-2 rounded-lg cursor-pointer ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+                        } hover:bg-gray-50 hover:border-l-4 border-[#895256] hover:shadow-lg transition duration-300`}
+                    >
+                      <div className="w-12 h-12 flex items-start justify-center mr-3">
+                        {employer.photo ? (
+                          <img
+                            src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="bg-[#895256] p-2 rounded-full">
+                            <FaUserCircle className="text-5xl text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 font-semibold text-start pl-9 text-gray-800">
+                        {employer.nom}
+                      </div>
+                      <div className="flex-1 text-start text-gray-700">{employer.prenom}</div>
+                      <div className="flex-1 text-start text-gray-700">
+                        {employer.profs.profession}
+                      </div>
+
+                      <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
+                        <FaEdit
+                          onClick={() => openModal('Addsuiviemployeemodal')}
+                          className="hover:text-black cursor-pointer transition"
                         />
-                      ) : (
-                        <div className="bg-[#895256] p-2 rounded-full">
-                          <FaUserCircle className="text-5xl text-gray-400" />
-                        </div>
-                      )}
+                        <FaTrash
+                          onClick={() => handleclickDelete(employer.id, employer.nom)}
+                          className="hover:text-red-600 cursor-pointer transition"
+                        />
+                      </div>
                     </div>
-
-                    <div className="flex-1 font-semibold text-start pl-9 text-gray-800">
-                      {employer.nom}
-                    </div>
-                    <div className="flex-1 text-start text-gray-700">{employer.prenom}</div>
-                    <div className="flex-1 text-start text-gray-700">
-                      {employer.profs.profession}
-                    </div>
-
-                    <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
-                      <FaEdit
-                        onClick={() => openModal('Addsuiviemployeemodal')}
-                        className="hover:text-black cursor-pointer transition"
-                      />
-                      <FaTrash
-                        onClick={() => handleclickDelete(employer.id, employer.nom)}
-                        className="hover:text-red-600 cursor-pointer transition"
-                      />
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </>}
             </div>
           </div>
 

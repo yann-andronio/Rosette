@@ -41,7 +41,10 @@ const salarySchema = yup.object().shape({
     .typeError('Le montant doit être un nombre.')
     .required('Le montant est requis.')
     .positive('Le montant doit être positif.'),
-  type: yup.number().required('Le type de paiement est requis.'),
+  type: yup
+    .number()
+    .typeError('Le type de paiement est requis.')
+    .required('Le type de paiement est requis.'),
   motif: yup.string().optional(),
   mois: yup
     .array()
@@ -156,7 +159,7 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
   const deleteConge = async (id:number) => {
     try{
       await axiosRequest('DELETE', `conge/${id}`, null, 'token')
-        .then(({data}) => console.log(data.message))
+        .then(({data}) => toast.success(data.message))
         .then(() => setReload(!reload))
       .catch(err => console.log(err.response.data.message))
     }catch(error){
@@ -190,11 +193,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
     const datas = {...data, w_id:employer.id}
     try{
       await axiosRequest('POST', 'worker-pay', datas, 'token')
-        .then(({data}) => console.log(data.message))
+        .then(({data}) => toast.success(data.message))
         .then(() => resetSalary())
         .then(() => setReloadsalaire(!reloadsalaire))
         .then(() => setReloads(!reloads))
-        .catch((err) => console.log(err.response.data.message))
+        .catch((err) => toast.error(err.response.data.message))
     }catch (err){
       console.log('Le serveur ne repond pas')
     }
@@ -205,11 +208,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
     const prepared = {debut:new Date(data.dateDebut).toLocaleDateString('en-CA'), fin:new Date(data.dateFin).toLocaleDateString('en-CA'), motif:data.motif, w_id:employer.id}
     try{
       await axiosRequest('POST', 'conge', prepared, 'token')
-        .then(({data}) => console.log(data.message))
+        .then(({data}) => toast.success(data.message))
         .then(() => resetConge())
         .then(() => setReload(!reload))
         .then(() => setReloads(!reloads))
-        .catch(err => console.log(err.response.data.message))
+        .catch(err => toast.error(err.response.data.message))
     }catch (err){
       console.log('Le serveur ne repond pas')
     }
@@ -220,11 +223,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
   const onStatusSubmit = async (data: StatusFormInputs) => {
     try{
         await axiosRequest('PUT', `worker-status/${employer.id}`, {status:data.nouveauStatut}, 'token')
-          .then(({data}) => console.log(data.message))
+          .then(({data}) => toast.success(data.message))
           .then(() => resetStatus())
           .then(() => setReloads(!reloads))
           .then(() => setReloadstatus(!reloadstatus))
-          .catch(err => console.log(err.response.data.message))
+          .catch(err => toast.error(err.response.data.message))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
