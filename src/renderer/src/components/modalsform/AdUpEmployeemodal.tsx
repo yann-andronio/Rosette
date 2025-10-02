@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Oval, ThreeDots } from "react-loader-spinner";
 import { EmployerType } from "@renderer/types/Alltypes";
+import { toast } from 'react-toastify'
 const matieresDisponibles = ['Math', 'Physique', 'Chimie', 'Français', 'Anglais', 'Histoire']
 
 type EmployeeModalProps = {
@@ -141,11 +142,11 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
       setIsLoading(true)
       try{
         await axiosRequest('POST', `worker-update/${id}`, formData, 'token')
-          .then(({data}) => console.log(data.message))
+          .then(({data}) => toast.success(data.message))
           .then(() => setIsLoading(false))
           .then(() => fresh(!reload))
           .then(() =>closemodal())
-          .catch(error => console.log(error?.response?.data?.error))
+          .catch(error => toast.error(error?.response?.data?.error))
           .finally(() => setIsLoading(false))
       }catch (e){
         console.log('Le serveur ne repond pas')

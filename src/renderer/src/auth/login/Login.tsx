@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { useNavigate } from 'react-router-dom'
 import { ThreeDots } from 'react-loader-spinner'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
@@ -150,6 +150,16 @@ function Login(): JSX.Element {
         </div>
         <img className="absolute h-full w-full bottom-0" src={wave} alt="Logo" />
       </div>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </div>
   )
 }

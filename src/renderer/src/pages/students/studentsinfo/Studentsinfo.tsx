@@ -294,7 +294,7 @@ function Studentsinfo(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Homme
+                Garçons
               </button>
               <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
@@ -303,7 +303,7 @@ function Studentsinfo(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                   } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Femme
+                Filles
               </button>
             </div>
           </div>

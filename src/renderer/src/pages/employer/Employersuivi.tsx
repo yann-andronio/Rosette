@@ -11,6 +11,7 @@ import { EmployerType } from '@renderer/types/Alltypes'
 import EmployerCardSuivi from '@renderer/components/card/EmployerCardSuivi'
 import Addsuiviemployeemodal from '@renderer/components/modalsform/Addsuiviemployeemodal'
 import { axiosRequest } from '@renderer/config/helpers'
+import { ToastContainer } from 'react-toastify'
 
 function Employersuivi(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -108,22 +109,24 @@ function Employersuivi(): JSX.Element {
                   >
                     <div className="w-12 h-12 flex items-start justify-center mr-3">
                       {employer.photo ? (
-                        <img src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`} className="w-full h-full object-cover" />
+                        <img
+                          src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="bg-[#895256] p-2 rounded-full">
-                        <FaUserCircle className="text-5xl text-gray-400" />
+                          <FaUserCircle className="text-5xl text-gray-400" />
                         </div>
                       )}
-
-
-
                     </div>
 
                     <div className="flex-1 font-semibold text-start pl-9 text-gray-800">
                       {employer.nom}
                     </div>
                     <div className="flex-1 text-start text-gray-700">{employer.prenom}</div>
-                    <div className="flex-1 text-start text-gray-700">{employer.profs.profession}</div>
+                    <div className="flex-1 text-start text-gray-700">
+                      {employer.profs.profession}
+                    </div>
 
                     <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
                       <FaEdit
@@ -141,8 +144,7 @@ function Employersuivi(): JSX.Element {
           {/* --- Card mpiasa  --- */}
           {selectedEmployer && (
             <div className="w-full lg:w-[35%]">
-              <EmployerCardSuivi  employer={selectedEmployer} />
-
+              <EmployerCardSuivi employer={selectedEmployer} />
             </div>
           )}
         </div>
@@ -150,7 +152,10 @@ function Employersuivi(): JSX.Element {
         {/* pagination */}
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button onClick={() => precedent(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button
+            onClick={() => precedent(currentPage)}
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
@@ -171,13 +176,15 @@ function Employersuivi(): JSX.Element {
               </button>
             ))}
           </div>
-          <button onClick={() => suivant(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button
+            onClick={() => suivant(currentPage)}
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
             </span>
           </button>
-
 
           {modal.Addsuiviemployeemodal && selectedEmployer && (
             <Addsuiviemployeemodal
@@ -189,6 +196,16 @@ function Employersuivi(): JSX.Element {
           )}
         </div>
       </div>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </div>
   )
 }
