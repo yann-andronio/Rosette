@@ -383,7 +383,7 @@ function Studentsecolage(): JSX.Element {
 
                       <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                       <div className="flex-1 text-gray-700">{student.prenom}</div>
-                      <div className="flex-1 text-gray-700">{student.sexe}</div>
+                      <div className="flex-1 text-gray-700">  {student.sexe == 1 ? 'Garçons' : 'Fille'}</div>
                       <div className="flex-1 text-gray-700">
                         {student.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle}
                       </div>

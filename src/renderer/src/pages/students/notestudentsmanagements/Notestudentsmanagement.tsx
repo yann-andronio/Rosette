@@ -226,7 +226,7 @@ function Notestudentsmanagement(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Homme
+                Garçons
               </button>
               <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
@@ -236,7 +236,7 @@ function Notestudentsmanagement(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Femme
+                Filles
               </button>
             </div>
           </div>
@@ -338,7 +338,7 @@ function Notestudentsmanagement(): JSX.Element {
                       <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                       <div className="flex-1 text-gray-700">{student.prenom}</div>
                       <div className="flex-1 text-gray-700">
-                        {student.sexe == 1 ? 'Homme' : 'Femme'}
+                        {student.sexe == 1 ? 'Garçons' : 'Fille'}
                       </div>
                       <div className="flex-1 text-gray-700">
                         {
