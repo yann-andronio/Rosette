@@ -170,7 +170,7 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center justify-center gap-2"
               >
                 {isLoading ? (
-                  <ThreeDots visible={true} height="20" width="100" color="white" radius="9" />
+                  <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
                 ) : (
                   <>
                     <FiPlus size={18} /> Ajouter
