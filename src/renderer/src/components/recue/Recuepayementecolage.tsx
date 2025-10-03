@@ -61,14 +61,14 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           <h2 className="text-2xl font-bold text-gray-900 uppercase border-b-2 border-gray-400 pb-1 inline-block">
             REÇU DE PAIEMENT D’ÉCOLAGE
           </h2>
-          <div className="mt-2 p-1 bg-gray-100 rounded-sm">
+          {/* <div className="mt-2 p-1 bg-gray-100 rounded-sm">
             <p className="text-sm font-semibold text-gray-800">
               N° Reçu :{' '}
               <span className="text-lg font-extrabold text-[#895256]">
                 {numeroRecu || 'À GÉNÉRER'}
               </span>
             </p>
-          </div>
+          </div> */}
         </div>
 
      
@@ -130,10 +130,10 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
         </div>
 
       
-        <p className="italic mb-6 p-2 border border-gray-300 rounded-md bg-white">
+        {/* <p className="italic mb-6 p-2 border border-gray-300 rounded-md bg-white">
           Montant en toutes lettres :{' '}
           <span className="underline font-bold text-gray-900">{'...'}</span> Ariary
-        </p>
+        </p> */}
 
         <p className="text-sm mb-10 text-right">
           Fait à <span className="font-semibold">Mananara</span>, le{' '}

@@ -162,7 +162,10 @@ function Parameters(): JSX.Element {
             />
           </div>
 
-          <button onClick={() => exporter()} className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group">
+          <button
+            onClick={() => exporter()}
+            className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group"
+          >
             <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
               <FiDownloadCloud size={28} />
             </div>
@@ -210,7 +213,15 @@ function Parameters(): JSX.Element {
           ))}
         </div>
 
-
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
 
       {/* Modals */}
@@ -234,19 +245,26 @@ function Parameters(): JSX.Element {
       )}
       {modal.Addmatieremodal && <Addmatieremodal closemodal={() => closModal('Addmatieremodal')} />}
       {modal.AdUpEmployeemodal && (
-        <AdUpEmployeemodal reload={reload} fresh={setReload}  closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer"  />
+        <AdUpEmployeemodal
+          reload={reload}
+          fresh={setReload}
+          closemodal={() => closModal('AdUpEmployeemodal')}
+          mode="ajoutemployer"
+        />
       )}
       {modal.Nifmodal && <Nifmodal closemodal={() => closModal('Nifmodal')} />}
       {modal.Statmodal && <Statmodal closemodal={() => closModal('Statmodal')} />}
-      {isBackup &&       <Triangle
-        visible={true}
-        height="280"
-        width="280"
-        color="#895256"
-        ariaLabel="triangle-loading"
-        wrapperStyle={{}}
-        wrapperClass="absolute top-1/2 left-1/2"/>}
-
+      {isBackup && (
+        <Triangle
+          visible={true}
+          height="280"
+          width="280"
+          color="#895256"
+          ariaLabel="triangle-loading"
+          wrapperStyle={{}}
+          wrapperClass="absolute top-1/2 left-1/2"
+        />
+      )}
     </div>
   )
 }

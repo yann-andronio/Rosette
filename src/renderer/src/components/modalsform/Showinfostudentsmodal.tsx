@@ -1,65 +1,87 @@
-
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 
-
-import {  FiPrinter, FiSlash, FiUser, FiX } from 'react-icons/fi'
+import { FiPrinter, FiSlash, FiUser, FiX } from 'react-icons/fi'
 import { useState } from 'react'
 import Statutupdateclasse from '../childmodal/Statutupdatesalle'
 import CertScolaire from '../certificats/CertScolaire'
 import { axiosRequest } from '@renderer/config/helpers'
-
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import {toast} from "react-toastify"
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: Etudiant
+  fresh: boolean
+  setFresh: (fresh: boolean) => void
 }
 
-const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) => {
+const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowInfoStudentsProps) => {
   const [statusBtnClicked, setStatusBtnClicked] = useState<string | null>(null)
   const [openClassModal, setOpenClassModal] = useState(false)
   const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null)
   const [setId, setSetId] = useState<number>()
   const [etId, setEtId] = useState<number>()
- const handleStatusBtnClick = (statut: string, index: number) => {
-   setStatusBtnClicked(statut)
-   setCurrentStatusIndex(index)
-   setOpenClassModal(true)
- }
 
-   const handleCloseChildModal = () => {
-     setOpenClassModal(false)
-     setStatusBtnClicked(null)
-     setCurrentStatusIndex(null)
+  const [issuspendreLoader, setIsDeletingLoader] = useState(false)
+  const [studentToSuspendId, setStudentToSuspendId]= useState<number | null>(null)
+  const { openModal, modal, closModal } = useMultiModals()
+
+  const handleStatusBtnClick = (statut: string, index: number) => {
+    setStatusBtnClicked(statut)
+    setCurrentStatusIndex(index)
+    setOpenClassModal(true)
+  }
+
+  const handleCloseChildModal = () => {
+    setOpenClassModal(false)
+    setStatusBtnClicked(null)
+    setCurrentStatusIndex(null)
+  }
+
+  const handleStatusValidated = (statut: string, index: number) => {
+    setTabStatusWhoAreValide((prev) => [...prev, index])
+    handleCloseChildModal()
+  }
+
+  const handlePrint = () => {
+    const printContents = document.getElementById('certificat-a-imprimer')?.innerHTML
+    if (!printContents) return
+    const originalContents = document.body.innerHTML
+    document.body.innerHTML = printContents
+    window.print()
+    document.body.innerHTML = originalContents
+    window.location.reload() // miverigna mi reactualiser page
+  }
+
+  const suspendre = async (id: number) => {
+    setIsDeletingLoader(true)
+    try {
+      await axiosRequest('PUT', `etudiant-suspendre/${id}`, null, 'token')
+        .then(({ data }) => toast.success(data.message)).then(() => setFresh(!fresh))
+        .then(() => closemodal())
+        .catch((err) => console.log(err?.response?.data?.error))
+    } catch (error) {
+      console.log('Le serveur ne repond pas')
+    } finally {
+      setIsDeletingLoader(false)
+    }
+  }
+
+   const handleOpenSuspendModal = () => {
+     const currentStatus = student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions
+     if (currentStatus !== 'suspendu') {
+       setStudentToSuspendId(student.id)
+       openModal('confirmSuspend') 
+     }
    }
 
-   const handleStatusValidated = (statut: string, index: number) => {
-     setTabStatusWhoAreValide((prev) => [...prev, index])
-     handleCloseChildModal()
-   }
-
-
-   const handlePrint = () => {
-     const printContents = document.getElementById('certificat-a-imprimer')?.innerHTML
-     if (!printContents) return
-     const originalContents = document.body.innerHTML
-     document.body.innerHTML = printContents
-     window.print()
-     document.body.innerHTML = originalContents
-     window.location.reload() // miverigna mi reactualiser page
-   }
-
-   const suspendre = async (id: number) => {
-      try{
-        await axiosRequest('PUT', `etudiant-suspendre/${id}`, null, 'token')
-          .then(({data}) => console.log(data.message))
-          .then(() => closemodal())
-          .catch(err => console.log(err?.response?.data?.error))
-      }catch(error){
-        console.log('Le serveur ne repond pas')
-      }
-   }
-
+  const handleConfirmSuspend = async () => {
+    if (studentToSuspendId !== null) {
+      await suspendre(studentToSuspendId)
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -89,7 +111,8 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             {student.nom} {student.prenom}
           </h2>
           <p className="mt-1 text-sm italic opacity-90">
-            {student?.sousetudiants[student?.sousetudiants?.length - 1]?.salle?.nom_salle} - {student?.sousetudiants[student?.sousetudiants?.length - 1]?.annee?.annee}
+            {student?.sousetudiants[student?.sousetudiants?.length - 1]?.salle?.nom_salle} -{' '}
+            {student?.sousetudiants[student?.sousetudiants?.length - 1]?.annee?.annee}
           </p>
           <p className="text-sm mt-1 opacity-80">
             Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
@@ -105,10 +128,10 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             </h3>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base">
               <p>
-                <span className="font-medium">Sexe :</span> {student.sexe==1?'Homme':'Femme'}
+                <span className="font-medium">Sexe :</span> {student.sexe == 1 ? 'Homme' : 'Femme'}
               </p>
 
-              {student.dateNaissance &&(
+              {student.dateNaissance && (
                 <p>
                   <span className="font-medium">Date de naissance :</span> {student.dateNaissance}
                 </p>
@@ -126,6 +149,11 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
               {student.ecole && (
                 <p>
                   <span className="font-medium">École précédente :</span> {student.ecole}
+                </p>
+              )}
+              {student.enfantProf && (
+                <p>
+                  <span className="font-medium">enfant de prof :</span> {student.enfantProf == 1 ? " Oui" : "Non"}
                 </p>
               )}
             </div>
@@ -150,7 +178,8 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                 )}
                 {student.telephone_pere && (
                   <p>
-                    <span className="font-medium">Téléphone du père :</span> {student.telephone_mere}
+                    <span className="font-medium">Téléphone du père :</span>{' '}
+                    {student.telephone_mere}
                   </p>
                 )}
                 {student.nomMere && (
@@ -165,7 +194,8 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                 )}
                 {student.telephone_mere && (
                   <p>
-                    <span className="font-medium">Téléphone de la mère :</span> {student.telephone_mere}
+                    <span className="font-medium">Téléphone de la mère :</span>{' '}
+                    {student.telephone_mere}
                   </p>
                 )}
               </div>
@@ -191,7 +221,8 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                 )}
                 {student.telephone_tuteur && (
                   <p>
-                    <span className="font-medium">Téléphone du tuteur :</span> {student.telephone_tuteur}
+                    <span className="font-medium">Téléphone du tuteur :</span>{' '}
+                    {student.telephone_tuteur}
                   </p>
                 )}
               </div>
@@ -206,9 +237,18 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
             <div className="flex flex-wrap gap-3 mb-4">
               {/* btn Suspendre */}
               <button
-                onClick={() => suspendre(student.id)}
+                onClick={handleOpenSuspendModal}
                 type="button"
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${student?.sousetudiants[student?.sousetudiants?.length -1]?.status_admissions=='suspendu'?'bg-[#f0f0f0] hover:cursor-not-allowed':'bg-[#895256] hover:bg-[#733935]'}  text-white text-sm font-medium transition`}
+                disabled={
+                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                  'suspendu'
+                }
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                  'suspendu'
+                    ? 'bg-gray-400 hover:cursor-not-allowed'
+                    : 'bg-[#895256] hover:bg-[#733935]'
+                } text-white text-sm font-medium transition`}
               >
                 <FiSlash size={16} /> Suspendre
               </button>
@@ -249,34 +289,41 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
                         </td>
                         <td className="px-4 py-3  text-gray-700">{status?.classe?.nom_classe}</td>
                         <td className="px-4 py-3  text-gray-700">
-
                           {status?.noteTotal != null ? status?.noteTotal : ' en cours ...'}
-
                         </td>
                         <td className="px-4 py-3 ">
                           <button
-                            onClick={() =>{
-                              if(status.status_admissions){
+                            onClick={() => {
+                              if (status.status_admissions) {
                                 handleStatusBtnClick(status.status_admissions, index)
                                 setSetId(status.id)
                                 setEtId(student.id)
                               }
+                            }}
+                            disabled={
+                              status.status_admissions == 'cours' || status.transfert == 1
+                                ? true
+                                : false
                             }
-
-                            }
-                            disabled={status.status_admissions =='cours'||status.transfert==1? true : false}
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${status.transfert==1?"cursor-not-allowed":""} ${
-                              status.status_admissions? status.status_admissions =='cours' ? 'bg-gray-400 cursor-not-allowed' : status.status_admissions?.toLowerCase() === 'admis' ? 'bg-green-500': status.status_admissions?.toLowerCase() === 'redoublé' ? 'bg-red-500' : 'bg-gray-400' : 'bg-gray-400' }`}
-
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${status.transfert == 1 ? 'cursor-not-allowed' : ''} ${
+                              status.status_admissions
+                                ? status.status_admissions == 'cours'
+                                  ? 'bg-gray-400 cursor-not-allowed'
+                                  : status.status_admissions?.toLowerCase() === 'admis'
+                                    ? 'bg-green-500'
+                                    : status.status_admissions?.toLowerCase() === 'redoublé'
+                                      ? 'bg-red-500'
+                                      : 'bg-gray-400'
+                                : 'bg-gray-400'
+                            }`}
                           >
                             {status.status_admissions
-                              ? status.status_admissions.charAt(0).toUpperCase() + status.status_admissions?.slice(1)
+                              ? status.status_admissions.charAt(0).toUpperCase() +
+                                status.status_admissions?.slice(1)
                               : 'en cours...'}
                           </button>
                         </td>
                       </tr>
-
-
                     ))}
                   </tbody>
                 </table>
@@ -296,6 +343,16 @@ const Showinfostudentsmodal = ({ closemodal, student }: ShowInfoStudentsProps) =
           closemodal={handleCloseChildModal}
           statut={statusBtnClicked.toLowerCase() as 'admis' | 'redoublé'}
           onValidated={(statut) => handleStatusValidated(statut, currentStatusIndex)}
+        />
+      )}
+
+      {modal.confirmSuspend && (
+        <ConfirmDeleteModal
+          title="Confirmation de suspension"
+          message={`Voulez-vous vraiment suspendre l'élève ${student.nom} ${student.prenom}? Cette action renvoie l'élève de l'etablissement.`}
+          onConfirm={handleConfirmSuspend}
+          closemodal={() => closModal('confirmSuspend')}
+          isDeletingLoader={issuspendreLoader}
         />
       )}
 

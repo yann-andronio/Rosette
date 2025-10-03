@@ -5,10 +5,22 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import { ThreeDots } from 'react-loader-spinner'
 
 type OperationProps = { closemodal: () => void }
 
 interface FormValues {
+  nif: string
+}
+interface NifHistorique {
+  nif: string
+  id: number
+  created_at: string
+}
+
+interface NifToDelete {
+  id: number
   nif: string
 }
 
@@ -16,17 +28,20 @@ const schema = yup.object({
   nif: yup.string().required('Le NIF est requis')
 })
 
-
 export default function Nifmodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{nif:string, id:number,created_at}[]>([])
+  const [historiques, setHistoriques] = useState<NifHistorique[]>([])
   const [reload, setReload] = useState<boolean>(false)
+  const [nifToDelet, setNifToDelet] = useState<NifToDelete | null>(null)
+  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+   const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const getHistoriques = async () => {
-    try{
-      await axiosRequest('GET', 'nif', null, 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error))
-    }catch(e){
+    try {
+      await axiosRequest('GET', 'nif-1', null, 'token')
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error))
+    } catch (e) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -34,6 +49,7 @@ export default function Nifmodal({ closemodal }: OperationProps) {
   useEffect(() => {
     getHistoriques()
   }, [activeTab, reload])
+
   const {
     register,
     handleSubmit,
@@ -45,28 +61,50 @@ export default function Nifmodal({ closemodal }: OperationProps) {
   })
 
   const onSubmit = async (data: FormValues) => {
-      try{
-        await axiosRequest('POST', 'nif', data, 'token')
-          .then(({data}) => toast.success(data.message))
-          .then(() =>    reset())
-          .then(() => setActiveTab('historique'))
-          .catch(error => toast.error(error.response.data.message))
-      }catch(err){
-        console.error('Le serveur ne repond pas')
-      }
+     setIsLoading(true)
+    try {
+      await axiosRequest('POST', 'nif', data, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => reset())
+        .then(() => setActiveTab('historique'))
+        .catch((error) => toast.error(error.response.data.message))
+    } catch (err) {
+      console.error('Le serveur ne repond pas')
+    } finally {
+       setIsLoading(false)
+    }
   }
 
-
-
-  const removeHistorique = async (id:number) => {
-    try{
-      await axiosRequest('DELETE', `nif/${id}`, id, 'token')
-        .then(({data}) => toast.success(data.message))
+  const removeHistorique = async (id: number) => {
+    try {
+      await axiosRequest('DELETE', `nif/${id}`, null, 'token')
+        .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
-        .catch(error => console.log(error))
-    }catch(e){
-      console.log("Le serveur ne repond pas")
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la suppression')
+        )
+    } catch (e) {
+      console.log('Le serveur ne repond pas')
     }
+  }
+
+  const handleclickDelete = (id: number, nif: string) => {
+    setNifToDelet({ id, nif })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!nifToDelet) return
+    setIsDeletingLoader(true)
+    try {
+      await removeHistorique(nifToDelet.id)
+    } finally {
+      setIsDeletingLoader(false)
+      setNifToDelet(null)
+    }
+  }
+
+  const handleCloseDeleteModal = () => {
+    setNifToDelet(null)
   }
 
   return (
@@ -128,7 +166,13 @@ export default function Nifmodal({ closemodal }: OperationProps) {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} /> Ajouter
+                {isLoading ? (
+                  <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
+                ) : (
+                  <>
+                    <FiPlus size={18} /> Ajouter
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -146,10 +190,9 @@ export default function Nifmodal({ closemodal }: OperationProps) {
                     <div>
                       <p className="font-semibold">NIF : {nif}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
-
                     </div>
                     <button
-                      onClick={() => removeHistorique(id)}
+                      onClick={() => handleclickDelete(id, nif)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -161,6 +204,16 @@ export default function Nifmodal({ closemodal }: OperationProps) {
           </div>
         )}
       </div>
+
+      {nifToDelet && (
+        <ConfirmDeleteModal
+          title="Supprimer le NIF"
+          message={`Voulez-vous vraiment supprimer le NIF "${nifToDelet.nif}" ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={handleCloseDeleteModal}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }

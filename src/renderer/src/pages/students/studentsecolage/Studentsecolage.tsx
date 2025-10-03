@@ -13,6 +13,7 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { Target } from 'framer-motion'
+import { ToastContainer } from 'react-toastify'
 
 function Studentsecolage(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -135,13 +136,16 @@ function Studentsecolage(): JSX.Element {
   }, [selectedyears])
 
 
+  //  ${
+  //       Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''
+  //     }
+
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${
         closeBar ? '"ml-16"' : ''
-      } transition-all duration-[600ms] ease-in-out ${
-        Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''
-      }`}
+      } transition-all duration-[600ms] ease-in-out
+      `}
     >
       <div className="px-20 py-8">
         <div className="bigboxfilter grid grid-cols-3 gap-6 w-full lg:flex-row justify-center">
@@ -237,7 +241,7 @@ function Studentsecolage(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Homme
+                Garçons
               </button>
               <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
@@ -247,7 +251,7 @@ function Studentsecolage(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Femme
+                Filles
               </button>
             </div>
           </div>
@@ -323,7 +327,10 @@ function Studentsecolage(): JSX.Element {
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
               <label className="text-gray-600 font-medium text-sm">Afficher</label>
-              <select onChange={(e:ChangeEvent<HTMLSelectElement>) => setLines(Number(e.target.value))} className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200">
+              <select
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => setLines(Number(e.target.value))}
+                className="px-4 py-2 rounded-lg bg-[#895256] text-white font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#9f7126] transition duration-200"
+              >
                 <option value={15}>15</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -340,73 +347,88 @@ function Studentsecolage(): JSX.Element {
             <div className="flex px-4 py-3 font-medium tracking-wide">
               <div className="w-33">Photo</div>
               <div className="flex-1">Nom</div>
-              <div className="flex-1">Prénom</div>
+              <div className="flex-1">Prénoms</div>
               <div className="flex-1">Sexe</div>
               <div className="flex-1">salle</div>
               <div className="flex-1">Statut</div>
               <div className="flex-1">Opération</div>
             </div>
           </div>
-          {isLoading?<div className='flex w-full justify-center'><RotatingLines
-            visible={true}
-
-            width='50'
-              strokeColor="#7A3B3F"
-              strokeWidth="5"
-              animationDuration="0.75"
-              ariaLabel="rotating-lines-loading"
-            /></div>:<>
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-            {students?.data.length === 0 ? (
-              <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
-            ) : (
-              students?.data.map((student, index) => (
-                <div
-                  key={index}
-                  className={`flex px-6 py-2 rounded-lg items-center ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                  } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
-                >
-                  <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
-                    <div className="image bg-[#895256] p-2 rounded-lg">
-                      <FaUserCircle className="text-3xl text-[#ffff]" />
-                    </div>
-                  </div>
-
-                  <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
-                  <div className="flex-1 text-gray-700">{student.prenom}</div>
-                  <div className="flex-1 text-gray-700">{student.sexe}</div>
-                  <div className="flex-1 text-gray-700">{student.sousetudiants[student.sousetudiants.length -1]?.salle?.nom_salle}</div>
-                  <div className="flex-1 ">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(et => et.payé == 1) == true? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+          {isLoading ? (
+            <div className="flex w-full justify-center">
+              <RotatingLines
+                visible={true}
+                width="50"
+                strokeColor="#7A3B3F"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+              />
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+                {students?.data.length === 0 ? (
+                  <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
+                ) : (
+                  students?.data.map((student, index) => (
+                    <div
+                      key={index}
+                      className={`flex px-6 py-2 rounded-lg items-center ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+                      } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
                     >
-                      {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(et => et.payé == 1) == true?'Complet':'Incomplet'}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex gap-8  text-[#9f7126] text-lg">
-                      <FaEye
-                        onClick={() => {
-                          setSelectedStudent(student)
-                          openModal('Showinfoecolagemodal')
-                        }}
-                        className="hover:text-black cursor-pointer transition"
-                      />
-                      <FaPlusCircle
-                        onClick={() => openModal('AdUpinfostudents')}
-                        className="hover:text-black cursor-pointer transition"
-                      />
+                      <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
+                        <div className="image bg-[#895256] p-2 rounded-lg">
+                          <FaUserCircle className="text-3xl text-[#ffff]" />
+                        </div>
+                      </div>
+
+                      <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
+                      <div className="flex-1 text-gray-700">{student.prenom}</div>
+                      <div className="flex-1 text-gray-700">  {student.sexe == 1 ? 'Garçon' : 'Fille'}</div>
+                      <div className="flex-1 text-gray-700">
+                        {student.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle}
+                      </div>
+                      <div className="flex-1 ">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every((et) => et.payé == 1) == true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                        >
+                          {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(
+                            (et) => et.payé == 1
+                          ) == true
+                            ? 'Complet'
+                            : 'Incomplet'}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex gap-8  text-[#9f7126] text-lg">
+                          <FaEye
+                            onClick={() => {
+                              setSelectedStudent(student)
+                              openModal('Showinfoecolagemodal')
+                            }}
+                            className="hover:text-black cursor-pointer transition"
+                          />
+                          <FaPlusCircle
+                            onClick={() => openModal('AdUpinfostudents')}
+                            className="hover:text-black cursor-pointer transition"
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div></>}
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-          <button onClick={() => precedent(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button
+            onClick={() => precedent(currentPage)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
@@ -427,13 +449,26 @@ function Studentsecolage(): JSX.Element {
               </button>
             ))}
           </div>
-          <button onClick={() => suivant(currentPage)} className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
+          <button
+            onClick={() => suivant(currentPage)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
             </span>
           </button>
         </div>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
 
       {modal.AdUpinfostudents && (

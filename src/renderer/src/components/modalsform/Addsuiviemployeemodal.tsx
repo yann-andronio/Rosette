@@ -17,6 +17,9 @@ import { EmployerType } from '@renderer/types/Alltypes'
 import Recuepayementemploye from '../recue/Recuepayementemploye'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import { data } from 'react-router-dom'
 
 export type SalaireEmploye = {
   montant: number
@@ -41,7 +44,10 @@ const salarySchema = yup.object().shape({
     .typeError('Le montant doit être un nombre.')
     .required('Le montant est requis.')
     .positive('Le montant doit être positif.'),
-  type: yup.number().required('Le type de paiement est requis.'),
+  type: yup
+    .number()
+    .typeError('Le type de paiement est requis.')
+    .required('Le type de paiement est requis.'),
   motif: yup.string().optional(),
   mois: yup
     .array()
@@ -71,34 +77,39 @@ const statusSchema = yup.object().shape({
 type SuiviEmployerModalProps = {
   employer: EmployerType
   closemodal: () => void
-  reloads:boolean
-  setReloads:(boolean) => void
+  reloads: boolean
+  setReloads: (boolean) => void
 }
 
-export default function SuiviEmployerModal({ closemodal, employer, reloads, setReloads }: SuiviEmployerModalProps) {
+export default function SuiviEmployerModal({
+  closemodal,
+  employer,
+  reloads,
+  setReloads
+}: SuiviEmployerModalProps) {
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
-  const [moissalaires, setMoissalaires] = useState<{id:number, mois:string, payé:number,reste:0}[]>([])
-  const [filtres, setFiltres] = useState<{id:number, annee:string}[]>([])
+  const [moissalaires, setMoissalaires] = useState<
+    { id: number; mois: string; payé: number; reste: 0 }[]
+  >([])
+  const [filtres, setFiltres] = useState<{ id: number; annee: string }[]>([])
   const getFiltres = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'ac-list', null, 'token')
-        .then(({data}) => setFiltres(data))
-        .catch(err => console.log(err.response.data.message))
-    }catch (e){
+        .then(({ data }) => setFiltres(data))
+        .catch((err) => console.log(err.response.data.message))
+    } catch (e) {
       console.log(e)
     }
   }
   const getMoissalaires = async () => {
-      try{
-        await axiosRequest('GET', `moissalaires/${employer.id}`, null, 'token')
-          .then(({data}) => setMoissalaires(data))
+    try {
+      await axiosRequest('GET', `moissalaires/${employer.id}`, null, 'token')
+        .then(({ data }) => setMoissalaires(data))
         .catch((error) => console.log(error.response.data.message))
-      }catch (err){
-        console.log(err)
-      }
-
+    } catch (err) {
+      console.log(err)
+    }
   }
-
 
   const [selectedMonths, setSelectedMonths] = useState<string[]>([])
 
@@ -131,18 +142,22 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
   ]
   const [reloadstatus, setReloadstatus] = useState<boolean>(false)
   useEffect(() => {
-    resetStatus({nouveauStatut:employer.status})
-  }, [activeTab=='statut', reloadstatus])
+    resetStatus({ nouveauStatut: employer.status })
+  }, [activeTab == 'statut', reloadstatus])
 
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
-  const [historiques, setHistoriques] = useState<{id:number,montant:number, mois:string, type:number}[]>([])
-  const [archconge, setArchconge] = useState<{id:number, debut:string, fin:string, status:number, motif:string}[]>([])
+  const [historiques, setHistoriques] = useState<
+    { id: number; montant: number; mois: string; type: number }[]
+  >([])
+  const [archconge, setArchconge] = useState<
+    { id: number; debut: string; fin: string; status: number; motif: string }[]
+  >([])
   const getConges = async () => {
-    try{
+    try {
       await axiosRequest('GET', `conge/${employer.id}`, null, 'token')
-        .then(({data}) => setArchconge(data))
-        .catch(err => console.log(err.response.data.message))
-    }catch(error){
+        .then(({ data }) => setArchconge(data))
+        .catch((err) => console.log(err.response.data.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -153,21 +168,20 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
 
   const [reload, setReload] = useState<boolean>(false)
 
-  const deleteConge = async (id:number) => {
-    try{
+  const deleteConge = async (id: number) => {
+    try {
       await axiosRequest('DELETE', `conge/${id}`, null, 'token')
-        .then(({data}) => console.log(data.message))
+        .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
-      .catch(err => console.log(err.response.data.message))
-    }catch(error){
+        .catch((err) => console.log(err.response.data.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getConges()
-  }, [reload]);
-
+  }, [reload])
 
   const handleMonthClick = (mois: string) => {
     const updated = selectedMonths.includes(mois)
@@ -186,46 +200,79 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
     setSelectedMonths([])
   }, [activeTab, resetSalary, resetConge, resetStatus])
   const [reloadsalaire, setReloadsalaire] = useState<boolean>(false)
-  const onSalarySubmit = async (data: SalaireEmploye) => {
-    const datas = {...data, w_id:employer.id}
-    try{
-      await axiosRequest('POST', 'worker-pay', datas, 'token')
-        .then(({data}) => console.log(data.message))
+  const [confirmesalary, setconfirmesalary] = useState<{} | null>(null)
+  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+  const { openModal, modal, closModal } = useMultiModals()
+
+  const onSalarySubmit = (data: SalaireEmploye) => {
+    const datasForConfirmation = { ...data, w_id: employer.id ,nom :employer.nom }
+    setconfirmesalary(datasForConfirmation)
+    openModal('confirmDelete')
+  }
+
+  const executeSalaryPayment = async (data: SalaireEmploye & { w_id: number }) => {
+    try {
+      await axiosRequest('POST', 'worker-pay', data, 'token')
+        .then(({ data }) => toast.success(data.message))
         .then(() => resetSalary())
-        .then(() => setReloadsalaire(!reloadsalaire))
-        .then(() => setReloads(!reloads))
-        .catch((err) => console.log(err.response.data.message))
-    }catch (err){
-      console.log('Le serveur ne repond pas')
+        .then(() => setSelectedMonths([]) )
+        .then(() => setReloadsalaire((prev) => !prev))
+        .then(() => setReloads((prev) => !prev))
+        .catch((err) => {
+          toast.error(err.response.data.message)
+          
+        })
+    } catch (err) {
+      console.log('Le serveur ne repond pas', err)
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!confirmesalary) return
+    setIsDeletingLoader(true)
+    try {
+      await executeSalaryPayment(confirmesalary as SalaireEmploye & { w_id: number })
+    } catch (error) {
+    } finally {
+      setIsDeletingLoader(false)
+      setconfirmesalary(null)
+      closModal('confirmDelete')
     }
   }
 
   const onCongeSubmit = async (data: CongeType) => {
-
-    const prepared = {debut:new Date(data.dateDebut).toLocaleDateString('en-CA'), fin:new Date(data.dateFin).toLocaleDateString('en-CA'), motif:data.motif, w_id:employer.id}
-    try{
+    const prepared = {
+      debut: new Date(data.dateDebut).toLocaleDateString('en-CA'),
+      fin: new Date(data.dateFin).toLocaleDateString('en-CA'),
+      motif: data.motif,
+      w_id: employer.id
+    }
+    try {
       await axiosRequest('POST', 'conge', prepared, 'token')
-        .then(({data}) => console.log(data.message))
+        .then(({ data }) => toast.success(data.message))
         .then(() => resetConge())
         .then(() => setReload(!reload))
         .then(() => setReloads(!reloads))
-        .catch(err => console.log(err.response.data.message))
-    }catch (err){
+        .catch((err) => toast.error(err.response.data.message))
+    } catch (err) {
       console.log('Le serveur ne repond pas')
     }
   }
 
-
-
   const onStatusSubmit = async (data: StatusFormInputs) => {
-    try{
-        await axiosRequest('PUT', `worker-status/${employer.id}`, {status:data.nouveauStatut}, 'token')
-          .then(({data}) => console.log(data.message))
-          .then(() => resetStatus())
-          .then(() => setReloads(!reloads))
-          .then(() => setReloadstatus(!reloadstatus))
-          .catch(err => console.log(err.response.data.message))
-    }catch(error){
+    try {
+      await axiosRequest(
+        'PUT',
+        `worker-status/${employer.id}`,
+        { status: data.nouveauStatut },
+        'token'
+      )
+        .then(({ data }) => toast.success(data.message))
+        .then(() => resetStatus())
+        .then(() => setReloads(!reloads))
+        .then(() => setReloadstatus(!reloadstatus))
+        .catch((err) => toast.error(err.response.data.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -246,20 +293,17 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
     }, 200)
   }
 
-
   const [Selectedyearfilter, setSelectedyearfilter] = useState<number | null>(null)
 
   const getHistoriques = async () => {
-    try{
+    try {
       await axiosRequest('GET', `archives/${employer.id}?year=${Selectedyearfilter}`, null, 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error.response.data.message))
-    }catch (err){
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error.response.data.message))
+    } catch (err) {
       console.log('Le serveur ne repond pas')
     }
   }
-
-
 
   useEffect(() => {
     getHistoriques()
@@ -282,7 +326,8 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                 {employer.nom} {employer.prenom}
               </h2>
               <p className="text-xs opacity-90">
-                {employer.profs.profession} | Salaire de base : {formatNumber(employer.salaire_base ?? 0)} Ar
+                {employer.profs.profession} | Salaire de base :{' '}
+                {formatNumber(employer.salaire_base ?? 0)} Ar
               </p>
             </div>
           </div>
@@ -301,10 +346,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as 'salaire' | 'conge' | 'statut')}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === tab.id
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                activeTab === tab.id
                   ? 'bg-white text-[#895256] shadow-md'
                   : 'text-gray-600 hover:bg-gray-200'
-                }`}
+              }`}
             >
               {tab.icon}
               {tab.label}
@@ -339,10 +385,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                         type="number"
                         placeholder="Ex: 500000"
                         {...registerSalary('montant')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.montant
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsSalary.montant
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                          }`}
+                        }`}
                       />
                       {errorsSalary.montant && (
                         <p className="text-red-500 text-xs mt-1">{errorsSalary.montant.message}</p>
@@ -355,19 +402,18 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                       </label>
                       <select
                         {...registerSalary('type')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.typePaiement
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsSalary.typePaiement
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                          }`}
+                        }`}
                       >
                         <option value="">Sélectionner</option>
                         <option value={0}>Avance</option>
                         <option value={1}>Salaire complet</option>
                       </select>
                       {errorsSalary.type && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errorsSalary.type.message}
-                        </p>
+                        <p className="text-red-500 text-xs mt-1">{errorsSalary.type.message}</p>
                       )}
                     </div>
                   </div>
@@ -378,10 +424,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                       placeholder="Exemple : avance pour urgence médicale..."
                       rows={2}
                       {...registerSalary('motif')}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsSalary.motif
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errorsSalary.motif
                           ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                           : 'border-gray-300 shadow-sm'
-                        }`}
+                      }`}
                     ></textarea>
                     {errorsSalary.motif && (
                       <p className="text-red-500 text-xs mt-1">{errorsSalary.motif.message}</p>
@@ -392,36 +439,36 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                   <div className="grid grid-cols-3 gap-2 p-3 rounded-lg border-gray-200 bg-white shadow-inner">
                     {moissalaires.map((month) => {
                       const isSelected = selectedMonths.includes(month.mois)
-                      if(month.payé == 1||month.reste==0){
+                      if (month.payé == 1 || month.reste == 0) {
                         return (
-
                           <div
                             key={month.id}
-
                             className={`text-sm font-medium cursor-not-allowed text-center rounded-lg px-2 py-2  transition-all duration-200 border
-                              ${isSelected
-                              ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
-                              : 'bg-green-500 text-gray-100  hover:bg-green-400-100'
-                            }`}
+                              ${
+                                isSelected
+                                  ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
+                                  : 'bg-green-500 text-gray-100  hover:bg-green-400-100'
+                              }`}
                           >
                             {month.mois}
                           </div>
                         )
-                      }else{
+                      } else {
                         return (
-                        <div
-                          key={month.id}
-                          onClick={() => handleMonthClick(month.mois)}
-                          className={`text-sm font-medium  text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
-                              ${isSelected
-                            ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                          }`}
-                        >
-                          {month.mois}
-                        </div>)
+                          <div
+                            key={month.id}
+                            onClick={() => handleMonthClick(month.mois)}
+                            className={`text-sm font-medium  text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
+                              ${
+                                isSelected
+                                  ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
+                                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                              }`}
+                          >
+                            {month.mois}
+                          </div>
+                        )
                       }
-
                     })}
                   </div>
                   {errorsSalary.mois && (
@@ -440,9 +487,7 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                 <div className="flex flex-col items-center p-4">
                   <h3 className="text-xl font-bold text-gray-800 mb-4">Historique par année</h3>
 
-                  <div
-                    className="flex border-b max-w-full border-gray-200 bg-whitemax-w-full overflow-x-auto pb-2 "
-                  >
+                  <div className="flex border-b max-w-full border-gray-200 bg-whitemax-w-full overflow-x-auto pb-2 ">
                     {filtres.map((item, index) => {
                       const isSelected = Selectedyearfilter === item.id
                       return (
@@ -535,10 +580,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                       <input
                         type="date"
                         {...registerConge('dateDebut')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsConge.dateDebut
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsConge.dateDebut
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                          }`}
+                        }`}
                       />
                       {errorsConge.dateDebut && (
                         <p className="text-red-500 text-xs mt-1">{errorsConge.dateDebut.message}</p>
@@ -549,10 +595,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                       <input
                         type="date"
                         {...registerConge('dateFin')}
-                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsConge.dateFin
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsConge.dateFin
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
-                          }`}
+                        }`}
                       />
                       {errorsConge.dateFin && (
                         <p className="text-red-500 text-xs mt-1">{errorsConge.dateFin.message}</p>
@@ -565,10 +612,11 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                       type="text"
                       placeholder="Ex: Maladie, personnel..."
                       {...registerConge('motif')}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsConge.motif
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errorsConge.motif
                           ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                           : 'border-gray-300 shadow-sm'
-                        }`}
+                      }`}
                     />
                     {errorsConge.motif && (
                       <p className="text-red-500 text-xs mt-1">{errorsConge.motif.message}</p>
@@ -595,20 +643,37 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                         >
                           <div>
                             <p className="font-medium text-gray-800">
-                              {item.debut} →{' '}
-                              {item.fin}
+                              {item.debut} → {item.fin}
                             </p>
                             {item.motif && (
-                              <span className="block text-xs italic text-gray-500 mt-0.5">
-                                {item.motif}
-                              </span>
+                              <div>
+                                <span className="block text-xs italic text-gray-500 mt-0.5">
+                                  Motif : {''}
+                                  {item.motif}
+                                </span>
+                                <span className=" gap-2 flex text-xs italic text-gray-500 mt-0.5">
+                                  Status : {''}
+                                  {item.status == 1 ? (
+                                    <p className={` ${item.status == 1 && 'text-[#895256]'}`}>
+                                      En cours
+                                    </p>
+                                  ) : (
+                                    <p className={` ${item.status == 1 && 'text-green-400]'}`}>
+                                      Terminé
+                                    </p>
+                                  )}
+                                </span>
+                              </div>
                             )}
                           </div>
                           <div className="flex items-center gap-2">
                             {/*<button className="p-1 rounded-md hover:bg-gray-100">*/}
                             {/*  <FiEdit2 className="text-blue-500" />*/}
                             {/*</button>*/}
-                            <button onClick={() => deleteConge(item.id)} className="p-1 rounded-md hover:bg-gray-100">
+                            <button
+                              onClick={() => deleteConge(item.id)}
+                              className="p-1 rounded-md hover:bg-gray-100"
+                            >
                               <FiTrash2 className="text-red-500" />
                             </button>
                           </div>
@@ -643,13 +708,14 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                     <label className="text-sm font-medium text-gray-600 mb-1">Nouveau statut</label>
                     <select
                       {...registerStatus('nouveauStatut')}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errorsStatus.nouveauStatut
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errorsStatus.nouveauStatut
                           ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                           : 'border-gray-300 shadow-sm'
-                        }`}
+                      }`}
                     >
                       <option value="">Sélectionner</option>
-                      <option value={'actif'} >Actif</option>
+                      <option value={'actif'}>Actif</option>
                       <option value={'congé'}>En congé</option>
                       <option value={'suspendu'}>Suspendu</option>
                     </select>
@@ -680,6 +746,16 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
           </div>
         )}
       </div>
+
+      {modal.confirmDelete && confirmesalary && (
+        <ConfirmDeleteModal
+          title="Confirmation de Paiement de Salaire"
+          message={`Confirmez-vous le paiement de ${formatNumber(confirmesalary.montant)} Ar pour le(s) mois : ${confirmesalary.mois.join(', ')} pour ${confirmesalary.nom} ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }

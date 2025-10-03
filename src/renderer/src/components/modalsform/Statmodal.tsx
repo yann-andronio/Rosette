@@ -5,6 +5,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import { ThreeDots } from 'react-loader-spinner'
 
 type OperationProps = { closemodal: () => void }
 
@@ -12,22 +14,35 @@ interface FormValues {
   ident: string
 }
 
+interface StatHistorique {
+  ident: string
+  id: number
+  created_at: string
+}
+
+interface StatToDelete {
+  id: number
+  ident: string
+}
+
 const schema = yup.object({
   ident: yup.string().required('Le stat est requis')
 })
 
-
-
 export default function Statmodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{ident:string, id:number,created_at}[]>([])
+  const [historiques, setHistoriques] = useState<StatHistorique[]>([])
   const [reload, setReload] = useState<boolean>(false)
+  const [statToDelet, setStatToDelet] = useState<StatToDelete | null>(null)
+  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const getHistoriques = async () => {
-    try{
-      await axiosRequest('GET', 'identify', null, 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error))
-    }catch(e){
+    try {
+      await axiosRequest('GET', 'identify-1', null, 'token')
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error))
+    } catch (e) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -35,6 +50,7 @@ export default function Statmodal({ closemodal }: OperationProps) {
   useEffect(() => {
     getHistoriques()
   }, [activeTab, reload])
+
   const {
     register,
     handleSubmit,
@@ -46,26 +62,52 @@ export default function Statmodal({ closemodal }: OperationProps) {
   })
 
   const onSubmit = async (data: FormValues) => {
-    try{
+     setIsLoading(true)
+    try {
       await axiosRequest('POST', 'identify', data, 'token')
-        .then(({data}) => toast.success(data.message))
-        .then(() =>    reset())
+        .then(({ data }) => toast.success(data.message))
+        .then(() => reset())
         .then(() => setActiveTab('historique'))
-        .catch(error => toast.error(error.response.data.message))
-    }catch(err){
+        .catch((error) => toast.error(error.response.data.message))
+    } catch (err) {
       console.error('Le serveur ne repond pas')
+       setIsLoading(false)
+    } finally {
+       setIsLoading(false)
     }
   }
 
-  const removeHistorique = async (id:number) => {
-    try{
-      await axiosRequest('DELETE', `identify/${id}`, id, 'token')
-        .then(({data}) => toast.success(data.message))
+  const removeHistorique = async (id: number) => {
+    try {
+      await axiosRequest('DELETE', `identify/${id}`, null, 'token')
+        .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
-        .catch(error => console.log(error))
-    }catch(e){
-      console.log("Le serveur ne repond pas")
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la suppression')
+        )
+    } catch (e) {
+      console.log('Le serveur ne repond pas')
     }
+  }
+
+  const handleclickDelete = (id: number, ident: string) => {
+    setStatToDelet({ id, ident })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!statToDelet) return
+
+    setIsDeletingLoader(true)
+    try {
+      await removeHistorique(statToDelet.id)
+    } finally {
+      setIsDeletingLoader(false)
+      setStatToDelet(null)
+    }
+  }
+
+  const handleCloseDeleteModal = () => {
+    setStatToDelet(null)
   }
 
   return (
@@ -127,7 +169,13 @@ export default function Statmodal({ closemodal }: OperationProps) {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} /> Ajouter
+                {isLoading ? (
+                  <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
+                ) : (
+                  <>
+                    <FiPlus size={18} /> Ajouter
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -145,10 +193,9 @@ export default function Statmodal({ closemodal }: OperationProps) {
                     <div>
                       <p className="font-semibold">STAT : {ident}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
-
                     </div>
                     <button
-                      onClick={() => removeHistorique(id)}
+                      onClick={() => handleclickDelete(id, ident)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -160,6 +207,16 @@ export default function Statmodal({ closemodal }: OperationProps) {
           </div>
         )}
       </div>
+
+      {statToDelet && (
+        <ConfirmDeleteModal
+          title="Supprimer le STAT"
+          message={`Voulez-vous vraiment supprimer le STAT "${statToDelet.ident}" ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={handleCloseDeleteModal}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }

@@ -196,12 +196,12 @@ function Studentsinfo(): JSX.Element {
   }
 
   const { modal, openModal, closModal } = useMultiModals()
-
+//  ${ Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}
   return (
     <div
-      className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''
-        } transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''
-        }`}
+      className={`Rigth bg-[#E6E6FA] w-full ${
+        closeBar ? '"ml-16"' : ''
+      } transition-all duration-[600ms] ease-in-out`}
     >
       <div className="px-20 py-8">
         <div className="bigboxfilter grid grid-cols-3 gap-6 w-full lg:flex-row justify-center">
@@ -219,10 +219,11 @@ function Studentsinfo(): JSX.Element {
                 <button
                   key={index}
                   onClick={() => handleselect(year.id.toString(), setselectedyear)}
-                  className={`${selectedyear == year.id.toString()
+                  className={`${
+                    selectedyear == year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
-                    } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {year.annee}
                 </button>
@@ -243,10 +244,11 @@ function Studentsinfo(): JSX.Element {
                 <button
                   key={index}
                   onClick={() => handleselect(niv.id.toString(), setselectedniveau)}
-                  className={`${selectedniveau == niv.id.toString()
+                  className={`${
+                    selectedniveau == niv.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
-                    } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {niv.nom_classe}
                 </button>
@@ -267,10 +269,11 @@ function Studentsinfo(): JSX.Element {
                 <button
                   key={index}
                   onClick={() => handleselect(sl.id.toString(), setselectedsalle)}
-                  className={`${selectedsalle === sl.id.toString()
+                  className={`${
+                    selectedsalle === sl.id.toString()
                       ? 'bg-[#895256] text-white border-none'
                       : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
-                    } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
                 >
                   {sl.nom_salle}
                 </button>
@@ -289,21 +292,23 @@ function Studentsinfo(): JSX.Element {
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
               <button
                 onClick={() => handleselect('Homme', setSelectedSexe)}
-                className={`${selectedSexe === 'Homme'
+                className={`${
+                  selectedSexe === 'Homme'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
-                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Homme
+                Garçons
               </button>
               <button
                 onClick={() => handleselect('Femme', setSelectedSexe)}
-                className={`${selectedSexe === 'Femme'
+                className={`${
+                  selectedSexe === 'Femme'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
-                  } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
+                } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Femme
+                Filles
               </button>
             </div>
           </div>
@@ -340,7 +345,7 @@ function Studentsinfo(): JSX.Element {
             <div className="flex px-4 py-3 font-medium tracking-wide">
               <div className="w-33">Photo</div>
               <div className="flex-1">Nom</div>
-              <div className="flex-1">Prénom</div>
+              <div className="flex-1">Prénoms</div>
               <div className="flex-1">Sexe</div>
               <div className="flex-1">salle</div>
               <div className="flex-1">Opération</div>
@@ -368,8 +373,9 @@ function Studentsinfo(): JSX.Element {
                   students?.data?.map((student, index) => (
                     <div
                       key={index}
-                      className={`flex px-6 py-2 rounded-lg items-center ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                        } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
+                      className={`flex px-6 py-2 rounded-lg items-center ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
+                      } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
                     >
                       <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
                         <div className="image bg-[#895256] p-2 rounded-lg">
@@ -385,7 +391,7 @@ function Studentsinfo(): JSX.Element {
                       <div className="flex-1 font-semibold text-gray-800">{student?.nom}</div>
                       <div className="flex-1 text-gray-700">{student?.prenom}</div>
                       <div className="flex-1 text-gray-700">
-                        {student?.sexe === 1 ? 'Homme' : 'Femme'}
+                        {student.sexe == 1 ? 'Garçon' : 'Fille'}
                       </div>
                       <div className="flex-1 text-gray-700">
                         {
@@ -442,9 +448,10 @@ function Studentsinfo(): JSX.Element {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-gray-600 text-sm">
-
-          <button onClick={() => precedent(currentPage)} className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
-
+          <button
+            onClick={() => precedent(currentPage)}
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             <span className="transform group-hover:-translate-x-1 transition-transform duration-300">
               &lt;
             </span>
@@ -455,21 +462,21 @@ function Studentsinfo(): JSX.Element {
               <button
                 key={page}
                 onClick={() => nextPage(page)}
-
                 className={`px-3 py-1 rounded-full font-medium cursor-pointer ${
                   page === currentPage
-
                     ? 'bg-[#9f7126] text-white'
                     : 'bg-gray-200 hover:bg-[#9f7126] hover:text-white transition'
-                  }`}
+                }`}
               >
                 {page}
               </button>
             ))}
           </div>
 
-          <button onClick={() => suivant(currentPage)} className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group">
-
+          <button
+            onClick={() => suivant(currentPage)}
+            className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#b78335] transition duration-300 group"
+          >
             Suivant
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               &gt;
@@ -501,6 +508,8 @@ function Studentsinfo(): JSX.Element {
         <Showinfostudentsmodal
           closemodal={() => closModal('showinfostudents')}
           student={selectedStudent}
+          fresh={reload}
+          setFresh={setReload}
         />
       )}
     </div>
