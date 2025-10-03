@@ -16,6 +16,8 @@ type infostudentsProps = {
   closemodal: () => void
   mode: 'ajoutstudents' | 'modifstudents',
   id?:number|null
+  fresh:boolean,
+  setFresh:(boolean) => void,
 }
 
 const schema = yup.object().shape({
@@ -41,7 +43,7 @@ const schema = yup.object().shape({
   enfantProf: yup.number().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
 
-const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode, id }) => {
+const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({ closemodal, mode, id, fresh, setFresh }) => {
   const [preStudent, setPrestudent] = useState<{ nom: string,
     prenom: string,
     sexe: number,
@@ -162,6 +164,7 @@ const getSalles = async () => {
           toast.success('Étudiant modifié avec succès ✅')
         })
         .then(() => setReload(!reload))
+        .then(() => setFresh(!fresh))
         .catch((error) => {
 
           // toast araika

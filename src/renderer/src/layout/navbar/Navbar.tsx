@@ -1,9 +1,10 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import { useDispatch } from 'react-redux'
 import { toggleCloseBar } from '../../redux/slice/activeLinkSlice'
 import { AiOutlineMenu } from 'react-icons/ai'
+import { UserProvider } from '@renderer/context/UserContext'
 
 
 
@@ -12,8 +13,10 @@ import { AiOutlineMenu } from 'react-icons/ai'
 const Navbar: React.FC = () => {
   const dispatch = useDispatch()
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
-  const user = useSelector((state: RootState) => state.user)
-  
+  // const users = useSelector((state: RootState) => state.user)
+
+  const {user} = useContext(UserProvider)
+
 
   return (
     <Fragment>

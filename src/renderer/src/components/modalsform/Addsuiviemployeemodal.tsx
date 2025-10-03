@@ -497,7 +497,7 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                               <FiEdit2 className="text-blue-500" />
                             </button> */}
                             <button className="p-1 rounded-md hover:bg-gray-100">
-                              <FiTrash2 className="text-red-500" />
+                              {/*<FiTrash2 className="text-red-500" />*/}
                             </button>
                           </div>
                         </li>

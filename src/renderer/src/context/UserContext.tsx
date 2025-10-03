@@ -1,5 +1,5 @@
 import { useState, createContext} from 'react'
-const UserProvider = createContext({
+export const UserProvider = createContext({
   user:null as any,
   setUser:(data:any) => {}
 })

@@ -302,14 +302,14 @@ function Notestudentsmanagement(): JSX.Element {
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
             {isLoading?<div className='flex w-full justify-center'><RotatingLines
                 visible={true}
-               
+
                 width="50"
-               
+
                 strokeColor="#7A3B3F"
                 strokeWidth="5"
                 animationDuration="0.75"
                 ariaLabel="rotating-lines-loading"
-             
+
               /></div>:<>
             {students.data.length === 0 ? (
               <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>
@@ -399,7 +399,7 @@ function Notestudentsmanagement(): JSX.Element {
         />
       )}
       {modal.Addnotemodal && selectedStudent && (
-        <Addnotemodal reload={reload} setReload={()=>setReload} closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
+        <Addnotemodal reload={reload} setReload={setReload} closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
       )}
     </div>
   )

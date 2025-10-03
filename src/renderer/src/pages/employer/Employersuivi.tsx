@@ -22,7 +22,19 @@ function Employersuivi(): JSX.Element {
     workers.data.length > 0 ? workers.data[0] : null
   )
 
+  const auto = async () => {
+    try{
+      await axiosRequest('GET', 'conge-auto-stop', null, 'token')
+        .then(()=> setReload(!reload))
+        .catch(error => console.log(error.response.data.message))
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
+  useEffect(() => {
+    auto()
+  }, [])
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -130,7 +142,7 @@ function Employersuivi(): JSX.Element {
                         onClick={() => openModal('Addsuiviemployeemodal')}
                         className="hover:text-black cursor-pointer transition"
                       />
-                      <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                      {/*<FaTrash className="hover:text-red-600 cursor-pointer transition" />*/}
                     </div>
                   </div>
                 ))

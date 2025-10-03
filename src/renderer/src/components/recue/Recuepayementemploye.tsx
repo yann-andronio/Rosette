@@ -1,5 +1,7 @@
 import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import logo from '../../images/logo.jpg'
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
 
 type Salaire = {
   mois: number[]
@@ -19,7 +21,21 @@ type RecueProps = {
 }
 
 export default function Recuepayementemploye({ employer, salaire }: RecueProps) {
+  const [decision, setDecision] = useState<string>('')
+  const getDecision = async () => {
+    try{
 
+      await axiosRequest('GET', 'nif',null, 'token')
+        .then(({data}) => setDecision(data))
+        .catch(error => console.log(error))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getDecision()
+  }, [])
   const formatNumber = (num?: number) => num ? num.toLocaleString('fr-FR', { minimumFractionDigits: 0 }) : '-'
   const moisLabel =salaire.mois
   const datePaiement = new Date().toLocaleDateString('fr-FR')
@@ -37,7 +53,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
           <h1 className="text-xl font-bold text-gray-900">REÇU DE SALAIRE</h1>
           <p className="text-xs text-gray-600">Entreprise La Rosette II</p>
           <p className="text-xs text-gray-600">Adresse : Mananara</p>
-          <p className="text-xs text-gray-600">NIF : 6011809898</p>
+          <p className="text-xs text-gray-600">NIF : {decision}</p>
         </div>
       </div>
 

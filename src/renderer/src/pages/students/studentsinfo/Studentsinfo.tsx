@@ -493,6 +493,8 @@ function Studentsinfo(): JSX.Element {
           id={et_id ? et_id : null}
           closemodal={() => closModal('AdUpinfostudents')}
           mode="modifstudents"
+          fresh={reload}
+          setFresh={setReload}
         />
       )}
       {modal.showinfostudents && selectedStudent && (

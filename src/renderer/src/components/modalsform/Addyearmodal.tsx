@@ -16,7 +16,8 @@ type YearProps = {
 
 type FormDataAlefa = {
   yearadd: string
-  selectedMonths: (number | undefined)[]
+  selectedMonths: (number | undefined)[],
+  debut:string
 }
 
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
@@ -36,7 +37,9 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
       .array()
       .of(yup.number())
       .min(1, 'Sélectionnez au moins un mois')
-      .required('Sélectionnez au moins un mois')
+      .required('Sélectionnez au moins un mois'),
+    debut:yup.string().required('Vous devez saisir un mois de début'),
+
   })
 
   const {
@@ -76,7 +79,8 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
   const onSubmit = async (data) => {
     const donneAlefa = {
       annee: data.yearadd,
-      mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name)
+      mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name),
+      debut:data.debut
     }
 
     setIsLoading(true)
@@ -169,6 +173,16 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
             {errors.yearadd && (
               <p className="text-sm text-red-400 mt-1">{errors.yearadd.message}</p>
             )}
+            <div className='mt-6'>
+              <select {...register('debut')} className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors.yearadd ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}>
+                <option value="">Selectionner Mois de Début</option>
+                {Monthlistedata.map((m) =>  <option key={m.id} value={m.name}>{m.name}</option>)}
+              </select>
+
+              {errors.debut && (
+                <p className="text-sm text-red-400 mt-1">{errors.debut.message}</p>
+              )}
+            </div>
 
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez les mois</h2>
@@ -190,6 +204,9 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                 <p className="text-sm text-red-400 mt-1">{errors.selectedMonths.message}</p>
               )}
             </div>
+
+
+
 
             <div className="flex justify-end gap-3 mt-6">
               <button

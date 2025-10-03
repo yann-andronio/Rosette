@@ -5,7 +5,7 @@ import { LuLayoutDashboard, LuGraduationCap } from 'react-icons/lu'
 import { MdWorkOutline } from 'react-icons/md'
 import { IoIosArrowForward } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import logo from '../../images/logo/logo4.png'
 import {FiLogOut } from 'react-icons/fi'
 import { MdSettings } from 'react-icons/md'
@@ -17,6 +17,8 @@ import { RiScales3Line } from 'react-icons/ri'
 import { BsCash } from 'react-icons/bs'
 import { HiUserCircle } from 'react-icons/hi'
 import { FaHistory, FaUsers } from 'react-icons/fa'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 interface Menu {
   name: string
@@ -81,6 +83,23 @@ const Sidebar = () => {
   const dispatch = useDispatch()
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
+  const navigate = useNavigate()
+  const logout = async () => {
+
+
+
+    try{
+      await axiosRequest('GET', 'logout', null, 'token')
+        .then(({data}) => toast.success(data.message))
+        .then(() => localStorage.removeItem('ACCESS_TOKEN'))
+        .then(() => navigate('/'))
+        .catch(error => console.log(error))
+    }catch (error){
+      console.log('Le serveur ne repond pas')
+    }
+
+
+  }
 
   const handleMenuClick = (menuName: string) => {
     if (closeBar) return
@@ -206,7 +225,7 @@ const Sidebar = () => {
             className={` ${closeBar ? 'justify-center' : ''} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
             <FiLogOut size={22} />
-            {!closeBar && <span className="ml-3">Se deconnecter</span>}
+            {!closeBar && <span onClick={() => logout()} className="ml-3">Se deconnecter</span>}
           </button>
         </div>
       </aside>

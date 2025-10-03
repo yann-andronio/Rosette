@@ -8,7 +8,7 @@ import { axiosRequest } from "@renderer/config/helpers";
 
 type NotemodalProps = {
   closemodal: () => void
-  setReload:() => void
+  setReload:(boolean) => void
   reload:boolean
   student: Etudiant
 }

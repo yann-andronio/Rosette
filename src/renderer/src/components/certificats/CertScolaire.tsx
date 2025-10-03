@@ -1,8 +1,27 @@
 import logo from '../../images/logo.jpg'
 import './cert.css'
+import { axiosRequest } from '@renderer/config/helpers'
+import { useEffect, useState } from 'react'
 
 const CertScolaire = ({ student }) => {
+
+
   const dateImpression = new Date().toLocaleDateString('fr-FR')
+  const [decision, setDecision] = useState<string>('')
+  const getDecision = async () => {
+    try{
+
+      await axiosRequest('GET', 'identifys',null, 'token')
+        .then(({data}) => setDecision(data))
+        .catch(error => console.log(error))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getDecision()
+  }, [])
 
   const {
     nom = '',
@@ -28,7 +47,7 @@ const CertScolaire = ({ student }) => {
         <div className="text-sm leading-tight font-serif">
           <p>CIRCONRSCRIPTION SCOLAIRE : MANANARA-NORD</p>
           <p>Collège privé : LA ROSETTE II</p>
-          <p>Décision N° : 009/2024-DREN Arofo/AO</p>
+          <p>Décision N° : {decision}</p>
           <p>Code : 511071201</p>
         </div>
         <div>

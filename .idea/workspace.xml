@@ -5,12 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardSuivi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/card/EmployerCardSuivi.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/auth/login/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/certificats/CertScolaire.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/certificats/CertScolaire.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/AdUpinfostudentsmodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addnotemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addnotemodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addyearmodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addyearmodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/recue/Recuepayementemploye.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/config/helpers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/config/helpers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/context/UserContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/context/UserContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/layout/navbar/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/layout/navbar/Navbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/layout/sidebar/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/layout/sidebar/Sidebar.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employersuivi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/employer/Employersuivi.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/parameters/Parameters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/parameters/Parameters.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/notestudentsmanagements/Notestudentsmanagement.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +131,7 @@
       <workItem from="1759055901453" duration="24687000" />
       <workItem from="1759218269284" duration="10551000" />
       <workItem from="1759262797835" duration="17334000" />
-      <workItem from="1759384110995" duration="17407000" />
+      <workItem from="1759384110995" duration="33336000" />
     </task>
     <servers />
   </component>

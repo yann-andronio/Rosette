@@ -6,15 +6,25 @@ import wave from '../../images/Style-Connection.png'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { useNavigate } from 'react-router-dom'
 import { ThreeDots } from 'react-loader-spinner'
 import { toast } from 'react-toastify'
+import { UserContext, UserProvider } from '@renderer/context/UserContext'
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
+  const autoUser = async () => {
+    await axiosRequest('GET', 'user-auto', null, 'token')
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error))
+  }
+  useEffect(() => {
+    autoUser()
+  }, [])
   const navigate = useNavigate()
+  const { setUser} = useContext(UserProvider)
   const [isLoading, setIsLoading] = useState(false)
   const ValidationSchema = yup.object({
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
@@ -30,17 +40,24 @@ function Login(): JSX.Element {
 
   const onSubmit = async (data: any) => {
     setIsLoading(true)
+    const getUser = async () => {
+      await axiosRequest('GET', 'user', null, 'token')
+        .then(({data}) => setUser({email:data?.email, name:data?.name, role:data?.role, firstname:data?.firstname}))
+        .then(() => navigate('/home'))
+        .catch((error) => console.log(error))
+
+    }
     try {
       await axiosRequest('POST', 'users-connexion', data, 'none')
         .then(({ data }) => {
           if (data?.token) {
-            localStorage.setItem('ACCESS_TOKEN', data?.token)
-            toast.success(data?.message)
-            // toast.success('Connexion réussie !')
+            localStorage.setItem('ACCESS_TOKEN', data.token)
+            // toast.success(data?.message)
+            toast.success('Connexion réussie !')
             reset()
-            setTimeout(() => {
-              navigate('/home')
-            }, 500)
+            getUser()
+
+
           }else{
             toast.error(data?.message)
           }
