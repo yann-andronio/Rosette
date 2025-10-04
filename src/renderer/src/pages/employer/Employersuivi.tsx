@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaUserCircle, FaUserTie } from 'react-icons/fa'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
@@ -190,7 +190,7 @@ function Employersuivi(): JSX.Element {
                         </div>
 
                         <div className="flex-1 flex justify-start  gap-3 text-[#9f7126] text-lg">
-                          <FaEdit
+                          <FaUserTie
                             onClick={() => openModal('Addsuiviemployeemodal')}
                             className="hover:text-black cursor-pointer transition"
                           />
