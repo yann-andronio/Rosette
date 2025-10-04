@@ -89,9 +89,11 @@ export default function SuiviEmployerModal({
   setReloads
 }: SuiviEmployerModalProps) {
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
-  const [moissalaires, setMoissalaires] = useState<{ id: number; mois: string; payé: number; reste: 0 }[]>([])
+  const [moissalaires, setMoissalaires] = useState<
+    { id: number; mois: string; payé: number; reste: 0 }[]
+  >([])
   const [filtres, setFiltres] = useState<{ id: number; annee: string }[]>([])
- const [loadSalary, setLoadSalary] = useState(false)
+  const [loadSalary, setLoadSalary] = useState(false)
 
   const getFiltres = async () => {
     try {
@@ -111,7 +113,7 @@ export default function SuiviEmployerModal({
     } catch (err) {
       console.log(err)
     } finally {
-      setLoadSalary(false) 
+      setLoadSalary(false)
     }
   }
 
@@ -150,8 +152,12 @@ export default function SuiviEmployerModal({
   }, [activeTab == 'statut', reloadstatus])
 
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
-  const [historiques, setHistoriques] = useState<{ id: number; montant: number; mois: string; type: number }[]>([])
-  const [archconge, setArchconge] = useState<{ id: number; debut: string; fin: string; status: number; motif: string }[]>([])
+  const [historiques, setHistoriques] = useState<
+    { id: number; montant: number; mois: string; type: number }[]
+  >([])
+  const [archconge, setArchconge] = useState<
+    { id: number; debut: string; fin: string; status: number; motif: string }[]
+  >([])
   const getConges = async () => {
     try {
       await axiosRequest('GET', `conge/${employer.id}`, null, 'token')
@@ -205,7 +211,7 @@ export default function SuiviEmployerModal({
   const { openModal, modal, closModal } = useMultiModals()
 
   const onSalarySubmit = (data: SalaireEmploye) => {
-    const datasForConfirmation = { ...data, w_id: employer.id ,nom :employer.nom }
+    const datasForConfirmation = { ...data, w_id: employer.id, nom: employer.nom }
     setconfirmesalary(datasForConfirmation)
     openModal('confirmDelete')
   }
@@ -215,12 +221,11 @@ export default function SuiviEmployerModal({
       await axiosRequest('POST', 'worker-pay', data, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => resetSalary())
-        .then(() => setSelectedMonths([]) )
+        .then(() => setSelectedMonths([]))
         .then(() => setReloadsalaire((prev) => !prev))
         .then(() => setReloads((prev) => !prev))
         .catch((err) => {
           toast.error(err.response.data.message)
-          
         })
     } catch (err) {
       console.log('Le serveur ne repond pas', err)
@@ -315,8 +320,6 @@ export default function SuiviEmployerModal({
     setSelectedyearfilter(id)
   }
 
-
-  
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
       <div className="bg-white w-full max-w-2xl h-[640px] rounded-2xl shadow-xl flex flex-col overflow-hidden">
@@ -558,15 +561,14 @@ export default function SuiviEmployerModal({
                     <div className="flex justify-center items-center h-20">
                       <RotatingLines
                         visible={true}
-                        strokeColor="#7A3B3F" 
+                        strokeColor="#7A3B3F"
                         strokeWidth="5"
                         animationDuration="0.75"
                         width="32"
                       />
                       <span className="ml-3 text-gray-600">Chargement de l'historique...</span>
                     </div>
-                  ) : 
-                  historiques.length > 0 ? (
+                  ) : historiques.length > 0 ? (
                     <ul className="space-y-2">
                       {historiques.map((item, index) => (
                         <li
