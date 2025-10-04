@@ -26,7 +26,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-[40rem] p-8 animate-fade-in scale-95 transition-transform duration-300">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-[45rem] p-8 animate-fade-in scale-95 transition-transform duration-300">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <FiAlertTriangle className="text-yellow-500 text-2xl" />

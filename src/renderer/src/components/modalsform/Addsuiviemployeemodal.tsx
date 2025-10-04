@@ -89,11 +89,11 @@ export default function SuiviEmployerModal({
   setReloads
 }: SuiviEmployerModalProps) {
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
-  const [moissalaires, setMoissalaires] = useState<
-    { id: number; mois: string; payé: number; reste: 0 }[]
-  >([])
+  const [moissalaires, setMoissalaires] = useState<{ id: number; mois: string; payé: number; reste: 0 }[]>([])
   const [filtres, setFiltres] = useState<{ id: number; annee: string }[]>([])
-  const [loadSalary, setLoadSalary] = useState(false)
+ const [loadMontshSalary, setLoadMontshSalary] = useState(false)
+ const [loadHistoriqueSalary, setLoadHistoriqueSalary] = useState(false)
+ const [loadFilterSalary, setLoadFilterSalary] = useState(false)
 
   const getFiltres = async () => {
     try {
@@ -105,7 +105,7 @@ export default function SuiviEmployerModal({
     }
   }
   const getMoissalaires = async () => {
-    setLoadSalary(true)
+    setLoadMontshSalary(true)
     try {
       await axiosRequest('GET', `moissalaires/${employer.id}`, null, 'token')
         .then(({ data }) => setMoissalaires(data))
@@ -113,7 +113,7 @@ export default function SuiviEmployerModal({
     } catch (err) {
       console.log(err)
     } finally {
-      setLoadSalary(false)
+      setLoadMontshSalary(false) 
     }
   }
 
@@ -152,12 +152,8 @@ export default function SuiviEmployerModal({
   }, [activeTab == 'statut', reloadstatus])
 
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
-  const [historiques, setHistoriques] = useState<
-    { id: number; montant: number; mois: string; type: number }[]
-  >([])
-  const [archconge, setArchconge] = useState<
-    { id: number; debut: string; fin: string; status: number; motif: string }[]
-  >([])
+  const [historiques, setHistoriques] = useState<{ id: number; montant: number; mois: string; type: number }[]>([])
+  const [archconge, setArchconge] = useState<{ id: number; debut: string; fin: string; status: number; motif: string }[]>([])
   const getConges = async () => {
     try {
       await axiosRequest('GET', `conge/${employer.id}`, null, 'token')
@@ -211,7 +207,7 @@ export default function SuiviEmployerModal({
   const { openModal, modal, closModal } = useMultiModals()
 
   const onSalarySubmit = (data: SalaireEmploye) => {
-    const datasForConfirmation = { ...data, w_id: employer.id, nom: employer.nom }
+    const datasForConfirmation = { ...data, w_id: employer.id ,nom :employer.nom }
     setconfirmesalary(datasForConfirmation)
     openModal('confirmDelete')
   }
@@ -221,11 +217,12 @@ export default function SuiviEmployerModal({
       await axiosRequest('POST', 'worker-pay', data, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => resetSalary())
-        .then(() => setSelectedMonths([]))
+        .then(() => setSelectedMonths([]) )
         .then(() => setReloadsalaire((prev) => !prev))
         .then(() => setReloads((prev) => !prev))
         .catch((err) => {
           toast.error(err.response.data.message)
+          
         })
     } catch (err) {
       console.log('Le serveur ne repond pas', err)
@@ -301,7 +298,7 @@ export default function SuiviEmployerModal({
   const [Selectedyearfilter, setSelectedyearfilter] = useState<number | null>(null)
 
   const getHistoriques = async () => {
-    setLoadSalary(true)
+    setLoadHistoriqueSalary(true)
     try {
       await axiosRequest('GET', `archives/${employer.id}?year=${Selectedyearfilter}`, null, 'token')
         .then(({ data }) => setHistoriques(data))
@@ -309,7 +306,7 @@ export default function SuiviEmployerModal({
     } catch (err) {
       console.log('Le serveur ne repond pas')
     } finally {
-      setLoadSalary(false)
+      setLoadHistoriqueSalary(false)
     }
   }
 
@@ -320,6 +317,8 @@ export default function SuiviEmployerModal({
     setSelectedyearfilter(id)
   }
 
+
+  
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
       <div className="bg-white w-full max-w-2xl h-[640px] rounded-2xl shadow-xl flex flex-col overflow-hidden">
@@ -445,7 +444,7 @@ export default function SuiviEmployerModal({
                   </div>
                   {/* Sélection des mois  */}
                   <h2 className="mt-4 mb-2 font-semibold text-gray-800">Sélectionnez un mois</h2>
-                  {loadSalary ? (
+                  {loadMontshSalary ? (
                     <div className="flex justify-center items-center h-20 bg-white rounded-lg shadow-inner">
                       <RotatingLines
                         visible={true}
@@ -497,15 +496,15 @@ export default function SuiviEmployerModal({
                     <p className="text-red-500 text-xs mt-1">{errorsSalary.mois.message}</p>
                   )}
                   <button
-                    disabled={loadSalary}
+                    disabled={loadMontshSalary}
                     type="submit"
                     className={`w-full mt-4 py-2.5 rounded-lg font-semibold transition shadow-md flex items-center justify-center gap-2 ${
-                      loadSalary
+                      loadMontshSalary
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-[#895256] text-white hover:bg-[#6a4247]'
                     }`}
                   >
-                    {loadSalary ? (
+                    {loadMontshSalary ? (
                       <div className="flex items-center gap-2">
                         <RotatingLines
                           visible={true}
@@ -557,7 +556,7 @@ export default function SuiviEmployerModal({
                   </div>
 
                   {/* LOADER CONDITIONNEL */}
-                  {loadSalary ? (
+                  {loadHistoriqueSalary ? (
                     <div className="flex justify-center items-center h-20">
                       <RotatingLines
                         visible={true}
