@@ -268,7 +268,9 @@ function Notestudentsmanagement(): JSX.Element {
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
-          <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
+          <h2 className="   border-l-4 border-[#895256] pl-3 text-2xl font-bold text-gray-800 mb-4 md:mb-0">
+            Liste des élèves
+          </h2>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -306,7 +308,9 @@ function Notestudentsmanagement(): JSX.Element {
           </div>
           {/* miscroll i ngiah une fois le max est atteint */}
 
-          <div className={`space-y-2 max-h-[60vh] ${isLoading ? "overflow-hidden" : "overflow-y-auto"} `}>
+          <div
+            className={`space-y-2 max-h-[60vh] ${isLoading ? 'overflow-hidden' : 'overflow-y-auto'} `}
+          >
             {isLoading ? (
               <div className=" py-2 flex w-full justify-center">
                 <RotatingLines
@@ -318,7 +322,6 @@ function Notestudentsmanagement(): JSX.Element {
                   ariaLabel="rotating-lines-loading"
                 />
               </div>
-
             ) : (
               <>
                 {students.data.length === 0 ? (
@@ -438,8 +441,12 @@ function Notestudentsmanagement(): JSX.Element {
         />
       )}
       {modal.Addnotemodal && selectedStudent && (
-        <Addnotemodal reload={reload} setReload={setReload} closemodal={() => closModal('Addnotemodal')} student={selectedStudent} />
-
+        <Addnotemodal
+          reload={reload}
+          setReload={setReload}
+          closemodal={() => closModal('Addnotemodal')}
+          student={selectedStudent}
+        />
       )}
     </div>
   )

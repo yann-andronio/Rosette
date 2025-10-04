@@ -318,7 +318,9 @@ function Studentsecolage(): JSX.Element {
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
-          <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
+          <h2 className="   border-l-4 border-[#895256] pl-3 text-2xl font-bold text-gray-800 mb-4 md:mb-0">
+            Liste des élèves
+          </h2>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -386,7 +388,10 @@ function Studentsecolage(): JSX.Element {
 
                       <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
                       <div className="flex-1 text-gray-700">{student.prenom}</div>
-                      <div className="flex-1 text-gray-700">  {student.sexe == 1 ? 'Garçon' : 'Fille'}</div>
+                      <div className="flex-1 text-gray-700">
+                        {' '}
+                        {student.sexe == 1 ? 'Garçon' : 'Fille'}
+                      </div>
                       <div className="flex-1 text-gray-700">
                         {student.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle}
                       </div>

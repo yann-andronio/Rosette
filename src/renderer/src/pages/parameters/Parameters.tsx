@@ -30,14 +30,13 @@ function Parameters(): JSX.Element {
   const handleOpenModal = (modalName: string) => () => openModal(modalName)
 
   const buttonsForParamsStudents = [
-    { icon: <FiUserPlus size={28} />, label: 'Ajouter un élève', modalName: 'AdUpinfostudentsmodal' },
     { icon: <FiCalendar size={28} />, label: 'Ajouter une année scolaire', modalName: 'Addyearmodal' },
     { icon: <FiLayers size={28} />, label: 'Ajouter une niveau', modalName: 'Addniveaumodal' },
     { icon: <FiBookOpen size={28} />, label: `Réglage d'admission`, modalName: 'Choosestatusmoyennemodalparams' },
     { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
   ]
   const buttonsForParamsemployers = [
-    { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
+    // { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
     { icon: <HiOutlineClipboardList size={28} />, label: 'Ajouter une fonction', modalName: 'Addfonctionemployer' },
    { icon: <HiOutlineBookOpen    size={28} />, label: 'Ajouter une matière', modalName: 'Addmatieremodal' }
  ]
@@ -225,12 +224,7 @@ function Parameters(): JSX.Element {
       </div>
 
       {/* Modals */}
-      {modal.AdUpinfostudentsmodal && (
-        <AdUpinfostudentsmodal
-          closemodal={() => closModal('AdUpinfostudentsmodal')}
-          mode="ajoutstudents"
-        />
-      )}
+    
       {modal.Addyearmodal && <Addyearmodal closemodal={() => closModal('Addyearmodal')} />}
       {modal.Addniveaumodal && <Addniveaumodal closemodal={() => closModal('Addniveaumodal')} />}
       {modal.Choosestatusmoyennemodalparams && (

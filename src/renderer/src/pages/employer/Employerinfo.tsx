@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaEdit, FaTrash, FaUserCircle } from 'react-icons/fa'
+import { FaEdit, FaPlus, FaTrash, FaUserCircle } from 'react-icons/fa'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { EmployerType } from '@renderer/types/Alltypes'
@@ -106,8 +106,15 @@ function Employerinfo(): JSX.Element {
       className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
     >
       <div className="px-20 py-8">
-        {/* <h2 className="text-2xl font-bold text-[#212529] mb-6">Liste des employés</h2> */}
-
+        <div className="flex z-0 flex-col md:flex-row justify-end items-center my-3">
+          <button
+            onClick={() => openModal('AdUpEmployeemodal')}
+            className="flex cursor-pointer  items-center gap-3 px-6 py-2.5 bg-[#895256] text-white rounded-lg shadow-xl hover:bg-[#7A3B3F] transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#895256] focus:ring-opacity-50 font-bold text-sm uppercase tracking-wider"
+          >
+            <FaPlus size={18} className="transition duration-300" />
+            Ajouter un employer
+          </button>
+        </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearchEmployes} />
           <div className="bg-white text-[#212529] shadow px-4 py-2 rounded-lg text-sm font-medium">

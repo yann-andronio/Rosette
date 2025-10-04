@@ -33,6 +33,7 @@ import { IconType } from 'react-icons'
 import Operationretirermodal from '@renderer/components/modalsform/Operationretirermodal'
 import Operationajoutmodal from '@renderer/components/modalsform/Operationajoutmodal'
 import { TailSpin } from 'react-loader-spinner'
+import { ToastContainer } from 'react-toastify'
 
 // ---- Mois jiaby ---- //
 const FullMonth = [
@@ -419,6 +420,16 @@ export default function Dashboard(): JSX.Element {
               </div>
             </div>
           </div>
+
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+          />
         </div>
       )}
 

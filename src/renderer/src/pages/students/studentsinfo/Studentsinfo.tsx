@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
@@ -314,8 +314,18 @@ function Studentsinfo(): JSX.Element {
           </div>
         </div>
 
-        <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
-          <h2 className="text-2xl font-bold text-gray-800">Liste des élèves</h2>
+        <div className="flex z-0 flex-col md:flex-row justify-between items-center my-6">
+          <h2 className="   border-l-4 border-[#895256] pl-3 text-2xl font-bold text-gray-800 mb-4 md:mb-0">
+            Liste des élèves
+          </h2>
+
+          <button
+            onClick={()=>openModal('AdUpinfostudentsmodal')}
+            className="flex cursor-pointer  items-center gap-3 px-6 py-2.5 bg-[#895256] text-white rounded-lg shadow-xl hover:bg-[#7A3B3F] transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#895256] focus:ring-opacity-50 font-bold text-sm uppercase tracking-wider"
+          >
+            <FaPlus size={18} className="transition duration-300" />
+            Ajouter un élève
+          </button>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -494,7 +504,13 @@ function Studentsinfo(): JSX.Element {
           draggable
         />
       </div>
-
+      {modal.AdUpinfostudentsmodal && (
+        <AdUpinfostudentsmodal
+          closemodal={() => closModal('AdUpinfostudentsmodal')}
+          mode="ajoutstudents" fresh={false} setFresh={function (boolean: any): void {
+            throw new Error('Function not implemented.')
+          } }        />
+      )}
       {modal.AdUpinfostudents && (
         <AdUpinfostudentsmodal
           id={et_id ? et_id : null}
