@@ -153,9 +153,14 @@ function Employerinfo(): JSX.Element {
                       <div
                         key={employer.id}
                         onClick={() => setSelectedEmployer(employer)}
-                        className={`flex items-center px-4 py-2 rounded-lg cursor-pointer ${
-                          index % 2 === 0 ? 'bg-white' : 'bg-gray-100'
-                        } hover:bg-gray-50 hover:border-l-4 border-[#895256] hover:shadow-lg transition duration-300`}
+                        className={`flex items-center px-4 py-2 rounded-lg cursor-pointer transition duration-300
+                          ${
+                            selectedEmployer?.id === employer.id
+                              ? 'bg-[#895256]/10 font-semibold shadow-inner border-l-4 border-[#895256]'
+                              : index % 2 === 0
+                                ? 'bg-white hover:bg-gray-50'
+                                : 'bg-gray-100 hover:bg-gray-50'
+                          } `}
                       >
                         <div className="w-12 h-12 flex items-start justify-center mr-3">
                           {employer.photo ? (
