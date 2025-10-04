@@ -415,10 +415,10 @@ function Studentsecolage(): JSX.Element {
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
-                          <FaPlusCircle
+                          {/* <FaPlusCircle
                             onClick={() => openModal('AdUpinfostudents')}
                             className="hover:text-black cursor-pointer transition"
-                          />
+                          /> */}
                         </div>
                       </div>
                     </div>
@@ -476,12 +476,12 @@ function Studentsecolage(): JSX.Element {
         />
       </div>
 
-      {modal.AdUpinfostudents && (
+      {/* {modal.AdUpinfostudents && (
         <AdUpinfostudentsmodal
           closemodal={() => closModal('AdUpinfostudents')}
           mode="modifstudents"
         />
-      )}
+      )} */}
       {modal.Showinfoecolagemodal && selectedStudent && (
         <Showinfoecolagemodal
           reload={reload}

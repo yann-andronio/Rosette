@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import { ThreeDots } from 'react-loader-spinner'
+import { formatDate } from '@renderer/utils/FormatDate'
 
 type OperationProps = { closemodal: () => void }
 
@@ -183,7 +184,7 @@ setIsLoading(true)
                   >
                     <div>
                       <p className="font-semibold">Matière : {nom}</p>
-                      <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
+                      <p className="text-xs text-gray-500 mb-1">Date : {formatDate(created_at)}</p>
                     </div>
                     <button
                       onClick={() => handleclickDelete(id, nom)}

@@ -18,11 +18,11 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   message = 'Êtes-vous sûr de vouloir supprimer cet élément ?'
 }) => {
 
-  const isSuspension = title === 'Confirmation de suspension' || "Confirmation de Payement de salaire"
-  const buttonColor = isSuspension? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
-  const buttonIcon = isSuspension ? FiCheck : FiTrash2
-  const ButtonText = isSuspension ? 'Confirmer' : 'Supprimer'
-  const IconComponent = buttonIcon
+  // const isSuspension = title === 'Confirmation de suspension' || "Confirmation de Payement de salaire"
+  // const buttonColor = isSuspension? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+  // const buttonIcon = isSuspension ? FiCheck : FiTrash2
+  // const ButtonText = isSuspension ? 'Confirmer' : 'Supprimer'
+  // const IconComponent = buttonIcon
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -54,7 +54,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
           <button
             onClick={onConfirm}
             disabled={isDeletingLoader}
-            className={`px-6 py-2 rounded-lg text-white transition-all font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${buttonColor}`}
+            className={`px-6 py-2 rounded-lg text-white transition-all font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-green-600 hover:bg-green-700`}
           >
             {isDeletingLoader ? (
               <ThreeDots
@@ -67,8 +67,8 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
               />
             ) : (
               <>
-                <IconComponent size={18} />
-                {ButtonText}
+                <FiCheck size={18} />
+                Confirmer
               </>
             )}
           </button>

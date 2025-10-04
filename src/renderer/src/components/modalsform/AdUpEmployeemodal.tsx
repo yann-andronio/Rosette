@@ -301,8 +301,6 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
                             ) : (
                               profession.map((f, index) => (
                                 <option key={f.id} value={f.id}>
-                                  {' '}
-                                  {/* J'ai corrigé 'value={index + 1}' à 'value={f.id}' pour utiliser le vrai ID */}
                                   {f.profession}
                                 </option>
                               ))
@@ -357,7 +355,6 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
                       <div className="flex-1 min-w-[150px] relative">
                         <select
                           {...register(`matiere.${index}.matiere` as const)}
-                          // Les classes CSS de l'input/select SONT CONSERVÉES
                           className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
                             errors.matiere?.[index]?.matiere
                               ? 'border-red-500 shadow-[0_0_5px_#f87171]'
@@ -379,7 +376,6 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
                           type="text"
                           {...register(`matiere.${index}.salle` as const)}
                           placeholder="Entrez le nom de la sall"
-                          // Les classes CSS de l'input SONT CONSERVÉES
                           className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
                             errors.matiere?.[index]?.salle
                               ? 'border-red-500 shadow-[0_0_5px_#f87171]'

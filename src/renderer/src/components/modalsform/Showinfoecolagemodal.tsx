@@ -1,36 +1,60 @@
-import { FaCheckCircle, FaTimesCircle, FaWallet, FaCalendarAlt, FaSchool, FaPrint } from 'react-icons/fa'
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaWallet,
+  FaCalendarAlt,
+  FaSchool,
+  FaPrint
+} from 'react-icons/fa'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { FiX } from 'react-icons/fi'
-import { axiosRequest } from "@renderer/config/helpers";
-import { useRef, useState } from 'react';
-import Recuepayementecolage from '../recue/Recuepayementecolage';
-import { toast } from "react-toastify";
-
-
+import { axiosRequest } from '@renderer/config/helpers'
+import { useRef, useState } from 'react'
+import Recuepayementecolage from '../recue/Recuepayementecolage'
+import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import { formatDate } from '../../utils/FormatDate'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: Etudiant
-  fresh:(boolean) => void
-  reload:boolean
+  fresh: (boolean) => void
+  reload: boolean
+}
+
+type EcolageToConfirm = {
+  id: number
+  mois: string 
+  cost: number 
 }
 
 const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoStudentsProps) => {
-
-
   const eleveNom = `${student.prenom} ${student.nom}`
-const pay = async (id:number, cost:number) => {
-    try{
-      await axiosRequest('PUT', `ecolage-pay/${id}`, {cost:cost, eleve: eleveNom, classe:student.sousetudiants[student.sousetudiants.length -1].classe.nom_classe, salle:student.sousetudiants[student.sousetudiants.length -1].salle.nom_salle, annee:student.sousetudiants[student.sousetudiants.length -1].annee.annee, ac_id:student.sousetudiants[student.sousetudiants.length -1].annee.id, prof:student.enfantProf}, 'token')
-        .then(({data}) => toast.success(data?.message))
+  const pay = async (id: number, cost: number) => {
+    try {
+      await axiosRequest(
+        'PUT',
+        `ecolage-pay/${id}`,
+        {
+          cost: cost,
+          eleve: eleveNom,
+          classe: student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
+          salle: student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
+          annee: student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
+          ac_id: student.sousetudiants[student.sousetudiants.length - 1].annee.id,
+          prof: student.enfantProf
+        },
+        'token'
+      )
+        .then(({ data }) => toast.success(data?.message))
         .then(() => fresh(!reload))
         .then(() => closemodal())
-        // .catch(error => console.log(error))
-    }catch (error){
+      // .catch(error => console.log(error))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
-  
 
   const [selectedEcolage, setSelectedEcolage] = useState<any | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
@@ -48,6 +72,28 @@ const pay = async (id:number, cost:number) => {
       window.location.reload()
     }, 200)
   }
+
+  const [ecolageConfirmation, setEcolageConfirmation] = useState < EcolageToConfirm | null>(null)
+  const [isPayingLoader, setIsPayingLoader] = useState(false)
+  const { openModal, modal, closModal } = useMultiModals()
+
+   const handleRequestPayment = (id, mois, cost) => {
+     setEcolageConfirmation({ id, mois, cost })
+     openModal('confirmDelete')
+   }
+
+   const handleConfirmPayment = async () => {
+     if (!ecolageConfirmation) return
+     const { id, cost } = ecolageConfirmation
+     setIsPayingLoader(true)
+     try {
+       await pay(id, cost) 
+     } finally {
+       setIsPayingLoader(false)
+       setEcolageConfirmation(null)
+       closModal('confirmDelete') 
+     }
+   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
@@ -85,11 +131,16 @@ const pay = async (id:number, cost:number) => {
                       onClick={() =>
                         handlePrint({
                           eleve: eleveNom,
-                          classe:student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
-                          salle:student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
-                          annee:student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
+                          classe:
+                            student.sousetudiants[student.sousetudiants.length - 1].classe
+                              .nom_classe,
+                          salle:
+                            student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
+                          annee:
+                            student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
                           mois: item.mois,
-                          montant:student.sousetudiants[student.sousetudiants.length - 1].classe.ecolage,
+                          montant:
+                            student.sousetudiants[student.sousetudiants.length - 1].classe.ecolage,
                           datePaiement: item.updated_at
                         })
                       }
@@ -113,7 +164,7 @@ const pay = async (id:number, cost:number) => {
                 </div>
                 <div className="flex items-center gap-2 text-gray-500 text-xs">
                   <FaCalendarAlt className="text-[#895256]" />
-                  <span>{item.payé == 1 ? item.updated_at : 'Non payé'}</span>
+                  <span>{item.payé == 1 ?  formatDate(item.updated_at)  : 'Non payé'}</span>
                 </div>
               </div>
               {item.payé ? (
@@ -129,9 +180,10 @@ const pay = async (id:number, cost:number) => {
               ) : (
                 <span
                   onClick={() =>
-                    pay(
+                    handleRequestPayment(
                       item.id,
-                      student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage
+                      item.mois, 
+                      student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage || 0
                     )
                   }
                   className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
@@ -147,6 +199,16 @@ const pay = async (id:number, cost:number) => {
           ))}
         </div>
       </div>
+
+      {modal.confirmDelete && ecolageConfirmation && (
+        <ConfirmDeleteModal
+          title="Confirmation de Paiement"
+          message={`Voulez-vous confirmer le paiement d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
+          onConfirm={handleConfirmPayment}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isPayingLoader}
+        />
+      )}
 
       {selectedEcolage && (
         <div className="hidden">
