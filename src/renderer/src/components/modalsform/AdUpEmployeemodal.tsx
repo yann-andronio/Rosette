@@ -29,7 +29,7 @@ const schema = yup.object().shape({
     .string()
     .required('Téléphone requis')
     .matches(/^[0-9+\s-]+$/, 'Numéro invalide'),
-  p_id: yup.number().required('Fonction requise'),
+  p_id: yup.number().typeError("Fonction requise").required('Fonction requise'),
   salaire_base: yup
     .number()
     .typeError('Le salaire doit être un nombre')
@@ -228,6 +228,13 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
             </label>
             <span className="text-sm text-white">Cliquez pour choisir une photo</span>
           </div>
+          <h2 className="text-2xl font-extrabold text-white mb-3 text-center tracking-wide">
+            Bienvenue dans le module employé
+          </h2>
+          <p className="text-base text-white text-center mb-10 px-6 leading-relaxed">
+            Remplissez les informations à droite pour{' '}
+            {mode === 'ajoutemployer' ? 'ajouter un nouvel employé' : 'modifier cet employé'}.
+          </p>
         </div>
 
         {/* Partie droite */}

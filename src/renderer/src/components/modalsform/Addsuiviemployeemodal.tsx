@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { FiX, FiEdit2, FiTrash2, FiSave } from 'react-icons/fi'
+import { FiX, FiEdit2, FiTrash2, FiSave, FiPlus } from 'react-icons/fi'
 import {
   FaMoneyBillWave,
   FaCalendarAlt,
@@ -20,7 +20,7 @@ import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { data } from 'react-router-dom'
-import { RotatingLines } from 'react-loader-spinner'
+import { RotatingLines, ThreeDots } from 'react-loader-spinner'
 
 export type SalaireEmploye = {
   montant: number
@@ -241,6 +241,8 @@ export default function SuiviEmployerModal({
       closModal('confirmDelete')
     }
   }
+  const [loadconger, setloadconger] = useState(false)
+  
 
   const onCongeSubmit = async (data: CongeType) => {
     const prepared = {
@@ -249,6 +251,7 @@ export default function SuiviEmployerModal({
       motif: data.motif,
       w_id: employer.id
     }
+    setloadconger(true)
     try {
       await axiosRequest('POST', 'conge', prepared, 'token')
         .then(({ data }) => toast.success(data.message))
@@ -258,10 +261,15 @@ export default function SuiviEmployerModal({
         .catch((err) => toast.error(err.response.data.message))
     } catch (err) {
       console.log('Le serveur ne repond pas')
+    } finally {
+      setloadconger(false)
     }
   }
 
+
+  const [loadstatus, setloadstatus] =useState(false)
   const onStatusSubmit = async (data: StatusFormInputs) => {
+    setloadstatus(true)
     try {
       await axiosRequest(
         'PUT',
@@ -276,6 +284,8 @@ export default function SuiviEmployerModal({
         .catch((err) => toast.error(err.response.data.message))
     } catch (error) {
       console.log('Le serveur ne repond pas')
+    } finally {
+       setloadstatus(false)
     }
   }
 
@@ -555,7 +565,6 @@ export default function SuiviEmployerModal({
                     <h3 className="text-md font-bold text-gray-700">Historique des paiements</h3>
                   </div>
 
-                  {/* LOADER CONDITIONNEL */}
                   {loadHistoriqueSalary ? (
                     <div className="flex justify-center items-center h-20">
                       <RotatingLines
@@ -591,7 +600,7 @@ export default function SuiviEmployerModal({
                               className="p-1 rounded-md hover:bg-gray-100"
                               title="Imprimer le reçu"
                             >
-                              <FaPrint className="text-gray-600" />
+                              <FaPrint className="text-gray-600  hover:text-blue-500" />
                             </button>
                             {/* Le bouton de suppression a été commenté dans votre code original : */}
                             {/* <button className="p-1 rounded-md hover:bg-gray-100">
@@ -602,7 +611,6 @@ export default function SuiviEmployerModal({
                       ))}
                     </ul>
                   ) : (
-                    // MESSAGE SI L'HISTORIQUE EST VIDE
                     <div className="text-center text-gray-500 text-sm py-4">
                       Aucun historique de salaire disponible.
                     </div>
@@ -680,7 +688,13 @@ export default function SuiviEmployerModal({
                     type="submit"
                     className="w-full mt-4 py-2.5 bg-[#895256] text-white rounded-lg font-semibold hover:bg-[#6a4247] transition shadow-md flex items-center justify-center gap-2"
                   >
-                    <FiSave /> Enregistrer
+                    {loadconger ? (
+                      <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
+                    ) : (
+                      <>
+                        <FiSave size={18} /> Enregistrer
+                      </>
+                    )}
                   </button>
                 </form>
 
@@ -783,7 +797,13 @@ export default function SuiviEmployerModal({
                     type="submit"
                     className="w-full mt-4 py-2.5 bg-[#895256] text-white rounded-lg font-semibold hover:bg-[#6a4247] transition shadow-md flex items-center justify-center gap-2"
                   >
-                    <FiSave /> Mettre à jour
+                    {loadstatus ? (
+                      <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
+                    ) : (
+                      <>
+                        <FiSave size={18} /> Mettre à jour
+                      </>
+                    )}
                   </button>
                 </form>
               </motion.div>

@@ -25,8 +25,8 @@ type ShowInfoStudentsProps = {
 
 type EcolageToConfirm = {
   id: number
-  mois: string 
-  cost: number 
+  mois: string
+  cost: number
 }
 
 const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoStudentsProps) => {
@@ -73,27 +73,27 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
     }, 200)
   }
 
-  const [ecolageConfirmation, setEcolageConfirmation] = useState < EcolageToConfirm | null>(null)
+  const [ecolageConfirmation, setEcolageConfirmation] = useState<EcolageToConfirm | null>(null)
   const [isPayingLoader, setIsPayingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
 
-   const handleRequestPayment = (id, mois, cost) => {
-     setEcolageConfirmation({ id, mois, cost })
-     openModal('confirmDelete')
-   }
+  const handleRequestPayment = (id, mois, cost) => {
+    setEcolageConfirmation({ id, mois, cost })
+    openModal('confirmDelete')
+  }
 
-   const handleConfirmPayment = async () => {
-     if (!ecolageConfirmation) return
-     const { id, cost } = ecolageConfirmation
-     setIsPayingLoader(true)
-     try {
-       await pay(id, cost) 
-     } finally {
-       setIsPayingLoader(false)
-       setEcolageConfirmation(null)
-       closModal('confirmDelete') 
-     }
-   }
+  const handleConfirmPayment = async () => {
+    if (!ecolageConfirmation) return
+    const { id, cost } = ecolageConfirmation
+    setIsPayingLoader(true)
+    try {
+      await pay(id, cost)
+    } finally {
+      setIsPayingLoader(false)
+      setEcolageConfirmation(null)
+      closModal('confirmDelete')
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
@@ -125,26 +125,33 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
               <div className="flex justify-between items-center mb-3">
                 <h4 className="font-semibold text-gray-700">{item.mois}</h4>
                 {item.payé === 1 ? (
-                  <div className="flex gap-5">
-                    <FaPrint
-                      className="text-gray-600 cursor-pointer hover:text-blue-500"
-                      onClick={() =>
-                        handlePrint({
-                          eleve: eleveNom,
-                          classe:
-                            student.sousetudiants[student.sousetudiants.length - 1].classe
-                              .nom_classe,
-                          salle:
-                            student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
-                          annee:
-                            student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
-                          mois: item.mois,
-                          montant:
-                            student.sousetudiants[student.sousetudiants.length - 1].classe.ecolage,
-                          datePaiement: item.updated_at
-                        })
-                      }
-                    />
+                  <div className="flex group gap-5">
+                    <div className="relative group">
+                      <span className=" absolute bottom-full left-1/2 transform -translate-x-1/2  mb-2 px-2 py-1  text-xs font-medium text-white  bg-gray-800 rounded-lg shadow-lg  opacity-0 group-hover:opacity-100  transition-opacity duration-300 whitespace-nowrap  ">
+                        Imprimer le reçu
+                      </span>
+                      <FaPrint
+                        className="text-gray-600 cursor-pointer hover:text-blue-500"
+                        onClick={() =>
+                          handlePrint({
+                            eleve: eleveNom,
+                            classe:
+                              student.sousetudiants[student.sousetudiants.length - 1].classe
+                                .nom_classe,
+                            salle:
+                              student.sousetudiants[student.sousetudiants.length - 1].salle
+                                .nom_salle,
+                            annee:
+                              student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
+                            mois: item.mois,
+                            montant:
+                              student.sousetudiants[student.sousetudiants.length - 1].classe
+                                .ecolage,
+                            datePaiement: item.updated_at
+                          })
+                        }
+                      />
+                    </div>
                     <FaCheckCircle className="text-green-500 text-lg" />
                   </div>
                 ) : (
@@ -164,7 +171,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                 </div>
                 <div className="flex items-center gap-2 text-gray-500 text-xs">
                   <FaCalendarAlt className="text-[#895256]" />
-                  <span>{item.payé == 1 ?  formatDate(item.updated_at)  : 'Non payé'}</span>
+                  <span>{item.payé == 1 ? formatDate(item.updated_at) : 'Non payé'}</span>
                 </div>
               </div>
               {item.payé ? (
@@ -182,7 +189,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                   onClick={() =>
                     handleRequestPayment(
                       item.id,
-                      item.mois, 
+                      item.mois,
                       student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage || 0
                     )
                   }

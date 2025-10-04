@@ -49,7 +49,7 @@ export const CardDashboard: React.FC<CardDashboardProps> = ({ item }) => {
       </div>
       <p className="text-2xl font-bold text-gray-800 mt-1">
         {/* {item.title !== '' ? `${item.value} Ar` : item.value} */}
-        {['Solde de kermesses', 'Solde de droits', `Solde d'écolage`].includes(item.title) ? `${item.value} Ar`: item.value}
+        {['Solde de kermesses', 'Solde de droits', `Solde d'écolages`].includes(item.title) ? `${item.value} Ar`: item.value}
       </p>
     </div>
   )
