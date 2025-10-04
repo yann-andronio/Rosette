@@ -5,23 +5,24 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { axiosRequest } from '@renderer/config/helpers'
-import { Oval, ThreeDots } from "react-loader-spinner";
-import { EmployerType } from "@renderer/types/Alltypes";
+import { Oval, ThreeDots } from 'react-loader-spinner'
+import { EmployerType } from '@renderer/types/Alltypes'
 import { toast } from 'react-toastify'
 const matieresDisponibles = ['Math', 'Physique', 'Chimie', 'Français', 'Anglais', 'Histoire']
 
 type EmployeeModalProps = {
   closemodal: () => void
   mode: 'ajoutemployer' | 'modifemplyer'
-  id?:number
+  id?: number
   reload: boolean
-  fresh:(boolean) => void
+  fresh: (boolean) => void
 }
 
 const schema = yup.object().shape({
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
   email: yup.string().email('Email invalide').required('Email requis'),
+  // Le sexe est une chaîne dans ce schéma, donc pas de transformation yup.number() nécessaire ici
   sexe: yup.string().required('Sexe requis'),
   adresse: yup.string().required('Adresse requise'),
   telephone: yup
@@ -42,7 +43,13 @@ const schema = yup.object().shape({
   )
 })
 
-const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id, reload, fresh }) => {
+const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
+  closemodal,
+  mode,
+  id,
+  reload,
+  fresh
+}) => {
   const {
     register,
     handleSubmit,
@@ -61,16 +68,16 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
   const [image, setImage] = useState<Blob | string>('')
   const [errorMatiere, setErrorMatiere] = useState<string>('')
   const [professionLoading, setProfessionLoading] = useState<boolean>(false)
-  const [profession, setProfession] = useState<{id:number, profession:string}[]>([])
+  const [profession, setProfession] = useState<{ id: number; profession: string }[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [preWorker, setPreWorker] = useState<EmployerType>()
-  const [historiques, setHistoriques] = useState<{nom:string, id:number,created_at}[]>([])
+  const [historiques, setHistoriques] = useState<{ nom: string; id: number; created_at }[]>([])
   const getHistoriques = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'domaines', null, 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error))
-    }catch(e){
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error))
+    } catch (e) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -99,16 +106,16 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
       setErrorMatiere('Au moins une matière doit être ajoutée pour un professeur.')
   }
 
-  const onSubmit =async (data: any) => {
+  const onSubmit = async (data: any) => {
     if (watchFonction == '1' && watchMatieresSalles.length === 0) {
       setErrorMatiere('Au moins une matière doit être ajoutée pour un professeur.')
       return
     }
     console.log('Données soumises :', data)
-    if(mode=='ajoutemployer'){
+    if (mode == 'ajoutemployer') {
       const formData = new FormData()
-      for(const key in data){
-        if(key != "matiere"){
+      for (const key in data) {
+        if (key != 'matiere') {
           formData.append(key, data[key])
         }
       }
@@ -116,71 +123,64 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
       formData.append('matiere', JSON.stringify(data.matiere))
       formData.append('photo', image)
       setIsLoading(true)
-      try{
-        await axiosRequest('POST', 'worker-creation', formData, 'token')
-          .then(({data}) => toast.success(data.message))
-          .then(() => setIsLoading(false))
-          .then(() =>closemodal())
-          .catch(error => toast.error(error?.response?.data?.message))
-          .finally(() => setIsLoading(false))
-      }catch (e){
-        console.log('Le serveur ne repond pas')
+      try {
+        const response = await axiosRequest('POST', 'worker-creation', formData, 'token')
+        toast.success(response.data.message)
+        fresh(!reload) 
+        closemodal()
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || "Erreur lors de l'ajout de l'employé.")
+      } finally {
+        setIsLoading(false)
       }
-    }else{
+    } else {
       const formData = new FormData()
-      for(const key in data){
-        if(key != "matiere"){
+      for (const key in data) {
+        if (key != 'matiere') {
           formData.append(key, data[key])
         }
-
-
-
       }
 
       formData.append('matiere', JSON.stringify(data.matiere))
       formData.append('photo', image)
       setIsLoading(true)
-      try{
-        await axiosRequest('POST', `worker-update/${id}`, formData, 'token')
-          .then(({data}) => toast.success(data.message))
-          .then(() => setIsLoading(false))
-          .then(() => fresh(!reload))
-          .then(() =>closemodal())
-          .catch(error => toast.error(error?.response?.data?.message))
-          .finally(() => setIsLoading(false))
-      }catch (e){
-        console.log('Le serveur ne repond pas')
-      }
+    try {
+      const response = await axiosRequest('POST', `worker-update/${id}`, formData, 'token')
+      toast.success(response.data.message)
+      fresh(!reload)
+      closemodal()
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Erreur lors de la modification de l'employé.")
+    } finally {
+      setIsLoading(false)
     }
-
-
-
+    }
   }
   const getProfession = async () => {
     setProfessionLoading(true)
-    try{
+    try {
       await axiosRequest('GET', 'profession-list', null, 'token')
-        .then(({data}) => setProfession(data))
+        .then(({ data }) => setProfession(data))
         .then(() => setProfessionLoading(false))
-        .catch(error => console.log(error?.response?.data?.error))
+        .catch((error) => console.log(error?.response?.data?.error))
         .finally(() => setProfessionLoading(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getProfession()
-  }, []);
-  const getWorker= async () => {
-    try{
-      axiosRequest('GET',   `worker/${id}`, null, 'token')
-        .then(({data}) => {
+  }, [])
+  const getWorker = async () => {
+    try {
+      axiosRequest('GET', `worker/${id}`, null, 'token')
+        .then(({ data }) => {
           reset(data)
           setPreWorker(data)
         })
-        .catch(error => console.log(error?.response?.data?.error))
-    }catch (error){
+        .catch((error) => console.log(error?.response?.data?.error))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -189,12 +189,12 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
   }, [])
   useEffect(() => {
     getWorker()
-  }, [mode=='modifemplyer']);
+  }, [mode == 'modifemplyer'])
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-      <div className="bg-white w-[80%] h-[650px] rounded-2xl flex shadow-2xl overflow-hidden">
+      <div className="bg-white w-full max-w-7xl h-[90vh] rounded-2xl flex shadow-2xl overflow-hidden">
         {/* Partie gauche */}
-        <div className="w-1/2 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
+        <div className="w-1/3 bg-[#895256] flex flex-col items-center justify-center p-8 relative">
           <div className="flex flex-col items-center mb-10">
             <label htmlFor="photo" className="cursor-pointer">
               <input
@@ -210,22 +210,28 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
                   alt="Photo employé"
                   className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
                 />
-              ) : <>{mode == 'modifemplyer' ?   <img
-                src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${preWorker?.photo}`}
-                alt="Photo Employé"
-                className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
-              />:(
-                <div className="w-40 h-40 flex items-center justify-center rounded-full bg-[#6b4a52] border-4 border-white mb-10 shadow-lg">
-                  <FiUser className="text-white text-[7rem]" />
-                </div>
-              )}</>}
+              ) : (
+                <>
+                  {mode == 'modifemplyer' ? (
+                    <img
+                      src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${preWorker?.photo}`}
+                      alt="Photo Employé"
+                      className="w-40 h-40 object-cover rounded-full border-4 border-white mb-10 shadow-lg"
+                    />
+                  ) : (
+                    <div className="w-40 h-40 flex items-center justify-center rounded-full bg-[#6b4a52] border-4 border-white mb-10 shadow-lg">
+                      <FiUser className="text-white text-[7rem]" />
+                    </div>
+                  )}
+                </>
+              )}
             </label>
             <span className="text-sm text-white">Cliquez pour choisir une photo</span>
           </div>
         </div>
 
         {/* Partie droite */}
-        <div className="w-1/2 p-10 flex flex-col justify-between">
+        <div className="w-2/3 p-10 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-[#895256] tracking-tight">
               {mode === 'ajoutemployer' ? 'Ajouter Employé' : 'Modifier Employé'}
@@ -239,84 +245,91 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
             </button>
           </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="overflow-y-auto pr-3"
-            style={{ maxHeight: '540px' }}
-          >
-            {/* Informations générales */}
+          <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto pr-3 flex-grow">
             <fieldset className="mb-8 border border-gray-200 rounded-xl p-6 shadow-sm">
               <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
                 Informations générales
               </legend>
 
-              {[
-                'nom',
-                'prenom',
-                'email',
-                'sexe',
-                'adresse',
-                'telephone',
-                'p_id',
-                'salaire_base'
-              ].map((field) => (
-                <div className="mb-5" key={field}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {field=='p_id'?'Fonction *' : <>{field.charAt(0).toUpperCase() + field.slice(1)} *</>}
-                  </label>
-                  {field === 'sexe' || field === 'p_id' ? (
-                    <select
-                      {...register(field as any)}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                        errors[field as keyof typeof errors]
-                          ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                          : 'border-gray-300 shadow-sm'
-                      }`}
-                    >
-                      <option value="">Sélectionnez</option>
-                      {field === 'sexe' ? (
-                        <>
-                          <option value={1}>Homme</option>
-                          <option value={0}>Femme</option>
-                        </>
-                      ) :<>{professionLoading?(<Oval
-                        visible={true}
-                        height="25"
-                        width="25"
-                        color="#895256"
-                        strokeWidth="5"
-                        ariaLabel="oval-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                      />):(
-                        profession.map((f, index) => (
-                          <option key={f.id} value={index + 1}>
-                            {f.profession}
-                          </option>
-                        ))
-                      )}</>
-
-                      }
-                    </select>
-                  ) : (
-                    <input
-                      type={field === 'salaire_base' ? 'number' : 'text'}
-                      {...register(field as any)}
-                      placeholder={`Entrez le ${field}`}
-                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                        errors[field as keyof typeof errors]
-                          ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                          : 'border-gray-300 shadow-sm'
-                      }`}
-                    />
-                  )}
-                  {errors[field as keyof typeof errors] && (
-                    <p className="text-red-500 text-xs mt-1 italic">
-                      {errors[field as keyof typeof errors]?.message?.toString()}
-                    </p>
-                  )}
-                </div>
-              ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+                {[
+                  'nom',
+                  'prenom',
+                  'email',
+                  'sexe',
+                  'adresse',
+                  'telephone',
+                  'p_id',
+                  'salaire_base'
+                ].map((field) => (
+                  <div className="mb-5" key={field}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {field == 'p_id' ? (
+                        'Fonction *'
+                      ) : (
+                        <>{field.charAt(0).toUpperCase() + field.slice(1)} *</>
+                      )}
+                    </label>
+                    {field === 'sexe' || field === 'p_id' ? (
+                      <select
+                        {...register(field as any)}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errors[field as keyof typeof errors]
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
+                      >
+                        <option value="">Sélectionnez</option>
+                        {field === 'sexe' ? (
+                          <>
+                            <option value={1}>Homme</option>
+                            <option value={0}>Femme</option>
+                          </>
+                        ) : (
+                          <>
+                            {professionLoading ? (
+                              <Oval
+                                visible={true}
+                                height="25"
+                                width="25"
+                                color="#895256"
+                                strokeWidth="5"
+                                ariaLabel="oval-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                              />
+                            ) : (
+                              profession.map((f, index) => (
+                                <option key={f.id} value={f.id}>
+                                  {' '}
+                                  {/* J'ai corrigé 'value={index + 1}' à 'value={f.id}' pour utiliser le vrai ID */}
+                                  {f.profession}
+                                </option>
+                              ))
+                            )}
+                          </>
+                        )}
+                      </select>
+                    ) : (
+                      <input
+                        type={field === 'salaire_base' ? 'number' : 'text'}
+                        {...register(field as any)}
+                        placeholder={`Entrez le ${field}`}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errors[field as keyof typeof errors]
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
+                      />
+                    )}
+                    {errors[field as keyof typeof errors] && (
+                      <p className="text-red-500 text-xs mt-1 italic">
+                        {errors[field as keyof typeof errors]?.message?.toString()}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </fieldset>
 
             {/* Matières & salles uniquement raha professeur nle fonction */}
@@ -344,6 +357,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
                       <div className="flex-1 min-w-[150px] relative">
                         <select
                           {...register(`matiere.${index}.matiere` as const)}
+                          // Les classes CSS de l'input/select SONT CONSERVÉES
                           className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
                             errors.matiere?.[index]?.matiere
                               ? 'border-red-500 shadow-[0_0_5px_#f87171]'
@@ -365,6 +379,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
                           type="text"
                           {...register(`matiere.${index}.salle` as const)}
                           placeholder="Entrez le nom de la sall"
+                          // Les classes CSS de l'input SONT CONSERVÉES
                           className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#895256] focus:outline-none ${
                             errors.matiere?.[index]?.salle
                               ? 'border-red-500 shadow-[0_0_5px_#f87171]'
@@ -398,23 +413,32 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({ closemodal, mode, id,
               )}
             </AnimatePresence>
 
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
-            >
-              {isLoading?	<ThreeDots
-                visible={true}
-                height="23"
-                width="100"
-                color="pink"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{}}
-                wrapperClass=""
-              />:<>              {mode === 'ajoutemployer' ? <FiPlus size={22} /> : <FiEdit size={22} />}
-                {mode === 'ajoutemployer' ? 'Ajouter' : 'Modifier'}</>}
-
-            </button>
+            <div className="sticky  bottom-0 bg-white pt-4 pb-0  border-t border-gray-100">
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#a4645a] to-[#7c3f42] text-white py-4 rounded-xl hover:from-[#895256] hover:to-[#623d3e] transition flex justify-center items-center gap-3 font-semibold text-lg shadow-md"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ThreeDots
+                    visible={true}
+                    height="23"
+                    width="100"
+                    color="pink"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  <>
+                    {' '}
+                    {mode === 'ajoutemployer' ? <FiPlus size={22} /> : <FiEdit size={22} />}
+                    {mode === 'ajoutemployer' ? 'Ajouter' : 'Modifier'}
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>

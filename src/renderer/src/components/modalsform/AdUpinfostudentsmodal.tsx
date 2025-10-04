@@ -7,8 +7,6 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 
-// ... (Les imports restent les mêmes)
-
 type infostudentsProps = {
   closemodal: () => void
   mode: 'ajoutstudents' | 'modifstudents'
@@ -17,7 +15,6 @@ type infostudentsProps = {
   setFresh: (boolean) => void
 }
 
-// ... (Le schéma yup reste le même)
 const schema = yup.object().shape({
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
@@ -25,7 +22,7 @@ const schema = yup.object().shape({
   dateNaissance: yup.string().required('Date de naissance requise'),
   lieuNaissance: yup.string().required('Lieu de naissance requis'),
   adresse: yup.string().required('Adresse requise'),
-  cl_id: yup.number().typeError("Niveau requis").required('Veuillez sélectionner un niveau'),
+  cl_id: yup.number().typeError('Niveau requis').required('Veuillez sélectionner un niveau'),
   sa_id: yup.number().typeError('Salle requise').required('Veuillez sélectionner une salle'),
   nomPere: yup.string(),
   prenomPere: yup.string(),
@@ -142,6 +139,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
           .then(({ data }) => {
             toast.success('Étudiant ajouté avec succès ✅')
           })
+          .then(() => setFresh(!fresh))
           .then(() => reset())
           .then(() => setReload(!reload))
           .catch((error) => toast.error(error.response?.data?.message))
@@ -221,8 +219,6 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
     }
   }, [mode])
 
-
-
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
       <div className="bg-white w-full max-w-7xl h-[90vh] rounded-2xl flex shadow-2xl overflow-hidden">
@@ -271,7 +267,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
             {mode === 'ajoutstudents' ? 'ajouter un nouvel étudiant' : 'modifier cet étudiant'}.
           </p>
         </div>
- {/* design droite */}
+        {/* design droite */}
         <div className="w-2/3 p-10 flex flex-col justify-between">
           <div className="flex justify-between items-center mb-4">
             {mode === 'modifstudents' ? (
@@ -550,7 +546,6 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
               </div>
             </fieldset>
 
-          
             <fieldset className="border border-gray-200 rounded-xl p-6 shadow-sm">
               <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
                 Informations tuteur
@@ -595,7 +590,6 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
               </div>
             </fieldset>
 
-          
             <fieldset className="mb-4 border border-gray-200 rounded-xl p-6 shadow-sm">
               <legend className="text-[#895256] font-semibold text-xl mb-4 px-2">
                 Autres informations
@@ -626,7 +620,6 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
                 </div>
 
                 <div className="col-span-1 sm:col-span-2">
-               
                   <label className="block text-sm font-medium text-gray-700 mb-3">
                     Est-il enfant de professeur ? *
                   </label>

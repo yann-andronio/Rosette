@@ -320,7 +320,7 @@ function Studentsinfo(): JSX.Element {
           </h2>
 
           <button
-            onClick={()=>openModal('AdUpinfostudentsmodal')}
+            onClick={() => openModal('AdUpinfostudentsmodal')}
             className="flex cursor-pointer  items-center gap-3 px-6 py-2.5 bg-[#895256] text-white rounded-lg shadow-xl hover:bg-[#7A3B3F] transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#895256] focus:ring-opacity-50 font-bold text-sm uppercase tracking-wider"
           >
             <FaPlus size={18} className="transition duration-300" />
@@ -507,9 +507,10 @@ function Studentsinfo(): JSX.Element {
       {modal.AdUpinfostudentsmodal && (
         <AdUpinfostudentsmodal
           closemodal={() => closModal('AdUpinfostudentsmodal')}
-          mode="ajoutstudents" fresh={false} setFresh={function (boolean: any): void {
-            throw new Error('Function not implemented.')
-          } }        />
+          mode="ajoutstudents"
+          fresh={reload}
+          setFresh={setReload}
+        />
       )}
       {modal.AdUpinfostudents && (
         <AdUpinfostudentsmodal

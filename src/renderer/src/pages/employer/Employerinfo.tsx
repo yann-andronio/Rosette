@@ -108,7 +108,7 @@ function Employerinfo(): JSX.Element {
       <div className="px-20 py-8">
         <div className="flex z-0 flex-col md:flex-row justify-end items-center my-3">
           <button
-            onClick={() => openModal('AdUpEmployeemodal')}
+            onClick={() => openModal('AdUpEmploye')}
             className="flex cursor-pointer  items-center gap-3 px-6 py-2.5 bg-[#895256] text-white rounded-lg shadow-xl hover:bg-[#7A3B3F] transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#895256] focus:ring-opacity-50 font-bold text-sm uppercase tracking-wider"
           >
             <FaPlus size={18} className="transition duration-300" />
@@ -249,6 +249,16 @@ function Employerinfo(): JSX.Element {
             <AdUpEmployeemodal
               closemodal={() => closModal('AdUpEmployeemodal')}
               mode="modifemplyer"
+              id={w_id}
+              reload={reload}
+              fresh={setReload}
+            />
+          )}
+
+          {modal.AdUpEmploye && (
+            <AdUpEmployeemodal
+              closemodal={() => closModal('AdUpEmploye')}
+              mode="ajoutemployer"
               id={w_id}
               reload={reload}
               fresh={setReload}
