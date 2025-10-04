@@ -20,6 +20,7 @@ import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { data } from 'react-router-dom'
+import { RotatingLines } from 'react-loader-spinner'
 
 export type SalaireEmploye = {
   montant: number
@@ -88,10 +89,10 @@ export default function SuiviEmployerModal({
   setReloads
 }: SuiviEmployerModalProps) {
   const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
-  const [moissalaires, setMoissalaires] = useState<
-    { id: number; mois: string; payé: number; reste: 0 }[]
-  >([])
+  const [moissalaires, setMoissalaires] = useState<{ id: number; mois: string; payé: number; reste: 0 }[]>([])
   const [filtres, setFiltres] = useState<{ id: number; annee: string }[]>([])
+ const [loadSalary, setLoadSalary] = useState(false)
+
   const getFiltres = async () => {
     try {
       await axiosRequest('GET', 'ac-list', null, 'token')
@@ -102,12 +103,15 @@ export default function SuiviEmployerModal({
     }
   }
   const getMoissalaires = async () => {
+    setLoadSalary(true)
     try {
       await axiosRequest('GET', `moissalaires/${employer.id}`, null, 'token')
         .then(({ data }) => setMoissalaires(data))
         .catch((error) => console.log(error.response.data.message))
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoadSalary(false) 
     }
   }
 
@@ -146,12 +150,8 @@ export default function SuiviEmployerModal({
   }, [activeTab == 'statut', reloadstatus])
 
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
-  const [historiques, setHistoriques] = useState<
-    { id: number; montant: number; mois: string; type: number }[]
-  >([])
-  const [archconge, setArchconge] = useState<
-    { id: number; debut: string; fin: string; status: number; motif: string }[]
-  >([])
+  const [historiques, setHistoriques] = useState<{ id: number; montant: number; mois: string; type: number }[]>([])
+  const [archconge, setArchconge] = useState<{ id: number; debut: string; fin: string; status: number; motif: string }[]>([])
   const getConges = async () => {
     try {
       await axiosRequest('GET', `conge/${employer.id}`, null, 'token')
@@ -296,12 +296,15 @@ export default function SuiviEmployerModal({
   const [Selectedyearfilter, setSelectedyearfilter] = useState<number | null>(null)
 
   const getHistoriques = async () => {
+    setLoadSalary(true)
     try {
       await axiosRequest('GET', `archives/${employer.id}?year=${Selectedyearfilter}`, null, 'token')
         .then(({ data }) => setHistoriques(data))
         .catch((error) => console.log(error.response.data.message))
     } catch (err) {
       console.log('Le serveur ne repond pas')
+    } finally {
+      setLoadSalary(false)
     }
   }
 
@@ -311,6 +314,9 @@ export default function SuiviEmployerModal({
   const handleyearclick = (id: number) => {
     setSelectedyearfilter(id)
   }
+
+
+  
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
       <div className="bg-white w-full max-w-2xl h-[640px] rounded-2xl shadow-xl flex flex-col overflow-hidden">
@@ -436,49 +442,82 @@ export default function SuiviEmployerModal({
                   </div>
                   {/* Sélection des mois  */}
                   <h2 className="mt-4 mb-2 font-semibold text-gray-800">Sélectionnez un mois</h2>
-                  <div className="grid grid-cols-3 gap-2 p-3 rounded-lg border-gray-200 bg-white shadow-inner">
-                    {moissalaires.map((month) => {
-                      const isSelected = selectedMonths.includes(month.mois)
-                      if (month.payé == 1 || month.reste == 0) {
-                        return (
-                          <div
-                            key={month.id}
-                            className={`text-sm font-medium cursor-not-allowed text-center rounded-lg px-2 py-2  transition-all duration-200 border
+                  {loadSalary ? (
+                    <div className="flex justify-center items-center h-20 bg-white rounded-lg shadow-inner">
+                      <RotatingLines
+                        visible={true}
+                        strokeColor="#7A3B3F"
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        width="32"
+                      />
+                      <span className="ml-3 text-gray-600">Chargement des mois...</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2 p-3 rounded-lg border-gray-200 bg-white shadow-inner">
+                      {moissalaires.map((month) => {
+                        const isSelected = selectedMonths.includes(month.mois)
+                        if (month.payé == 1 || month.reste == 0) {
+                          return (
+                            <div
+                              key={month.id}
+                              className={`text-sm font-medium cursor-not-allowed text-center rounded-lg px-2 py-2  transition-all duration-200 border
                               ${
                                 isSelected
                                   ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
                                   : 'bg-green-500 text-gray-100  hover:bg-green-400-100'
                               }`}
-                          >
-                            {month.mois}
-                          </div>
-                        )
-                      } else {
-                        return (
-                          <div
-                            key={month.id}
-                            onClick={() => handleMonthClick(month.mois)}
-                            className={`text-sm font-medium  text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
+                            >
+                              {month.mois}
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div
+                              key={month.id}
+                              onClick={() => handleMonthClick(month.mois)}
+                              className={`text-sm font-medium  text-center rounded-lg px-2 py-2 cursor-pointer transition-all duration-200 border
                               ${
                                 isSelected
                                   ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
                                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
                               }`}
-                          >
-                            {month.mois}
-                          </div>
-                        )
-                      }
-                    })}
-                  </div>
+                            >
+                              {month.mois}
+                            </div>
+                          )
+                        }
+                      })}
+                    </div>
+                  )}
                   {errorsSalary.mois && (
                     <p className="text-red-500 text-xs mt-1">{errorsSalary.mois.message}</p>
                   )}
                   <button
+                    disabled={loadSalary}
                     type="submit"
-                    className="w-full mt-4 py-2.5 bg-[#895256] text-white rounded-lg font-semibold hover:bg-[#6a4247] transition shadow-md flex items-center justify-center gap-2"
+                    className={`w-full mt-4 py-2.5 rounded-lg font-semibold transition shadow-md flex items-center justify-center gap-2 ${
+                      loadSalary
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-[#895256] text-white hover:bg-[#6a4247]'
+                    }`}
                   >
-                    <FiSave /> Enregistrer
+                    {loadSalary ? (
+                      <div className="flex items-center gap-2">
+                        <RotatingLines
+                          visible={true}
+                          strokeColor="white"
+                          strokeWidth="5"
+                          animationDuration="0.75"
+                          width="20"
+                        />
+                        En cours...
+                      </div>
+                    ) : (
+                      <>
+                        <FiSave /> Enregistrer
+                      </>
+                    )}
                   </button>
                 </form>
 
@@ -508,11 +547,26 @@ export default function SuiviEmployerModal({
                 </div>
 
                 {/* Historique */}
+                {/* Historique */}
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-md font-bold text-gray-700">Historique des paiements</h3>
                   </div>
-                  {historiques.length > 0 ? (
+
+                  {/* LOADER CONDITIONNEL */}
+                  {loadSalary ? (
+                    <div className="flex justify-center items-center h-20">
+                      <RotatingLines
+                        visible={true}
+                        strokeColor="#7A3B3F" 
+                        strokeWidth="5"
+                        animationDuration="0.75"
+                        width="32"
+                      />
+                      <span className="ml-3 text-gray-600">Chargement de l'historique...</span>
+                    </div>
+                  ) : 
+                  historiques.length > 0 ? (
                     <ul className="space-y-2">
                       {historiques.map((item, index) => (
                         <li
@@ -538,17 +592,16 @@ export default function SuiviEmployerModal({
                             >
                               <FaPrint className="text-gray-600" />
                             </button>
+                            {/* Le bouton de suppression a été commenté dans votre code original : */}
                             {/* <button className="p-1 rounded-md hover:bg-gray-100">
-                              <FiEdit2 className="text-blue-500" />
-                            </button> */}
-                            <button className="p-1 rounded-md hover:bg-gray-100">
-                              {/*<FiTrash2 className="text-red-500" />*/}
-                            </button>
+                <FiTrash2 className="text-red-500" />
+              </button> */}
                           </div>
                         </li>
                       ))}
                     </ul>
                   ) : (
+                    // MESSAGE SI L'HISTORIQUE EST VIDE
                     <div className="text-center text-gray-500 text-sm py-4">
                       Aucun historique de salaire disponible.
                     </div>
