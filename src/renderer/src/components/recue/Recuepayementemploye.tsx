@@ -2,6 +2,7 @@ import { Monthlistedata } from '@renderer/data/Monthlistedata'
 import logo from '../../images/logo.jpg'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
+import { formatDate } from '@renderer/utils/FormatDate'
 
 type Salaire = {
   mois: number[]
@@ -68,10 +69,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
           <span className="font-semibold">Fonction :</span> {employer?.profs.profession || '-'}
         </p>
         <p>
-          <span className="font-semibold">Date d'embauche :</span>{' '}
-          {employer.created_at}
-
-
+          <span className="font-semibold">Date d'embauche :</span> {formatDate(employer.created_at)}
         </p>
       </div>
 
@@ -91,7 +89,13 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
             <tr>
               <td className="border px-2 py-1">{moisLabel}</td>
               <td className="border px-2 py-1">{formatNumber(salaire.montant)}</td>
-              <td className="border px-2 py-1">{salaire.type==1?'Salaire Complet':salaire.type==0?"Avance sur Salaire":"Reste sur Salaire"}</td>
+              <td className="border px-2 py-1">
+                {salaire.type == 1
+                  ? 'Salaire Complet'
+                  : salaire.type == 0
+                    ? 'Avance sur Salaire'
+                    : 'Reste sur Salaire'}
+              </td>
               <td className="border px-2 py-1">{salaire.motif || '-'}</td>
             </tr>
           </tbody>

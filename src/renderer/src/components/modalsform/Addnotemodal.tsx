@@ -16,10 +16,10 @@ type NotemodalProps = {
 
 const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student, reload, setReload }) => {
   const ValidationSchema = yup.object({
-    note1: yup.number(),
-    note2: yup.number(),
-    note3: yup.number(),
-    noteTotal: yup.number()
+    note1: yup.number().typeError('Vous devez mettre une note'),
+    note2: yup.number().typeError('Vous devez mettre une note'),
+    note3: yup.number().typeError('Vous devez mettre une note'),
+    noteTotal: yup.number().typeError('Vous devez mettre une Total')
   })
 
   const {
