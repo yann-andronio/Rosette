@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker'
 import { format, parse, isValid } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { FaCalendarAlt, FaFilter } from 'react-icons/fa'
+import { RiResetLeftFill } from 'react-icons/ri'
 import 'react-datepicker/dist/react-datepicker.css'
 import './custom-datepicker.css'
 
@@ -89,7 +90,7 @@ export function Calendarfilter({setDebut, setFin , SetReset , reset}:{setDebut:(
           onClick={handleReset}
           className="w-full justify-center  flex items-center gap-2 px-4 py-2 bg-[#895256] text-white font-medium rounded-xl shadow-md hover:bg-[#6e3e42] transition-colors"
         >
-          <FaFilter size={15} />
+          <RiResetLeftFill size={15} />
           Réinitialiser
         </button>
         <button

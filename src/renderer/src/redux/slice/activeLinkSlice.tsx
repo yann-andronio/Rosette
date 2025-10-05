@@ -16,9 +16,13 @@ const activeLinkSlice = createSlice({
     },
     toggleCloseBar: (state) => {
       state.closeBar = !state.closeBar
-    }
+    },
+    resetActiveName: (state) => {
+  state.activeName = 'Dashboard'
+}
+
   }
 })
 
-export const { setActiveName, toggleCloseBar } = activeLinkSlice.actions
+export const { setActiveName, toggleCloseBar, resetActiveName } = activeLinkSlice.actions
 export default activeLinkSlice.reducer

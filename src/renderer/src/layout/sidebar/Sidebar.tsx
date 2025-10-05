@@ -1,4 +1,4 @@
-import { setActiveName } from '@renderer/redux/slice/activeLinkSlice'
+import { resetActiveName, setActiveName } from '@renderer/redux/slice/activeLinkSlice'
 import { RootState } from '@renderer/redux/Store'
 import { useState, useEffect } from 'react'
 import { LuLayoutDashboard, LuGraduationCap } from 'react-icons/lu'
@@ -92,7 +92,10 @@ const Sidebar = () => {
       await axiosRequest('GET', 'logout', null, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => localStorage.removeItem('ACCESS_TOKEN'))
-        .then(() => navigate('/'))
+        .then(() => {
+          dispatch(resetActiveName())
+          navigate('/')
+        })
         .catch((error) => console.log(error))
     } catch (error) {
       console.log('Le serveur ne repond pas')

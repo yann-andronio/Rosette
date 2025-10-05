@@ -7,7 +7,7 @@ import userReducer from './slice/userSlice'
 const activeLinkPersistConfig = {
   key: 'activeLink',
   storage,
-   whitelist: ['activeName']
+  //  whitelist: ['activeName']
 }
 
 const userPersistConfig = {
