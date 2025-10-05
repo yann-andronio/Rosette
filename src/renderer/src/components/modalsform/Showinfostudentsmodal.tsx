@@ -110,12 +110,12 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
           <h2 className="text-2xl font-semibold text-center">
             {student.nom} {student.prenom}
           </h2>
+          <p className="text-sm mt-1 opacity-80">
+            Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
+          </p>
           <p className="mt-1 text-sm italic opacity-90">
             {student?.sousetudiants[student?.sousetudiants?.length - 1]?.salle?.nom_salle} -{' '}
             {student?.sousetudiants[student?.sousetudiants?.length - 1]?.annee?.annee}
-          </p>
-          <p className="text-sm mt-1 opacity-80">
-            Matricule : <span className="font-medium">{student.matricule || 'N/A'}</span>
           </p>
         </div>
 
@@ -128,7 +128,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
             </h3>
             <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-base">
               <p>
-                <span className="font-medium">Sexe :</span> {student.sexe == 1 ? 'Homme' : 'Femme'}
+                <span className="font-medium">Sexe :</span> {student.sexe == 1 ? 'Garçon' : 'Fille'}
               </p>
 
               {student.dateNaissance && (
@@ -151,11 +151,12 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                   <span className="font-medium">École précédente :</span> {student.ecole}
                 </p>
               )}
-              {student.enfantProf && (
+            
                 <p>
-                  <span className="font-medium">enfant de prof :</span> {student.enfantProf == 1 ? " Oui" : "Non"}
+                  <span className="font-medium">enfant de prof :</span>{' '}
+                  {student.enfantProf == 1 ? 'Oui' : 'Non'}
                 </p>
-              )}
+              
             </div>
           </section>
 
