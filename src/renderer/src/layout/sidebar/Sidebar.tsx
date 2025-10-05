@@ -242,7 +242,7 @@ const Sidebar = () => {
               </div>
             ) : (
               <>
-                <FiLogOut size={22} />
+                  <FiLogOut onClick={() => logout()} size={22} />
                 {!closeBar && (
                   <span onClick={() => logout()} className="ml-3">
                     Se deconnecter

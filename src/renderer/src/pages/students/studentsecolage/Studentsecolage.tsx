@@ -20,57 +20,76 @@ function Studentsecolage(): JSX.Element {
   const [searcheleves, setSearcheleves] = useState('')
   const [selectedyears, setselectedyears] = useState<string>('0')
   const [selectedsalle, setselectedsalle] = useState<string>('0')
-  const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
-  const [classes, setClasses] = useState<{id:number, nom_classe:string}[]>([])
-  const [salles, setSalles] = useState<{id:number, nom_salle:string}[]>([])
+  const [acs, setAcs] = useState<{ id: number; annee: string }[]>([])
+  const [classes, setClasses] = useState<{ id: number; nom_classe: string }[]>([])
+  const [salles, setSalles] = useState<{ id: number; nom_salle: string }[]>([])
   const [selectedniveau, setselectedniveau] = useState<string>('0')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [macs, setMacs] = useState<{id:number, mois:string}[]>([])
+  const [macs, setMacs] = useState<{ id: number; mois: string }[]>([])
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
   const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('0')
   const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('0')
-  const [students, setStudents] = useState<{ per_page:number, total:number,  last_page:number, data:Etudiant[]}>({last_page:1, data:[], total:0, per_page:0})
-
+  const [students, setStudents] = useState<{
+    per_page: number
+    total: number
+    last_page: number
+    data: Etudiant[]
+  }>({ last_page: 1, data: [], total: 0, per_page: 0 })
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
   const [reload, setReload] = useState<boolean>(false)
 
-  const getEtudiants = async ()=>  {
+  const getEtudiants = async () => {
     setIsLoading(true)
-    try{
-      await axiosRequest('GET', `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`, null , 'token')
-        .then(({data}) => setStudents((data)))
+    try {
+      await axiosRequest(
+        'GET',
+        `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`,
+        null,
+        'token'
+      )
+        .then(({ data }) => setStudents(data))
         .then(() => setIsLoading(false))
-        .catch(error => console.log(error.response.data?.message))
+        .catch((error) => console.log(error.response.data?.message))
         .finally(() => setIsLoading(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const precedent = (current) => {
-    if(current > 1){
+    if (current > 1) {
       setCurrentPage(current - 1)
     }
   }
 
   const suivant = (current) => {
-    if(current < students.last_page){
+    if (current < students.last_page) {
       setCurrentPage(current + 1)
     }
   }
 
   useEffect(() => {
     getEtudiants()
-  }, [currentPage, lines, selectedSexe, selectedyears, selectedniveau, selectedsalle, searcheleves, reload, selectedstatusecolage, selectedmoisEcolage])
+  }, [
+    currentPage,
+    lines,
+    selectedSexe,
+    selectedyears,
+    selectedniveau,
+    selectedsalle,
+    searcheleves,
+    reload,
+    selectedstatusecolage,
+    selectedmoisEcolage
+  ])
 
-  const pagination:number[] = []
-  for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
+  const pagination: number[] = []
+  for (let i: number = 1; i <= Math.ceil(students?.total / students.per_page); i++) {
     pagination.push(i)
   }
   const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
-
 
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
     setter((prev) => (prev === current ? '0' : current))
@@ -80,52 +99,48 @@ function Studentsecolage(): JSX.Element {
     setSearcheleves(dataeleve)
   }
 
-
-
   const { modal, openModal, closModal } = useMultiModals()
 
   const getAcs = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'ac-list', null, 'token')
-        .then(({data}) => setAcs(data))
-        .catch(error => console.log(error.response?.data?.message))
-    }catch(error){
+        .then(({ data }) => setAcs(data))
+        .catch((error) => console.log(error.response?.data?.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getClasse = async () => {
-
-    try{
+    try {
       await axiosRequest('GET', `classe-list_year/${selectedyears}`, null, 'token')
-        .then(({data}) => setClasses(data))
-        .catch(error => console.log(error.response?.data?.message))
-    }catch(error){
+        .then(({ data }) => setClasses(data))
+        .catch((error) => console.log(error.response?.data?.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getMac = async () => {
-
-    try{
+    try {
       await axiosRequest('GET', `mac-list_year/${selectedyears}`, null, 'token')
-        .then(({data}) => setMacs(data))
-        .catch(error => console.log(error.response?.data?.message))
-    }catch(error){
+        .then(({ data }) => setMacs(data))
+        .catch((error) => console.log(error.response?.data?.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getSalle = async () => {
-    try{
+    try {
       await axiosRequest('GET', `salle-list_year/${selectedyears}`, null, 'token')
-        .then(({data}) => setSalles(data))
-        .catch(error => console.log(error.response?.data?.message))
-    }catch(error){
+        .then(({ data }) => setSalles(data))
+        .catch((error) => console.log(error.response?.data?.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
-  const nextPage = (page:number) =>{
+  const nextPage = (page: number) => {
     setCurrentPage(page)
   }
   useEffect(() => {
@@ -134,7 +149,6 @@ function Studentsecolage(): JSX.Element {
     getSalle()
     getMac()
   }, [selectedyears])
-
 
   //  ${
   //       Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''
@@ -338,7 +352,6 @@ function Studentsecolage(): JSX.Element {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
                 <option value={150}>150</option>
-
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
@@ -359,45 +372,45 @@ function Studentsecolage(): JSX.Element {
               <div className="flex-1">Opération</div>
             </div>
           </div>
-{/*<<<<<<< HEAD*/}
-{/*          {isLoading?<div className='flex w-full justify-center'><RotatingLines*/}
-{/*            visible={true}*/}
+          {/*<<<<<<< HEAD*/}
+          {/*          {isLoading?<div className='flex w-full justify-center'><RotatingLines*/}
+          {/*            visible={true}*/}
 
-{/*            width='50'*/}
-{/*              strokeColor="#7A3B3F"*/}
-{/*              strokeWidth="5"*/}
-{/*              animationDuration="0.75"*/}
-{/*              ariaLabel="rotating-lines-loading"*/}
-{/*            /></div>:<>*/}
-{/*          <div className="space-y-2 max-h-[60vh] overflow-y-auto">*/}
-{/*            {students?.data.length === 0 ? (*/}
-{/*              <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>*/}
-{/*            ) : (*/}
-{/*              students?.data.map((student, index) => (*/}
-{/*                <div*/}
-{/*                  key={index}*/}
-{/*                  className={`flex px-6 py-2 rounded-lg items-center ${*/}
-{/*                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'*/}
-{/*                  } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}*/}
-{/*                >*/}
-{/*                  <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">*/}
-{/*                    <div className="image bg-[#895256] p-2 rounded-lg">*/}
-{/*                      <img*/}
-{/*                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}*/}
-{/*                        alt="Profil"*/}
-{/*                        className="rounded-sm w-10 h-10"*/}
-{/*                      />*/}
-{/*                    </div>*/}
-{/*                  </div>*/}
+          {/*            width='50'*/}
+          {/*              strokeColor="#7A3B3F"*/}
+          {/*              strokeWidth="5"*/}
+          {/*              animationDuration="0.75"*/}
+          {/*              ariaLabel="rotating-lines-loading"*/}
+          {/*            /></div>:<>*/}
+          {/*          <div className="space-y-2 max-h-[60vh] overflow-y-auto">*/}
+          {/*            {students?.data.length === 0 ? (*/}
+          {/*              <div className="text-center mt-10 text-gray-600">Aucun élève trouvé</div>*/}
+          {/*            ) : (*/}
+          {/*              students?.data.map((student, index) => (*/}
+          {/*                <div*/}
+          {/*                  key={index}*/}
+          {/*                  className={`flex px-6 py-2 rounded-lg items-center ${*/}
+          {/*                    index % 2 === 0 ? 'bg-white' : 'bg-gray-100'*/}
+          {/*                  } hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}*/}
+          {/*                >*/}
+          {/*                  <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">*/}
+          {/*                    <div className="image bg-[#895256] p-2 rounded-lg">*/}
+          {/*                      <img*/}
+          {/*                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}*/}
+          {/*                        alt="Profil"*/}
+          {/*                        className="rounded-sm w-10 h-10"*/}
+          {/*                      />*/}
+          {/*                    </div>*/}
+          {/*                  </div>*/}
 
-{/*                  <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>*/}
-{/*                  <div className="flex-1 text-gray-700">{student.prenom}</div>*/}
-{/*                  <div className="flex-1 text-gray-700">{student.sexe}</div>*/}
-{/*                  <div className="flex-1 text-gray-700">{student.sousetudiants[student.sousetudiants.length -1]?.salle?.nom_salle}</div>*/}
-{/*                  <div className="flex-1 ">*/}
-{/*                    <span*/}
-{/*                      className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(et => et.payé == 1) == true? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}*/}
-{/*=======*/}
+          {/*                  <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>*/}
+          {/*                  <div className="flex-1 text-gray-700">{student.prenom}</div>*/}
+          {/*                  <div className="flex-1 text-gray-700">{student.sexe}</div>*/}
+          {/*                  <div className="flex-1 text-gray-700">{student.sousetudiants[student.sousetudiants.length -1]?.salle?.nom_salle}</div>*/}
+          {/*                  <div className="flex-1 ">*/}
+          {/*                    <span*/}
+          {/*                      className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(et => et.payé == 1) == true? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}*/}
+          {/*=======*/}
           {isLoading ? (
             <div className="flex w-full justify-center">
               <RotatingLines
@@ -425,10 +438,10 @@ function Studentsecolage(): JSX.Element {
                       <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
                         <div className="image bg-[#895256] p-2 rounded-lg">
                           <img
-                                             src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
-                                             alt="Profil"
-                                              className="rounded-sm w-10 h-10"
-                                              />
+                            src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
+                            alt="Profil"
+                            className="rounded-sm w-10 h-10"
+                          />
                         </div>
                       </div>
 

@@ -22,23 +22,23 @@ interface FormValues {
 
 const schema = yup.object({
   motif: yup.string().required('Le motif est requis'),
+
   ecolage: yup
     .number()
-    .transform((v) => (isNaN(v) ? 0 : v))
-    .required()
-    .default(0)
+    .typeError("Le montant de l'écolage doit être un nombre")
+    .required("Le montant de l'écolage est requis")
     .min(0, "Le montant de l'écolage doit être >= 0"),
+
   droit: yup
     .number()
-    .transform((v) => (isNaN(v) ? 0 : v))
-    .required()
-    .default(0)
-    .min(0, 'Le montant du droit doit être >= 0'),
+    .typeError('Le montant du dépôt doit être un nombre')
+    .required('Le montant du dépôt est requis')
+    .min(0, 'Le montant du dépôt doit être >= 0'),
+
   kermesse: yup
     .number()
-    .transform((v) => (isNaN(v) ? 0 : v))
-    .required()
-    .default(0)
+    .typeError('Le montant de la kermesse doit être un nombre')
+    .required('Le montant de la kermesse est requis')
     .min(0, 'Le montant de la kermesse doit être >= 0')
 })
 
@@ -99,7 +99,7 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
       <div className="flex items-center justify-center text-white gap-3 mb-5">
         <h1 className="text-2xl font-bold">Retirer de l'argent</h1>
       </div>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[60vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             {['retirer', 'historique'].map((tab) => (
