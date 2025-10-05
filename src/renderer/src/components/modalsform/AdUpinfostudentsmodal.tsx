@@ -346,8 +346,8 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
                     }`}
                   >
                     <option value="">Sélectionnez</option>
-                    <option value={1}>Homme</option>
-                    <option value={0}>Femme</option>
+                    <option value={1}>Garçcon</option>
+                    <option value={0}>Fille</option>
                   </select>
                   {errors.sexe && (
                     <p className="text-red-500 text-xs mt-1 italic font-semibold">
