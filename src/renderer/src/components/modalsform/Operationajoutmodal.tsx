@@ -5,35 +5,36 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import { ThreeDots } from 'react-loader-spinner'
 
 type OperationProps = {
   closemodal: () => void
-reload : boolean
-  setReload : (value:boolean) => void
+  reload: boolean
+  setReload: (value: boolean) => void
 }
 
 interface FormValues {
   motif: string
   ecolage: number
-droit: number
-kermesse: number
+  droit: number
+  kermesse: number
 }
 
 const schema = yup.object({
   motif: yup.string().required('Le motif est requis'),
-ecolage: yup
+  ecolage: yup
     .number()
     .transform((v) => (isNaN(v) ? 0 : v))
     .required()
     .default(0)
     .min(0, "Le montant de l'écolage doit être >= 0"),
-droit: yup
+  droit: yup
     .number()
     .transform((v) => (isNaN(v) ? 0 : v))
     .required()
     .default(0)
     .min(0, 'Le montant du dépôt doit être >= 0'),
-kermesse: yup
+  kermesse: yup
     .number()
     .transform((v) => (isNaN(v) ? 0 : v))
     .required()
@@ -41,7 +42,7 @@ kermesse: yup
     .min(0, 'Le montant de la kermess doit être >= 0')
 })
 
-export default function Operationajoutmodal({ closemodal, reload , setReload }: OperationProps) {
+export default function Operationajoutmodal({ closemodal, reload, setReload }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
   const [historiques, setHistoriques] = useState<
     { id: number; motif: string; ops: { type: string; montant: number }[]; created_at: string }[]
@@ -59,35 +60,35 @@ export default function Operationajoutmodal({ closemodal, reload , setReload }: 
   })
 
   const getHistoriques = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'plus-list', 'null', 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error.response.data.message))
-    }catch(error){
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error.response.data.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getHistoriques()
-  }, [activeTab=='historique'])
+  }, [activeTab == 'historique'])
+  const [isLoadingAddOperation, setIsLoadingAddOperation] = useState(false)
 
-  const onSubmit =async (data: FormValues) => {
-
-
-    try{
+  const onSubmit = async (data: FormValues) => {
+    setIsLoadingAddOperation(true)
+    try {
       await axiosRequest('POST', 'op-plus', data, 'token')
-        .then(({data}) => toast.success(data.message))
+        .then(({ data }) => toast.success(data.message))
         .then(() => reset())
         .then(() => setActiveTab('historique'))
         .then(() => setReload(!reload))
-        .catch((err) => toast.error(err.response.data.message) )
-    }catch (error){
+        .catch((err) => toast.error(err.response.data.message))
+        .finally(() => setIsLoadingAddOperation(false))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
     seterrorkely(null)
   }
-
 
   // const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
 
@@ -153,9 +154,7 @@ export default function Operationajoutmodal({ closemodal, reload , setReload }: 
                   placeholder="Montant"
                 />
                 {errors.ecolage && (
-                  <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.ecolage.message}
-                  </p>
+                  <p className="text-sm text-red-600 font-medium mt-1">{errors.ecolage.message}</p>
                 )}
               </div>
 
@@ -172,9 +171,7 @@ export default function Operationajoutmodal({ closemodal, reload , setReload }: 
                   placeholder="Montant"
                 />
                 {errors.droit && (
-                  <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.droit.message}
-                  </p>
+                  <p className="text-sm text-red-600 font-medium mt-1">{errors.droit.message}</p>
                 )}
               </div>
 
@@ -191,9 +188,7 @@ export default function Operationajoutmodal({ closemodal, reload , setReload }: 
                   placeholder="Montant"
                 />
                 {errors.kermesse && (
-                  <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.kermesse.message}
-                  </p>
+                  <p className="text-sm text-red-600 font-medium mt-1">{errors.kermesse.message}</p>
                 )}
               </div>
             </div>
@@ -215,7 +210,23 @@ export default function Operationajoutmodal({ closemodal, reload , setReload }: 
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} /> Ajouter
+                {isLoadingAddOperation ? (
+                  <ThreeDots
+                    visible={true}
+                    height="20"
+                    width="50"
+                    color="pink"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  <div className="flex items-center justify-center gap-2 ">
+                    <FiPlus size={18} />
+                    <p>Ajouter</p>
+                  </div>
+                )}
               </button>
             </div>
           </form>

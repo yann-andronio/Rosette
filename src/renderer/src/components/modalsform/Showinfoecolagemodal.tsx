@@ -16,7 +16,7 @@ import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { formatDate } from '../../utils/FormatDate'
-
+import { RotatingLines } from 'react-loader-spinner'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -35,37 +35,55 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
   const eleveNom = `${student.prenom} ${student.nom}`
 
   const [paymois, setPaymois] = useState()
-  const [up, setUp] =useState(false)
-const pay = async (id:number, cost:number) => {
-    try{
-      await axiosRequest('PUT', `ecolage-pay/${id}`, {cost:cost, eleve: eleveNom, classe:student.sousetudiants[student.sousetudiants.length -1].classe.nom_classe, salle:student.sousetudiants[student.sousetudiants.length -1].salle.nom_salle, annee:student.sousetudiants[student.sousetudiants.length -1].annee.annee, ac_id:student.sousetudiants[student.sousetudiants.length -1].annee.id, prof:student.enfantProf}, 'token')
-        .then(({data}) => toast.success(data?.message))
+  const [up, setUp] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const pay = async (id: number, cost: number) => {
+    try {
+      await axiosRequest(
+        'PUT',
+        `ecolage-pay/${id}`,
+        {
+          cost: cost,
+          eleve: eleveNom,
+          classe: student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
+          salle: student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
+          annee: student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
+          ac_id: student.sousetudiants[student.sousetudiants.length - 1].annee.id,
+          prof: student.enfantProf
+        },
+        'token'
+      )
+        .then(({ data }) => toast.success(data?.message))
         .then(() => fresh(!reload))
         // .then(() => closemodal())
         .then(() => setUp(!up))
-        // .catch(error => console.log(error))
-    }catch (error){
+      // .catch(error => console.log(error))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getEcolage = async () => {
-    try{
-      await axiosRequest('GET', `pay-mois/${student.sousetudiants[student.sousetudiants.length - 1].id}`, null, 'token')
-        .then(({data}) => setPaymois(data))
-        .catch(error => console.log(error))
-    }catch(error){
+    setIsLoading(true)
+    try {
+      await axiosRequest(
+        'GET',
+        `pay-mois/${student.sousetudiants[student.sousetudiants.length - 1].id}`,
+        null,
+        'token'
+      )
+        .then(({ data }) => setPaymois(data))
+        .catch((error) => console.log(error))
+    } catch (error) {
       console.log(error)
+    } finally {
+      setIsLoading(false)
     }
-
   }
 
   useEffect(() => {
     getEcolage()
   }, [up])
-
-
-
 
   const [selectedEcolage, setSelectedEcolage] = useState<any | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
@@ -127,84 +145,112 @@ const pay = async (id:number, cost:number) => {
           <h3 className="text-xl font-semibold text-[#895256] mt-2">Paiements d'écolage</h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-          {paymois?.ecolage.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col justify-between p-4 rounded-2xl bg-white border border-gray-200 shadow-md transition hover:shadow-xl hover:-translate-y-1"
-            >
-              <div className="flex justify-between items-center mb-3">
-
-                <h4 className="font-semibold text-gray-700">{item?.mois}</h4>
-                {item?.payé === 1 ? (
-                  <div className="flex gap-5">
-                    <FaPrint
-                      className="text-gray-600 cursor-pointer hover:text-blue-500"
-                      onClick={() =>
-                        handlePrint({
-                          eleve: eleveNom,
-                          classe:student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
-                          salle:student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
-                          annee:student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
-                          mois: item?.mois,
-                          montant:student.sousetudiants[student.sousetudiants.length - 1].classe.ecolage,
-                          datePaiement: item?.updated_at
-                        })
-                      }
-                    />
-
-                    <FaCheckCircle className="text-green-500 text-lg" />
-                  </div>
-                ) : (
-                  <FaTimesCircle className="text-red-500 text-lg" />
-                )}
-              </div>
-
-              <div className="flex flex-col gap-2 mt-1">
-                <div className="flex items-center gap-2 text-gray-700 font-medium text-sm">
-                  <FaWallet className="text-[#895256]" />
-                  <span>
-                    {student.sousetudiants[
-                      student.sousetudiants.length - 1
-                    ]?.classe?.ecolage?.toLocaleString()}{' '}
-                    Ar
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 text-xs">
-                  <FaCalendarAlt className="text-[#895256]" />
-                  <span>{item.payé == 1 ? formatDate(item.updated_at) : 'Non payé'}</span>
-                </div>
-              </div>
-              {item.payé ? (
-                <span
-                  className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
-                    item.payé === 1
-                      ? 'bg-green-600 cursor-not-allowed'
-                      : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
-                  }`}
-                >
-                  {item.payé == 1 ? 'Payé' : 'Non Payé'}
-                </span>
-              ) : (
-                <span
-                  onClick={() =>
-                    handleRequestPayment(
-                      item.id,
-                      item.mois,
-                      student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage || 0
-                    )
-                  }
-                  className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
-                    item.payé === 1
-                      ? 'bg-green-600 cursor-not-allowed'
-                      : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
-                  }`}
-                >
-                  {item.payé == 1 ? 'Payé' : 'Non Payé'}
-                </span>
-              )}
+        <div
+          className={` ${isLoading ? ' flex items-center justify-center' : ' grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 '}`}
+        >
+          {isLoading ? (
+            <div className="flex w-full h-full items-center justify-center">
+              <RotatingLines
+                visible={true}
+                strokeColor="#7A3B3F"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+              />
             </div>
-          ))}
+          ) : (
+            <>
+              {paymois?.ecolage.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col justify-between p-4 rounded-2xl bg-white border border-gray-200 shadow-md transition hover:shadow-xl hover:-translate-y-1"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="font-semibold text-gray-700">{item?.mois}</h4>
+                    {item?.payé === 1 ? (
+                      <div className="flex group gap-5">
+                        <div className="relative group">
+                          <span className=" absolute bottom-full left-1/2 transform -translate-x-1/2  mb-2 px-2 py-1  text-xs font-medium text-white  bg-gray-800 rounded-lg shadow-lg  opacity-0 group-hover:opacity-100  transition-opacity duration-300 whitespace-nowrap  ">
+                            Imprimer le reçu
+                          </span>
+                          <FaPrint
+                            className="text-gray-600 cursor-pointer hover:text-blue-500"
+                            onClick={() =>
+                              handlePrint({
+                                eleve: eleveNom,
+                                classe:
+                                  student.sousetudiants[student.sousetudiants.length - 1].classe
+                                    .nom_classe,
+                                salle:
+                                  student.sousetudiants[student.sousetudiants.length - 1].salle
+                                    .nom_salle,
+                                annee:
+                                  student.sousetudiants[student.sousetudiants.length - 1].annee
+                                    .annee,
+                                mois: item?.mois,
+                                montant:
+                                  student.sousetudiants[student.sousetudiants.length - 1].classe
+                                    .ecolage,
+                                datePaiement: item?.updated_at
+                              })
+                            }
+                          />
+                        </div>
+                        <FaCheckCircle className="text-green-500 text-lg" />
+                      </div>
+                    ) : (
+                      <FaTimesCircle className="text-red-500 text-lg" />
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-2 mt-1">
+                    <div className="flex items-center gap-2 text-gray-700 font-medium text-sm">
+                      <FaWallet className="text-[#895256]" />
+                      <span>
+                        {student.sousetudiants[
+                          student.sousetudiants.length - 1
+                        ]?.classe?.ecolage?.toLocaleString()}{' '}
+                        Ar
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-500 text-xs">
+                      <FaCalendarAlt className="text-[#895256]" />
+                      <span>{item.payé == 1 ? formatDate(item.updated_at) : 'Non payé'}</span>
+                    </div>
+                  </div>
+                  {item.payé ? (
+                    <span
+                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
+                        item.payé === 1
+                          ? 'bg-green-600 cursor-not-allowed'
+                          : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
+                      }`}
+                    >
+                      {item.payé == 1 ? 'Payé' : 'Non Payé'}
+                    </span>
+                  ) : (
+                    <span
+                      onClick={() =>
+                        handleRequestPayment(
+                          item.id,
+                          item.mois,
+                          student.sousetudiants[student.sousetudiants.length - 1]?.classe
+                            ?.ecolage || 0
+                        )
+                      }
+                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
+                        item.payé === 1
+                          ? 'bg-green-600 cursor-not-allowed'
+                          : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
+                      }`}
+                    >
+                      {item.payé == 1 ? 'Payé' : 'Non Payé'}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
 
