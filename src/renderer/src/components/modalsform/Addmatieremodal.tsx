@@ -5,6 +5,10 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import { ThreeDots } from 'react-loader-spinner'
+import { formatDate } from '@renderer/utils/FormatDate'
 
 type OperationProps = { closemodal: () => void }
 
@@ -23,6 +27,8 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
   const [historiques, setHistoriques] = useState<{nom:string, id:number,created_at}[]>([])
   const [reload, setReload] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState(false)
+
 
 
   const {
@@ -47,6 +53,8 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
     getHistoriques()
   }, [activeTab, reload])
   const onSubmit = async (data: FormValues) => {
+setIsLoading(true)
+    
     try{
       await axiosRequest('POST', 'domaines', data, 'token')
         .then(({data}) => toast.success(data.message))
@@ -55,6 +63,8 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
         .catch(error => toast.error(error.response.data.message))
     }catch(err){
       console.error('Le serveur ne repond pas')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -68,6 +78,29 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
       console.log("Le serveur ne repond pas")
     }
   }
+
+
+    const [matiereToDelet, setmatiereToDelet] = useState<{ id: number; nom: string } | null>(null)
+    const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+  const { openModal, modal, closModal } = useMultiModals()
+  
+
+   const handleclickDelete = (id: number, nom: string) => {
+     setmatiereToDelet({ id, nom })
+     openModal('confirmDelete')
+   }
+
+   const handleConfirmDelete = async () => {
+     if (!matiereToDelet) return
+     setIsDeletingLoader(true)
+     try {
+       await removeHistorique(matiereToDelet.id)
+     } finally {
+       setIsDeletingLoader(false)
+       setmatiereToDelet(null)
+       //  closModal('confirmDelete')
+     }
+   }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -102,7 +135,6 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
         {activeTab === 'ajouter' ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-
               <input
                 {...register('nom')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
@@ -129,7 +161,13 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} /> Ajouter
+                {isLoading ? (
+                  <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
+                ) : (
+                  <>
+                    <FiPlus size={18} /> Ajouter
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -146,11 +184,10 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
                   >
                     <div>
                       <p className="font-semibold">Matière : {nom}</p>
-                      <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
-                      {/* J'ai supprimé la liste 'ops' car elle contenait le montant */}
+                      <p className="text-xs text-gray-500 mb-1">Date : {formatDate(created_at)}</p>
                     </div>
                     <button
-                      onClick={() => removeHistorique(id)}
+                      onClick={() => handleclickDelete(id, nom)}
                       className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                     >
                       <FiTrash2 size={18} />
@@ -162,6 +199,16 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
           </div>
         )}
       </div>
+
+      {modal.confirmDelete && matiereToDelet && (
+        <ConfirmDeleteModal
+          title="Supprimer la classe"
+          message={`Voulez-vous vraiment supprimer la matière de ${matiereToDelet.nom} ?`}
+          onConfirm={handleConfirmDelete}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isDeletingLoader}
+        />
+      )}
     </div>
   )
 }

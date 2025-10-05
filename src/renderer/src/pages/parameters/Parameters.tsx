@@ -1,7 +1,17 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import { FiUserPlus, FiCalendar, FiLayers, FiBookOpen, FiUserCheck, FiUploadCloud, FiDownloadCloud, FiCreditCard, FiBarChart2 } from 'react-icons/fi'
+import {
+  FiUserPlus,
+  FiCalendar,
+  FiLayers,
+  FiBookOpen,
+  FiUserCheck,
+  FiUploadCloud,
+  FiDownloadCloud,
+  FiCreditCard,
+  FiBarChart2
+} from 'react-icons/fi'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addniveaumodal from '@renderer/components/modalsform/Addniveaumodal'
@@ -20,77 +30,136 @@ import Nifmodal from '@renderer/components/modalsform/Nifmodal'
 import Statmodal from '@renderer/components/modalsform/Statmodal'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Triangle } from 'react-loader-spinner'
+import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
+import { useNavigate } from 'react-router-dom'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const { openModal, modal, closModal } = useMultiModals()
-    const [reload, setReload] = useState<boolean>(false)
+  const [reload, setReload] = useState<boolean>(false)
   const [isBackup, setIsBAckup] = useState<boolean>(false)
+  const [importFileName, setImportFileName] = useState<string | null>(null)
 
   const handleOpenModal = (modalName: string) => () => openModal(modalName)
 
   const buttonsForParamsStudents = [
-    { icon: <FiUserPlus size={28} />, label: 'Ajouter un élève', modalName: 'AdUpinfostudentsmodal' },
-    { icon: <FiCalendar size={28} />, label: 'Ajouter une année scolaire', modalName: 'Addyearmodal' },
+    {
+      icon: <FiCalendar size={28} />,
+      label: 'Ajouter une année scolaire',
+      modalName: 'Addyearmodal'
+    },
     { icon: <FiLayers size={28} />, label: 'Ajouter une niveau', modalName: 'Addniveaumodal' },
-    { icon: <FiBookOpen size={28} />, label: `Réglage d'admission`, modalName: 'Choosestatusmoyennemodalparams' },
+    {
+      icon: <FiBookOpen size={28} />,
+      label: `Réglage d'admission`,
+      modalName: 'Choosestatusmoyennemodalparams'
+    },
     { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
   ]
   const buttonsForParamsemployers = [
-    { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
-    { icon: <HiOutlineClipboardList size={28} />, label: 'Ajouter une fonction', modalName: 'Addfonctionemployer' },
-   { icon: <HiOutlineBookOpen    size={28} />, label: 'Ajouter une matière', modalName: 'Addmatieremodal' }
- ]
-
+    // { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
+    {
+      icon: <HiOutlineClipboardList size={28} />,
+      label: 'Ajouter une fonction',
+      modalName: 'Addfonctionemployer'
+    },
+    {
+      icon: <HiOutlineBookOpen size={28} />,
+      label: 'Ajouter une matière',
+      modalName: 'Addmatieremodal'
+    }
+  ]
 
   const buttonsForParamsAdmin = [
-    { icon: <FiUserCheck size={28} />, label: 'Ajouter un administrateur', modalName: 'registeremploye' },
+    {
+      icon: <FiUserCheck size={28} />,
+      label: 'Ajouter un administrateur',
+      modalName: 'registeremploye'
+    }
   ]
   const buttonsForCongigNifStat = [
     { icon: <FiCreditCard size={28} />, label: 'Configuration NIF', modalName: 'Nifmodal' },
     { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' }
   ]
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const handleClick = () => {
+    fileInputRef.current?.click()
+  }
 
+  const navigate = useNavigate()
 
-   const fileInputRef = useRef<HTMLInputElement>(null)
+  const HandleConfirmImport = async () => {
+    // if (!importFileName) {
+    //   toast.error("Aucun fichier n'a été sélectionné pour l'importation.")
+    //   closModal('confirmImport')
+    //   return
+    // }
+    setIsBAckup(true)
+    try {
+      await axiosRequest('POST', 'import', { db: importFileName }, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => setIsBAckup(false))
+        .then(() => {
+          setTimeout(() => {
+            navigate('/')
+          }, 1500)
 
-   const handleClick = () => {
-     fileInputRef.current?.click()
-   }
+        })
+        .catch((error) => toast.error(error.response.data.message))
+    } catch (error) {
+      console.log('Le serveur ne repond pas')
+    } finally {
+      setIsBAckup(false)
+      setImportFileName(null)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      setTimeout(() => {
+        navigate('/')
+      }, 1500)
 
-   const handleFileChange =async (event: React.ChangeEvent<HTMLInputElement>) => {
-     const file = event.target.files?.[0]
-     if (file) {
-       if(confirm('Voulez-vous vraiment importer cette sauvegarde?')){
-         setIsBAckup(true)
-         try{
-           await axiosRequest('POST', 'import', {db:file.name}, 'token')
-             .then(({data}) => toast.success(data.message))
-             .then(() => setIsBAckup(false))
-             .catch(error => toast.error(error.response.data.message))
-             .finally(() => setIsBAckup(false))
-         }catch(error){
-           console.log('Le serveur ne repond pas')
-         }
-       }
+      closModal('confirmImport')
+    }
+  }
 
-     }
-   }
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      // if (confirm('Voulez-vous vraiment importer cette sauvegarde?')) {
+      //   setIsBAckup(true)
+      //   try {
+      //     await axiosRequest('POST', 'import', { db: file.name }, 'token')
+      //       .then(({ data }) => toast.success(data.message))
+      //       .then(() => setIsBAckup(false))
+      //       .catch((error) => toast.error(error.response.data.message))
+      //       .finally(() => setIsBAckup(false))
+      //   } catch (error) {
+      //     console.log('Le serveur ne repond pas')
+      //   }
+      // }
+      setImportFileName(file.name)
+      openModal('confirmImport')
+    }
+  }
 
-   const exporter = async () => {
-    try{
+  const exporter = async () => {
+    try {
       setIsBAckup(true)
       await axiosRequest('GET', 'export', null, 'token')
         .then(() => toast.success('Sauvegarde reussi'))
         .then(() => setIsBAckup(false))
-        .catch(error => toast.error(error.response.data.message))
+        .catch((error) => toast.error(error.response.data.message))
         .finally(() => setIsBAckup(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
+    } finally {
+      closModal('confirmexport')
     }
-   }
+  }
+
+  const handleConfirmExport = () => {
+    openModal('confirmexport')
+  }
 
   return (
     <div
@@ -162,7 +231,10 @@ function Parameters(): JSX.Element {
             />
           </div>
 
-          <button onClick={() => exporter()} className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group">
+          <button
+            onClick={() => handleConfirmExport()}
+            className=" border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center  p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group"
+          >
             <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#895256] text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
               <FiDownloadCloud size={28} />
             </div>
@@ -210,16 +282,19 @@ function Parameters(): JSX.Element {
           ))}
         </div>
 
-
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
 
       {/* Modals */}
-      {modal.AdUpinfostudentsmodal && (
-        <AdUpinfostudentsmodal
-          closemodal={() => closModal('AdUpinfostudentsmodal')}
-          mode="ajoutstudents"
-        />
-      )}
+
       {modal.Addyearmodal && <Addyearmodal closemodal={() => closModal('Addyearmodal')} />}
       {modal.Addniveaumodal && <Addniveaumodal closemodal={() => closModal('Addniveaumodal')} />}
       {modal.Choosestatusmoyennemodalparams && (
@@ -234,19 +309,50 @@ function Parameters(): JSX.Element {
       )}
       {modal.Addmatieremodal && <Addmatieremodal closemodal={() => closModal('Addmatieremodal')} />}
       {modal.AdUpEmployeemodal && (
-        <AdUpEmployeemodal reload={reload} fresh={setReload}  closemodal={() => closModal('AdUpEmployeemodal')} mode="ajoutemployer"  />
+        <AdUpEmployeemodal
+          reload={reload}
+          fresh={setReload}
+          closemodal={() => closModal('AdUpEmployeemodal')}
+          mode="ajoutemployer"
+        />
       )}
       {modal.Nifmodal && <Nifmodal closemodal={() => closModal('Nifmodal')} />}
       {modal.Statmodal && <Statmodal closemodal={() => closModal('Statmodal')} />}
-      {isBackup &&       <Triangle
-        visible={true}
-        height="280"
-        width="280"
-        color="#895256"
-        ariaLabel="triangle-loading"
-        wrapperStyle={{}}
-        wrapperClass="absolute top-1/2 left-1/2"/>}
+      {isBackup && (
+        <Triangle
+          visible={true}
+          height="280"
+          width="280"
+          color="#895256"
+          ariaLabel="triangle-loading"
+          wrapperStyle={{}}
+          wrapperClass="absolute top-1/2 left-1/2"
+        />
+      )}
 
+      {modal.confirmImport && (
+        <ConfirmDeleteModal
+          title="Confirmer l'Importation de la Base"
+          message={`Voulez-vous vraiment IMPORTER la sauvegarde "${importFileName}" ? Cette action écrasera toutes les données actuelles de l'application !`}
+          onConfirm={HandleConfirmImport}
+          closemodal={() => {
+            closModal('confirmImport')
+            setImportFileName(null)
+            if (fileInputRef.current) fileInputRef.current.value = ''
+          }}
+          isDeletingLoader={isBackup}
+        />
+      )}
+
+      {modal.confirmexport && (
+        <ConfirmDeleteModal
+          title="Confirmation de l'exportation de la base de données"
+          message="Voulez-vous vraiment exporter la base de données ? Cette action générera un fichier de sauvegarde que vous pourrez réutiliser."
+          onConfirm={exporter}
+          closemodal={() => closModal('confirmexport')}
+          isDeletingLoader={isBackup}
+        />
+      )}
     </div>
   )
 }

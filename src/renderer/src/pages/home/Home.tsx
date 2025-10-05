@@ -4,6 +4,7 @@ import { RootState } from '../../redux/Store'
 import Sidebar from '../../layout/sidebar/Sidebar'
 import Navbar from '@renderer/layout/navbar/Navbar'
 import { useEffect } from 'react'
+import { ToastContainer } from 'react-toastify'
 
 function Home(): JSX.Element {
   const navigate = useNavigate()
@@ -26,6 +27,15 @@ function Home(): JSX.Element {
         <Navbar />
         <Outlet />
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </div>
   )
 }

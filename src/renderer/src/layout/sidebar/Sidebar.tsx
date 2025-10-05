@@ -86,8 +86,6 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const logout = async () => {
 
-
-
     try{
       await axiosRequest('GET', 'logout', null, 'token')
         .then(({data}) => toast.success(data.message))

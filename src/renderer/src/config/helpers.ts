@@ -7,6 +7,7 @@ const headers = (token:string|null) =>  ({headers:{'Access-Control-Allow-Origin'
 
 
 const axiosRequest =async (type:"GET"|"POST"|"DELETE"|"PUT", route:string, data:any, token:string):Promise<any> => {
+
   if(type === "GET"){
    return await axios.get(`${BASE_URL}/api/${route}`,  headers(localStorage.getItem('ACCESS_TOKEN')))
   }else if(type === "POST"){

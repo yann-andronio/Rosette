@@ -1,23 +1,39 @@
-import { FaCheckCircle, FaTimesCircle, FaWallet, FaCalendarAlt, FaSchool, FaPrint } from 'react-icons/fa'
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaWallet,
+  FaCalendarAlt,
+  FaSchool,
+  FaPrint
+} from 'react-icons/fa'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { FiX } from 'react-icons/fi'
-import { axiosRequest } from "@renderer/config/helpers";
-import { useEffect, useRef, useState } from 'react'
-import Recuepayementecolage from '../recue/Recuepayementecolage';
-import {toast} from "react-toastify";
+
+import { axiosRequest } from '@renderer/config/helpers'
+import { useRef, useState, useEffect } from 'react'
+import Recuepayementecolage from '../recue/Recuepayementecolage'
+import { toast } from 'react-toastify'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
+import useMultiModals from '@renderer/hooks/useMultiModals'
+import { formatDate } from '../../utils/FormatDate'
 
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: Etudiant
-  fresh:(boolean) => void
-  reload:boolean
+  fresh: (boolean) => void
+  reload: boolean
+}
+
+type EcolageToConfirm = {
+  id: number
+  mois: string
+  cost: number
 }
 
 const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoStudentsProps) => {
-
-
   const eleveNom = `${student.prenom} ${student.nom}`
+
   const [paymois, setPaymois] = useState()
   const [up, setUp] =useState(false)
 const pay = async (id:number, cost:number) => {
@@ -49,6 +65,8 @@ const pay = async (id:number, cost:number) => {
   }, [up])
 
 
+
+
   const [selectedEcolage, setSelectedEcolage] = useState<any | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
 
@@ -64,6 +82,28 @@ const pay = async (id:number, cost:number) => {
       document.body.innerHTML = originalContents
       window.location.reload()
     }, 200)
+  }
+
+  const [ecolageConfirmation, setEcolageConfirmation] = useState<EcolageToConfirm | null>(null)
+  const [isPayingLoader, setIsPayingLoader] = useState(false)
+  const { openModal, modal, closModal } = useMultiModals()
+
+  const handleRequestPayment = (id, mois, cost) => {
+    setEcolageConfirmation({ id, mois, cost })
+    openModal('confirmDelete')
+  }
+
+  const handleConfirmPayment = async () => {
+    if (!ecolageConfirmation) return
+    const { id, cost } = ecolageConfirmation
+    setIsPayingLoader(true)
+    try {
+      await pay(id, cost)
+    } finally {
+      setIsPayingLoader(false)
+      setEcolageConfirmation(null)
+      closModal('confirmDelete')
+    }
   }
 
   return (
@@ -94,6 +134,7 @@ const pay = async (id:number, cost:number) => {
               className="flex flex-col justify-between p-4 rounded-2xl bg-white border border-gray-200 shadow-md transition hover:shadow-xl hover:-translate-y-1"
             >
               <div className="flex justify-between items-center mb-3">
+
                 <h4 className="font-semibold text-gray-700">{item?.mois}</h4>
                 {item?.payé === 1 ? (
                   <div className="flex gap-5">
@@ -111,6 +152,7 @@ const pay = async (id:number, cost:number) => {
                         })
                       }
                     />
+
                     <FaCheckCircle className="text-green-500 text-lg" />
                   </div>
                 ) : (
@@ -130,7 +172,7 @@ const pay = async (id:number, cost:number) => {
                 </div>
                 <div className="flex items-center gap-2 text-gray-500 text-xs">
                   <FaCalendarAlt className="text-[#895256]" />
-                  <span>{item.payé == 1 ? item.updated_at : 'Non payé'}</span>
+                  <span>{item.payé == 1 ? formatDate(item.updated_at) : 'Non payé'}</span>
                 </div>
               </div>
               {item.payé ? (
@@ -146,9 +188,10 @@ const pay = async (id:number, cost:number) => {
               ) : (
                 <span
                   onClick={() =>
-                    pay(
+                    handleRequestPayment(
                       item.id,
-                      student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage
+                      item.mois,
+                      student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage || 0
                     )
                   }
                   className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
@@ -164,6 +207,16 @@ const pay = async (id:number, cost:number) => {
           ))}
         </div>
       </div>
+
+      {modal.confirmDelete && ecolageConfirmation && (
+        <ConfirmDeleteModal
+          title="Confirmation de Paiement"
+          message={`Voulez-vous confirmer le paiement d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
+          onConfirm={handleConfirmPayment}
+          closemodal={() => closModal('confirmDelete')}
+          isDeletingLoader={isPayingLoader}
+        />
+      )}
 
       {selectedEcolage && (
         <div className="hidden">
