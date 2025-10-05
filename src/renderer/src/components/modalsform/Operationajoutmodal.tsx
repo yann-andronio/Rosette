@@ -2,32 +2,38 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
-type OperationProps = { closemodal: () => void }
+type OperationProps = {
+  closemodal: () => void
+reload : boolean
+  setReload : (value:boolean) => void
+}
 
 interface FormValues {
   motif: string
-  solde_ecolage: number
-  solde_depot: number
-  solde_kermess: number
+  ecolage: number
+droit: number
+kermesse: number
 }
 
 const schema = yup.object({
   motif: yup.string().required('Le motif est requis'),
-  solde_ecolage: yup
+ecolage: yup
     .number()
     .transform((v) => (isNaN(v) ? 0 : v))
     .required()
     .default(0)
     .min(0, "Le montant de l'écolage doit être >= 0"),
-  solde_depot: yup
+droit: yup
     .number()
     .transform((v) => (isNaN(v) ? 0 : v))
     .required()
     .default(0)
     .min(0, 'Le montant du dépôt doit être >= 0'),
-  solde_kermess: yup
+kermesse: yup
     .number()
     .transform((v) => (isNaN(v) ? 0 : v))
     .required()
@@ -35,10 +41,10 @@ const schema = yup.object({
     .min(0, 'Le montant de la kermess doit être >= 0')
 })
 
-export default function Operationajoutmodal({ closemodal }: OperationProps) {
+export default function Operationajoutmodal({ closemodal, reload , setReload }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
   const [historiques, setHistoriques] = useState<
-    { id: number; motif: string; ops: { type: string; montant: number }[]; date: string }[]
+    { id: number; motif: string; ops: { type: string; montant: number }[]; created_at: string }[]
   >([])
   const [errorkely, seterrorkely] = useState<string | null>(null)
 
@@ -49,50 +55,46 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
     formState: { errors }
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    defaultValues: { motif: '', solde_ecolage: 0, solde_depot: 0, solde_kermess: 0 }
+    defaultValues: { motif: '', ecolage: 0, droit: 0, kermesse: 0 }
   })
 
-  const onSubmit = (data: FormValues) => {
-   
-    console.log('Form data alefa :', data)
+  const getHistoriques = async () => {
+    try{
+      await axiosRequest('GET', 'plus-list', 'null', 'token')
+        .then(({data}) => setHistoriques(data))
+        .catch(error => console.log(error.response.data.message))
+    }catch(error){
+      console.log('Le serveur ne repond pas')
+    }
+  }
 
-   
-    const newOps = [
-      { type: "Solde d'écolage", montant: data.solde_ecolage },
-      { type: 'Solde de dépôt', montant: data.solde_depot },
-      { type: 'Solde de kermess', montant: data.solde_kermess }
-    ].filter((op) => op.montant > 0)
+  useEffect(() => {
+    getHistoriques()
+  }, [activeTab=='historique'])
 
-    console.log('Opérations générées :', newOps)
+  const onSubmit =async (data: FormValues) => {
 
-    if (newOps.length === 0) {
-      seterrorkely('Veuillez saisir au moins un montant supérieur à 0')
-      return
+
+    try{
+      await axiosRequest('POST', 'op-plus', data, 'token')
+        .then(({data}) => toast.success(data.message))
+        .then(() => reset())
+        .then(() => setActiveTab('historique'))
+        .then(() => setReload(!reload))
+        .catch((err) => toast.error(err.response.data.message) )
+    }catch (error){
+      console.log('Le serveur ne repond pas')
     }
     seterrorkely(null)
-
-    const newHistorique = {
-      id: Date.now(),
-      motif: data.motif,
-      ops: newOps,
-      date: new Date().toLocaleString()
-    }
-
-   
-    console.log('Historique complet miboaka :', newHistorique)
-
-    setHistoriques((prev) => [...prev, newHistorique])
-    setActiveTab('historique')
-    reset()
   }
 
 
-  const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
+  // const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
-        <h1 className="text-2xl font-bold">soloy titre fa tsy aiko</h1>
+        <h1 className="text-2xl font-bold">Dépot d'argent</h1>
       </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
@@ -142,36 +144,36 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
                 <label className="font-medium">Solde d'écolage</label>
                 <input
                   type="number"
-                  {...register('solde_ecolage')}
+                  {...register('ecolage')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.solde_ecolage
+                    errors.ecolage
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Montant"
                 />
-                {errors.solde_ecolage && (
+                {errors.ecolage && (
                   <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.solde_ecolage.message}
+                    {errors.ecolage.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="font-medium">Solde de dépôt</label>
+                <label className="font-medium">Solde de droit</label>
                 <input
                   type="number"
-                  {...register('solde_depot')}
+                  {...register('droit')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.solde_depot
+                    errors.droit
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Montant"
                 />
-                {errors.solde_depot && (
+                {errors.droit && (
                   <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.solde_depot.message}
+                    {errors.droit.message}
                   </p>
                 )}
               </div>
@@ -180,17 +182,17 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
                 <label className="font-medium">Solde de kermess</label>
                 <input
                   type="number"
-                  {...register('solde_kermess')}
+                  {...register('kermesse')}
                   className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                    errors.solde_kermess
+                    errors.kermesse
                       ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                       : 'border-gray-300 shadow-sm'
                   }`}
                   placeholder="Montant"
                 />
-                {errors.solde_kermess && (
+                {errors.kermesse && (
                   <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.solde_kermess.message}
+                    {errors.kermesse.message}
                   </p>
                 )}
               </div>
@@ -223,14 +225,14 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
               <p className="text-center text-gray-500">Aucune opération enregistrée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ id, motif, ops, date }) => (
+                {historiques.map(({ id, motif, ops, created_at }) => (
                   <li
                     key={id}
                     className="bg-gray-100 p-4 rounded-lg flex justify-between items-start hover:bg-gray-200 transition"
                   >
                     <div>
                       <p className="font-semibold">Motif : {motif}</p>
-                      <p className="text-xs text-gray-500 mb-1">Date : {date}</p>
+                      <p className="text-xs text-gray-500 mb-1">Date : {created_at}</p>
                       <ul className="ml-4 text-sm text-gray-700 list-disc">
                         {ops.map((itemops, index) => (
                           <li key={index}>
@@ -239,12 +241,12 @@ export default function Operationajoutmodal({ closemodal }: OperationProps) {
                         ))}
                       </ul>
                     </div>
-                    <button
-                      onClick={() => removeHistorique(id)}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
+                    {/*<button*/}
+                    {/*  onClick={() => removeHistorique(id)}*/}
+                    {/*  className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"*/}
+                    {/*>*/}
+                    {/*  <FiTrash2 size={18} />*/}
+                    {/*</button>*/}
                   </li>
                 ))}
               </ul>

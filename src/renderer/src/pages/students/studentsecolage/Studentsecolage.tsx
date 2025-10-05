@@ -327,6 +327,9 @@ function Studentsecolage(): JSX.Element {
                 <option value={15}>15</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={150}>150</option>
+
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">
@@ -369,7 +372,11 @@ function Studentsecolage(): JSX.Element {
                 >
                   <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
                     <div className="image bg-[#895256] p-2 rounded-lg">
-                      <FaUserCircle className="text-3xl text-[#ffff]" />
+                      <img
+                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
+                        alt="Profil"
+                        className="rounded-sm w-10 h-10"
+                      />
                     </div>
                   </div>
 

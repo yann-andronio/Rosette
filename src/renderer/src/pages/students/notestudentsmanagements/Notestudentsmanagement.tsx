@@ -278,6 +278,8 @@ function Notestudentsmanagement(): JSX.Element {
                 <option value={15}>15</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={150}>150</option>
               </select>
             </div>
             <div className="mt-4 md:mt-0 bg-white text-gray-700 shadow px-4 py-2 rounded-lg text-sm font-medium">

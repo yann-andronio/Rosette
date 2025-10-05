@@ -91,7 +91,7 @@ export default function Recuepayementemploye({ employer, salaire }: RecueProps) 
             <tr>
               <td className="border px-2 py-1">{moisLabel}</td>
               <td className="border px-2 py-1">{formatNumber(salaire.montant)}</td>
-              <td className="border px-2 py-1">{salaire.type==1?'Salaire Complet':"Avance sur Salaire"}</td>
+              <td className="border px-2 py-1">{salaire.type==1?'Salaire Complet':salaire.type==0?"Avance sur Salaire":"Reste sur Salaire"}</td>
               <td className="border px-2 py-1">{salaire.motif || '-'}</td>
             </tr>
           </tbody>

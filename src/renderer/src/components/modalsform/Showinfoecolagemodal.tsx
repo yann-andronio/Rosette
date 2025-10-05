@@ -2,7 +2,7 @@ import { FaCheckCircle, FaTimesCircle, FaWallet, FaCalendarAlt, FaSchool, FaPrin
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { FiX } from 'react-icons/fi'
 import { axiosRequest } from "@renderer/config/helpers";
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
 import Recuepayementecolage from '../recue/Recuepayementecolage';
 import {toast} from "react-toastify";
 
@@ -18,18 +18,36 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
 
   const eleveNom = `${student.prenom} ${student.nom}`
+  const [paymois, setPaymois] = useState()
+  const [up, setUp] =useState(false)
 const pay = async (id:number, cost:number) => {
     try{
       await axiosRequest('PUT', `ecolage-pay/${id}`, {cost:cost, eleve: eleveNom, classe:student.sousetudiants[student.sousetudiants.length -1].classe.nom_classe, salle:student.sousetudiants[student.sousetudiants.length -1].salle.nom_salle, annee:student.sousetudiants[student.sousetudiants.length -1].annee.annee, ac_id:student.sousetudiants[student.sousetudiants.length -1].annee.id, prof:student.enfantProf}, 'token')
         .then(({data}) => toast.success(data?.message))
         .then(() => fresh(!reload))
-        .then(() => closemodal())
+        // .then(() => closemodal())
+        .then(() => setUp(!up))
         // .catch(error => console.log(error))
     }catch (error){
       console.log('Le serveur ne repond pas')
     }
   }
-  
+
+  const getEcolage = async () => {
+    try{
+      await axiosRequest('GET', `pay-mois/${student.sousetudiants[student.sousetudiants.length - 1].id}`, null, 'token')
+        .then(({data}) => setPaymois(data))
+        .catch(error => console.log(error))
+    }catch(error){
+      console.log(error)
+    }
+
+  }
+
+  useEffect(() => {
+    getEcolage()
+  }, [up])
+
 
   const [selectedEcolage, setSelectedEcolage] = useState<any | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
@@ -70,14 +88,14 @@ const pay = async (id:number, cost:number) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-          {student.sousetudiants[student.sousetudiants.length - 1].ecolage.map((item, index) => (
+          {paymois?.ecolage.map((item, index) => (
             <div
               key={index}
               className="flex flex-col justify-between p-4 rounded-2xl bg-white border border-gray-200 shadow-md transition hover:shadow-xl hover:-translate-y-1"
             >
               <div className="flex justify-between items-center mb-3">
-                <h4 className="font-semibold text-gray-700">{item.mois}</h4>
-                {item.payé === 1 ? (
+                <h4 className="font-semibold text-gray-700">{item?.mois}</h4>
+                {item?.payé === 1 ? (
                   <div className="flex gap-5">
                     <FaPrint
                       className="text-gray-600 cursor-pointer hover:text-blue-500"
@@ -87,9 +105,9 @@ const pay = async (id:number, cost:number) => {
                           classe:student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
                           salle:student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
                           annee:student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
-                          mois: item.mois,
+                          mois: item?.mois,
                           montant:student.sousetudiants[student.sousetudiants.length - 1].classe.ecolage,
-                          datePaiement: item.updated_at
+                          datePaiement: item?.updated_at
                         })
                       }
                     />

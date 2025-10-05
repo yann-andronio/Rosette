@@ -259,7 +259,9 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
     }
   }
 
-
+  useEffect(() => {
+    resetSalary({montant:employer.salaire_base})
+  }, [activeTab == 'salaire'])
 
   useEffect(() => {
     getHistoriques()
@@ -363,6 +365,7 @@ export default function SuiviEmployerModal({ closemodal, employer, reloads, setR
                         <option value="">Sélectionner</option>
                         <option value={0}>Avance</option>
                         <option value={1}>Salaire complet</option>
+                        <option value={2}>reste</option>
                       </select>
                       {errorsSalary.type && (
                         <p className="text-red-500 text-xs mt-1">

@@ -48,7 +48,7 @@ const Sidebar = () => {
           iconsubmenu: <HiOutlineInformationCircle size={25} />
         },
         {
-          name: 'gestion des notes',
+          name: 'Gestion des notes',
           path: '/home/notemanagements',
           iconsubmenu: <MdAssignment size={25} />
         },

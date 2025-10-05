@@ -112,6 +112,7 @@ export default function Dashboard(): JSX.Element {
   const [debut, setDebut] = useState<string|null>(null)
   const [fin, setFin] = useState<string|null>(null)
   const [flux, setFlux] = useState<{debit:number, credit:number}>({debit:0, credit:0})
+  const [reload, setReload] = useState<boolean>(false)
 
   const getFlux= async () => {
     try{
@@ -202,7 +203,7 @@ export default function Dashboard(): JSX.Element {
     getDatapie()
   getFlux()
     getAc()
-  }, [])
+  }, [reload])
 
 
 
@@ -247,7 +248,7 @@ export default function Dashboard(): JSX.Element {
 
   useEffect(() => {
     getDatabar()
-  }, [selectedYear,debut, fin])
+  }, [selectedYear,debut, fin, reload])
 
 
   const { modal, openModal, closModal } = useMultiModals()
@@ -277,7 +278,7 @@ export default function Dashboard(): JSX.Element {
               <FaPlus size={22} />
             </div>
 
-            <p className="text-lg text-white font-semibold text-center">Ajouter une Operation</p>
+            <p className="text-lg text-white font-semibold text-center">Opération de dépot</p>
           </div>
 
           <div
@@ -288,7 +289,7 @@ export default function Dashboard(): JSX.Element {
               <FaMinus size={22} />
             </div>
 
-            <p className="text-lg text-white font-semibold text-center">Retirer une Operation</p>
+            <p className="text-lg text-white font-semibold text-center">Opération de rétrait</p>
           </div>
         </div>
 
@@ -341,14 +342,14 @@ export default function Dashboard(): JSX.Element {
             <div className="flex flex-col space-y-4">
               <div className="flex items-center justify-between p-6 bg-green-50 rounded-2xl shadow-md">
                 <div>
-                  <p className="text-lg text-gray-600">Bénéfice</p>
+                  <p className="text-lg text-gray-600">Débit</p>
                   <p className="text-3xl font-bold text-green-700 mt-1">+ {flux.debit} Ar</p>
                 </div>
                 <MdTrendingUp className="text-green-600 w-12 h-12" />
               </div>
               <div className="flex items-center justify-between p-6 bg-red-50 rounded-2xl shadow-md">
                 <div>
-                  <p className="text-lg text-gray-600">Pertes</p>
+                  <p className="text-lg text-gray-600">Crédit</p>
                   <p className="text-3xl font-bold text-red-700 mt-1">- {flux.credit} Ar</p>
                 </div>
                 <MdTrendingDown className="text-red-600 w-12 h-12" />
@@ -367,10 +368,10 @@ export default function Dashboard(): JSX.Element {
       </div>
 
       {modal.Operationretirermodal && (
-        <Operationretirermodal closemodal={() => closModal('Operationretirermodal')} />
+        <Operationretirermodal reload={reload} setReload={setReload} closemodal={() => closModal('Operationretirermodal')} />
       )}
       {modal.Operationajoutmodal && (
-        <Operationajoutmodal closemodal={() => closModal('Operationajoutmodal')} />
+        <Operationajoutmodal reload={reload} setReload={setReload} closemodal={() => closModal('Operationajoutmodal')} />
       )}
     </div>
   )
