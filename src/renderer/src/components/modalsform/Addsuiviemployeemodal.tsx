@@ -163,10 +163,12 @@ const [fresh, setFresh] = useState<boolean>(false)
       console.log('Le serveur ne repond pas')
     }
   }
+
+  const [reloadMonth, setReloadMonth] = useState(false)
+  
   useEffect(() => {
     getMoissalaires()
-
-  }, [])
+  }, [reloadMonth])
 
   useEffect(() => {
     getFiltres()
@@ -207,7 +209,7 @@ const [fresh, setFresh] = useState<boolean>(false)
   }, [activeTab, resetSalary, resetConge, resetStatus])
   const [reloadsalaire, setReloadsalaire] = useState<boolean>(false)
   const [confirmesalary, setconfirmesalary] = useState<{} | null>(null)
-  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+  const [isDeletingLoader, setIsConfirmPayemntLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
 
   const onSalarySubmit = (data: SalaireEmploye) => {
@@ -234,16 +236,18 @@ const [fresh, setFresh] = useState<boolean>(false)
     }
   }
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmPayement = async () => {
+      setReloadMonth(!reloadMonth)
     if (!confirmesalary) return
-    setIsDeletingLoader(true)
+    setIsConfirmPayemntLoader(true)
     try {
       await executeSalaryPayment(confirmesalary as SalaireEmploye & { w_id: number })
     } catch (error) {
     } finally {
-      setIsDeletingLoader(false)
+      setIsConfirmPayemntLoader(false)
       setconfirmesalary(null)
       closModal('confirmDelete')
+    
     }
   }
   const [loadconger, setloadconger] = useState(false)
@@ -837,7 +841,7 @@ const [fresh, setFresh] = useState<boolean>(false)
         <ConfirmDeleteModal
           title="Confirmation de Paiement de Salaire"
           message={`Confirmez-vous le paiement de ${formatNumber(confirmesalary.montant)} Ar pour le(s) mois : ${confirmesalary.mois.join(', ')} pour ${confirmesalary.nom} ?`}
-          onConfirm={handleConfirmDelete}
+          onConfirm={handleConfirmPayement}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}
         />
