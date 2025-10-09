@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,27 +9,27 @@ import { ThreeDots } from 'react-loader-spinner'
 import { toast } from 'react-toastify'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
+import UpdateAddYearsForm from '../updatemodalparametres/UpdateAddYearsForm'
 
 type YearProps = {
   closemodal: () => void
 }
 
-type FormDataAlefa = {
-  yearadd: string
-  selectedMonths: (number | undefined)[],
-  debut:string
-}
+
 
 const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [reload, setReload] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [reload, setReload] = useState(false)
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{ annee: string; id: number; mois: { mois: string }[] }[]>([])
+
+  const [historiques, setHistoriques] = useState<any[]>([])
   const [selectedMonths, setSelectedMonths] = useState<number[]>([])
 
-  const [yearToDelete, setYearToDelete] = useState<{ id: number; annee: string } | null>(null)
+  const [yearToDelete, setYearToDelete] = useState<any>(null)
   const { openModal, modal, closModal } = useMultiModals()
-  const [isDeletingLoader, setIsDeletingLoader] = useState<boolean>(false)
+  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+
+  const [yearToEdit, setYearToEdit] = useState<any>(null)
 
   const schema = yup.object({
     yearadd: yup.string().required('Vous devez saisir une année'),
@@ -38,8 +38,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
       .of(yup.number())
       .min(1, 'Sélectionnez au moins un mois')
       .required('Sélectionnez au moins un mois'),
-    debut:yup.string().required('Vous devez saisir un mois de début'),
-
+    debut: yup.string().required('Vous devez saisir un mois de début')
   })
 
   const {
@@ -48,7 +47,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     formState: { errors },
     setValue,
     reset
-  } = useForm<FormDataAlefa>({
+  } = useForm<any>({
     resolver: yupResolver(schema)
   })
 
@@ -57,7 +56,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
       ? selectedMonths.filter((mid) => mid !== id)
       : [...selectedMonths, id]
     setSelectedMonths(updated)
-    setValue('selectedMonths', updated)
+    setValue('selectedMonths', updated as any)
   }
 
   const getHistorique = async () => {
@@ -76,11 +75,11 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     getHistorique()
   }, [activeTab === 'historique', reload])
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     const donneAlefa = {
       annee: data.yearadd,
       mois: Monthlistedata.filter((m) => data.selectedMonths.includes(m.id)).map((m) => m.name),
-      debut:data.debut
+      debut: data.debut
     }
 
     setIsLoading(true)
@@ -118,24 +117,41 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
     openModal('confirmDelete')
   }
 
- const handleConfirmDelete = async () => {
-   if (!yearToDelete) return
-   setIsDeletingLoader(true)
-   try {
-     await removeYear(yearToDelete.id)
-   } finally {
-     setIsDeletingLoader(false)
-     setYearToDelete(null)
-    //  closModal('confirmDelete')
-   }
- }
+  const handleConfirmDelete = async () => {
+    if (!yearToDelete) return
+    setIsDeletingLoader(true)
+    try {
+      await removeYear(yearToDelete.id)
+    } finally {
+      setIsDeletingLoader(false)
+      setYearToDelete(null)
+      // closModal('confirmDelete') 
+    }
+  }
+
+  // Modif
+  const handleclickEdit = (yearData: any) => {
+    const DataJiabyModif = historiques.find((h) => h.id === yearData.id)
+    if (DataJiabyModif) {
+      setYearToEdit(DataJiabyModif)
+      openModal('updateYear')
+    } else {
+      toast.error("Données de l'année introuvables.")
+    }
+  }
+
+  const handleUpdateSuccess = () => {
+    setReload((r) => !r) 
+    closModal('updateYear')
+    setYearToEdit(null)
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
         <h1 className="text-2xl font-bold">Ajouter une Année scolaire</h1>
       </div>
-      <div className="bg-white  rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             <button
@@ -171,17 +187,22 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors.yearadd ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}
             />
             {errors.yearadd && (
-              <p className="text-sm text-red-400 mt-1">{errors.yearadd.message}</p>
+              <p className="text-sm text-red-400 mt-1">{errors.yearadd.message as string}</p>
             )}
-            <div className='mt-6'>
-              <select {...register('debut')} className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors.yearadd ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}>
+            <div className="mt-6">
+              <select
+                {...register('debut')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${errors.debut ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'}`}
+              >
                 <option value="">Selectionner Mois de Début</option>
-                {Monthlistedata.map((m) =>  <option key={m.id} value={m.name}>{m.name}</option>)}
+                {Monthlistedata.map((m) => (
+                  <option key={m.id} value={m.name}>
+                    {m.name}
+                  </option>
+                ))}
               </select>
 
-              {errors.debut && (
-                <p className="text-sm text-red-400 mt-1">{errors.debut.message}</p>
-              )}
+              {errors.debut && <p className="text-sm text-red-400 mt-1">{errors.debut.message as string}</p>}
             </div>
 
             <div className="mt-6">
@@ -201,12 +222,9 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                 })}
               </div>
               {errors.selectedMonths && (
-                <p className="text-sm text-red-400 mt-1">{errors.selectedMonths.message}</p>
+                <p className="text-sm text-red-400 mt-1">{errors.selectedMonths.message as string}</p>
               )}
             </div>
-
-
-
 
             <div className="flex justify-end gap-3 mt-6">
               <button
@@ -245,37 +263,77 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
               <p className="text-center text-gray-500">Aucune année ajoutée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ annee, id, mois }, index) => (
-                  <li
-                    key={index}
-                    className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
-                  >
-                    <div>
-                      <p className="font-semibold">Année : {annee}</p>
-                      <p className="text-sm text-gray-700">
-                        Mois :{' '}
-                        {mois.map((m, index) => (
-                          <span key={index}>
-                            {m?.mois + (index !== mois.length - 1 ? ', ' : '')}
-                          </span>
-                        ))}
-                      </p>
-                    </div>
-                    <button
-                      aria-label={`Supprimer l'année ${annee}`}
-                      onClick={() => handleclickDelete(id, annee)}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                {historiques.map(
+                  ({ annee, id, mois, debut }, index  ) => (
+                    <li
+                      key={index}
+                      className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
                     >
-                      <FiTrash2 size={18} />
-                    </button>
-                  </li>
-                ))}
+                      <div>
+                        <p className="font-semibold">Année : {annee}</p>
+                        <p className="text-sm text-gray-700">Mois de début : {debut}</p>
+                        <p className="text-sm text-gray-700">
+                          Mois :{' '}
+                          {mois.map((m: any, index: number) => (
+                              <span key={index}>
+                                {m?.mois + (index !== mois.length - 1 ? ', ' : '')}
+                              </span>
+                            )
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="flex space-x-2">
+                        <button
+                          aria-label={`Modifier l'année ${annee}`}
+                          onClick={() => handleclickEdit({ id, annee, mois, debut })}
+                          className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                        >
+                          <FiEdit size={18} />
+                        </button>
+
+                        <button
+                          aria-label={`Supprimer l'année ${annee}`}
+                          onClick={() => handleclickDelete(id, annee)}
+                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                        >
+                          <FiTrash2 size={18} />
+                        </button>
+                      </div>
+                    </li>
+                  )
+                )}
               </ul>
             )}
           </div>
         )}
       </div>
 
+      {modal.updateYear && yearToEdit && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="flex items-center justify-center text-white gap-3 mb-5">
+            <h1 className="text-2xl font-bold">Modifier l'Année {yearToEdit.annee}</h1>
+          </div>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => closModal('updateYear')}
+                className="text-gray-600 hover:text-red-600 transition"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <UpdateAddYearsForm
+              yearData={yearToEdit}
+              onClose={() => closModal('updateYear')}
+              onUpdateSuccess={handleUpdateSuccess}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de suppression */}
       {modal.confirmDelete && yearToDelete && (
         <ConfirmDeleteModal
           title="Supprimer l'année"

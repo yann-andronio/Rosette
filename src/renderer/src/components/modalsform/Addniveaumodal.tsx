@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -260,15 +260,11 @@ const deleteHistorique = async (id:number) => {
                 <div className="flex w-full justify-center">
                   <RotatingLines
                     visible={true}
-                  
                     width="55"
-                  
                     strokeColor="#7A3B3F"
                     strokeWidth="5"
                     animationDuration="0.75"
                     ariaLabel="rotating-lines-loading"
-                  
-                 
                   />
                 </div>
               ) : (
@@ -329,15 +325,11 @@ const deleteHistorique = async (id:number) => {
               <div className="flex w-full justify-center">
                 <RotatingLines
                   visible={true}
-              
                   width="50"
-                
                   strokeColor="#7A3B3F"
                   strokeWidth="5"
                   animationDuration="0.75"
                   ariaLabel="rotating-lines-loading"
-               
-                
                 />
               </div>
             ) : (
@@ -360,12 +352,21 @@ const deleteHistorique = async (id:number) => {
                             {ecolage} Ar
                           </span>
                         </div>
-                        <button
-                          onClick={() => handleclickDelete(id , nom_classe)}
-                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
+                        <div className="flex space-x-2">
+                          <button
+                            aria-label={`Modifier le niveaux}`}
+                            className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                          >
+                            <FiEdit size={18} />
+                          </button>
+
+                          <button
+                            onClick={() => handleclickDelete(id, nom_classe)}
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                          >
+                            <FiTrash2 size={18} />
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>
