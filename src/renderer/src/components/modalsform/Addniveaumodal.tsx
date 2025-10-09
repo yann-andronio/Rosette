@@ -46,7 +46,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
 
-  const [classeToEdit, setClasseToEdit] = useState<any>(null)
+  const [niveauxToEdit, setniveauxToEdit] = useState<any>(null)
 
   const deleteHistorique = async (id: number) => {
     try {
@@ -166,14 +166,14 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
 
   // Modif
  const handleclickEdit = (classeData: any) => {
-   setClasseToEdit(classeData)
-   openModal('updateClasse')
+   setniveauxToEdit(classeData)
+   openModal('updateniveaux')
  }
 
  const handleUpdateSuccess = () => {
    setReload((r) => !r) 
-   closModal('updateClasse') 
-   setClasseToEdit(null)
+   closModal('updateniveaux') 
+   setniveauxToEdit(null)
  }
 
   return (
@@ -414,15 +414,15 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
         />
       )}
 
-      {modal.updateClasse && classeToEdit && (
+      {modal.updateniveaux && niveauxToEdit && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="flex items-center justify-center text-white gap-3 mb-5">
-            <h1 className="text-2xl font-bold">Modifier la Classe {classeToEdit.nom_classe}</h1>
+            <h1 className="text-2xl font-bold">Modifier la Classe {niveauxToEdit.nom_classe}</h1>
           </div>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
             <div className="flex justify-end mb-4">
               <button
-                onClick={() => closModal('updateClasse')}
+                onClick={() => closModal('updateniveaux')}
                 className="text-gray-600 hover:text-red-600 transition"
               >
                 <FiX size={20} />
@@ -430,9 +430,9 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             </div>
 
             <UpdateNiveauxForm
-              NiveauData={classeToEdit}
+              NiveauData={niveauxToEdit}
               years={years}
-              onClose={() => closModal('updateClasse')}
+              onClose={() => closModal('updateniveaux')}
               onUpdateSuccess={handleUpdateSuccess}
             />
           </div>

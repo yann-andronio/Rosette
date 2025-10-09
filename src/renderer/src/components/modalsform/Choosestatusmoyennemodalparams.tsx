@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,6 +8,7 @@ import { RotatingLines, ThreeDots } from 'react-loader-spinner'
 import { toast } from 'react-toastify'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
+import UpdateAdmissonForm from '../updatemodalparametres/UpdateAdmissonForm'
 
 type ChosseCtausMoyenModalProps = {
   closemodal: () => void
@@ -24,33 +25,39 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [reload, setReload] = useState(false)
   const [histLoading, setHistLoading] = useState<boolean>(false)
-  const [acs, setAcs] = useState<{id:number, annee:string}[]>([])
-  const [historiques, setHistoriques] = useState<{id:number,note:number, acs:{id:number, annee:string}}[]>([])
- 
- const [noteadmissionToDelete, setnoteadmissionToDelete] = useState<{ id: number; note: number ,  acs:{id:number, annee:string}} | null>(null)
- const { openModal, modal, closModal } = useMultiModals()
- const [isDeletingLoader, setIsDeletingLoader] = useState<boolean>(false)
- 
+  const [acs, setAcs] = useState<{ id: number; annee: string }[]>([])
+  const [historiques, setHistoriques] = useState<
+    { id: number; note: number; acs: { id: number; annee: string } }[]
+  >([])
+
+  const [noteadmissionToDelete, setnoteadmissionToDelete] = useState<{
+    id: number
+    note: number
+    acs: { id: number; annee: string }
+  } | null>(null)
+  const { openModal, modal, closModal } = useMultiModals()
+  const [isDeletingLoader, setIsDeletingLoader] = useState<boolean>(false)
+
+  const [moyenneadmToEdit, setmoyenneadmToEdit] = useState<any>(null)
+
   const getAcs = async () => {
     setIsLoading(true)
-    try{
+    try {
       await axiosRequest('GET', 'ac-list', null, 'token')
-        .then(({data}) => setAcs(data))
+        .then(({ data }) => setAcs(data))
         .then(() => setIsLoading(false))
-        .catch(error => console.log(error.response?.data?.message))
+        .catch((error) => console.log(error.response?.data?.message))
         .finally(() => setIsLoading(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getAcs()
-  }, [activeTab==='ajouter'])
+  }, [activeTab === 'ajouter'])
   const schema = yup.object({
-    ac_id: yup
-      .string()
-      .required('Sélectionnez une année'),
+    ac_id: yup.string().required('Sélectionnez une année'),
     note: yup
       .number()
       .typeError('La moyenne doit être un nombre')
@@ -70,71 +77,82 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
 
   const selectednoteadmissionforstyle = watch('ac_id')
 
-  const onSubmit =async (data: FormDataAlefa) => {
+  const onSubmit = async (data: FormDataAlefa) => {
     setIsLoading(true)
-    try{
+    try {
       await axiosRequest('POST', 'admission-creation', data, 'token')
         .then(({ data }) => toast.success(data?.message || 'Admission creé ✅'))
         .then(() => setIsLoading(false))
         .then(() => setActiveTab('historique'))
         .catch((error) =>
-          toast.warning(error?.response?.data?.message ||` Erreur lors de la création d' admission ❌`)
+          toast.warning(
+            error?.response?.data?.message || ` Erreur lors de la création d' admission ❌`
+          )
         )
         .finally(() => setIsLoading(false))
-    }catch(error){
-    console.log('Le serveur ne repond pas')
+    } catch (error) {
+      console.log('Le serveur ne repond pas')
     }
-
   }
 
   const getHistoriques = async () => {
     setHistLoading(true)
-    try{
-      await axiosRequest('GET', 'admission-list',null, 'token' )
-
-        .then(({data}) => setHistoriques(data))
+    try {
+      await axiosRequest('GET', 'admission-list', null, 'token')
+        .then(({ data }) => setHistoriques(data))
         .then(() => setHistLoading(false))
-        .catch(error => console.log(error.response?.data?.message))
+        .catch((error) => console.log(error.response?.data?.message))
         .finally(() => setHistLoading(false))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
-
   }
 
   useEffect(() => {
     getHistoriques()
-  }, [activeTab==='historique', reload])
+  }, [activeTab === 'historique', reload])
 
-  const deletes = async (id:number) => {
-    try{
+  const deletes = async (id: number) => {
+    try {
       await axiosRequest('DELETE', `admission-delete/${id}`, null, 'token')
-        .then(({ data }) => toast.success(data?.message ||`note d' admission supprimée ✅`))
+        .then(({ data }) => toast.success(data?.message || `note d' admission supprimée ✅`))
         .then(() => setReload(!reload))
         .catch((error) => console.log(error.response?.data?.message))
-    }catch(error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
+  const handleclickDelete = (id: number, note: number, acs: { id: number; annee: string }) => {
+    setnoteadmissionToDelete({ id, note, acs })
+    openModal('confirmDelete')
+  }
 
-   const handleclickDelete = (id: number, note: number, acs: { id: number; annee: string }) => {
-     setnoteadmissionToDelete({ id, note, acs })
-     openModal('confirmDelete')
-   }
+  const handleConfirmDelete = async () => {
+    if (!noteadmissionToDelete) return
+    setIsDeletingLoader(true)
+    try {
+      await deletes(noteadmissionToDelete.id)
+    } finally {
+      setIsDeletingLoader(false)
+      setnoteadmissionToDelete(null)
+      //  closModal('confirmDelete')
+    }
+  }
 
-   const handleConfirmDelete = async () => {
-     if (!noteadmissionToDelete) return
-     setIsDeletingLoader(true)
-     try {
-       await deletes(noteadmissionToDelete.id)
-     } finally {
-       setIsDeletingLoader(false)
-       setnoteadmissionToDelete(null)
-       //  closModal('confirmDelete')
-     }
-   }
+  // Modif
+  const handleclickEdit = (MoyenneAdmData: any) => {
+    setmoyenneadmToEdit(MoyenneAdmData)
+    openModal('updateniveaux')
+  }
 
+  const handleUpdateSuccess = () => {
+    setReload((r) => !r)
+    closModal('updateniveaux')
+    setmoyenneadmToEdit(null)
+  }
+
+  
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -193,15 +211,11 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                 <div className="flex w-full justify-center">
                   <RotatingLines
                     visible={true}
-                    
                     width="55"
-                   
                     strokeColor="#7A3B3F"
                     strokeWidth="5"
                     animationDuration="0.75"
                     ariaLabel="rotating-lines-loading"
-                  
-                 
                   />
                 </div>
               ) : (
@@ -265,15 +279,11 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
               <div className="flex w-full justify-center">
                 <RotatingLines
                   visible={true}
-              
                   width="55"
-               
                   strokeColor="#7A3B3F"
                   strokeWidth="5"
                   animationDuration="0.75"
                   ariaLabel="rotating-lines-loading"
-               
-                  
                 />
               </div>
             ) : (
@@ -298,12 +308,22 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                               Moyenne : {note}
                             </span>
                           </div>
-                          <button
-                            onClick={() => handleclickDelete(id , note , acs)}
-                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                          >
-                            <FiTrash2 size={18} />
-                          </button>
+                          <div className="flex space-x-2">
+                            <button
+                              aria-label={`Modifier le niveaux}`}
+                              onClick={() => handleclickEdit({ id, acs, note })}
+                              className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                            >
+                              <FiEdit size={18} />
+                            </button>
+
+                            <button
+                              onClick={() => handleclickDelete(id, note, acs)}
+                              className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                            >
+                              <FiTrash2 size={18} />
+                            </button>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -323,6 +343,33 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}
         />
+      )}
+
+      {modal.updateniveaux && moyenneadmToEdit && acs.length > 0 && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="flex items-center justify-center text-white gap-3 mb-5">
+            <h1 className="text-2xl font-bold">
+              Modifier la note d'admission {moyenneadmToEdit.note}
+            </h1>
+          </div>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => closModal('updateniveaux')}
+                className="text-gray-600 hover:text-red-600 transition"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <UpdateAdmissonForm
+              myenneadmdata={moyenneadmToEdit}
+              years={acs}
+              onClose={() => closModal('updateniveaux')}
+              onUpdateSuccess={handleUpdateSuccess}
+            />
+          </div>
+        </div>
       )}
     </div>
   )
