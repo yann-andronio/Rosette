@@ -3,10 +3,11 @@ import DatePicker from 'react-datepicker'
 import { format, parse, isValid } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { FaCalendarAlt, FaFilter } from 'react-icons/fa'
+import { RiResetLeftFill } from 'react-icons/ri'
 import 'react-datepicker/dist/react-datepicker.css'
 import './custom-datepicker.css'
 
-export function Calendarfilter({setDebut, setFin}:{setDebut:(date) => void, setFin:(date) => void}): JSX.Element {
+export function Calendarfilter({setDebut, setFin , SetReset , reset}:{setDebut:(date) => void, setFin:(date) => void , SetReset:(u:boolean)=>void , reset:boolean} ): JSX.Element {
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
   const [inputStart, setInputStart] = useState(format(startDate!, 'dd-MM-yyyy'))
@@ -23,6 +24,16 @@ export function Calendarfilter({setDebut, setFin}:{setDebut:(date) => void, setF
     if (isValid(parsedEnd)) setEndDate(parsedEnd)
     setDebut(new Date(parsedStart).toLocaleDateString('en-CA'))
     setFin(new Date(parsedEnd).toLocaleDateString('en-CA'))
+    console.log(startDate)
+    console.log(endDate)
+  }
+
+  const handleReset= () => {
+    SetReset(!reset)
+    setDebut(null)
+    setFin(null)
+    setStartDate(null)
+    setEndDate(null)
   }
 
   // Synchronisation nle inputs affichés avec le calendrier
@@ -35,9 +46,7 @@ export function Calendarfilter({setDebut, setFin}:{setDebut:(date) => void, setF
 
   return (
     <div className="flex flex-col  justify-center items-center bg-white rounded-3xl shadow-lg    ">
-
       <div className="flex items-center gap-4  p-4">
-
         <div className="date-input-container">
           <div className="date-input-wrapper">
             <input
@@ -58,8 +67,6 @@ export function Calendarfilter({setDebut, setFin}:{setDebut:(date) => void, setF
             <FaCalendarAlt size={15} className="text-gray-500" />
           </div>
         </div>
-
-
       </div>
 
       {/* Calendrier */}
@@ -78,7 +85,14 @@ export function Calendarfilter({setDebut, setFin}:{setDebut:(date) => void, setF
           locale={fr}
         />
       </div>
-      <div className="py-2 w-full px-2">
+      <div className="py-2 flex gap-2 w-full px-2">
+        <button
+          onClick={handleReset}
+          className="w-full justify-center  flex items-center gap-2 px-4 py-2 bg-[#895256] text-white font-medium rounded-xl shadow-md hover:bg-[#6e3e42] transition-colors"
+        >
+          <RiResetLeftFill size={15} />
+          Réinitialiser
+        </button>
         <button
           onClick={handleConfirm}
           className="w-full justify-center  flex items-center gap-2 px-4 py-2 bg-[#895256] text-white font-medium rounded-xl shadow-md hover:bg-[#6e3e42] transition-colors"

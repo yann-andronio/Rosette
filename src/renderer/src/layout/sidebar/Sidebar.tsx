@@ -1,4 +1,4 @@
-import { setActiveName } from '@renderer/redux/slice/activeLinkSlice'
+import { resetActiveName, setActiveName } from '@renderer/redux/slice/activeLinkSlice'
 import { RootState } from '@renderer/redux/Store'
 import { useState, useEffect } from 'react'
 import { LuLayoutDashboard, LuGraduationCap } from 'react-icons/lu'
@@ -7,7 +7,7 @@ import { IoIosArrowForward } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import logo from '../../images/logo/logo4.png'
-import {FiLogOut } from 'react-icons/fi'
+import { FiLogOut } from 'react-icons/fi'
 import { MdSettings } from 'react-icons/md'
 import s from './sidebar.module.css'
 import { HiOutlineInformationCircle } from 'react-icons/hi'
@@ -19,6 +19,8 @@ import { HiUserCircle } from 'react-icons/hi'
 import { FaHistory, FaUsers } from 'react-icons/fa'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import { tr } from 'date-fns/locale'
+import { ThreeDots } from 'react-loader-spinner'
 
 interface Menu {
   name: string
@@ -29,7 +31,6 @@ interface Menu {
 
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-
 
   const menus: Menu[] = [
     {
@@ -84,19 +85,23 @@ const Sidebar = () => {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
   const logout = async () => {
-
-    try{
+    setIsLoading(true)
+    try {
       await axiosRequest('GET', 'logout', null, 'token')
-        .then(({data}) => toast.success(data.message))
+        .then(({ data }) => toast.success(data.message))
         .then(() => localStorage.removeItem('ACCESS_TOKEN'))
-        .then(() => navigate('/'))
-        .catch(error => console.log(error))
-    }catch (error){
+        .then(() => {
+          dispatch(resetActiveName())
+          navigate('/')
+        })
+        .catch((error) => console.log(error))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
+    } finally {
+      setIsLoading(false)
     }
-
-
   }
 
   const handleMenuClick = (menuName: string) => {
@@ -220,10 +225,31 @@ const Sidebar = () => {
           </Link>
 
           <button
-            className={` ${closeBar ? 'justify-center' : ''} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
+            className={` ${closeBar ? 'justify-center' : ''} ${isLoading ? 'justify-center' : ""} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
-            <FiLogOut size={22} />
-            {!closeBar && <span onClick={() => logout()} className="ml-3">Se deconnecter</span>}
+            {isLoading ? (
+              <div className='flex justify-center items-center'>
+                <ThreeDots
+                  visible={true}
+                  height="20"
+                  width="50"
+                  color="pink"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              </div>
+            ) : (
+              <>
+                  <FiLogOut onClick={() => logout()} size={22} />
+                {!closeBar && (
+                  <span onClick={() => logout()} className="ml-3">
+                    Se deconnecter
+                  </span>
+                )}
+              </>
+            )}
           </button>
         </div>
       </aside>

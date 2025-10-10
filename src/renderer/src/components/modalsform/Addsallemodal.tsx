@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,6 +9,7 @@ import { data } from 'autoprefixer'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import { toast } from 'react-toastify'
+import UpdateAddSalleForm from '../updatemodalparametres/UpdateAddSalleForm'
 
 type AddsalleModalProps = {
   closemodal: () => void
@@ -26,13 +27,15 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isHistoriqueLoading, setIsHistoriqueLoading] = useState<boolean>(false)
   const [niveau, setNiveau] = useState<{ id: number; nom_classe: string }[]>([])
-  const [historiques, setHistoriques] = useState<{ id: number; nom_salle: string; effectif: number; classes: { nom_classe } }[]>([])
-  
-  
-  
+  const [historiques, setHistoriques] = useState<
+    { id: number; nom_salle: string; effectif: number; classes: { nom_classe } }[]
+  >([])
+
   const [salleToDelete, setSalleToDelete] = useState<{ id: number; nom_salle: string } | null>(null)
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
+
+  const [salleToEdit, setSalleToEdit] = useState<any>(null)
 
   const getNiveau = async () => {
     setIsLoading(true)
@@ -137,6 +140,18 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
       setSalleToDelete(null)
       //  closModal('confirmDelete')
     }
+  }
+
+  // Modif
+  const handleclickEdit = (classeData: any) => {
+    setSalleToEdit(classeData)
+    openModal('updatesalle')
+  }
+
+  const handleUpdateSuccess = () => {
+    setReload((r) => !r)
+    closModal('updatesalle')
+    setSalleToEdit(null)
   }
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -310,12 +325,23 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
                             Effectif : {effectif} élèves
                           </span>
                         </div>
-                        <button
-                          onClick={() => handleclickDelete(id, nom_salle)}
-                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
+
+                        <div className="flex space-x-2">
+                          <button
+                            aria-label={`Modifier le niveaux}`}
+                            onClick={() => handleclickEdit({ id, nom_salle, effectif, classes })}
+                            className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                          >
+                            <FiEdit size={18} />
+                          </button>
+
+                          <button
+                            onClick={() => handleclickDelete(id, nom_salle)}
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                          >
+                            <FiTrash2 size={18} />
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -334,6 +360,31 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}
         />
+      )}
+
+      {modal.updatesalle && salleToEdit && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="flex items-center justify-center text-white gap-3 mb-5">
+            <h1 className="text-2xl font-bold">Modifier la salle {salleToEdit.nom_salle}</h1>
+          </div>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => closModal('updatesalle')}
+                className="text-gray-600 hover:text-red-600 transition"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <UpdateAddSalleForm
+              SalleData={salleToEdit}
+              niveau={niveau}
+              onClose={() => closModal('updatesalle')}
+              onUpdateSuccess={handleUpdateSuccess}
+            />
+          </div>
+        </div>
       )}
     </div>
   )

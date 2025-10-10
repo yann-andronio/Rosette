@@ -165,15 +165,22 @@ function Employersuivi(): JSX.Element {
                         key={employer.id}
                         onClick={() => setSelectedEmployer(employer)}
                         className={`flex items-center px-4 py-2 rounded-lg cursor-pointer transition duration-300
-                          ${selectedEmployer?.id === employer.id ? 'bg-[#895256]/10 font-semibold shadow-inner border-l-4 border-[#895256]'
-                              : index % 2 === 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-100 hover:bg-gray-50' } `}
+                          ${
+                            selectedEmployer?.id === employer.id
+                              ? 'bg-[#895256]/10 font-semibold shadow-inner border-l-4 border-[#895256]'
+                              : index % 2 === 0
+                                ? 'bg-white hover:bg-gray-50'
+                                : 'bg-gray-100 hover:bg-gray-50'
+                          } `}
                       >
                         <div className="w-12 h-12 flex items-start justify-center mr-3">
                           {employer.photo ? (
-                            <img
-                              src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`}
-                              className="w-full h-full object-cover"
-                            />
+                            <div className="bg-red-400 w-full h-full">
+                              <img
+                                src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
                           ) : (
                             <div className="bg-[#895256] p-2 rounded-full">
                               <FaUserCircle className="text-5xl text-gray-400" />

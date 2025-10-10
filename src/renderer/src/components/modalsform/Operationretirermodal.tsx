@@ -5,11 +5,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useCallback, useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import { ThreeDots } from 'react-loader-spinner'
 
 type OperationProps = {
   closemodal: () => void
-  reload:boolean
-  setReload:(reload:boolean) => void
+  reload: boolean
+  setReload: (reload: boolean) => void
 }
 
 interface FormValues {
@@ -19,47 +20,49 @@ interface FormValues {
   kermesse: number
 }
 
-
 const schema = yup.object({
   motif: yup.string().required('Le motif est requis'),
+
   ecolage: yup
     .number()
-    .transform((v) => (isNaN(v) ? 0 : v))
-    .required()
-    .default(0)
+    .typeError("Le montant de l'écolage doit être un nombre")
+    .required("Le montant de l'écolage est requis")
     .min(0, "Le montant de l'écolage doit être >= 0"),
+
   droit: yup
     .number()
-    .transform((v) => (isNaN(v) ? 0 : v))
-    .required()
-    .default(0)
-    .min(0, 'Le montant du droit doit être >= 0'),
+    .typeError('Le montant du dépôt doit être un nombre')
+    .required('Le montant du dépôt est requis')
+    .min(0, 'Le montant du dépôt doit être >= 0'),
+
   kermesse: yup
     .number()
-    .transform((v) => (isNaN(v) ? 0 : v))
-    .required()
-    .default(0)
+    .typeError('Le montant de la kermesse doit être un nombre')
+    .required('Le montant de la kermesse est requis')
     .min(0, 'Le montant de la kermesse doit être >= 0')
 })
 
 export default function OperationModal({ closemodal, reload, setReload }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'retirer' | 'historique'>('retirer')
-  const [historiques, setHistoriques] = useState<{ id: number; motif: string; ops: { type: string; montant: number }[]; created_at: string }[]>([])
+  const [historiques, setHistoriques] = useState<
+    { id: number; motif: string; ops: { type: string; montant: number }[]; created_at: string }[]
+  >([])
   const [errorkely, seterrorkely] = useState<string | null>(null)
+  const [isLoadingRetirerOperation, setIsLoadingRetirerOperation] = useState(false)
 
   const getHistoriques = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'moins-list', 'null', 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error.response.data.message))
-    }catch(error){
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error.response.data.message))
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getHistoriques()
-  }, [activeTab=='historique'])
+  }, [activeTab == 'historique'])
 
   const {
     register,
@@ -71,26 +74,23 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
     defaultValues: { motif: '', ecolage: 0, droit: 0, kermesse: 0 }
   })
 
- const onSubmit =async (data: FormValues) => {
-
-
-
-
-
-   try{
-     await axiosRequest('POST', 'op-moins', data, 'token')
-       .then(({data}) => toast.success(data.message))
-       .then(() => reset())
-       .then(() => setActiveTab('historique'))
-       .then(() => setReload(!reload))
-       .catch((err) => toast.error(err.response.data.message) )
-   }catch (error){
-     console.log('Le serveur ne repond pas')
-   }
-   seterrorkely(null)
-   // setActiveTab('historique')
-   // reset()
- }
+  const onSubmit = async (data: FormValues) => {
+    setIsLoadingRetirerOperation(true)
+    try {
+      await axiosRequest('POST', 'op-moins', data, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => reset())
+        .then(() => setActiveTab('historique'))
+        .then(() => setReload(!reload))
+        .catch((err) => toast.error(err.response.data.message))
+        .finally(() => setIsLoadingRetirerOperation(false))
+    } catch (error) {
+      console.log('Le serveur ne repond pas')
+    }
+    seterrorkely(null)
+    // setActiveTab('historique')
+    // reset()
+  }
 
   // const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
 
@@ -99,7 +99,7 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
       <div className="flex items-center justify-center text-white gap-3 mb-5">
         <h1 className="text-2xl font-bold">Retirer de l'argent</h1>
       </div>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[60vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             {['retirer', 'historique'].map((tab) => (
@@ -156,9 +156,7 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
                   placeholder="Montant"
                 />
                 {errors.ecolage && (
-                  <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.ecolage.message}
-                  </p>
+                  <p className="text-sm text-red-600 font-medium mt-1">{errors.ecolage.message}</p>
                 )}
               </div>
 
@@ -175,9 +173,7 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
                   placeholder="Montant"
                 />
                 {errors.droit && (
-                  <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.droit.message}
-                  </p>
+                  <p className="text-sm text-red-600 font-medium mt-1">{errors.droit.message}</p>
                 )}
               </div>
 
@@ -194,9 +190,7 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
                   placeholder="Montant"
                 />
                 {errors.kermesse && (
-                  <p className="text-sm text-red-600 font-medium mt-1">
-                    {errors.kermesse.message}
-                  </p>
+                  <p className="text-sm text-red-600 font-medium mt-1">{errors.kermesse.message}</p>
                 )}
               </div>
             </div>
@@ -218,7 +212,23 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
                 type="submit"
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
-                <FiPlus size={18} /> retirer
+                {isLoadingRetirerOperation ? (
+                  <ThreeDots
+                    visible={true}
+                    height="20"
+                    width="50"
+                    color="pink"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                ) : (
+                  <div className="flex items-center justify-center gap-2 ">
+                    <FiPlus size={18} />
+                    <p>retirer</p>
+                  </div>
+                )}
               </button>
             </div>
           </form>

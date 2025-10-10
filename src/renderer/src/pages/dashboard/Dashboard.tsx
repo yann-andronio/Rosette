@@ -32,7 +32,7 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { IconType } from 'react-icons'
 import Operationretirermodal from '@renderer/components/modalsform/Operationretirermodal'
 import Operationajoutmodal from '@renderer/components/modalsform/Operationajoutmodal'
-import { TailSpin } from 'react-loader-spinner'
+import { RotatingLines, TailSpin } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
 
 // ---- Mois jiaby ---- //
@@ -137,12 +137,11 @@ export default function Dashboard(): JSX.Element {
   })
   const [selectedYear, setSelectedYear] = useState<string>('last')
 
-  const [debut, setDebut] = useState<string|null>(null)
-  const [fin, setFin] = useState<string|null>(null)
-  const [flux, setFlux] = useState<{debit:number, credit:number}>({debit:0, credit:0})
+  const [debut, setDebut] = useState<string | null>(null)
+  const [fin, setFin] = useState<string | null>(null)
+  const [flux, setFlux] = useState<{ debit: number; credit: number }>({ debit: 0, credit: 0 })
   const [reload, setReload] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState(true)
-
+  const [isLoading, setIsLoading] = useState(false)
 
   const getFlux = async () => {
     try {
@@ -153,7 +152,11 @@ export default function Dashboard(): JSX.Element {
       console.log('Le Serveur ne repond pas')
     }
   }
+
+  const [isLoaderDataBar, setIsLoaderDataBar] = useState<boolean>(false)
+
   const getDatabar = async () => {
+   setIsLoaderDataBar(true)
     try {
       await axiosRequest(
         'GET',
@@ -163,6 +166,8 @@ export default function Dashboard(): JSX.Element {
       )
         .then(({ data }) => setDatabar(data))
         .catch((error) => console.log(error))
+        .then(() => setIsLoaderDataBar(false))
+      .finally(()=>setIsLoaderDataBar(false))
     } catch (error) {
       console.log('Le serveur ne repond pas')
     }
@@ -256,10 +261,13 @@ export default function Dashboard(): JSX.Element {
     getEcolage()
     getDroit()
     getKermesse()
+
   }, [reload]);
 
 
   const [infra, setInfra] = useState([])
+
+
 
   const visibleLabels = FullMonth.slice(0, range)
 
@@ -300,10 +308,15 @@ export default function Dashboard(): JSX.Element {
     }
   }
 
+  const [reset, SetReset] = useState(false)
+
   useEffect(() => {
     getDatabar()
 
-  }, [selectedYear,debut, fin, reload])
+
+
+  }, [selectedYear, debut, fin, reload, reset])
+
 
   const getInfra = async () => {
     try{
@@ -328,6 +341,7 @@ export default function Dashboard(): JSX.Element {
     if (ratio >= 0.9) return 'text-orange-600 bg-orange-50'
     return 'text-green-600 bg-green-50'
   };
+
 
   const { modal, openModal, closModal } = useMultiModals()
 
@@ -388,11 +402,24 @@ export default function Dashboard(): JSX.Element {
           </div>
 
           {/* Graphique principal + calendrier */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative">
             <div
-              className="bg-white shadow-lg rounded-2xl p-6 lg:col-span-2 flex flex-col items-start"
+              className="bg-white shadow-lg rounded-2xl p-6 lg:col-span-2 flex flex-col items-start relative"
               style={{ height: '450px' }}
             >
+              {isLoaderDataBar && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/80">
+                  <RotatingLines
+                    visible={true}
+                    strokeColor="#7A3B3F"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    ariaLabel="rotating-lines-loading"
+                  />
+                </div>
+              )}
+
+              {/* Contenu du graphique */}
               <div className="flex justify-between items-center w-full mb-4">
                 <h2 className="text-xl font-bold text-[#212529]">
                   Évolution Revenus, Dépenses & Bénéfices
@@ -425,7 +452,8 @@ export default function Dashboard(): JSX.Element {
                 <Bar data={dataBar} options={optionsBar} />
               </div>
             </div>
-            <Calendarfilter setDebut={setDebut} setFin={setFin} />
+
+            <Calendarfilter setDebut={setDebut} setFin={setFin} SetReset={SetReset} reset={reset} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
@@ -472,10 +500,18 @@ export default function Dashboard(): JSX.Element {
       )}
 
       {modal.Operationretirermodal && (
-        <Operationretirermodal reload={reload} setReload={setReload} closemodal={() => closModal('Operationretirermodal')} />
+        <Operationretirermodal
+          reload={reload}
+          setReload={setReload}
+          closemodal={() => closModal('Operationretirermodal')}
+        />
       )}
       {modal.Operationajoutmodal && (
-        <Operationajoutmodal reload={reload} setReload={setReload} closemodal={() => closModal('Operationajoutmodal')} />
+        <Operationajoutmodal
+          reload={reload}
+          setReload={setReload}
+          closemodal={() => closModal('Operationajoutmodal')}
+        />
       )}
 
       <div className="max-w-7xl mx-auto">

@@ -10,7 +10,8 @@ import {
   FiUploadCloud,
   FiDownloadCloud,
   FiCreditCard,
-  FiBarChart2
+  FiBarChart2,
+  FiPenTool
 } from 'react-icons/fi'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
@@ -32,6 +33,8 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { Triangle } from 'react-loader-spinner'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 import { useNavigate } from 'react-router-dom'
+import Addtitremodal from '@renderer/components/modalsform/AddTittleEcolemodal'
+import { BsFillPencilFill } from 'react-icons/bs'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -79,7 +82,8 @@ function Parameters(): JSX.Element {
   ]
   const buttonsForCongigNifStat = [
     { icon: <FiCreditCard size={28} />, label: 'Configuration NIF', modalName: 'Nifmodal' },
-    { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' }
+    { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' },
+    { icon: <BsFillPencilFill size={28} />, label: 'Configuration du titre', modalName: 'titremodal' }
   ]
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -265,7 +269,7 @@ function Parameters(): JSX.Element {
 
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2 mt-12">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
-          Configuration de Nif et Stat
+          Configuration de Nif , Stat et Titre de l' établissement
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {buttonsForCongigNifStat.map((item, index) => (
@@ -318,6 +322,7 @@ function Parameters(): JSX.Element {
       )}
       {modal.Nifmodal && <Nifmodal closemodal={() => closModal('Nifmodal')} />}
       {modal.Statmodal && <Statmodal closemodal={() => closModal('Statmodal')} />}
+      {modal.titremodal && <Addtitremodal closemodal={() => closModal('titremodal')} />}
       {isBackup && (
         <Triangle
           visible={true}

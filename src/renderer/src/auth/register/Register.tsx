@@ -56,11 +56,8 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
         )
         .finally(() => setIsLoading(false))
     }catch (err){
-      alert('Erreur lors de la connexion au serveur')
+      toast.error('Erreur lors de la connexion au serveur')
     }
-
-
-
 
 
   }
@@ -202,15 +199,6 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
         </form>
       </div>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
     </div>
   )
 }

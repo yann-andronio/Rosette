@@ -14,23 +14,20 @@ import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
 type OperationProps = { closemodal: () => void }
 
 interface FormValues {
-  nom: string
+  tittle: string
 }
 
 const schema = yup.object({
-  nom: yup.string().required('Le motif est requis')
+  tittle: yup.string().required('Le titre est requis')
 })
 
-
-
-
-export default function Addmatieremodal({ closemodal }: OperationProps) {
+export default function Addtitremodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{nom:string, id:number,created_at}[]>([])
+  const [historiques, setHistoriques] = useState<{ tittle: string; id: number; created_at }[]>([])
   const [reload, setReload] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
 
-    const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
+  const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
 
   const {
     register,
@@ -39,14 +36,14 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
     formState: { errors }
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    defaultValues: { nom: '' }
+    defaultValues: { tittle: '' }
   })
   const getHistoriques = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'domaines', null, 'token')
-        .then(({data}) => setHistoriques(data))
-        .catch(error => console.log(error))
-    }catch(e){
+        .then(({ data }) => setHistoriques(data))
+        .catch((error) => console.log(error))
+    } catch (e) {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -54,65 +51,62 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
     getHistoriques()
   }, [activeTab, reload])
   const onSubmit = async (data: FormValues) => {
-setIsLoading(true)
-    
-    try{
+    setIsLoading(true)
+
+    try {
       await axiosRequest('POST', 'domaines', data, 'token')
-        .then(({data}) => toast.success(data.message))
-        .then(() =>    reset())
+        .then(({ data }) => toast.success(data.message))
+        .then(() => reset())
         .then(() => setActiveTab('historique'))
-        .catch(error => toast.error(error.response.data.message))
-    }catch(err){
+        .catch((error) => toast.error(error.response.data.message))
+    } catch (err) {
       console.error('Le serveur ne repond pas')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const removeHistorique = async (id:number) => {
-    try{
+  const removeHistorique = async (id: number) => {
+    try {
       await axiosRequest('DELETE', `domaines/${id}`, id, 'token')
-        .then(({data}) => toast.success(data.message))
+        .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
-        .catch(error => console.log(error))
-    }catch(e){
-      console.log("Le serveur ne repond pas")
+        .catch((error) => console.log(error))
+    } catch (e) {
+      console.log('Le serveur ne repond pas')
     }
   }
 
-
-    const [matiereToDelet, setmatiereToDelet] = useState<{ id: number; nom: string } | null>(null)
-    const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+  const [titreToDelet, settitreToDelet] = useState<{ id: number; tittle: string } | null>(null)
+  const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
-  
 
-   const handleclickDelete = (id: number, nom: string) => {
-     setmatiereToDelet({ id, nom })
-     openModal('confirmDelete')
-   }
+  const handleclickDelete = (id: number, tittle: string) => {
+    settitreToDelet({ id, tittle })
+    openModal('confirmDelete')
+  }
 
-   const handleConfirmDelete = async () => {
-     if (!matiereToDelet) return
-     setIsDeletingLoader(true)
-     try {
-       await removeHistorique(matiereToDelet.id)
-     } finally {
-       setIsDeletingLoader(false)
-       setmatiereToDelet(null)
-       //  closModal('confirmDelete')
-     }
-   }
-
-  
-    const handleClickEdit = (item: { id: number; nom?: string }) => {
-      const value = item.nom || ''
-      setEditData({ id: item.id, value })
-      openModal('updatematiere')
+  const handleConfirmDelete = async () => {
+    if (!titreToDelet) return
+    setIsDeletingLoader(true)
+    try {
+      await removeHistorique(titreToDelet.id)
+    } finally {
+      setIsDeletingLoader(false)
+      settitreToDelet(null)
+      //  closModal('confirmDelete')
     }
+  }
+
+  const handleClickEdit = (item: { id: number; tittle?: string }) => {
+    const value = item.tittle || ''
+    setEditData({ id: item.id, value })
+    openModal('updatetitre')
+  }
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
-        <h1 className="text-2xl font-bold">Ajouter une matière</h1>
+        <h1 className="text-2xl font-bold">Configuration du Titre de l' établissement</h1>
       </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
@@ -143,16 +137,16 @@ setIsLoading(true)
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <input
-                {...register('nom')}
+                {...register('tittle')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.nom
+                  errors.tittle
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
-                placeholder="Ex: Mathématiques"
+                placeholder="Ex: ROSETTE II"
               />
-              {errors.nom && (
-                <p className="text-sm text-red-600 font-medium mt-1">{errors.nom.message}</p>
+              {errors.tittle && (
+                <p className="text-sm text-red-600 font-medium mt-1">{errors.tittle.message}</p>
               )}
             </div>
 
@@ -184,30 +178,30 @@ setIsLoading(true)
               <p className="text-center text-gray-500">Aucune matière enregistrée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ id, nom, created_at }) => (
+                {historiques.map(({ id, tittle, created_at }) => (
                   <li
                     key={id}
                     className="bg-gray-100 p-4 rounded-lg flex justify-between items-start hover:bg-gray-200 transition"
                   >
                     <div>
-                      <p className="font-semibold">Matière : {nom}</p>
+                      <p className="font-semibold">Titre : {tittle}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {formatDate(created_at)}</p>
                     </div>
-                     <div className="flex space-x-2">
+                    <div className="flex space-x-2">
                       <button
                         aria-label={`Modifier le niveaux}`}
-                        onClick={() => handleClickEdit({id , nom})}
+                        onClick={() => handleClickEdit({ id, tittle })}
                         className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
                       >
                         <FiEdit size={18} />
                       </button>
-                    <button
-                      onClick={() => handleclickDelete(id, nom)}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                    >
-                      <FiTrash2 size={18} />
+                      <button
+                        onClick={() => handleclickDelete(id, tittle)}
+                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                      >
+                        <FiTrash2 size={18} />
                       </button>
-                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -216,25 +210,25 @@ setIsLoading(true)
         )}
       </div>
 
-      {modal.confirmDelete && matiereToDelet && (
+      {modal.confirmDelete && titreToDelet && (
         <ConfirmDeleteModal
           title="Supprimer la classe"
-          message={`Voulez-vous vraiment supprimer la matière de ${matiereToDelet.nom} ?`}
+          message={`Voulez-vous vraiment supprimer le titre  ${titreToDelet.tittle} de l' établissement ?`}
           onConfirm={handleConfirmDelete}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}
         />
       )}
 
-      {modal.updatematiere && editData && (
+      {modal.updatetitre && editData && (
         <UpdateForSimpleInput
           id={editData.id}
           defaultValue={editData.value}
-          fieldName="matiere"
-          title="Modifier cette matiere"
-          placeholder="EX: Professeur"
-          updateUrl="matiere"
-          closemodal={() => closModal('updatematiere')}
+          fieldName="Titre"
+          title="Modifier la titre de l'établissement"
+          placeholder="EX: Rosette II"
+          updateUrl="titre"
+          closemodal={() => closModal('updatetitre')}
           reload={() => setReload(!reload)}
         />
       )}

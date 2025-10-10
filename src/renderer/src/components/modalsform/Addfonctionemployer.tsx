@@ -1,4 +1,4 @@
-import { FiPlus, FiX, FiTrash2 } from 'react-icons/fi'
+import { FiPlus, FiX, FiTrash2, FiEdit } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -7,6 +7,8 @@ import { ThreeDots } from 'react-loader-spinner'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
+import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
+import useMultiModals from '@renderer/hooks/useMultiModals'
 
 type AddFunctionProps = {
   closemodal: () => void
@@ -37,6 +39,9 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
   const [reload, setReload] = useState<boolean>(false)
   const [fonctionToDelet, setFonctionToDelet] = useState<FonctionToDelet | null>(null)
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
+
+    const { openModal, modal, closModal } = useMultiModals()
+    const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
 
   const {
     register,
@@ -108,6 +113,12 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
   const handleCloseDeleteModal = () => {
     setFonctionToDelet(null)
   }
+
+    const handleClickEdit = (item: { id: number; profession?: string }) => {
+      const value = item.profession || ''
+      setEditData({ id: item.id, value })
+      openModal('updateprofession')
+    }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -191,13 +202,22 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
                     className="bg-gray-100 p-4 rounded-md flex justify-between items-center hover:bg-gray-200 transition"
                   >
                     <span className="font-semibold">{item.profession}</span>
-                    <button
-                      aria-label={`Supprimer la fonction ${item.profession}`}
-                      onClick={() => handleclickDelete(item.id, item.profession)}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        aria-label={`Modifier le niveaux}`}
+                        onClick={() => handleClickEdit(item)}
+                        className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                      >
+                        <FiEdit size={18} />
+                      </button>
+                      <button
+                        aria-label={`Supprimer la fonction ${item.profession}`}
+                        onClick={() => handleclickDelete(item.id, item.profession)}
+                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -213,6 +233,19 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
           onConfirm={handleConfirmDelete}
           closemodal={handleCloseDeleteModal}
           isDeletingLoader={isDeletingLoader}
+        />
+      )}
+
+      {modal.updateprofession && editData && (
+        <UpdateForSimpleInput
+          id={editData.id}
+          defaultValue={editData.value}
+          fieldName="profession"
+          title="Modifier cette profession"
+          placeholder="EX: Professeur"
+          updateUrl="profession"
+          closemodal={() => closModal('updateprofession')}
+          reload={() => setReload(!reload)}
         />
       )}
     </div>

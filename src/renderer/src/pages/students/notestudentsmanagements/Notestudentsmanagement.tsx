@@ -337,11 +337,14 @@ function Notestudentsmanagement(): JSX.Element {
                       }  hover:bg-gray-50 hover:border-l-[5px] border-[#895256] hover:shadow-lg transition duration-300`}
                     >
                       <div className="w-27 h-12 flex items-center justify-centerrounded-lg mr-4">
-                        <img
-                          src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
-                          alt="Profil"
-                          className="rounded-sm w-10 h-10"
-                        />
+                        <div className="image bg-[#895256] p-2 rounded-lg">
+                          <img
+                            src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
+                            alt="Profil"
+                            className="rounded-sm w-10 h-10"
+                            
+                          />
+                        </div>
                       </div>
 
                       <div className="flex-1 font-semibold text-gray-800">{student.nom}</div>
