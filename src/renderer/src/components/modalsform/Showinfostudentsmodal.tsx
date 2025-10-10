@@ -73,7 +73,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
      const currentStatus = student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions
      if (currentStatus !== 'suspendu') {
        setStudentToSuspendId(student.id)
-       openModal('confirmSuspend') 
+       openModal('confirmSuspend')
      }
    }
 
@@ -151,12 +151,12 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                   <span className="font-medium">École précédente :</span> {student.ecole}
                 </p>
               )}
-            
+
                 <p>
                   <span className="font-medium">enfant de prof :</span>{' '}
                   {student.enfantProf == 1 ? 'Oui' : 'Non'}
                 </p>
-              
+
             </div>
           </section>
 
@@ -306,7 +306,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                                 ? true
                                 : false
                             }
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white ${status.transfert == 1 ? 'cursor-not-allowed' : ''} ${
+                            className={`inline-block px-3 py-1  rounded-full text-xs font-semibold text-white ${status.transfert == 1 ? 'cursor-not-allowed' : ''} ${
                               status.status_admissions
                                 ? status.status_admissions == 'cours'
                                   ? 'bg-gray-400 cursor-not-allowed'

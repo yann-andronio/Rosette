@@ -76,7 +76,7 @@ function Notestudentsmanagement(): JSX.Element {
   const getClasse = async () => {
 
     try{
-      await axiosRequest('GET', 'classe-list', null, 'token')
+      await axiosRequest('GET', `classe-list_year/${selectedyear}`, null, 'token')
         .then(({data}) => setClasses(data))
         .catch(error => console.log(error.response?.data?.message))
     }catch(error){
@@ -86,7 +86,7 @@ function Notestudentsmanagement(): JSX.Element {
 
   const getSalle = async () => {
     try{
-      await axiosRequest('GET', 'salle-list', null, 'token')
+      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null, 'token')
         .then(({data}) => setSalles(data))
         .catch(error => console.log(error.response?.data?.message))
     }catch(error){
@@ -107,9 +107,17 @@ function Notestudentsmanagement(): JSX.Element {
 
   useEffect(() => {
     getAcs()
-    getClasse()
-    getSalle()
+
   }, [])
+
+  useEffect(() => {
+    getClasse()
+  }, [selectedyear]);
+
+  useEffect(() => {
+
+    getSalle()
+  }, [selectedniveau]);
 
   useEffect(() => {
     getEtudiants()
@@ -342,7 +350,7 @@ function Notestudentsmanagement(): JSX.Element {
                             src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${student.photo}`}
                             alt="Profil"
                             className="rounded-sm w-10 h-10"
-                            
+
                           />
                         </div>
                       </div>

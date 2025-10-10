@@ -88,10 +88,10 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
 
   const [salles, setSalles] = useState<{ nom_salle: string; id: number }[]>([])
   const [niveau, setNiveau] = useState<{ nom_classe: string; id: number }[]>([])
-
+const [niv, setNiv] = useState(0)
   const getSalles = async () => {
     try {
-      await axiosRequest('GET', 'salle-list', null, 'token')
+      await axiosRequest('GET', `salle-list_year/${niv}`, null, 'token')
         .then(({ data }) => setSalles(data))
         .catch((error) => console.log(error))
     } catch (error) {
@@ -101,7 +101,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
 
   const getClasses = async () => {
     try {
-      await axiosRequest('GET', 'classe-list', null, 'token')
+      await axiosRequest('GET', `classe-list_year/0`, null, 'token')
         .then(({ data }) => setNiveau(data))
         .catch((error) => console.log(error))
     } catch (error) {
@@ -209,9 +209,13 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
 
   useEffect(() => {
     getMatricule()
-    getSalles()
+
     getClasses()
   }, [reload])
+
+  useEffect(() => {
+    getSalles()
+  }, [reload, niv])
 
   useEffect(() => {
     if (mode === 'modifstudents') {
@@ -419,6 +423,7 @@ const AdUpinfostudentsmodal: React.FC<infostudentsProps> = ({
                 <div className="col-span-1">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Niveau *</label>
                   <select
+                    onInput={(e) => setNiv(e.target.value)}
                     {...register('cl_id')}
                     className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
                       errors.cl_id

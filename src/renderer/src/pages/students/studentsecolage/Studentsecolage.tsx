@@ -1,18 +1,16 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { ChangeEvent, useEffect, useState } from 'react'
-import { FaUserCircle, FaEdit, FaTrash, FaEye, FaPlusCircle } from 'react-icons/fa'
+import {FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
-import { FilterOptions, StudentsType } from '@renderer/types/Alltypes'
+
 import { MdMeetingRoom } from 'react-icons/md'
 import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
-import { Target } from 'framer-motion'
 import { ToastContainer } from 'react-toastify'
 
 function Studentsecolage(): JSX.Element {
@@ -133,7 +131,7 @@ function Studentsecolage(): JSX.Element {
 
   const getSalle = async () => {
     try {
-      await axiosRequest('GET', `salle-list_year/${selectedyears}`, null, 'token')
+      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null, 'token')
         .then(({ data }) => setSalles(data))
         .catch((error) => console.log(error.response?.data?.message))
     } catch (error) {
@@ -144,15 +142,20 @@ function Studentsecolage(): JSX.Element {
     setCurrentPage(page)
   }
   useEffect(() => {
-    getAcs()
-    getClasse()
-    getSalle()
     getMac()
   }, [selectedyears])
 
-  //  ${
-  //       Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''
-  //     }
+  useEffect(() => {
+    getAcs()
+  }, []);
+
+  useEffect(() => {
+    getSalle()
+  }, [selectedniveau]);
+
+  useEffect(() => {
+    getClasse()
+  }, [selectedyears]);
 
   return (
     <div

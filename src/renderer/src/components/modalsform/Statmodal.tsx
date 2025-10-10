@@ -39,7 +39,7 @@ export default function Statmodal({ closemodal }: OperationProps) {
   const [statToDelet, setStatToDelet] = useState<StatToDelete | null>(null)
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  
+
 
    const { openModal, modal, closModal } = useMultiModals()
    const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
@@ -86,7 +86,7 @@ export default function Statmodal({ closemodal }: OperationProps) {
   }
 
 
-  
+
 
   const removeHistorique = async (id: number) => {
     try {
@@ -121,7 +121,7 @@ export default function Statmodal({ closemodal }: OperationProps) {
     setStatToDelet(null)
   }
 
-  
+
    const handleClickEdit = (item: { id: number; ident?: string }) => {
      const value = item.ident || ''
      setEditData({ id: item.id, value })
@@ -250,10 +250,10 @@ export default function Statmodal({ closemodal }: OperationProps) {
         <UpdateForSimpleInput
           id={editData.id}
           defaultValue={editData.value}
-          fieldName="stat"
+          fieldName="ident"
           title="Modifier le stat"
           placeholder="Ex: TEST/1234"
-          updateUrl="stat"
+          updateUrl="identify"
           closemodal={() => closModal('updatestat')}
           reload={() => setReload(!reload)}
         />

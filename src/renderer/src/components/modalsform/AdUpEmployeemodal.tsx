@@ -8,7 +8,7 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { Oval, ThreeDots } from 'react-loader-spinner'
 import { EmployerType } from '@renderer/types/Alltypes'
 import { toast } from 'react-toastify'
-const matieresDisponibles = ['Math', 'Physique', 'Chimie', 'Français', 'Anglais', 'Histoire']
+
 
 type EmployeeModalProps = {
   closemodal: () => void
@@ -126,7 +126,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
       try {
         const response = await axiosRequest('POST', 'worker-creation', formData, 'token')
         toast.success(response.data.message)
-        fresh(!reload) 
+        fresh(!reload)
         closemodal()
       } catch (error: any) {
         toast.error(error?.response?.data?.message || "Erreur lors de l'ajout de l'employé.")
@@ -190,6 +190,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
   useEffect(() => {
     getWorker()
   }, [mode == 'modifemplyer'])
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-6">
       <div className="bg-white w-full max-w-7xl h-[90vh] rounded-2xl flex shadow-2xl overflow-hidden">

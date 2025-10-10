@@ -102,7 +102,7 @@ function Studentsinfo(): JSX.Element {
   const [reload, setReload] = useState<boolean>(false)
   const getClasse = async () => {
     try {
-      await axiosRequest('GET', 'classe-list', null, 'token')
+      await axiosRequest('GET', `classe-list_year/${selectedyear}`, null, 'token')
         .then(({ data }) => setClasses(data))
         .catch((error) => console.log(error.response?.data?.message))
     } catch (error) {
@@ -112,7 +112,7 @@ function Studentsinfo(): JSX.Element {
 
   const getSalle = async () => {
     try {
-      await axiosRequest('GET', 'salle-list', null, 'token')
+      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null, 'token')
         .then(({ data }) => setSalles(data))
         .catch((error) => console.log(error.response?.data?.message))
     } catch (error) {
@@ -131,9 +131,15 @@ function Studentsinfo(): JSX.Element {
   }
 
   useEffect(() => {
-    getAcs()
-    getClasse()
     getSalle()
+  }, [selectedniveau])
+
+  useEffect(() => {
+    getClasse()
+  }, [selectedyear])
+
+  useEffect(() => {
+    getAcs()
   }, [])
 
   const nextPage = (page: number) => {

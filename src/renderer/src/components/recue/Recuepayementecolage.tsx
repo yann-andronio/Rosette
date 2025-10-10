@@ -1,6 +1,7 @@
-import { forwardRef } from 'react'
-import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa' 
-import logo from '../../images/logo.jpg' 
+import { forwardRef, useEffect, useState } from 'react'
+import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa'
+import logo from '../../images/logo.jpg'
+import { axiosRequest } from '@renderer/config/helpers'
 
 type RecuepayementecolageProps = {
   eleve: string
@@ -10,7 +11,7 @@ type RecuepayementecolageProps = {
   mois: string
   montant: number
   datePaiement: string
-  numeroRecu?: string 
+  numeroRecu?: string
 }
 
 const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProps>(
@@ -20,16 +21,23 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
       month: 'long',
       day: 'numeric'
     })
-
+  const [num , setNum] = useState()
+    const getNum = async () => {
+      await axiosRequest('GET', 'recue', null, 'token')
+        .then(({data}) => setNum(data))
+    }
+    useEffect(() => {
+      getNum()
+    }, [])
     return (
       <div
         ref={ref}
         className="bg-white w-[600px] mx-auto p-8 border border-gray-900 shadow-xl text-sm leading-normal text-gray-900 print:w-full print:shadow-none print:p-4"
       >
-       
+
         <div className="flex justify-between items-start border-b-2 border-[#895256] pb-4 mb-6">
           <div className="flex items-center gap-4">
-        
+
             <img src={logo} alt="Logo de l'école" className="w-20 h-20 object-contain" />
             <div>
               <h1 className="text-xl font-extrabold text-gray-900 uppercase tracking-wider">
@@ -47,7 +55,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
             </div>
             <div className="flex items-center justify-end gap-1">
               <FaPhone size={10} className="text-gray-600" />
-              <span>+261 242290407</span>
+              <span>+261 324334407</span>
             </div>
             <div className="flex items-center justify-end gap-1">
               <FaEnvelope size={10} className="text-gray-600" />
@@ -56,22 +64,22 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           </div>
         </div>
 
-     
+
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 uppercase border-b-2 border-gray-400 pb-1 inline-block">
             REÇU DE PAIEMENT D’ÉCOLAGE
           </h2>
-          {/* <div className="mt-2 p-1 bg-gray-100 rounded-sm">
+         <div className="mt-2 p-1 bg-gray-100 rounded-sm">
             <p className="text-sm font-semibold text-gray-800">
               N° Reçu :{' '}
               <span className="text-lg font-extrabold text-[#895256]">
-                {numeroRecu || 'À GÉNÉRER'}
+                {num}
               </span>
             </p>
-          </div> */}
+          </div>
         </div>
 
-     
+
         <div className="mb-6 p-4 border border-gray-400 rounded-lg bg-gray-50">
           <h3 className="text-base font-bold mb-3 border-b border-gray-300 pb-1 text-gray-700">
             INFORMATIONS DE L’ÉLÈVE
@@ -98,7 +106,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           </div>
         </div>
 
-  
+
         <h3 className="text-base font-bold mb-3 text-gray-700">DÉTAILS DU PAIEMENT</h3>
         <div className="border-2 border-gray-600 rounded-lg mb-6 overflow-hidden">
           <table className="w-full text-sm">
@@ -115,12 +123,12 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
                 <td className="p-3 text-center">{formattedDatePaiement}</td>
                 <td className="p-3 text-right font-bold text-lg">{montant.toLocaleString()} Ar</td>
               </tr>
-            
+
               <tr className="border-t border-gray-400 bg-gray-100">
                 <td colSpan={2} className="p-3 text-right text-base font-extrabold text-gray-900">
                   MONTANT TOTAL REÇU :
                 </td>
-             
+
                 <td className="p-3 text-right text-xl font-extrabold text-gray-900 border-l border-gray-400">
                   {montant.toLocaleString()} Ar
                 </td>
@@ -129,7 +137,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           </table>
         </div>
 
-      
+
         {/* <p className="italic mb-6 p-2 border border-gray-300 rounded-md bg-white">
           Montant en toutes lettres :{' '}
           <span className="underline font-bold text-gray-900">{'...'}</span> Ariary
@@ -140,14 +148,14 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           <span className="font-semibold">{formattedDatePaiement}</span>.
         </p>
 
-     
+
         <div className="flex justify-between mt-10 text-sm">
           <div className="text-center w-1/3">
             <p className="mb-12 border-b border-dashed border-gray-500 pb-1">
               Signature de l’élève / parent
             </p>
           </div>
-        
+
           <div className="text-center w-1/3">
             <p className="mb-12 border-b border-dashed border-gray-500 pb-1">
               Signature & Cachet de l’École
@@ -155,7 +163,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           </div>
         </div>
 
-      
+
         <div className="mt-12 text-center text-xs text-gray-600 border-t pt-3">
           <p className="font-bold text-gray-800">CONSERVEZ PRÉCIEUSEMENT CE DOCUMENT.</p>
           <p className="mt-1">
