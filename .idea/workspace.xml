@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/updatemodalparametres/UpdateAddSalleForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/updatemodalparametres/UpdateAddSalleForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/updatemodalparametres/UpdateAdmissonForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/updatemodalparametres/UpdateAdmissonForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addfonctionemployer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addfonctionemployer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addmatieremodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addmatieremodal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/src/components/updatemodalparametres/UpdateForSimpleInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/updatemodalparametres/UpdateForSimpleInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/parameters/Parameters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/parameters/Parameters.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +124,7 @@
       <workItem from="1759573481014" duration="22954000" />
       <workItem from="1759615649932" duration="14867000" />
       <workItem from="1759730123261" duration="15037000" />
-      <workItem from="1760081571209" duration="5426000" />
+      <workItem from="1760081571209" duration="7038000" />
     </task>
     <servers />
   </component>

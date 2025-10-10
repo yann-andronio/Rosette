@@ -243,7 +243,7 @@ const Addfonctionemployer: React.FC<AddFunctionProps> = ({ closemodal }) => {
           fieldName="profession"
           title="Modifier cette profession"
           placeholder="EX: Professeur"
-          updateUrl="profession"
+          updateUrl="profession-update"
           closemodal={() => closModal('updateprofession')}
           reload={() => setReload(!reload)}
         />

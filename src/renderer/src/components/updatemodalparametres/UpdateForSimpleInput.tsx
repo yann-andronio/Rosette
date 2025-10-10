@@ -45,8 +45,9 @@ export default function UpdateForSimpleInput({
 
   const onSubmit = async (data: any) => {
     setIsLoading(true)
+    console.log(data)
     try {
-      await axiosRequest('PUT', `profession-update/${id}`, data, 'token')
+      await axiosRequest('PUT', `${updateUrl}/${id}`, data, 'token')
       toast.success(`${title} mis à jour avec succès`)
       reload()
       closemodal()

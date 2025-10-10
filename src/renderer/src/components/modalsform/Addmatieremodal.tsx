@@ -55,7 +55,7 @@ export default function Addmatieremodal({ closemodal }: OperationProps) {
   }, [activeTab, reload])
   const onSubmit = async (data: FormValues) => {
 setIsLoading(true)
-    
+
     try{
       await axiosRequest('POST', 'domaines', data, 'token')
         .then(({data}) => toast.success(data.message))
@@ -84,7 +84,7 @@ setIsLoading(true)
     const [matiereToDelet, setmatiereToDelet] = useState<{ id: number; nom: string } | null>(null)
     const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
-  
+
 
    const handleclickDelete = (id: number, nom: string) => {
      setmatiereToDelet({ id, nom })
@@ -103,7 +103,7 @@ setIsLoading(true)
      }
    }
 
-  
+
     const handleClickEdit = (item: { id: number; nom?: string }) => {
       const value = item.nom || ''
       setEditData({ id: item.id, value })
@@ -230,10 +230,10 @@ setIsLoading(true)
         <UpdateForSimpleInput
           id={editData.id}
           defaultValue={editData.value}
-          fieldName="matiere"
+          fieldName="nom"
           title="Modifier cette matiere"
-          placeholder="EX: Professeur"
-          updateUrl="matiere"
+          placeholder="EX: Math"
+          updateUrl="domaines"
           closemodal={() => closModal('updatematiere')}
           reload={() => setReload(!reload)}
         />
