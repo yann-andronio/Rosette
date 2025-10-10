@@ -65,15 +65,18 @@ const UpdateAddSalleForm: React.FC<UpdateAddSalleFormProps> = ({
 
   const onSubmit = async (data: FormDataSalle) => {
     setIsLoading(true)
-    // try {
-    //   const res = await axiosRequest('PUT', `salle-update/${SalleData.id}`, data, 'token')  sologna endpointttt************
-    //   toast.success(res.data?.message || 'Salle modifiée ')
-    //   onUpdateSuccess()
-    // } catch (error) {
-    //   toast.error('Erreur lors de la modification ')
-    // } finally {
-    //   setIsLoading(false)
-    // }
+    try {
+     await axiosRequest('PUT', `salle-update/${SalleData.id}`, data, 'token')
+        .then((res) =>       toast.success(res.data?.message || 'Salle modifiée '))
+       .then(() =>onUpdateSuccess() )
+        .catch((error) => toast.error('Erreur lors de la modification:'+error.response.data.message))
+
+
+    } catch (error) {
+      toast.error('Erreur lors de la modification ')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

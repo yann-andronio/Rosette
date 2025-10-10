@@ -514,7 +514,7 @@ export default function Dashboard(): JSX.Element {
         />
       )}
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto mb-5">
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-800 mb-2">

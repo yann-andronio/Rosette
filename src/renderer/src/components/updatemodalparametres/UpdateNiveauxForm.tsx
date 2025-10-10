@@ -9,7 +9,7 @@ import { FiEdit } from 'react-icons/fi'
 
 type FormDataAlefa = {
   nom_classe: string
-  ac_id: string 
+  ac_id: string
   ecolage: number
   kermesse: number
   droit: number
@@ -98,19 +98,19 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
       kermesse: data.kermesse
     }
 
-    // try { 
-     
-    //   await axiosRequest('PUT', `classe-update/${NiveauData.id}`, donneAlefa, 'token')  solona  endpoint eto
-    //     .then(({ data }) => toast.success(data?.message || 'Classe modifiée '))
-    //     .then(() => onUpdateSuccess())
-    //     .catch((error) =>
-    //       toast.error(error?.response?.data?.message || 'Erreur lors de la modification ')
-    //     )
-    // } catch (error) {
-    //   toast.error('Le serveur ne répond pas ')
-    // } finally {
-    //   setIsLoading(false)
-    // }
+    try {
+
+      await axiosRequest('PUT', `classe-update/${NiveauData.id}`, donneAlefa, 'token')
+        .then(({ data }) => toast.success(data?.message || 'Classe modifiée '))
+        .then(() => onUpdateSuccess())
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la modification ')
+        )
+    } catch (error) {
+      toast.error('Le serveur ne répond pas ')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
