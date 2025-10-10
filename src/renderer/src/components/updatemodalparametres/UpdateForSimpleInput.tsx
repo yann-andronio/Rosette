@@ -10,12 +10,12 @@ import { ThreeDots } from 'react-loader-spinner'
 interface UpdateForSimpleInputProps {
   id: number
   defaultValue: string
-  fieldName: string 
-  title: string 
+  fieldName: string
+  title: string
   placeholder: string
-  updateUrl: string 
+  updateUrl: string
   closemodal: () => void
-  reload: () => void 
+  reload: () => void
 }
 
 export default function UpdateForSimpleInput({
@@ -46,7 +46,7 @@ export default function UpdateForSimpleInput({
   const onSubmit = async (data: any) => {
     setIsLoading(true)
     try {
-      await axiosRequest('PUT', `${updateUrl}/${id}`, data, 'token')
+      await axiosRequest('PUT', `profession-update/${id}`, data, 'token')
       toast.success(`${title} mis à jour avec succès`)
       reload()
       closemodal()

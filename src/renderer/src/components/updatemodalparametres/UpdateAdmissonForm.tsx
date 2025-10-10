@@ -71,19 +71,19 @@ const UpdateAdmissonForm: React.FC<UpdateAdmissonFormProps> = ({
       ac_id: ac_id_value
     }
 
-    // try {
+    try {
 
-    //   await axiosRequest('PUT', `admission-update/${myenneadmdata.id}`, donneAlefa, 'token')  solona  endpoint eto*******
-    //     .then(({ data }) => toast.success(data?.message || 'Classe modifiée '))
-    //     .then(() => onUpdateSuccess())
-    //     .catch((error) =>
-    //       toast.error(error?.response?.data?.message || 'Erreur lors de la modification ')
-    //     )
-    // } catch (error) {
-    //   toast.error('Le serveur ne répond pas ')
-    // } finally {
-    //   setIsLoading(false)
-    // }
+      await axiosRequest('PUT', `admission-update/${myenneadmdata.id}`, donneAlefa, 'token')
+        .then(({ data }) => toast.success(data?.message || 'Classe modifiée '))
+        .then(() => onUpdateSuccess())
+        .catch((error) =>
+          toast.error(error?.response?.data?.message || 'Erreur lors de la modification ')
+        )
+    } catch (error) {
+      toast.error('Le serveur ne répond pas ')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

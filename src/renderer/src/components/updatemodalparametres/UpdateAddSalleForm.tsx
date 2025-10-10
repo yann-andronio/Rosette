@@ -71,7 +71,6 @@ const UpdateAddSalleForm: React.FC<UpdateAddSalleFormProps> = ({
        .then(() =>onUpdateSuccess() )
         .catch((error) => toast.error('Erreur lors de la modification:'+error.response.data.message))
 
-
     } catch (error) {
       toast.error('Erreur lors de la modification ')
     } finally {

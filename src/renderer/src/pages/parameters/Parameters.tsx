@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import {
-  FiUserPlus,
+
   FiCalendar,
   FiLayers,
   FiBookOpen,
@@ -11,16 +11,16 @@ import {
   FiDownloadCloud,
   FiCreditCard,
   FiBarChart2,
-  FiPenTool
+
 } from 'react-icons/fi'
-import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
+
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addniveaumodal from '@renderer/components/modalsform/Addniveaumodal'
 import Choosestatusmoyennemodalparams from '@renderer/components/modalsform/Choosestatusmoyennemodalparams'
 import Register from '@renderer/auth/register/Register'
 import { MdMeetingRoom } from 'react-icons/md'
 import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
-import { FaUserTie } from 'react-icons/fa'
+
 import { HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'

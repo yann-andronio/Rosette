@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { RotatingLines, ThreeDots } from 'react-loader-spinner'
-import { data } from 'autoprefixer'
+
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import { toast } from 'react-toastify'
