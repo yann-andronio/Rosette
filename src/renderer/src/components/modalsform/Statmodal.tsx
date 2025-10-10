@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,6 +8,8 @@ import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import { ThreeDots } from 'react-loader-spinner'
 import { formatDate } from '@renderer/utils/FormatDate'
+import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
+import useMultiModals from '@renderer/hooks/useMultiModals'
 
 type OperationProps = { closemodal: () => void }
 
@@ -36,7 +38,12 @@ export default function Statmodal({ closemodal }: OperationProps) {
   const [reload, setReload] = useState<boolean>(false)
   const [statToDelet, setStatToDelet] = useState<StatToDelete | null>(null)
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  
+
+   const { openModal, modal, closModal } = useMultiModals()
+   const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
+
 
   const getHistoriques = async () => {
     try {
@@ -78,6 +85,9 @@ export default function Statmodal({ closemodal }: OperationProps) {
     }
   }
 
+
+  
+
   const removeHistorique = async (id: number) => {
     try {
       await axiosRequest('DELETE', `identify/${id}`, null, 'token')
@@ -110,6 +120,13 @@ export default function Statmodal({ closemodal }: OperationProps) {
   const handleCloseDeleteModal = () => {
     setStatToDelet(null)
   }
+
+  
+   const handleClickEdit = (item: { id: number; ident?: string }) => {
+     const value = item.ident || ''
+     setEditData({ id: item.id, value })
+     openModal('updatestat')
+   }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -195,12 +212,22 @@ export default function Statmodal({ closemodal }: OperationProps) {
                       <p className="font-semibold">STAT : {ident}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {formatDate(created_at)}</p>
                     </div>
-                    <button
-                      onClick={() => handleclickDelete(id, ident)}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
+
+                    <div className="flex space-x-2">
+                      <button
+                        aria-label={`Modifier le niveaux}`}
+                        onClick={() => handleClickEdit({ id, ident })}
+                        className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                      >
+                        <FiEdit size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleclickDelete(id, ident)}
+                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -216,6 +243,19 @@ export default function Statmodal({ closemodal }: OperationProps) {
           onConfirm={handleConfirmDelete}
           closemodal={handleCloseDeleteModal}
           isDeletingLoader={isDeletingLoader}
+        />
+      )}
+
+      {modal.updatestat && editData && (
+        <UpdateForSimpleInput
+          id={editData.id}
+          defaultValue={editData.value}
+          fieldName="stat"
+          title="Modifier le stat"
+          placeholder="Ex: TEST/1234"
+          updateUrl="stat"
+          closemodal={() => closModal('updatestat')}
+          reload={() => setReload(!reload)}
         />
       )}
     </div>

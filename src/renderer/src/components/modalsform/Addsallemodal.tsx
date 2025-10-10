@@ -35,8 +35,7 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
 
-    const [salleToEdit, setSalleToEdit] = useState<any>(null)
-
+  const [salleToEdit, setSalleToEdit] = useState<any>(null)
 
   const getNiveau = async () => {
     setIsLoading(true)
@@ -327,7 +326,7 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
                           </span>
                         </div>
 
-                           <div className="flex space-x-2">
+                        <div className="flex space-x-2">
                           <button
                             aria-label={`Modifier le niveaux}`}
                             onClick={() => handleclickEdit({ id, nom_salle, effectif, classes })}
@@ -337,13 +336,12 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
                           </button>
 
                           <button
-                          onClick={() => handleclickDelete(id, nom_salle)}
-                          className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                        >
-                          <FiTrash2 size={18} />
-                        </button>
+                            onClick={() => handleclickDelete(id, nom_salle)}
+                            className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                          >
+                            <FiTrash2 size={18} />
+                          </button>
                         </div>
-                      
                       </li>
                     ))}
                   </ul>

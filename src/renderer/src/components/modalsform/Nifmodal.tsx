@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
+import { FiEdit, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,6 +8,8 @@ import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import { ThreeDots } from 'react-loader-spinner'
 import { formatDate } from '@renderer/utils/FormatDate'
+import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
+import useMultiModals from '@renderer/hooks/useMultiModals'
 
 type OperationProps = { closemodal: () => void }
 
@@ -35,7 +37,11 @@ export default function Nifmodal({ closemodal }: OperationProps) {
   const [reload, setReload] = useState<boolean>(false)
   const [nifToDelet, setNifToDelet] = useState<NifToDelete | null>(null)
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
-   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const { openModal, modal, closModal } = useMultiModals()
+  const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
+
 
   const getHistoriques = async () => {
     try {
@@ -107,6 +113,13 @@ export default function Nifmodal({ closemodal }: OperationProps) {
   const handleCloseDeleteModal = () => {
     setNifToDelet(null)
   }
+
+   const handleClickEdit = (item: { id: number; nif?: string }) => {
+     const value = item.nif || ''
+     setEditData({ id: item.id, value })
+     openModal('updateNif')
+   }
+
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -192,12 +205,22 @@ export default function Nifmodal({ closemodal }: OperationProps) {
                       <p className="font-semibold">NIF : {nif}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {formatDate(created_at)}</p>
                     </div>
-                    <button
-                      onClick={() => handleclickDelete(id, nif)}
-                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                    >
-                      <FiTrash2 size={18} />
-                    </button>
+
+                    <div className="flex space-x-2">
+                      <button
+                        aria-label={`Modifier le niveaux}`}
+                        onClick={() => handleClickEdit({ id, nif })}
+                        className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
+                      >
+                        <FiEdit size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleclickDelete(id, nif)}
+                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -215,6 +238,21 @@ export default function Nifmodal({ closemodal }: OperationProps) {
           isDeletingLoader={isDeletingLoader}
         />
       )}
+
+      {modal.updateNif && editData && (
+        <UpdateForSimpleInput
+          id={editData.id}
+          defaultValue={editData.value}
+          fieldName="nif"
+          title="Modifier le NIF"
+          placeholder="Ex: TEST/1234"
+          updateUrl="nif"
+          closemodal={() => closModal('updateNif')}
+          reload={() => setReload(!reload)}
+        />
+      )}
     </div>
   )
 }
+
+
