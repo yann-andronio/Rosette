@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
-import { Users, UsersRound, DoorOpen } from 'lucide-react';
+import { Users, UsersRound, DoorOpen } from 'lucide-react'
 import {
   FaUserGraduate,
   FaChalkboardTeacher,
@@ -156,7 +156,7 @@ export default function Dashboard(): JSX.Element {
   const [isLoaderDataBar, setIsLoaderDataBar] = useState<boolean>(false)
 
   const getDatabar = async () => {
-   setIsLoaderDataBar(true)
+    setIsLoaderDataBar(true)
     try {
       await axiosRequest(
         'GET',
@@ -167,7 +167,7 @@ export default function Dashboard(): JSX.Element {
         .then(({ data }) => setDatabar(data))
         .catch((error) => console.log(error))
         .then(() => setIsLoaderDataBar(false))
-      .finally(()=>setIsLoaderDataBar(false))
+        .finally(() => setIsLoaderDataBar(false))
     } catch (error) {
       console.log('Le serveur ne repond pas')
     }
@@ -261,13 +261,9 @@ export default function Dashboard(): JSX.Element {
     getEcolage()
     getDroit()
     getKermesse()
-
-  }, [reload]);
-
+  }, [reload])
 
   const [infra, setInfra] = useState([])
-
-
 
   const visibleLabels = FullMonth.slice(0, range)
 
@@ -312,36 +308,31 @@ export default function Dashboard(): JSX.Element {
 
   useEffect(() => {
     getDatabar()
-
-
-
   }, [selectedYear, debut, fin, reload, reset])
 
-
   const getInfra = async () => {
-    try{
+    try {
       await axiosRequest('GET', 'infra', null, 'token')
-        .then(({data}) => setInfra(data))
+        .then(({ data }) => setInfra(data))
         .catch((error) => console.log(error))
-    }catch (error){
+    } catch (error) {
       console.log('Le serveur ne repond pas')
     }
   }
 
   useEffect(() => {
     getInfra()
-  }, []);
+  }, [])
   const totalEleves = (salles) => {
     return salles.reduce((sum, salle) => sum + salle?.eleves?.length, 0)
-  };
+  }
 
   const getStatusColor = (eleves, effectifMax) => {
     const ratio = eleves / effectifMax
     if (ratio >= 1) return 'text-red-600 bg-red-50'
     if (ratio >= 0.9) return 'text-orange-600 bg-orange-50'
     return 'text-green-600 bg-green-50'
-  };
-
+  }
 
   const { modal, openModal, closModal } = useMultiModals()
 
@@ -487,6 +478,148 @@ export default function Dashboard(): JSX.Element {
             </div>
           </div>
 
+          <div className="max-w-7xl mt-8 mx-auto mb-5">
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-slate-800 mb-2">
+                Infrastructures de L'établissement
+              </h1>
+              <p className="text-slate-600">Vue d'ensemble des salles de classe par niveau</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-slate-600 mb-1">Total Classes</p>
+                    <p className="text-3xl font-bold text-slate-800">{infra?.length}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <DoorOpen className="w-6 h-6 text-[#895256]" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-slate-600 mb-1">Total Salles</p>
+                    <p className="text-3xl font-bold text-slate-800">
+                      {infra?.reduce((sum, n) => sum + n.salles.length, 0)}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <DoorOpen className="w-6 h-6 text-[#895256]" />
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-slate-600 mb-1">Total Élèves</p>
+                    <p className="text-3xl font-bold text-slate-800">
+                      {infra?.reduce((sum, n) => sum + totalEleves(n.salles), 0)}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <Users className="w-6 h-6 text-[#895256]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {infra.map((niveau) => {
+                return (
+                  <div
+                    key={niveau?.id}
+                    className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
+                  >
+                    <div className="p-6 bg-indigo-50 border-b border-indigo-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border-2 border-indigo-200">
+                            <span className="text-2xl font-bold text-indigo-700">
+                              {niveau?.nom_classe.slice(0, 4)}
+                            </span>
+                          </div>
+                          <div>
+                            <h2 className="text-2xl font-bold text-slate-800">
+                              {niveau?.nom_classe}
+                            </h2>
+                            <p className="text-sm text-slate-600">
+                              {niveau?.salles.length} salles • {totalEleves(niveau?.salles)}{' '}
+                              Etudiants
+                            </p>
+                          </div>
+                        </div>
+                        <span className="px-4 py-2 rounded-lg font-semibold bg-indigo-100 text-indigo-800">
+                          {niveau?.salles?.length} salles
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-6">
+                      <div className="space-y-3">
+                        {niveau?.salles?.map((salle, index) => (
+                          <div
+                            key={index}
+                            className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="flex items-center gap-3 flex-1">
+                                <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-indigo-200">
+                                  <DoorOpen className="w-6 h-6 text-[#895256]" />
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold text-slate-800 text-lg">
+                                    {salle.nom_salle}
+                                  </h3>
+                                  <p className="text-sm text-slate-500">Salle de classe</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-4">
+                                <div className="bg-white rounded-lg px-5 py-3 border-2 border-slate-200 shadow-sm">
+                                  <div className="flex items-center gap-3">
+                                    <Users className="w-6 h-6 text-[#895256]" />
+                                    <div className="text-center">
+                                      <p className="text-xs text-slate-500 font-medium mb-0.5">
+                                        Etudiants
+                                      </p>
+                                      <p
+                                        className={`text-2xl font-bold ${getStatusColor(3, salle.effectif)}`}
+                                      >
+                                        {salle?.eleves?.length}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Effectif max */}
+                                <div className="bg-white rounded-lg px-5 py-3 border-2 border-slate-200 shadow-sm">
+                                  <div className="flex items-center gap-3">
+                                    <UsersRound className="w-6 h-6 text-[#895256]" />
+                                    <div className="text-center">
+                                      <p className="text-xs text-slate-500 font-medium mb-0.5">
+                                        Effectif Max
+                                      </p>
+                                      <p className="text-2xl font-bold text-slate-800">
+                                        {salle.effectif}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
           <ToastContainer
             position="top-right"
             autoClose={3000}
@@ -513,151 +646,6 @@ export default function Dashboard(): JSX.Element {
           closemodal={() => closModal('Operationajoutmodal')}
         />
       )}
-
-      <div className="max-w-7xl mx-auto mb-5">
-
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">
-            Infrastructures de L'etablissement
-          </h1>
-          <p className="text-slate-600">
-            Vue d'ensemble des salles de classe par niveau
-          </p>
-        </div>
-
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Classes</p>
-                <p className="text-3xl font-bold text-slate-800">{infra?.length}</p>
-              </div>
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <DoorOpen className="w-6 h-6 text-[#895256]" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Salles</p>
-                <p className="text-3xl font-bold text-slate-800">
-                  {infra?.reduce((sum, n) => sum + n.salles.length, 0)}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <DoorOpen className="w-6 h-6 text-[#895256]" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Élèves</p>
-                <p className="text-3xl font-bold text-slate-800">
-                  {infra?.reduce((sum, n) => sum + totalEleves(n.salles), 0)}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-[#895256]" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-        <div className="space-y-6">
-          {infra.map((niveau) => {
-            return (
-              <div
-                key={niveau?.id}
-                className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
-              >
-
-                <div className="p-6 bg-indigo-50 border-b border-indigo-200">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border-2 border-indigo-200">
-                        <span className="text-2xl font-bold text-indigo-700">
-                          {niveau?.nom_classe.slice(0, 4)}
-                        </span>
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-slate-800">
-                          {niveau?.nom_classe}
-                        </h2>
-                        <p className="text-sm text-slate-600">
-                          {niveau?.salles.length} salles • {totalEleves(niveau?.salles)} Etudiants
-                        </p>
-                      </div>
-                    </div>
-                    <span className="px-4 py-2 rounded-lg font-semibold bg-indigo-100 text-indigo-800">
-                      {niveau?.salles?.length} salles
-                    </span>
-                  </div>
-                </div>
-
-
-                <div className="p-6">
-                  <div className="space-y-3">
-                    {niveau?.salles?.map((salle, index) => (
-                      <div
-                        key={index}
-                        className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-3 flex-1">
-                            <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-indigo-200">
-                              <DoorOpen className="w-6 h-6 text-[#895256]" />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-slate-800 text-lg">
-                                {salle.nom_salle}
-                              </h3>
-                              <p className="text-sm text-slate-500">
-                                Salle de classe
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-4">
-
-                            <div className="bg-white rounded-lg px-5 py-3 border-2 border-slate-200 shadow-sm">
-                              <div className="flex items-center gap-3">
-                                <Users className="w-6 h-6 text-[#895256]" />
-                                <div className="text-center">
-                                  <p className="text-xs text-slate-500 font-medium mb-0.5">Etudiants</p>
-                                  <p className={`text-2xl font-bold ${getStatusColor(3, salle.effectif)}`}>
-                                    {salle?.eleves?.length}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Effectif max */}
-                            <div className="bg-white rounded-lg px-5 py-3 border-2 border-slate-200 shadow-sm">
-                              <div className="flex items-center gap-3">
-                                <UsersRound className="w-6 h-6 text-[#895256]" />
-                                <div className="text-center">
-                                  <p className="text-xs text-slate-500 font-medium mb-0.5">Effectif Max</p>
-                                  <p className="text-2xl font-bold text-slate-800">
-                                    {salle.effectif}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
     </div>
   )
 }
