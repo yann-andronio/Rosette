@@ -35,6 +35,7 @@ import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteMod
 import { useNavigate } from 'react-router-dom'
 import Addtitremodal from '@renderer/components/modalsform/AddTittleEcolemodal'
 import { BsFillPencilFill } from 'react-icons/bs'
+import { BiTransfer } from 'react-icons/bi'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -57,7 +58,8 @@ function Parameters(): JSX.Element {
       label: `Réglage d'admission`,
       modalName: 'Choosestatusmoyennemodalparams'
     },
-    { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' }
+    { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' },
+    { icon: <BiTransfer  size={28} />, label: `Transfert d'infrastructures`, modalName: 'confirmationmodaltransfert' }
   ]
   const buttonsForParamsemployers = [
     // { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
@@ -163,6 +165,21 @@ function Parameters(): JSX.Element {
 
   const handleConfirmExport = () => {
     openModal('confirmexport')
+  }
+
+  const HandleConfirmTransfet = async () => {
+     try {
+       setIsBAckup(true)
+       await axiosRequest('GET', 'transfert-data', null, 'token')
+         .then(() => toast.success('Sauvegarde reussi'))
+         .then(() => setIsBAckup(false))
+         .catch((error) => toast.error(error.response.data.message))
+         .finally(() => setIsBAckup(false))
+     } catch (error) {
+       console.log('Le serveur ne repond pas')
+     } finally {
+       closModal('confirmationmodaltransfert')
+     }
   }
 
   return (
@@ -342,6 +359,19 @@ function Parameters(): JSX.Element {
           onConfirm={HandleConfirmImport}
           closemodal={() => {
             closModal('confirmImport')
+            setImportFileName(null)
+            if (fileInputRef.current) fileInputRef.current.value = ''
+          }}
+          isDeletingLoader={isBackup}
+        />
+      )}
+      {modal.confirmationmodaltransfert && (
+        <ConfirmDeleteModal
+          title="Confirmer le transfert des infrastrucures"
+          message={`Voulez-vous vraiment Transferer les infrastrucures ? Cette action transfereras toutes les infrastructures actuelles vers la nouvelle année scolaire !`}
+          onConfirm={HandleConfirmTransfet}
+          closemodal={() => {
+            closModal('confirmationmodaltransfert')
             setImportFileName(null)
             if (fileInputRef.current) fileInputRef.current.value = ''
           }}

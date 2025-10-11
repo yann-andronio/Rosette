@@ -1,6 +1,6 @@
 import { resetActiveName, setActiveName } from '@renderer/redux/slice/activeLinkSlice'
 import { RootState } from '@renderer/redux/Store'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { LuLayoutDashboard, LuGraduationCap } from 'react-icons/lu'
 import { MdWorkOutline } from 'react-icons/md'
 import { IoIosArrowForward } from 'react-icons/io'
@@ -21,6 +21,7 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { tr } from 'date-fns/locale'
 import { ThreeDots } from 'react-loader-spinner'
+import { UserContext, UserProvider } from '@renderer/context/UserContext'
 
 interface Menu {
   name: string
@@ -31,6 +32,8 @@ interface Menu {
 
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
+    const { user } = useContext(UserProvider)
+
 
   const menus: Menu[] = [
     {
@@ -64,12 +67,12 @@ const Sidebar = () => {
       subMenus: [
         {
           name: `information d'employés`,
-          path: '/home/EmployeInfo',
+          path: user.role == 'directeur' ? '/home/EmployeInfo' : '#',
           iconsubmenu: <FaUsers size={25} />
         },
         {
           name: `Suivie d'employés`,
-          path: '/home/Employersuivi',
+          path: user.role == 'directeur' ? '/home/Employersuivi' : '#',
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]
@@ -136,7 +139,8 @@ const Sidebar = () => {
                   <Link
                     onClick={() => dispatch(setActiveName(menu.name))}
                     to={menu.path || '#'}
-                    className={`flex items-center  ${activeName === menu.name ? s.active : s.inactive} p-2 w-full ${closeBar ? 'w-[5rem] justify-center ' : 'w-[16rem]'}`}
+                    className={`flex items-center  ${activeName === menu.name ? s.active : s.inactive}  
+                     p-2 w-full ${closeBar ? 'w-[5rem] justify-center ' : 'w-[16rem]'}`}
                   >
                     {menu.icon}
                     {/* mbola mila reglegna nle hidden eto */}
@@ -225,10 +229,10 @@ const Sidebar = () => {
           </Link>
 
           <button
-            className={` ${closeBar ? 'justify-center' : ''} ${isLoading ? 'justify-center' : ""} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
+            className={` ${closeBar ? 'justify-center' : ''} ${isLoading ? 'justify-center' : ''} flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >
             {isLoading ? (
-              <div className='flex justify-center items-center'>
+              <div className="flex justify-center items-center">
                 <ThreeDots
                   visible={true}
                   height="20"
@@ -242,7 +246,7 @@ const Sidebar = () => {
               </div>
             ) : (
               <>
-                  <FiLogOut onClick={() => logout()} size={22} />
+                <FiLogOut onClick={() => logout()} size={22} />
                 {!closeBar && (
                   <span onClick={() => logout()} className="ml-3">
                     Se deconnecter

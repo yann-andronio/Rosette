@@ -536,8 +536,8 @@ export default function Dashboard(): JSX.Element {
                     <div className="p-6 bg-indigo-50 border-b border-indigo-200">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border-2 border-indigo-200">
-                            <span className="text-2xl font-bold text-indigo-700">
+                          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center border-2 border-[#895256]">
+                            <span className="text-2xl font-bold text-[#895256]">
                               {niveau?.nom_classe.slice(0, 4)}
                             </span>
                           </div>
