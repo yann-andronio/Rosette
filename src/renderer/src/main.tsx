@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { Provider } from 'react-redux'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider , createHashRouter } from 'react-router-dom'
 import Store from './redux/Store'
 import Login from './auth/login/Login'
 
@@ -24,7 +24,7 @@ import Historique from './pages/historiques/Historique'
 import { ToastContainer } from 'react-toastify'
 
 
-const route = createBrowserRouter([
+const route = createHashRouter([
   {
     path: '/',
     element: <App />,
