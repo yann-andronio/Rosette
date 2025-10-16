@@ -40,7 +40,7 @@ const Addsallemodal: React.FC<AddsalleModalProps> = ({ closemodal }) => {
   const getNiveau = async () => {
     setIsLoading(true)
     try {
-      await axiosRequest('GET', 'classe-list', null, 'token')
+      await axiosRequest('GET', 'classe-list-salle', null, 'token')
         .then(({ data }) => setNiveau(data))
         .then(() => setIsLoading(false))
         .catch((error) => console.log(error.response?.data?.message))
