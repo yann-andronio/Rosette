@@ -293,7 +293,7 @@ function Studentsecolage(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Complet
+                Payé
               </button>
               <button
                 onClick={() => handleselect('Incomplet', setSelectedstatusecolage)}
@@ -303,7 +303,7 @@ function Studentsecolage(): JSX.Element {
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Incomplet
+                Non Payé
               </button>
             </div>
           </div>

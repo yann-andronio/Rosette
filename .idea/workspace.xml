@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsallemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +51,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.26830.93" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-WS-252.27397.92" />
       </set>
     </attachedChunks>
   </component>
@@ -123,7 +123,16 @@
       <workItem from="1759730123261" duration="15037000" />
       <workItem from="1760081571209" duration="7767000" />
       <workItem from="1760101396586" duration="8112000" />
-      <workItem from="1760163531454" duration="314000" />
+      <workItem from="1760163531454" duration="1813000" />
+      <workItem from="1760360609424" duration="3000" />
+      <workItem from="1760593225211" duration="1381000" />
+      <workItem from="1760601120960" duration="2386000" />
+      <workItem from="1760697328724" duration="745000" />
+      <workItem from="1760737371275" duration="2000" />
+      <workItem from="1760818170859" duration="235000" />
+      <workItem from="1762945358725" duration="3000" />
+      <workItem from="1763706180401" duration="822000" />
+      <workItem from="1763708486877" duration="1583000" />
     </task>
     <servers />
   </component>
@@ -164,16 +173,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/renderer/src/pages/students/studentsinfo/Studentsinfo.tsx</url>
-          <line>98</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
