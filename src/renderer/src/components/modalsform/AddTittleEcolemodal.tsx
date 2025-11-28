@@ -14,16 +14,16 @@ import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
 type OperationProps = { closemodal: () => void }
 
 interface FormValues {
-  tittle: string
+  name: string
 }
 
 const schema = yup.object({
-  tittle: yup.string().required('Le titre est requis')
+  name: yup.string().required('Le titre est requis')
 })
 
 export default function Addtitremodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{ tittle: string; id: number; created_at }[]>([])
+  const [historiques, setHistoriques] = useState<{ name: string; id: number; created_at:string }[]>([])
   const [reload, setReload] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -36,11 +36,11 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
     formState: { errors }
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    defaultValues: { tittle: '' }
+    defaultValues: { name: '' }
   })
   const getHistoriques = async () => {
     try {
-      await axiosRequest('GET', 'domaines', null, 'token')
+      await axiosRequest('GET', 'school', null, 'token')
         .then(({ data }) => setHistoriques(data))
         .catch((error) => console.log(error))
     } catch (e) {
@@ -54,7 +54,7 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
     setIsLoading(true)
 
     try {
-      await axiosRequest('POST', 'domaines', data, 'token')
+      await axiosRequest('POST', 'school', data, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => reset())
         .then(() => setActiveTab('historique'))
@@ -68,7 +68,7 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
 
   const removeHistorique = async (id: number) => {
     try {
-      await axiosRequest('DELETE', `domaines/${id}`, id, 'token')
+      await axiosRequest('DELETE', `school/${id}`, id, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
         .catch((error) => console.log(error))
@@ -77,12 +77,12 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
     }
   }
 
-  const [titreToDelet, settitreToDelet] = useState<{ id: number; tittle: string } | null>(null)
+  const [titreToDelet, settitreToDelet] = useState<{ id: number; name: string } | null>(null)
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
 
-  const handleclickDelete = (id: number, tittle: string) => {
-    settitreToDelet({ id, tittle })
+  const handleclickDelete = (id: number, name: string) => {
+    settitreToDelet({ id, name })
     openModal('confirmDelete')
   }
 
@@ -98,8 +98,8 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
     }
   }
 
-  const handleClickEdit = (item: { id: number; tittle?: string }) => {
-    const value = item.tittle || ''
+  const handleClickEdit = (item: { id: number; name?: string }) => {
+    const value = item.name || ''
     setEditData({ id: item.id, value })
     openModal('updatetitre')
   }
@@ -137,16 +137,16 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <input
-                {...register('tittle')}
+                {...register('name')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.tittle
+                  errors.name
                     ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                     : 'border-gray-300 shadow-sm'
                 }`}
                 placeholder="Ex: ROSETTE II"
               />
-              {errors.tittle && (
-                <p className="text-sm text-red-600 font-medium mt-1">{errors.tittle.message}</p>
+              {errors.name && (
+                <p className="text-sm text-red-600 font-medium mt-1">{errors.name.message}</p>
               )}
             </div>
 
@@ -178,25 +178,25 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
               <p className="text-center text-gray-500">Aucune matière enregistrée</p>
             ) : (
               <ul className="space-y-3">
-                {historiques.map(({ id, tittle, created_at }) => (
+                {historiques.map(({ id, name, created_at }) => (
                   <li
                     key={id}
                     className="bg-gray-100 p-4 rounded-lg flex justify-between items-start hover:bg-gray-200 transition"
                   >
                     <div>
-                      <p className="font-semibold">Titre : {tittle}</p>
+                      <p className="font-semibold">Titre : {name}</p>
                       <p className="text-xs text-gray-500 mb-1">Date : {formatDate(created_at)}</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
                         aria-label={`Modifier le niveaux}`}
-                        onClick={() => handleClickEdit({ id, tittle })}
+                        onClick={() => handleClickEdit({ id, name })}
                         className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
                       >
                         <FiEdit size={18} />
                       </button>
                       <button
-                        onClick={() => handleclickDelete(id, tittle)}
+                        onClick={() => handleclickDelete(id, name)}
                         className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                       >
                         <FiTrash2 size={18} />
@@ -213,7 +213,7 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
       {modal.confirmDelete && titreToDelet && (
         <ConfirmDeleteModal
           title="Supprimer la classe"
-          message={`Voulez-vous vraiment supprimer le titre  ${titreToDelet.tittle} de l' établissement ?`}
+          message={`Voulez-vous vraiment supprimer le titre  ${titreToDelet.name} de l' établissement ?`}
           onConfirm={handleConfirmDelete}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}
@@ -224,10 +224,10 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
         <UpdateForSimpleInput
           id={editData.id}
           defaultValue={editData.value}
-          fieldName="Titre"
+          fieldName="name"
           title="Modifier la titre de l'établissement"
           placeholder="EX: Rosette II"
-          updateUrl="titre"
+          updateUrl="school"
           closemodal={() => closModal('updatetitre')}
           reload={() => setReload(!reload)}
         />

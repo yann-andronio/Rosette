@@ -48,7 +48,7 @@ export default function UpdateForSimpleInput({
     console.log(data)
     try {
       await axiosRequest('PUT', `${updateUrl}/${id}`, data, 'token')
-      toast.success(`${title} mis à jour avec succès`)
+      toast.success(`${name} mis à jour avec succès`)
       reload()
       closemodal()
     } catch (error) {
