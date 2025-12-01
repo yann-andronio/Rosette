@@ -21,7 +21,7 @@ type EmployeeModalProps = {
 const schema = yup.object().shape({
   nom: yup.string().required('Nom requis'),
   prenom: yup.string().required('Prénom requis'),
-  email: yup.string().email('Email invalide').required('Email requis'),
+  email: yup.string().email('Email invalide'),
   // Le sexe est une chaîne dans ce schéma, donc pas de transformation yup.number() nécessaire ici
   sexe: yup.string().required('Sexe requis'),
   adresse: yup.string().required('Adresse requise'),
@@ -275,7 +275,7 @@ const AdUpEmployeemodal: React.FC<EmployeeModalProps> = ({
                       {field == 'p_id' ? (
                         'Fonction *'
                       ) : (
-                        <>{field.charAt(0).toUpperCase() + field.slice(1)} *</>
+                        <>{field.charAt(0).toUpperCase() + field.slice(1)} {field!=='email'?'*':""}</>
                       )}
                     </label>
                     {field === 'sexe' || field === 'p_id' ? (
