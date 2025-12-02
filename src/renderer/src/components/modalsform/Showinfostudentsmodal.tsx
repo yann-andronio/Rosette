@@ -25,7 +25,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
   const [etId, setEtId] = useState<number>()
 
   const [issuspendreLoader, setIsDeletingLoader] = useState(false)
-  const [studentToSuspendId, setStudentToSuspendId]= useState<number | null>(null)
+  const [studentToSuspendId, setStudentToSuspendId]= useState<{id:number | null, route:string}|null>(null)
   const { openModal, modal, closModal } = useMultiModals()
 
   const handleStatusBtnClick = (statut: string, index: number) => {
@@ -55,10 +55,10 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
     window.location.reload() // miverigna mi reactualiser page
   }
 
-  const suspendre = async (id: number) => {
+  const suspendre = async (id: number, route:string) => {
     setIsDeletingLoader(true)
     try {
-      await axiosRequest('PUT', `etudiant-suspendre/${id}`, null, 'token')
+      await axiosRequest('PUT', `etudiant-${route}/${id}`, null, 'token')
         .then(({ data }) => toast.success(data.message)).then(() => setFresh(!fresh))
         .then(() => closemodal())
         .catch((err) => console.log(err?.response?.data?.error))
@@ -71,15 +71,15 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
 
    const handleOpenSuspendModal = () => {
      const currentStatus = student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions
-     if (currentStatus !== 'suspendu') {
-       setStudentToSuspendId(student.id)
+    //  if (currentStatus !== 'suspendu') {
+       setStudentToSuspendId({id:student.id, route:currentStatus=='suspendu'?'desuspendre':'suspendre'})
        openModal('confirmSuspend')
-     }
+    //  }
    }
 
   const handleConfirmSuspend = async () => {
     if (studentToSuspendId !== null) {
-      await suspendre(studentToSuspendId)
+      await suspendre(studentToSuspendId.id as number, studentToSuspendId.route)
     }
   }
 
@@ -240,18 +240,18 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
               <button
                 onClick={handleOpenSuspendModal}
                 type="button"
-                disabled={
-                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                  'suspendu'
-                }
+                // disabled={
+                //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                //   'suspendu'
+                // }
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
                   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
                   'suspendu'
-                    ? 'bg-gray-400 hover:cursor-not-allowed'
-                    : 'bg-[#895256] hover:bg-[#733935]'
-                } text-white text-sm font-medium transition`}
+                    ? 'bg-red-400 hover:bg-red-500 '
+                    : 'bg-red-500 hover:bg-red-400'
+                } text-white text-sm font-medium transition cursor-pointer`}
               >
-                <FiSlash size={16} /> Suspendre
+                <FiSlash size={16} /> {student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions =='suspendu'?'Desuspendre':'Suspendre'}
               </button>
 
               {/* btn Imprimer Certificat scolarité */}
@@ -302,7 +302,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                               }
                             }}
                             disabled={
-                              status.status_admissions == 'cours' || status.transfert == 1
+                              status.status_admissions == 'cours' || status.status_admissions=='suspendu'|| status.transfert == 1
                                 ? true
                                 : false
                             }
