@@ -33,7 +33,7 @@ const schema = yup.object().shape({
   nomTuteur: yup.string(),
   prenomTuteur: yup.string(),
   telephoneTuteur: yup.string(),
-  // matricule: yup.string(),
+  // matricule: yup.string().required('Veuillez renseigner la matricule'),
   ecole: yup.string(),
   enfantProf: yup.number().required("Veuillez indiquer si l'étudiant est enfant de professeur")
 })
@@ -155,6 +155,8 @@ const [niv, setNiv] = useState(0)
       for (const key in data) {
         form.append(key, data[key])
       }
+
+  
       form.append('matricule', matricule)
 
       setIsLoading(true)
@@ -207,6 +209,9 @@ const [niv, setNiv] = useState(0)
     }
   }
 
+  const changeMatricule = (e) => {
+    setMatricule(e.target.value)
+  }
   useEffect(() => {
     getMatricule()
 
@@ -605,8 +610,10 @@ const [niv, setNiv] = useState(0)
                   <label className="block text-sm font-medium text-gray-700 mb-2">Matricule</label>
                   <input
                     type="text"
-                    disabled={true}
-                    className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300 bg-gray-100 cursor-not-allowed"
+                    // disabled={true}
+                      onChange={changeMatricule}
+                      required
+                    className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300 bg-gray-100 "
                     placeholder="Matricule"
                     defaultValue={mode === 'modifstudents' ? preStudent?.matricule : matricule}
                   />
