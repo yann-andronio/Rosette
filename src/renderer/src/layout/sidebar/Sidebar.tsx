@@ -16,7 +16,7 @@ import { BiStats } from 'react-icons/bi'
 import { RiScales3Line } from 'react-icons/ri'
 import { BsCash } from 'react-icons/bs'
 import { HiUserCircle } from 'react-icons/hi'
-import { FaHistory, FaUsers } from 'react-icons/fa'
+import { FaCoins, FaHistory, FaUsers, FaWallet } from 'react-icons/fa'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { tr } from 'date-fns/locale'
@@ -32,8 +32,7 @@ interface Menu {
 
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-    const { user } = useContext(UserProvider)
-
+  const { user } = useContext(UserProvider)
 
   const menus: Menu[] = [
     {
@@ -58,7 +57,13 @@ const Sidebar = () => {
         },
         // { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
         // { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
-        { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> }
+        { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> },
+        { name: 'Droit', path: '/home/StudentsDroit', iconsubmenu: <FaWallet size={25} /> },
+        {
+          name: 'StudentsKermess',
+          path: '/home/StudentsKermess',
+          iconsubmenu: <FaCoins size={25} />
+        }
       ]
     },
     {

@@ -11,6 +11,7 @@ import {
   FiDownloadCloud,
   FiCreditCard,
   FiBarChart2,
+  FiUserPlus,
 
 } from 'react-icons/fi'
 
@@ -36,6 +37,7 @@ import { useNavigate } from 'react-router-dom'
 import Addtitremodal from '@renderer/components/modalsform/AddTittleEcolemodal'
 import { BsFillPencilFill } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
+import AddRole from '@renderer/components/modalsform/AddRole'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -80,6 +82,11 @@ function Parameters(): JSX.Element {
       icon: <FiUserCheck size={28} />,
       label: 'Ajouter un administrateur',
       modalName: 'registeremploye'
+    },
+    {
+      icon: <FiUserPlus size={28} />,
+      label: 'Ajouter un Rôle',
+      modalName: 'AddRole'
     }
   ]
   const buttonsForCongigNifStat = [
@@ -324,6 +331,7 @@ function Parameters(): JSX.Element {
         />
       )}
       {modal.registeremploye && <Register closemodal={() => closModal('registeremploye')} />}
+      {modal.AddRole && <AddRole closemodal={() => closModal('AddRole')} />}
       {modal.Addsallemodal && <Addsallemodal closemodal={() => closModal('Addsallemodal')} />}
       {modal.Addfonctionemployer && (
         <Addfonctionemployer closemodal={() => closModal('Addfonctionemployer')} />
