@@ -14,7 +14,6 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
   const [montant, setMontant] = useState<number>(0)
   const [selectedType, setSelectedType] = useState<'Complet' | 'Avance' | 'Remboursé'>('Complet')
 
-  // Fake data historique
   const fakeHistorique = [
     { id: 1, date: '2025-01-05', montant: 150000, status: 'Payé', type: 'Complet' },
     { id: 2, date: '2025-02-05', montant: 50000, status: 'Non payé', type: 'Avance' },
@@ -24,7 +23,6 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto animate-fade-in">
-        {/* HEADER */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-[#212529]">Paiement de Droit / Historique</h1>
           <button onClick={closemodal} className="text-gray-400 hover:text-red-600 transition">
@@ -32,7 +30,6 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
           </button>
         </div>
 
-        {/* INFO ÉTUDIANT */}
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 shadow-sm">
           <h2 className="font-bold text-lg text-[#212529] mb-1">
             {student.nom} {student.prenom}
@@ -55,7 +52,6 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
           </div>
         </div>
 
-        {/* TABS */}
         <div className="flex gap-4 border-b border-gray-200 mb-6">
           {['paiement', 'historique'].map((tab) => (
             <button
@@ -72,7 +68,6 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
           ))}
         </div>
 
-        {/* CONTENU */}
         {activeTab === 'paiement' ? (
           <div className="space-y-5">
             {/* Montant */}
@@ -89,7 +84,6 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               />
             </div>
 
-            {/* Type de paiement */}
             <div>
               <label className="block text-[#212529] font-semibold mb-2">Type de paiement</label>
               <div className="flex gap-3">
