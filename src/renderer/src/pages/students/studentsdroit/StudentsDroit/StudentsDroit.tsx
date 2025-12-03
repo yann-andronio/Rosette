@@ -7,15 +7,15 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
 import { MdMeetingRoom } from 'react-icons/md'
-import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
+
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
-import PrintOptionsModal, {
-  PrintType
-} from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
+
 import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
+import PrintOptionsModalDroit from '@renderer/components/modalv2/studentsDroit/PrintOptionsModalDroit'
+import ShowinfoDroitmodal from '@renderer/components/modalv2/studentsDroit/ShowinfoDroitmodal'
 
 function StudentsDroit(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -303,7 +303,7 @@ function StudentsDroit(): JSX.Element {
                 <LuWallet size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">
-                Sélectionnez un Statut d'écolage
+                Sélectionnez un Statut de Droit
               </h1>
             </div>
 
@@ -332,7 +332,7 @@ function StudentsDroit(): JSX.Element {
           </div>
 
           {/* Filtre mois */}
-          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+          {/* <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
             <div className=" flex items-center mb-4">
               <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
                 <LuCalendarDays size={28} />
@@ -354,7 +354,7 @@ function StudentsDroit(): JSX.Element {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
@@ -503,7 +503,7 @@ function StudentsDroit(): JSX.Element {
                           <FaEye
                             onClick={() => {
                               setSelectedStudent(student)
-                              openModal('Showinfoecolagemodal')
+                              openModal('ShowinfoDroitmodal')
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
@@ -574,17 +574,17 @@ function StudentsDroit(): JSX.Element {
           mode="modifstudents"
         />
       )} */}
-      {modal.Showinfoecolagemodal && selectedStudent && (
-        <Showinfoecolagemodal
+      {modal.ShowinfoDroitmodal && selectedStudent && (
+        <ShowinfoDroitmodal
           reload={reload}
           fresh={setReload}
-          closemodal={() => closModal('Showinfoecolagemodal')}
+          closemodal={() => closModal('ShowinfoDroitmodal')}
           student={selectedStudent}
         />
       )}
 
       {modal.PrintOptionsModal && (
-        <PrintOptionsModal
+        <PrintOptionsModalDroit
           closemodal={() => closModal('PrintOptionsModal')}
           onPrint={handlePrintStudentsNonpayé}
           yearSelected={selectedyears}

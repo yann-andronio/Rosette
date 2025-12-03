@@ -60,7 +60,7 @@ const Sidebar = () => {
         { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> },
         { name: 'Droit', path: '/home/StudentsDroit', iconsubmenu: <FaWallet size={25} /> },
         {
-          name: 'StudentsKermess',
+          name: 'Kermess',
           path: '/home/StudentsKermess',
           iconsubmenu: <FaCoins size={25} />
         }
