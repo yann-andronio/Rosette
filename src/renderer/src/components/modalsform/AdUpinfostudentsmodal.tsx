@@ -460,7 +460,7 @@ const [niv, setNiv] = useState(0)
                         : 'border-gray-300 shadow-sm'
                     }`}
                   >
-                    <option value="">Sélectionnez une salle</option>
+                    <option value={0}>Sélectionnez une salle</option>
                     {salles.map((sal) => (
                       <option key={sal.id} value={sal.id}>
                         {sal.nom_salle}
@@ -611,8 +611,8 @@ const [niv, setNiv] = useState(0)
                   <input
                     type="text"
                     // disabled={true}
-                      onChange={changeMatricule}
-                      required
+                    onChange={changeMatricule}
+                    required
                     className="w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none border-gray-300 shadow-sm transition-shadow duration-300 bg-gray-100 "
                     placeholder="Matricule"
                     defaultValue={mode === 'modifstudents' ? preStudent?.matricule : matricule}
