@@ -23,7 +23,9 @@ const schema = yup.object().shape({
   lieuNaissance: yup.string().required('Lieu de naissance requis'),
   adresse: yup.string().required('Adresse requise'),
   cl_id: yup.number().typeError('Niveau requis').required('Veuillez sélectionner un niveau'),
-  sa_id: yup.number().typeError('Salle requise').required('Veuillez sélectionner une salle'),
+  // sa_id: yup.number().typeError('Salle requise').required('Veuillez sélectionner une salle'),
+  sa_id: yup.number().nullable().optional(),
+
   nomPere: yup.string(),
   prenomPere: yup.string(),
   telephonePere: yup.string(),

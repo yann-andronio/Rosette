@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import {FaEye } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuUsers, LuWallet } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuPrinter, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
@@ -12,6 +12,8 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
+import PrintOptionsModal, { PrintType } from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
+import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
 
 function Studentsecolage(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -156,6 +158,27 @@ function Studentsecolage(): JSX.Element {
   useEffect(() => {
     getClasse()
   }, [selectedyears]);
+
+
+   const printRef = useRef<HTMLDivElement>(null)
+
+
+  const handlePrintStudentsNonpayé = () => {
+     setTimeout(() => {
+       if (!printRef.current) return
+       const printContents = printRef.current.innerHTML
+       if (!printContents) return
+       const originalContents = document.body.innerHTML
+       document.body.innerHTML = printContents
+       window.print()
+       document.body.innerHTML = originalContents
+       window.location.reload()
+     }, 200)
+  }
+
+  console.log('====================================');
+  console.log(selectedstatusecolage ,  selectedyears)
+  console.log('====================================');
 
   return (
     <div
@@ -342,6 +365,13 @@ function Studentsecolage(): JSX.Element {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearcheleves} />
+          <button
+            onClick={() => openModal('PrintOptionsModal')}
+            className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#7A3B3F] transition duration-300 font-bold"
+          >
+            <LuPrinter size={20} />
+            Imprimer les listes
+          </button>
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
@@ -464,8 +494,8 @@ function Studentsecolage(): JSX.Element {
                           {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(
                             (et) => et.payé == 1
                           ) == true
-                            ? 'Complet'
-                            : 'Incomplet'}
+                            ? 'Payé'
+                            : 'Non payé'}
                         </span>
                       </div>
                       <div className="flex-1">
@@ -552,6 +582,25 @@ function Studentsecolage(): JSX.Element {
           student={selectedStudent}
         />
       )}
+
+      {modal.PrintOptionsModal && (
+        <PrintOptionsModal
+          closemodal={() => closModal('PrintOptionsModal')}
+          onPrint={handlePrintStudentsNonpayé}
+          yearSelected={selectedyears}
+          monthSelected={selectedmoisEcolage}
+          statusSelected={selectedstatusecolage}
+        />
+      )}
+
+      <div className="hidden">
+        <PapierImpressionNonPaye
+          yearSelected={selectedyears}
+          monthSelected={selectedmoisEcolage}
+          elevesNonPayes={students.data}
+          ref={printRef}
+        />
+      </div>
     </div>
   )
 }
