@@ -4,7 +4,9 @@ import {
   FaWallet,
   FaCalendarAlt,
   FaSchool,
-  FaPrint
+  FaPrint,
+  FaInfo,
+  FaInfoCircle
 } from 'react-icons/fa'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { FiX } from 'react-icons/fi'
@@ -17,6 +19,8 @@ import ConfirmDeleteModal from './ConfirmDeleteModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { formatDate } from '../../utils/FormatDate'
 import { RotatingLines } from 'react-loader-spinner'
+import PaymentTypeModalecolage from '../modalv2/studentecolage/PaymentTypeModalecolage'
+import PaymentHistoryModal from '../modalv2/studentecolage/PaymentHistoryModal'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -105,9 +109,22 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
   const [ecolageConfirmation, setEcolageConfirmation] = useState<EcolageToConfirm | null>(null)
   const [isPayingLoader, setIsPayingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
+  const [paymentTypeModal, setPaymentTypeModal] = useState<{ mois: string; cost: number } | null>(null)
 
   const handleRequestPayment = (id, mois, cost) => {
     setEcolageConfirmation({ id, mois, cost })
+    setPaymentTypeModal({ mois, cost })
+  }
+
+  //  const handleRequestPayment = (id, mois, cost) => {
+  //    setEcolageConfirmation({ id, mois, cost })
+  //    openModal('confirmDelete')
+  //  }
+
+  // ouvre la confirmation de payement d'ecolage  final
+  const handleConfirmPaymentType = (type: string, montant: number) => {
+    setEcolageConfirmation((prev) => (prev ? { ...prev, type, cost: montant } : null))
+    setPaymentTypeModal(null)
     openModal('confirmDelete')
   }
 
@@ -123,6 +140,13 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
       closModal('confirmDelete')
     }
   }
+
+
+  const [paymentHistoryModal, setPaymentHistoryModal] = useState<{
+    mois: string
+    history: any[]
+  } | null>(null)
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
@@ -170,10 +194,11 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                     {item?.payé === 1 ? (
                       <div className="flex group gap-5">
                         <div className="relative group">
-                          <span className=" absolute bottom-full left-1/2 transform -translate-x-1/2  mb-2 px-2 py-1  text-xs font-medium text-white  bg-gray-800 rounded-lg shadow-lg  opacity-0 group-hover:opacity-100  transition-opacity duration-300 whitespace-nowrap  ">
+                          {/* <span className=" absolute bottom-full left-1/2 transform -translate-x-1/2  mb-2 px-2 py-1  text-xs font-medium text-white  bg-gray-800 rounded-lg shadow-lg  opacity-0 group-hover:opacity-100  transition-opacity duration-300 whitespace-nowrap  ">
                             Imprimer le reçu
-                          </span>
+                          </span> */}
                           <FaPrint
+                            title="Imprimer le reçu"
                             className="text-gray-600 cursor-pointer hover:text-blue-500"
                             onClick={() =>
                               handlePrint({
@@ -196,6 +221,13 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                             }
                           />
                         </div>
+                        <FaInfoCircle
+                          className="text-yellow-600 cursor-pointer hover:text-yellow-400"
+                          title="Voir historique du paiement"
+                          onClick={() =>
+                            setPaymentHistoryModal({ mois: item.mois, history: item.history || [] })
+                          }
+                        />
                         <FaCheckCircle className="text-green-500 text-lg" />
                       </div>
                     ) : (
@@ -254,6 +286,15 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
         </div>
       </div>
 
+      {paymentTypeModal && (
+        <PaymentTypeModalecolage
+          mois={paymentTypeModal.mois}
+          montant={paymentTypeModal.cost}
+          closemodal={() => setPaymentTypeModal(null)}
+          onConfirm={handleConfirmPaymentType}
+        />
+      )}
+
       {modal.confirmDelete && ecolageConfirmation && (
         <ConfirmDeleteModal
           title="Confirmation de Paiement"
@@ -277,6 +318,14 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
             datePaiement={selectedEcolage.datePaiement}
           />
         </div>
+      )}
+
+      {paymentHistoryModal && (
+        <PaymentHistoryModal
+          mois={paymentHistoryModal.mois}
+          history={paymentHistoryModal.history}
+          closeModal={() => setPaymentHistoryModal(null)}
+        />
       )}
     </div>
   )
