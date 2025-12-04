@@ -6,16 +6,19 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { FiX } from 'react-icons/fi'
 import { ThreeDots } from 'react-loader-spinner'
+import { pages } from '../modalsform/AddRole'
 
 interface UpdateForSimpleInputProps {
   id: number
   defaultValue: string
-  fieldName: string
+  fieldName: string 
   title: string
   placeholder: string
   updateUrl: string
   closemodal: () => void
   reload: () => void
+  selectedPages?: string[] 
+  setSelectedPages?: (pages: string[]) => void
 }
 
 export default function UpdateForSimpleInput({
@@ -26,7 +29,9 @@ export default function UpdateForSimpleInput({
   placeholder,
   updateUrl,
   closemodal,
-  reload
+  reload,
+  selectedPages = [],
+  setSelectedPages
 }: UpdateForSimpleInputProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -45,10 +50,12 @@ export default function UpdateForSimpleInput({
 
   const onSubmit = async (data: any) => {
     setIsLoading(true)
-    console.log(data)
+    console.log('Données mises à jour :', data, 'Pages:', selectedPages)
     try {
+
       await axiosRequest('PUT', `${updateUrl}/${id}`, data, 'token')
       toast.success(`${name} mis à jour avec succès`)
+
       reload()
       closemodal()
     } catch (error) {
@@ -60,7 +67,9 @@ export default function UpdateForSimpleInput({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6">
+      <div
+        className={`bg-white rounded-2xl shadow-2xl w-full p-6 ${selectedPages.length > 0 ? 'max-w-3xl' : 'max-w-lg'}`}
+      >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xl font-semibold text-gray-700">{title}</h2>
           <button onClick={closemodal} className="text-gray-600 hover:text-red-600">
@@ -78,6 +87,36 @@ export default function UpdateForSimpleInput({
           />
           {errors[fieldName] && (
             <p className="text-sm text-red-600">{(errors[fieldName]?.message as string) || ''}</p>
+          )}
+
+          {/* raha misy selection na page seulement  */}
+          {setSelectedPages && (
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2 text-gray-700">Pages accessibles :</h3>
+              <div className="grid grid-cols-2 gap-2 max-h-40 overflow-auto scrollbar-thin scrollbar-thumb-[#895256] scrollbar-track-gray-100">
+                {pages.map((page) => (
+                  <label
+                    key={page.path}
+                    className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedPages.includes(page.path)}
+                      onChange={() => {
+                        if (selectedPages.includes(page.path)) {
+                          setSelectedPages(selectedPages.filter((p) => p !== page.path))
+                        } else {
+                          setSelectedPages([...selectedPages, page.path])
+                        }
+                        console.log('Pages choisies :', selectedPages)
+                      }}
+                      className="form-checkbox h-5 w-5 text-[#895256]"
+                    />
+                    <span className="text-gray-800">{page.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           )}
 
           <div className="flex justify-end gap-3 mt-5">

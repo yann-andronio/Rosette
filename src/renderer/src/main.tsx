@@ -22,6 +22,8 @@ import Employerinfo from './pages/employer/Employerinfo'
 import Employersuivi from './pages/employer/Employersuivi'
 import Historique from './pages/historiques/Historique'
 import { ToastContainer } from 'react-toastify'
+import StudentsDroit from './pages/students/studentsdroit/StudentsDroit/StudentsDroit'
+import StudentsKermess from './pages/students/StudentsKermess/StudentsKermess'
 
 
 const route = createHashRouter([
@@ -54,6 +56,14 @@ const route = createHashRouter([
       {
         path: '/home/ecolagestudents',
         element: <Studentsecolage />
+      },
+      {
+        path: '/home/StudentsDroit',
+        element: <StudentsDroit />
+      },
+      {
+        path: '/home/StudentsKermess',
+        element: <StudentsKermess />
       },
       {
         path: '/home/parametre',

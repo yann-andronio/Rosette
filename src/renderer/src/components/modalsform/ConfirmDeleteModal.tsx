@@ -4,10 +4,11 @@ import { ThreeDots } from 'react-loader-spinner'
 
 type ConfirmDeleteModalProps = {
   closemodal: () => void
-  onConfirm: () => Promise<void> 
+  onConfirm: () => Promise<void>
   isDeletingLoader?: boolean
   title?: string
   message?: string
+  
 }
 
 const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({

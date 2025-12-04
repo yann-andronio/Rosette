@@ -1,21 +1,23 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import {FaEye } from 'react-icons/fa'
+import { FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuPrinter, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
 import { MdMeetingRoom } from 'react-icons/md'
-import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
+
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
-import PrintOptionsModal, { PrintType } from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
-import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
 
-function Studentsecolage(): JSX.Element {
+import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
+import PrintOptionsModalDroit from '@renderer/components/modalv2/studentsDroit/PrintOptionsModalDroit'
+import ShowinfoDroitmodal from '@renderer/components/modalv2/studentsDroit/ShowinfoDroitmodal'
+
+function StudentsDroit(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
   const [selectedyears, setselectedyears] = useState<string>('0')
@@ -149,36 +151,34 @@ function Studentsecolage(): JSX.Element {
 
   useEffect(() => {
     getAcs()
-  }, []);
+  }, [])
 
   useEffect(() => {
     getSalle()
-  }, [selectedniveau]);
+  }, [selectedniveau])
 
   useEffect(() => {
     getClasse()
-  }, [selectedyears]);
+  }, [selectedyears])
 
-
-   const printRef = useRef<HTMLDivElement>(null)
-
+  const printRef = useRef<HTMLDivElement>(null)
 
   const handlePrintStudentsNonpayé = () => {
-     setTimeout(() => {
-       if (!printRef.current) return
-       const printContents = printRef.current.innerHTML
-       if (!printContents) return
-       const originalContents = document.body.innerHTML
-       document.body.innerHTML = printContents
-       window.print()
-       document.body.innerHTML = originalContents
-       window.location.reload()
-     }, 200)
+    setTimeout(() => {
+      if (!printRef.current) return
+      const printContents = printRef.current.innerHTML
+      if (!printContents) return
+      const originalContents = document.body.innerHTML
+      document.body.innerHTML = printContents
+      window.print()
+      document.body.innerHTML = originalContents
+      window.location.reload()
+    }, 200)
   }
 
-  console.log('====================================');
-  console.log(selectedstatusecolage ,  selectedyears)
-  console.log('====================================');
+  console.log('====================================')
+  console.log(selectedstatusecolage, selectedyears)
+  console.log('====================================')
 
   return (
     <div
@@ -303,7 +303,7 @@ function Studentsecolage(): JSX.Element {
                 <LuWallet size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">
-                Sélectionnez un Statut d'écolage
+                Sélectionnez un Statut de Droit
               </h1>
             </div>
 
@@ -332,7 +332,7 @@ function Studentsecolage(): JSX.Element {
           </div>
 
           {/* Filtre mois */}
-          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+          {/* <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
             <div className=" flex items-center mb-4">
               <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
                 <LuCalendarDays size={28} />
@@ -354,7 +354,7 @@ function Studentsecolage(): JSX.Element {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
@@ -503,7 +503,7 @@ function Studentsecolage(): JSX.Element {
                           <FaEye
                             onClick={() => {
                               setSelectedStudent(student)
-                              openModal('Showinfoecolagemodal')
+                              openModal('ShowinfoDroitmodal')
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
@@ -574,17 +574,17 @@ function Studentsecolage(): JSX.Element {
           mode="modifstudents"
         />
       )} */}
-      {modal.Showinfoecolagemodal && selectedStudent && (
-        <Showinfoecolagemodal
+      {modal.ShowinfoDroitmodal && selectedStudent && (
+        <ShowinfoDroitmodal
           reload={reload}
           fresh={setReload}
-          closemodal={() => closModal('Showinfoecolagemodal')}
+          closemodal={() => closModal('ShowinfoDroitmodal')}
           student={selectedStudent}
         />
       )}
 
       {modal.PrintOptionsModal && (
-        <PrintOptionsModal
+        <PrintOptionsModalDroit
           closemodal={() => closModal('PrintOptionsModal')}
           onPrint={handlePrintStudentsNonpayé}
           yearSelected={selectedyears}
@@ -605,4 +605,4 @@ function Studentsecolage(): JSX.Element {
   )
 }
 
-export default Studentsecolage
+export default StudentsDroit

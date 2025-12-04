@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import {FaEye } from 'react-icons/fa'
+import { FaEye } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuPrinter, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
@@ -12,10 +12,12 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
-import PrintOptionsModal, { PrintType } from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
+import PrintOptionsModal, {
+  PrintType
+} from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
 import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
 
-function Studentsecolage(): JSX.Element {
+function StudentsKermess(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const [searcheleves, setSearcheleves] = useState('')
   const [selectedyears, setselectedyears] = useState<string>('0')
@@ -149,36 +151,34 @@ function Studentsecolage(): JSX.Element {
 
   useEffect(() => {
     getAcs()
-  }, []);
+  }, [])
 
   useEffect(() => {
     getSalle()
-  }, [selectedniveau]);
+  }, [selectedniveau])
 
   useEffect(() => {
     getClasse()
-  }, [selectedyears]);
+  }, [selectedyears])
 
-
-   const printRef = useRef<HTMLDivElement>(null)
-
+  const printRef = useRef<HTMLDivElement>(null)
 
   const handlePrintStudentsNonpayé = () => {
-     setTimeout(() => {
-       if (!printRef.current) return
-       const printContents = printRef.current.innerHTML
-       if (!printContents) return
-       const originalContents = document.body.innerHTML
-       document.body.innerHTML = printContents
-       window.print()
-       document.body.innerHTML = originalContents
-       window.location.reload()
-     }, 200)
+    setTimeout(() => {
+      if (!printRef.current) return
+      const printContents = printRef.current.innerHTML
+      if (!printContents) return
+      const originalContents = document.body.innerHTML
+      document.body.innerHTML = printContents
+      window.print()
+      document.body.innerHTML = originalContents
+      window.location.reload()
+    }, 200)
   }
 
-  console.log('====================================');
-  console.log(selectedstatusecolage ,  selectedyears)
-  console.log('====================================');
+  console.log('====================================')
+  console.log(selectedstatusecolage, selectedyears)
+  console.log('====================================')
 
   return (
     <div
@@ -605,4 +605,4 @@ function Studentsecolage(): JSX.Element {
   )
 }
 
-export default Studentsecolage
+export default StudentsKermess
