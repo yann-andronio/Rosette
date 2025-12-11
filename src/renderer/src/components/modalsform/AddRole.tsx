@@ -112,7 +112,7 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
 
   const removeRole = async (id: number) => {
     try {
-      await axiosRequest('DELETE', `roles/${id}`, null, 'token')
+      await axiosRequest('DELETE', `roles/${id}`, null, 'token')  
       toast.success('Rôle supprimé')
       setReload(!reload)
     } catch (e) {
