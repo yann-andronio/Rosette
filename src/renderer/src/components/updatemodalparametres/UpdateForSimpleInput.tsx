@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { FiX } from 'react-icons/fi'
 import { ThreeDots } from 'react-loader-spinner'
-import { pages } from '../modalsform/AddRole'
+
 
 interface UpdateForSimpleInputProps {
   id: number
@@ -33,12 +33,39 @@ export default function UpdateForSimpleInput({
   selectedPages = [],
   setSelectedPages
 }: UpdateForSimpleInputProps) {
+  const [pages, setPages] = useState<{id:number, page_name:string, page_path:string}[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const schema = yup.object({
     [fieldName]: yup.string().required(`Le ${fieldName} est requis`)
   })
 
+  const [selected , setSelected ] = useState<number[]>([])
+
+    const getSelected = async () => {
+    try{
+        await axiosRequest('GET', `roles/${id}`, null, 'token')
+        .then(({data}) => setSelected(data))
+        .catch((err) => console.log(err))
+    }catch(error){
+      console.log('Error: le serveur ne repond pas')
+    }
+  }
+
+  const getPages = async () => {
+    try{
+        await axiosRequest('GET', `pages`, null, 'token')
+        .then(({data}) => setPages(data))
+        .catch((err) => console.log(err))
+    }catch(error){
+      console.log('Error: le serveur ne repond pas')
+    }
+  }
+
+  useEffect(() => {
+    getSelected()
+    getPages()
+  }, [])
   const {
     register,
     handleSubmit,
@@ -50,10 +77,10 @@ export default function UpdateForSimpleInput({
 
   const onSubmit = async (data: any) => {
     setIsLoading(true)
-    console.log('Données mises à jour :', data, 'Pages:', selectedPages)
+
     try {
 
-      await axiosRequest('PUT', `${updateUrl}/${id}`, data, 'token')
+      await axiosRequest('PUT', `${updateUrl}/${id}`, {...data, pages:selected}, 'token')
       toast.success(`${name} mis à jour avec succès`)
 
       reload()
@@ -64,6 +91,7 @@ export default function UpdateForSimpleInput({
       setIsLoading(false)
     }
   }
+
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -90,29 +118,30 @@ export default function UpdateForSimpleInput({
           )}
 
           {/* raha misy selection na page seulement  */}
-          {setSelectedPages && (
+          {selected && (
             <div className="mt-4">
               <h3 className="font-semibold mb-2 text-gray-700">Pages accessibles :</h3>
               <div className="grid grid-cols-2 gap-2 max-h-40 overflow-auto scrollbar-thin scrollbar-thumb-[#895256] scrollbar-track-gray-100">
                 {pages.map((page) => (
                   <label
-                    key={page.path}
+                    key={page.page_path}
                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
                   >
                     <input
                       type="checkbox"
-                      checked={selectedPages.includes(page.path)}
+                      checked={selected.includes(page?.id)}
                       onChange={() => {
-                        if (selectedPages.includes(page.path)) {
-                          setSelectedPages(selectedPages.filter((p) => p !== page.path))
-                        } else {
-                          setSelectedPages([...selectedPages, page.path])
+                        if(selected.includes(page?.id)){
+                          setSelected(selected.filter(p => p != page?.id))
+                        }else{
+                            setSelected([...selected, page?.id])
                         }
-                        console.log('Pages choisies :', selectedPages)
                       }}
+              
+                        
                       className="form-checkbox h-5 w-5 text-[#895256]"
                     />
-                    <span className="text-gray-800">{page.name}</span>
+                    <span className="text-gray-800">{page?.page_name}</span>
                   </label>
                 ))}
               </div>

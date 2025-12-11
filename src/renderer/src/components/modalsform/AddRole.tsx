@@ -10,25 +10,14 @@ import ConfirmDeleteModal from './ConfirmDeleteModal'
 import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
-export const pages = [
-  { name: 'Dashboard', path: '/home' },
-  { name: 'Information des élèves', path: '/home/StudentsInfo' },
-  { name: 'Gestion des notes', path: '/home/notemanagements' },
-  { name: 'Ecolage', path: '/home/ecolagestudents' },
-  { name: 'Droit', path: '/home/StudentsDroit' },
-  { name: 'StudentsKermess', path: '/home/StudentsKermess' },
-  { name: 'Paramètres', path: '/home/parametre' },
-  { name: `information d'employés`, path: '/home/EmployeInfo' },
-  { name: `Suivie d'employés`, path: '/home/Employersuivi' },
-  { name: 'Historique', path: '/home/Historique' }
-]
+
 
 type AddRoleProps = { closemodal: () => void }
 
-type FormData = { role: string }
+type FormData = { role_name: string }
 
 interface RoleItem {
-  role: string
+  role_name: string
   id: number
   pages?: string[]
 }
@@ -39,7 +28,7 @@ interface RoleToDelete {
 }
 
 const schema = yup.object({
-  role: yup.string().required('Vous devez saisir un rôle')
+  role_name: yup.string().required('Vous devez saisir un rôle')
 })
 
 const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
@@ -51,6 +40,10 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
   const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
+  const [pages, setPages] = useState<{id:number, page_name:string, page_path:string}[]>([])
+
+
+
 
   const {
     register,
@@ -60,6 +53,16 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   })
+
+  const getPages = async () => {
+    try{
+        await axiosRequest('GET', 'pages', null, 'token')
+        .then(({data}) => setPages(data))
+        .catch((err) => console.log(err))
+    }catch(error){
+      console.log('Error: le serveur ne repond pas')
+    }
+  }
 
   const [selectedPages, setSelectedPages] = useState<string[]>([])
 
@@ -73,7 +76,7 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
 
   const getRoles = async () => {
     try {
-      const { data } = await axiosRequest('GET', 'role-list', null, 'token')
+      const { data } = await axiosRequest('GET', 'roles', null, 'token')
       setRoles(data)
     } catch (e) {
       console.log('Le serveur ne répond pas')
@@ -82,17 +85,23 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
 
   useEffect(() => {
     getRoles()
+    getPages()
   }, [reload, activeTab])
 
   const onSubmit = async (data: FormData) => {
       setIsLoading(true)
-       console.log('Données lasa:', { ...data, pages: selectedPages })
+      console.log('Données lasa:', { ...data, pages: selectedPages })
     try {
-      await axiosRequest('POST', 'role-creation', { ...data, pages: selectedPages }, 'token')
-      toast.success('Rôle ajouté avec succès')
-      reset()
+      await axiosRequest('POST', 'roles', { ...data, pages: selectedPages }, 'token')
+      .then(() => toast.success('Rôle ajouté avec succès'))
+      .then(() => {
+             reset()
       setSelectedPages([])
       setActiveTab('historique')
+      })
+      .catch(err =>toast.error(err.response.data.message))
+      
+   
     } catch (err) {
       console.error(err)
       toast.error("Erreur lors de l'ajout")
@@ -103,7 +112,7 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
 
   const removeRole = async (id: number) => {
     try {
-      await axiosRequest('DELETE', `role/${id}`, null, 'token')
+      await axiosRequest('DELETE', `roles/${id}`, null, 'token')
       toast.success('Rôle supprimé')
       setReload(!reload)
     } catch (e) {
@@ -125,8 +134,8 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
   }
   const handleCloseDeleteModal = () => setRoleToDelete(null)
 
-  const handleClickEdit = (item: { id: number; role?: string; pages?: string[] }) => {
-    setEditData({ id: item.id, value: item.role || '' })
+  const handleClickEdit = (item: { id: number; role_name?: string; pages?: string[] }) => {
+    setEditData({ id: item.id, value: item.role_name || '' })
     setSelectedPages(item.pages || [])
     openModal('updaterole')
   }
@@ -170,14 +179,14 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
             <input
               type="text"
               placeholder="Ex: Admin"
-              {...register('role')}
+              {...register('role_name')}
               className={`w-full px-6 py-4 border rounded-2xl focus:ring-2 focus:ring-[#9f7126] focus:outline-none transition-shadow duration-300 text-[#212529] ${
-                errors.role
+                errors.role_name
                   ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                   : 'border-gray-300 shadow-sm'
               }`}
             />
-            {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+            {errors.role_name && <p className="text-sm text-red-500">{errors.role_name.message}</p>}
 
             {/* Checkboxes pages */}
             <div className="mt-4">
@@ -187,16 +196,16 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
               <div className="grid grid-cols-2 gap-3 max-h-48 overflow-auto scrollbar-thin scrollbar-thumb-[#895256] scrollbar-track-gray-100">
                 {pages.map((page) => (
                   <label
-                    key={page.path}
+                    key={page.id}
                     className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-100 transition cursor-pointer"
                   >
                     <input
                       type="checkbox"
-                      checked={selectedPages.includes(page.path)}
-                      onChange={() => handlePageToggle(page.path)}
+                      checked={selectedPages.includes(page.id.toString())}
+                      onChange={() => handlePageToggle(page.id.toString())}
                       className="form-checkbox h-5 w-5 text-[#895256] accent-[#895256]"
                     />
-                    <span className="text-[#212529]">{page.name}</span>
+                    <span className="text-[#212529]">{page.page_name}</span>
                   </label>
                 ))}
               </div>
@@ -236,7 +245,7 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
                     className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center shadow hover:shadow-md transition"
                   >
                     <div>
-                      <span className="font-semibold text-[#212529]">{item.role}</span>
+                      <span className="font-semibold text-[#212529]">{item.role_name}</span>
                       {item.pages && item.pages.length > 0 && (
                                 <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-1">
                                     {/* ******************************************************** mbol amodifiegna design  */}
@@ -245,7 +254,7 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
                               key={p}
                               className="bg-red-500 text-white px-2 py-1 rounded-full text-xs"
                             >
-                              {pages.find((page) => page.path === p)?.name || p}
+                              {p.page_name}
                             </span>
                           ))}
                         </div>
@@ -260,8 +269,8 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
                         <FiEdit size={18} />
                       </button>
                       <button
-                        aria-label={`Supprimer le rôle ${item.role}`}
-                        onClick={() => handleClickDelete(item.id, item.role)}
+                        aria-label={`Supprimer le rôle ${item.role_name}`}
+                        onClick={() => handleClickDelete(item.id, item.role_name)}
                         className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
                       >
                         <FiTrash2 size={18} />
@@ -289,10 +298,10 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
         <UpdateForSimpleInput
           id={editData.id}
           defaultValue={editData.value}
-          fieldName="role"
+          fieldName="role_name"
           title="Modifier ce rôle"
           placeholder="Ex: Admin"
-          updateUrl="role-update"
+          updateUrl={`roles`}
           selectedPages={selectedPages}
           setSelectedPages={setSelectedPages}
           closemodal={() => closModal('updaterole')}
