@@ -2,7 +2,7 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // import { useDispatch } from 'react-redux'
 // import { setUser } from '../../redux/slice/userSlice'
@@ -19,7 +19,20 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+const [roles, setRoles] = useState<{id:number, role_name:string}[]>([])
+  const getRoles = async () => {
+    try{
+        await axiosRequest('GET', 'roles', null, 'token')
+        .then(({data}) => setRoles(data))
+        .catch((err) => console.log(err))
+    }catch(error){
+        console.log(error)
+    }
+  }
 
+  useEffect(() => {
+      getRoles()
+  }, [])
   const ValidationSchema = yup.object({
     name: yup.string().required('Nom requis'),
     firstname: yup.string().required('Prénom requis'),
@@ -29,7 +42,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
       .string()
       .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
       .required('Veuillez confirmer votre mot de passe'),
-    role: yup.string().required('Veuillez sélectionner un rôle')
+    role_id: yup.string().required('Veuillez sélectionner un rôle')
   })
 
   const {
@@ -62,6 +75,7 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
 
   }
 
+  console.log(roles)
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-8 relative overflow-hidden">
@@ -167,15 +181,20 @@ function Register({ closemodal }: RegisterProps): JSX.Element {
 
           <select
             className={`w-full border p-3 rounded-lg focus:ring-2 outline-none ${
-              errors.role ? 'border-red-400' : 'border-gray-300'
+              errors.role_id ? 'border-red-400' : 'border-gray-300'
             }`}
-            {...register('role')}
+            {...register('role_id')}
           >
             <option value="">Sélectionner un rôle</option>
-            <option value="directeur">Directeur</option>
-            <option value="secretaire">Secrétaire</option>
+            {roles.map((r) => 
+
+              ( <option value={r?.id}>{r?.role_name}</option>)
+
+            )}
+            
+            {/* <option value="secretaire">Secrétaire</option> */}
           </select>
-          {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+          {errors.role_id && <p className="text-sm text-red-500">{errors.role_id.message}</p>}
 
           <button
             type="submit"

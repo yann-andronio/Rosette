@@ -4,10 +4,12 @@ export const UserProvider = createContext({
   user:null as any,
   setUser:(data:any) => {}
 })
+
+import { protect } from '@renderer/security/Security';
 export function UserContext ({children}) {
 
   const [user, setUser] = useState<any>({})
-
+  protect({name:'Brandon', roles:{role_name:'administrateur', pages:[{page_path:'/test'}]}, email:'brandonravomanana.v@gmail.com'})
   const getUser = async () => {
 
     try{

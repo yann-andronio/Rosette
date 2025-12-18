@@ -43,7 +43,7 @@ function Login(): JSX.Element {
     setIsLoading(true)
     const getUser = async () => {
       await axiosRequest('GET', 'user', null, 'token')
-        .then(({data}) => setUser({email:data?.email, name:data?.name, role:data?.role, firstname:data?.firstname}))
+        .then(({data}) => setUser({email:data?.email, name:data?.name, roles:data?.roles, firstname:data?.firstname}))
         .then(() => navigate('/home'))
         .catch((error) => console.log(error))
 
