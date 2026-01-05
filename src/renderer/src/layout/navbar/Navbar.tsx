@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="nameandfonction flex flex-col ">
-            <h1 className="font-medium text-black text-base">{user.name}</h1>
+            <h1 className="font-medium text-black text-base">{user?.name}</h1>
             <p className="text-[#0000005C]">{user?.roles?.role_name}</p>
           </div>
         </div>

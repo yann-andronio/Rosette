@@ -72,12 +72,14 @@ const Sidebar = () => {
       subMenus: [
         {
           name: `information d'employés`,
-          path: user.role == 'directeur' ? '/home/EmployeInfo' : '#',
+          // path: user.role_id == 'directeur' ? '/home/EmployeInfo' : '#',
+          path: '/home/EmployeInfo',
+
           iconsubmenu: <FaUsers size={25} />
         },
         {
           name: `Suivie d'employés`,
-          path: user.role == 'directeur' ? '/home/Employersuivi' : '#',
+          path: '/home/Employersuivi',
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]
