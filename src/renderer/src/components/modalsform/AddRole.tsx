@@ -40,7 +40,7 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
   const [isDeletingLoader, setIsDeletingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
   const [editData, setEditData] = useState<{ id: number; value: string } | null>(null)
-  const [pages, setPages] = useState<{id:number, page_name:string, page_path:string}[]>([])
+  const [pages, setPages] = useState<{ id: number, page_name: string, page_path: string }[]>([])
 
 
 
@@ -65,6 +65,17 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
   }
 
   const [selectedPages, setSelectedPages] = useState<string[]>([])
+  const selectedAllPage = pages.length > 0 && selectedPages.length === pages.length
+
+  const handleSelectAllPages = () => {
+    if (selectedAllPage) {
+      setSelectedPages([])
+    } else {
+      setSelectedPages(pages.map((p) => p.id.toString()))
+    }
+  }
+
+
 
   const handlePageToggle = (path: string) => {
     const newSelected = selectedPages.includes(path)
@@ -173,7 +184,6 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
           </button>
         </div>
 
-     
         {activeTab === 'ajouter' ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <input
@@ -193,6 +203,18 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
               <h2 className="font-semibold mb-3 text-[#212529]">
                 Pages accessibles pour ce rôle :
               </h2>
+
+              <label className="flex pl-[8px] items-center gap-3 mb-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedAllPage}
+                  onChange={handleSelectAllPages}
+                  className="form-checkbox h-5 w-5 text-[#895256] accent-[#895256]"
+                />
+                <span className="font-medium text-[#212529]">Tout sélectionner</span>
+              </label>
+
+
               <div className="grid grid-cols-2 gap-3 max-h-48 overflow-auto scrollbar-thin scrollbar-thumb-[#895256] scrollbar-track-gray-100">
                 {pages.map((page) => (
                   <label
@@ -247,8 +269,8 @@ const AddRole: React.FC<AddRoleProps> = ({ closemodal }) => {
                     <div>
                       <span className="font-semibold text-[#212529]">{item.role_name}</span>
                       {item.pages && item.pages.length > 0 && (
-                                <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-1">
-                                    {/* ******************************************************** mbol amodifiegna design  */}
+                        <div className="text-sm text-gray-500 mt-1 flex flex-wrap gap-1">
+                          {/* ******************************************************** mbol amodifiegna design  */}
                           {item.pages.map((p) => (
                             <span
                               key={p}

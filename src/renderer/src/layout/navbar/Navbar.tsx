@@ -1,10 +1,12 @@
-import React, { Fragment, useContext } from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import { useDispatch } from 'react-redux'
 import { toggleCloseBar } from '../../redux/slice/activeLinkSlice'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { UserProvider } from '@renderer/context/UserContext'
+import ProfileModal from '@renderer/components/modalv2/profil/ProfileModal'
+import useMultiModals from '@renderer/hooks/useMultiModals'
 
 
 
@@ -13,9 +15,10 @@ import { UserProvider } from '@renderer/context/UserContext'
 const Navbar: React.FC = () => {
   const dispatch = useDispatch()
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
+    const { user } = useContext(UserProvider)
+   const { openModal, modal, closModal } = useMultiModals()
   // const users = useSelector((state: RootState) => state.user)
 
-  const {user} = useContext(UserProvider)
 
 
   return (
@@ -26,9 +29,12 @@ const Navbar: React.FC = () => {
           <h1 className="text-lg font-semibold">{activeName}</h1>
         </div>
         <div className="infouser flex items-center gap-3">
-          <div className="flex items-center">
-            <p className="h-12 w-12 rounded-full text-white bg-[#895256] flex items-center justify-center text-lg font-bold">
-              {user.name ? user.name.charAt(0).toUpperCase() : ''}
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => openModal('profilModal')}
+          >
+            <p className="h-12 w-12 rounded-full text-white bg-[#895256] flex items-center justify-center text-lg font-bold hover:opacity-90 transition">
+              {user?.name ? user.name.charAt(0).toUpperCase() : ''}
             </p>
           </div>
 
@@ -37,6 +43,8 @@ const Navbar: React.FC = () => {
             <p className="text-[#0000005C]">{user?.roles?.role_name}</p>
           </div>
         </div>
+
+        {modal.profilModal && <ProfileModal user={user} onClose={() => closModal('profilModal')} />}
       </div>
     </Fragment>
   )
