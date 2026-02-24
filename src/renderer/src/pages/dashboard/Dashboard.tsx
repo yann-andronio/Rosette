@@ -377,7 +377,7 @@ export default function Dashboard(): JSX.Element {
                 <FaPlus size={22} />
               </div>
 
-              <p className="text-lg text-white font-semibold text-center">Ajouter une Operation</p>
+              <p className="text-lg text-white font-semibold text-center">Depot d'argent</p>
             </div>
 
             <div
@@ -388,7 +388,7 @@ export default function Dashboard(): JSX.Element {
                 <FaMinus size={22} />
               </div>
 
-              <p className="text-lg text-white font-semibold text-center">Retirer une Operation</p>
+              <p className="text-lg text-white font-semibold text-center">Retrait d'argent</p>
             </div>
           </div>
 
