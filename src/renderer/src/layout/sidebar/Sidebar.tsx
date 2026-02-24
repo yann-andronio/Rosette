@@ -57,7 +57,7 @@ const Sidebar = () => {
         },
         // { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
         // { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
-        { name: 'Ecolage', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> },
+        { name: 'Frais de Scolarité', path: '/home/ecolagestudents', iconsubmenu: <BsCash size={25} /> },
         { name: 'Droit', path: '/home/StudentsDroit', iconsubmenu: <FaWallet size={25} /> },
         {
           name: 'Kermess',
