@@ -29,6 +29,7 @@ function Studentsecolage(): JSX.Element {
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
   const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('0')
   const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('0')
+  const [yearForPrint, setYearForPrint] = useState<string>('0')
   const [students, setStudents] = useState<{
     per_page: number
     total: number
@@ -99,6 +100,7 @@ function Studentsecolage(): JSX.Element {
     setSearcheleves(dataeleve)
   }
 
+  console.log(yearForPrint)
   const { modal, openModal, closModal } = useMultiModals()
 
   const getAcs = async () => {
@@ -201,7 +203,10 @@ function Studentsecolage(): JSX.Element {
               {acs.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.id.toString(), setselectedyears)}
+                  onClick={() =>{ 
+                    handleselect(year.id.toString(), setselectedyears)
+                    setYearForPrint(year.annee)
+                  }}
                   className={`${
                     selectedyears === year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
@@ -587,7 +592,7 @@ function Studentsecolage(): JSX.Element {
         <PrintOptionsModal
           closemodal={() => closModal('PrintOptionsModal')}
           onPrint={handlePrintStudentsNonpayé}
-          yearSelected={selectedyears}
+          yearSelected={yearForPrint}
           monthSelected={selectedmoisEcolage}
           statusSelected={selectedstatusecolage}
         />
@@ -595,7 +600,7 @@ function Studentsecolage(): JSX.Element {
 
       <div className="hidden">
         <PapierImpressionNonPaye
-          yearSelected={selectedyears}
+          yearSelected={yearForPrint}
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
           ref={printRef}

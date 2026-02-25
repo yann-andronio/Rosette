@@ -9,6 +9,7 @@ interface PapierImpressionNonPayeProps {
 
 const PapierImpressionNonPaye = forwardRef<HTMLDivElement, PapierImpressionNonPayeProps>(
   ({ elevesNonPayes, yearSelected, monthSelected }, ref) => {
+    
     return (
       <div ref={ref} className="p-6 bg-white text-gray-900 font-sans text-sm leading-relaxed">
         <div className="mb-6 text-center border-b pb-3">
