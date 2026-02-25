@@ -100,7 +100,7 @@ function Studentsecolage(): JSX.Element {
     setSearcheleves(dataeleve)
   }
 
-  console.log(yearForPrint)
+
   const { modal, openModal, closModal } = useMultiModals()
 
   const getAcs = async () => {
@@ -178,9 +178,6 @@ function Studentsecolage(): JSX.Element {
      }, 200)
   }
 
-  console.log('====================================');
-  console.log(selectedstatusecolage ,  selectedyears)
-  console.log('====================================');
 
   return (
     <div
