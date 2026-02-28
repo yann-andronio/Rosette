@@ -21,6 +21,7 @@ import ConfirmDeleteModal from './ConfirmDeleteModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
 import { RotatingLines, ThreeDots } from 'react-loader-spinner'
+import BulletinDepaye from '../recue/BulletinDepaye'
 
 export type SalaireEmploye = {
   montant: number
@@ -614,6 +615,13 @@ const [fresh, setFresh] = useState<boolean>(false)
                             <button
                               onClick={() => handlePrint(item)}
                               className="p-1 rounded-md hover:bg-gray-100"
+                              title="Imprimer le fiche de paie"
+                            >
+                              <FaPrint className="text-red-600  hover:text-blue-500" />
+                            </button>
+                            <button
+                              onClick={() => handlePrint(item)}
+                              className="p-1 rounded-md hover:bg-gray-100"
                               title="Imprimer le reçu"
                             >
                               <FaPrint className="text-gray-600  hover:text-blue-500" />
@@ -833,6 +841,14 @@ const [fresh, setFresh] = useState<boolean>(false)
         {selectedPayment && (
           <div ref={printRef}>
             <Recuepayementemploye employer={employer} salaire={selectedPayment} />
+          </div>
+        )}
+      </div>
+
+      <div className="hidden">
+        {selectedPayment && (
+          <div ref={printRef}>
+            <BulletinDepaye employer={employer} salaire={selectedPayment} />
           </div>
         )}
       </div>
