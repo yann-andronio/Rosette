@@ -312,7 +312,7 @@ function Notestudentsmanagement(): JSX.Element {
               <div className="flex-1">Prénoms</div>
               <div className="flex-1">Sexe</div>
               <div className="flex-1">salle</div>
-              <div className="flex-1">Moyenne</div>
+              <div className="flex-1">Mention</div>
               <div className="flex-1">Opération</div>
             </div>
           </div>
