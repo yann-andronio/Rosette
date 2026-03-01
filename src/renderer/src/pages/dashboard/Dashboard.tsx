@@ -36,6 +36,7 @@ import Operationretirermodal from '@renderer/components/modalsform/Operationreti
 import Operationajoutmodal from '@renderer/components/modalsform/Operationajoutmodal'
 import { RotatingLines, TailSpin } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
+import { title } from 'process';
 
 // ---- Mois jiaby ---- //
 const FullMonth = [
@@ -351,56 +352,37 @@ useEffect(() => {
 
   const { modal, openModal, closModal } = useMultiModals()
 
-  const [selectedMajorExam, setSelectedMajorExam] = useState<'1' | '2' | '3' | 'all'>('all')
+  const [selectedMajorExam, setSelectedMajorExam] = useState<'1' | '2' | '3' | 'last'>('last')
 
-// ---- Fake Data Majors par examen ---- //
-const majorsByExam = {
-  '1': [
-    { classe: '6ème A', nom: 'Rakoto Jean', moyenne: 16.5 },
-    { classe: '6ème B', nom: 'Rabe Marie', moyenne: 17.2 },
-    { classe: '5ème A', nom: 'Andrianina Paul', moyenne: 15.9 },
-    { classe: '4ème A', nom: 'Rasoa Clara', moyenne: 18.1 },
-    { classe: '3ème A', nom: 'Rakotomalala Eric', moyenne: 16.8 }
-  ],
-  '2': [
-    { classe: '6ème A', nom: 'Rakoto Jean', moyenne: 17.3 },
-    { classe: '6ème B', nom: 'Rabe Marie', moyenne: 18.0 },
-    { classe: '5ème A', nom: 'Andrianina Paul', moyenne: 16.4 },
-    { classe: '4ème A', nom: 'Rasoa Clara', moyenne: 18.5 },
-    { classe: '3ème A', nom: 'Rakotomalala Eric', moyenne: 17.1 }
-  ],
-  '3': [
-    { classe: '6ème A', nom: 'Rakoto Jean', moyenne: 17.8 },
-    { classe: '6ème B', nom: 'Rabe Marie', moyenne: 18.2 },
-    { classe: '5ème A', nom: 'Andrianina Paul', moyenne: 16.9 },
-    { classe: '4ème A', nom: 'Rasoa Clara', moyenne: 18.7 },
-    { classe: '3ème A', nom: 'Rakotomalala Eric', moyenne: 17.5 }
-  ],
-  all: [
-    { classe: '6ème A', nom: 'Rakoto Jean', moyenne: 17.2 },
-    { classe: '6ème B', nom: 'Rabe Marie', moyenne: 17.8 },
-    { classe: '5ème A', nom: 'Andrianina Paul', moyenne: 16.4 },
-    { classe: '4ème A', nom: 'Rasoa Clara', moyenne: 18.4 },
-    { classe: '3ème A', nom: 'Rakotomalala Eric', moyenne: 17.1 }
-  ]
-}
 // ---- Graphique Performance Moyenne par Classe (FAKE DATA) ---- //
-const dataPerformance = {
-  labels: ['6ème A', '6ème B', '5ème A', '4ème A', '3ème A'],
+const [dataPerformance, setDataPerformance] = useState<{labels:string[], datasets:{label:string, data:number[], backgroundColor:string}[]}>({
+  labels: ['label1, label2'],
   datasets: [
     {
       label: 'Moyenne Générale (%)',
-      data: [78, 85, 74, 88, 81],
+      data: [1,2],
       backgroundColor: '#7c3aed'
     }
   ]
+})
+
+const getDataPerfomance = async () => {
+  await axiosRequest('GET', 'performance', null, 'token')
+  .then(({data}) => setDataPerformance(data))
 }
+
+useEffect(() => {
+  getDataPerfomance()
+}, [])
+
+
+
 
 const optionsPerformance = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'top' as const }
+    legend: { position: 'top' as const},
   },
   scales: {
     y: {
@@ -411,17 +393,22 @@ const optionsPerformance = {
   }
 }
 
-// ---- Fake Data Majors ---- //
-const majorsFake = [
-  { classe: '6ème A', nom: 'Rakoto Jean', moyenne: 17.8 },
-  { classe: '6ème B', nom: 'Rabe Marie', moyenne: 18.2 },
-  { classe: '5ème A', nom: 'Andrianina Paul', moyenne: 16.9 },
-  { classe: '4ème A', nom: 'Rasoa Clara', moyenne: 18.7 },
-  { classe: '3ème A', nom: 'Rakotomalala Eric', moyenne: 17.5 }
-]
+const [majors, setMajors] = useState<{classe:string, nom;string, moyenne:number}[]>([])
+
+
+const getMajors = async () => {
+
+  await axiosRequest('GET', `major?nbr=${selectedMajorExam}`, null, 'token')
+  .then(({data}) => setMajors(data))
+}
 
 
 
+useEffect(() => {
+  getMajors()
+}, [selectedMajorExam])
+
+majors.sort((a,b) => b.moyenne-a.moyenne)
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
@@ -593,7 +580,11 @@ const majorsFake = [
       Performance Moyenne par Classe
     </h2>
     <div className="w-full h-full">
+      
       <Bar data={dataPerformance} options={optionsPerformance} />
+           
+    
+    
     </div>
   </div>
 
@@ -606,14 +597,17 @@ const majorsFake = [
   <select
     value={selectedMajorExam}
     onChange={(e) =>
-      setSelectedMajorExam(e.target.value as '1' | '2' | '3' | 'all')
+      setSelectedMajorExam(e.target.value as '1' | '2' | '3' | 'last', '4')
     }
     className="p-2 border border-gray-300 rounded-md absolute right-3 top-5"
   >
+    <option value="last">Dernier Examen</option>
     <option value="1">1er Examen</option>
     <option value="2">2ème Examen</option>
     <option value="3">3ème Examen</option>
-    <option value="all">Tous</option>
+    <option value="4">Moyenne générale</option>
+  
+
   </select>
     <div className="overflow-x-auto">
       <table className="min-w-full border border-slate-200 rounded-lg overflow-hidden">
@@ -625,7 +619,7 @@ const majorsFake = [
           </tr>
         </thead>
         <tbody>
-          {majorsFake.map((eleve, index) => (
+          {majors.map((eleve, index) => (
             <tr
               key={index}
               className="border-b border-slate-200 hover:bg-slate-50 transition"
