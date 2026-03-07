@@ -24,6 +24,7 @@ import Historique from './pages/historiques/Historique'
 import { ToastContainer } from 'react-toastify'
 import StudentsDroit from './pages/students/studentsdroit/StudentsDroit/StudentsDroit'
 import StudentsKermess from './pages/students/StudentsKermess/StudentsKermess'
+import StudentsInactif from './pages/students/studentsInactif/StudentsInactif'
 
 
 const route = createHashRouter([
@@ -64,6 +65,10 @@ const route = createHashRouter([
       {
         path: '/home/StudentsKermess',
         element: <StudentsKermess />
+      },
+      {
+        path: '/home/studentsInactif',
+        element: <StudentsInactif />
       },
       {
         path: '/home/parametre',
