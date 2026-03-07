@@ -29,7 +29,7 @@ function StudentsDroit(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [macs, setMacs] = useState<{ id: number; mois: string }[]>([])
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
-  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('0')
+  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('All')
   const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('0')
   const [students, setStudents] = useState<{
     per_page: number
@@ -47,7 +47,7 @@ function StudentsDroit(): JSX.Element {
     try {
       await axiosRequest(
         'GET',
-        `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`,
+        `etudiant-list_droit?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&payed=${selectedstatusecolage}`,
         null,
         'token'
       )
@@ -94,7 +94,7 @@ function StudentsDroit(): JSX.Element {
   const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
 
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-    setter((prev) => (prev === current ? '0' : current))
+    setter((prev) => (prev === current ? 'All' : current))
   }
 
   const handleSearcheleves = (dataeleve: string) => {
@@ -176,9 +176,7 @@ function StudentsDroit(): JSX.Element {
     }, 200)
   }
 
-  console.log('====================================')
-  console.log(selectedstatusecolage, selectedyears)
-  console.log('====================================')
+
 
   return (
     <div
@@ -309,9 +307,9 @@ function StudentsDroit(): JSX.Element {
 
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
               <button
-                onClick={() => handleselect('Complet', setSelectedstatusecolage)}
+                onClick={() => handleselect('1', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === 'Complet'
+                  selectedstatusecolage === '1'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
@@ -319,9 +317,9 @@ function StudentsDroit(): JSX.Element {
                 Payé
               </button>
               <button
-                onClick={() => handleselect('Incomplet', setSelectedstatusecolage)}
+                onClick={() => handleselect('0', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === 'Incomplet'
+                  selectedstatusecolage === '0'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
@@ -489,11 +487,9 @@ function StudentsDroit(): JSX.Element {
                       </div>
                       <div className="flex-1 ">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every((et) => et.payé == 1) == true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                         >
-                          {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(
-                            (et) => et.payé == 1
-                          ) == true
+                          {student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1
                             ? 'Payé'
                             : 'Non payé'}
                         </span>

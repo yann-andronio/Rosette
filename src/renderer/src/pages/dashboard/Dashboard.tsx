@@ -352,7 +352,7 @@ useEffect(() => {
 
   const { modal, openModal, closModal } = useMultiModals()
 
-  const [selectedMajorExam, setSelectedMajorExam] = useState<'1' | '2' | '3' | 'last'>('last')
+  const [selectedMajorExam, setSelectedMajorExam] = useState<'1' | '2' | '3' | 'last'| '4'>('last')
 
 // ---- Graphique Performance Moyenne par Classe (FAKE DATA) ---- //
 const [dataPerformance, setDataPerformance] = useState<{labels:string[], datasets:{label:string, data:number[], backgroundColor:string}[]}>({
