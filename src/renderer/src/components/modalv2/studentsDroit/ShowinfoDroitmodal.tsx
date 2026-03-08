@@ -1,6 +1,9 @@
+import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FiX, FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi'
+import { toast } from 'react-toastify'
+import { number } from 'yup'
 
 type ShowInfoDroitsProps = {
   closemodal: () => void
@@ -11,14 +14,36 @@ type ShowInfoDroitsProps = {
 
 export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroitsProps) {
   const [activeTab, setActiveTab] = useState<'paiement' | 'historique'>('paiement')
-  const [montant, setMontant] = useState<number>(0)
+  const [montant, setMontant] = useState<number>()
   const [selectedType, setSelectedType] = useState<'Complet' | 'Avance' | 'Remboursé'>('Complet')
+  const [histo, setHisto] = useState<{id:number, montant:number,type:string, reste:number , created_at:string}[]>([])
+  const [fresh, setFresh] = useState(false)
+  const getHisto = async () => {
+    await axiosRequest('GET', `droithisto/${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.id}`, null, 'token')
+    .then(({data}) => setHisto(data))
+  }
 
-  const fakeHistorique = [
-    { id: 1, date: '2025-01-05', montant: 150000, status: 'Payé', type: 'Complet' },
-    { id: 2, date: '2025-02-05', montant: 50000, status: 'Non payé', type: 'Avance' },
-    { id: 3, date: '2025-03-05', montant: 150000, status: 'Payé', type: 'Complet' }
-  ]
+  const deletehisto = async (id:number) => {
+    await axiosRequest('DELETE', `droithisto/${id}`, null, 'token')
+    .then(({data}) => toast.success(data.message))
+    .then(()=> setFresh((fresh) => !fresh))
+  }
+
+  useEffect(() => {
+    getHisto()
+  }, [activeTab=='historique', fresh])
+
+
+  const pay = async () => {
+    try{
+      await axiosRequest('POST', 'etudiant-droit', {type: selectedType.toLowerCase(), montant: montant, se_id: student.sousetudiants[student.sousetudiants.length - 1].id, ac_id:  student.sousetudiants[student.sousetudiants.length - 1].ac_id}, 'token')
+      .then(({data}) => toast.success(data.message))
+      .catch(err => toast.error(err.response.data.message))
+    }catch(e){
+      console.log(e)
+    }
+  }
+  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -37,17 +62,19 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
 
           <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
             <p>
-              <span className="font-semibold">anciens</span>
+              <span className="font-semibold">{student?.sousetudiants.length > 1?'Ancien(ne)':'Nouveau(lle)'}</span>
             </p>
             <p>
-              <span className="font-semibold">Classe :</span>...
+              <span className="font-semibold">Classe :</span>{student?.sousetudiants[student.sousetudiants.length -1].classe.nom_classe}
             </p>
             <p>
               <span className="font-semibold">Matricule :</span> {student.matricule || '—'}
             </p>
             <p>
               <span className="font-semibold">Statut :</span>{' '}
-              <span className="text-[#895256] font-bold">Non payé</span>
+              <span className="text-[#895256] font-bold">{student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1
+                            ? 'Payé'
+                            : 'Non payé'}</span>
             </p>
           </div>
         </div>
@@ -78,7 +105,7 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               <input
                 type="number"
                 value={montant}
-                onChange={(e) => setMontant(Number(e.target.value))}
+                onChange={(e) => setMontant(e.target.value)}
                 placeholder="Ex: 150000"
                 className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#895256] text-[#212529] font-medium placeholder-gray-400"
               />
@@ -103,17 +130,17 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               </div>
             </div>
 
-            <button className="w-full mt-4 py-3 bg-[#895256] text-white font-semibold rounded-xl hover:bg-[#733935] transition-all shadow-md flex justify-center items-center gap-2">
+            <button onClick={pay} className="w-full mt-4 py-3 bg-[#895256] text-white font-semibold rounded-xl hover:bg-[#733935] transition-all shadow-md flex justify-center items-center gap-2">
               <FiPlus size={18} /> Valider le paiement
             </button>
           </div>
         ) : (
           <div className="space-y-4">
-            {fakeHistorique.length === 0 ? (
+            {histo.length === 0 ? (
               <p className="text-center text-gray-500">Aucun paiement enregistré</p>
             ) : (
               <ul className="space-y-3">
-                {fakeHistorique.map((item) => (
+                {histo.map((item) => (
                   <li
                     key={item.id}
                     className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center hover:shadow-md transition"
@@ -122,24 +149,24 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
                       <p className="font-semibold text-[#212529]">
                         Montant : {item.montant.toLocaleString()} Ar
                       </p>
-                      <p className="text-sm text-gray-500">Date : {item.date}</p>
+                      <p className="text-sm text-gray-500">Date : {item.created_at}</p>
                       <p className="text-sm">
                         Type : <span className="font-medium text-[#895256]">{item.type}</span>
                       </p>
                       <p
                         className={`text-sm font-medium ${
-                          item.status === 'Payé' ? 'text-green-700' : 'text-red-700'
+                          item.reste === 0  ? 'text-green-700' : 'text-red-700'
                         }`}
                       >
-                        {item.status}
+                        {item.reste ==0?'Payé':'Non Payé'}
                       </p>
                     </div>
 
                     <div className="flex gap-2">
-                      <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition">
+                      {/* <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition">
                         <FiEdit size={18} />
-                      </button>
-                      <button className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition">
+                      </button> */}
+                      <button onClick={() => deletehisto(item.id)} className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition">
                         <FiTrash2 size={18} />
                       </button>
                     </div>
