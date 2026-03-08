@@ -18,7 +18,9 @@ type FormDataAlefa = {
   ac_id: string,
   ecolage: number,
   kermesse:number,
-  droit:number
+  droit:number,
+  kermesse_ancien:number
+  droit_ancien:number
 }
 
 const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
@@ -31,7 +33,9 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
       ecolage: number
       acs: { annee: string }
       kermesse: number 
-      droit:number
+      droit:number,
+      droit_ancien:number,
+      kermesse_ancien:number
     }[]
   >([])
 
@@ -107,6 +111,16 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
       .number()
       .typeError('Le montant doit être un nombre')
       .required('Le montant est requis')
+      .min(0, 'Le montant ne peut pas être négatif'),
+    droit_ancien: yup
+      .number()
+      .typeError('Le montant doit être un nombre')
+      .required('Le montant est requis')
+      .min(0, 'Le montant ne peut pas être négatif'),
+    kermesse_ancien: yup
+      .number()
+      .typeError('Le montant doit être un nombre')
+      .required('Le montant est requis')
       .min(0, 'Le montant ne peut pas être négatif')
   })
 
@@ -127,7 +141,9 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
       ac_id: data.ac_id,
       ecolage: data.ecolage,
       droit: data.droit,
-      kermesse: data.kermesse
+      kermesse: data.kermesse,
+      droit_ancien:data.droit_ancien,
+      kermesse_ancien:data.kermesse_ancien
     }
 
     setIsLoading(true)
@@ -256,6 +272,22 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
               />
               {errors.droit && <p className="text-sm text-red-400 mt-1">{errors.droit.message}</p>}
             </div>
+            {/* droit  ancien*/}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Droit pour ancien (ex: 50000 Ar)"
+                {...register('droit_ancien')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.droit_ancien
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.droit_ancien && <p className="text-sm text-red-400 mt-1">{errors.droit_ancien.message}</p>}
+            </div>
+
+
 
             {/* Kermesse  */}
             <div className="mt-4">
@@ -272,6 +304,21 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
               {errors.kermesse && (
                 <p className="text-sm text-red-400 mt-1">{errors.kermesse.message}</p>
               )}
+            </div>
+
+            {/* kermesse  ancien*/}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Kermesse pour ancien (ex: 50000 Ar)"
+                {...register('kermesse_ancien')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.kermesse_ancien
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.kermesse_ancien && <p className="text-sm text-red-400 mt-1">{errors.kermesse_ancien.message}</p>}
             </div>
 
             <div className="mt-6">
@@ -358,7 +405,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                   <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
                 ) : (
                   <ul className="space-y-3">
-                    {historiques.map(({ id, nom_classe, ecolage, acs, kermesse, droit }, index) => (
+                    {historiques.map(({ id, nom_classe, ecolage, acs, kermesse, droit, droit_ancien, kermesse_ancien }, index) => (
                       <li
                         key={index}
                         className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
@@ -374,14 +421,20 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                           <span className="text-sm text-[#895256] font-medium mt-1">
                             Droit: {droit} Ar{' '}
                           </span>
+                           <span className="text-sm text-[#895256] font-medium mt-1">
+                            Droit Ancien: {droit_ancien} Ar
+                          </span>
                           <span className="text-sm text-[#895256] font-medium mt-1">
                             Kermesse: {kermesse} Ar
+                          </span>
+                           <span className="text-sm text-[#895256] font-medium mt-1">
+                            Kermesse Ancien: {kermesse_ancien} Ar
                           </span>
                         </div>
                         <div className="flex space-x-2">
                           <button
                             aria-label={`Modifier le niveaux}`}
-                            onClick={() => handleclickEdit({ id, nom_classe, ecolage, acs , kermesse , droit })}
+                            onClick={() => handleclickEdit({ id, nom_classe, ecolage, acs , kermesse , droit, droit_ancien, kermesse_ancien })}
                             className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
                           >
                             <FiEdit size={18} />

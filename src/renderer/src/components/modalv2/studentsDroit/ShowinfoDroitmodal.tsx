@@ -18,6 +18,18 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
   const [selectedType, setSelectedType] = useState<'Complet' | 'Avance' | 'Remboursé'>('Complet')
   const [histo, setHisto] = useState<{id:number, montant:number,type:string, reste:number , created_at:string}[]>([])
   const [fresh, setFresh] = useState(false)
+  const [droitinfo, setDroitinfo] = useState<{payed:number}>({payed:student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed})
+
+  const getDroitInfo = async () => {
+    await axiosRequest('GET', `droitinfo/${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.id}`, null, 'token')
+    .then(({data}) => setDroitinfo(data))
+  }
+
+  useEffect(() => {
+    getDroitInfo()
+  }, [fresh])
+
+
   const getHisto = async () => {
     await axiosRequest('GET', `droithisto/${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.id}`, null, 'token')
     .then(({data}) => setHisto(data))
@@ -36,14 +48,16 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
 
   const pay = async () => {
     try{
-      await axiosRequest('POST', 'etudiant-droit', {type: selectedType.toLowerCase(), montant: montant, se_id: student.sousetudiants[student.sousetudiants.length - 1].id, ac_id:  student.sousetudiants[student.sousetudiants.length - 1].ac_id}, 'token')
+      await axiosRequest('POST', 'etudiant-droit', {type: selectedType.toLowerCase(), montant: selectedType!='Avance'?0:montant, se_id: student.sousetudiants[student.sousetudiants.length - 1].id, ac_id:  student.sousetudiants[student.sousetudiants.length - 1].ac_id}, 'token')
       .then(({data}) => toast.success(data.message))
+      .then(() => setFresh(!fresh))
       .catch(err => toast.error(err.response.data.message))
     }catch(e){
       console.log(e)
     }
   }
   
+  const payed = droitinfo.payed
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -72,7 +86,7 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
             </p>
             <p>
               <span className="font-semibold">Statut :</span>{' '}
-              <span className="text-[#895256] font-bold">{student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1
+              <span className="text-[#895256] font-bold">{droitinfo.payed == 1
                             ? 'Payé'
                             : 'Non payé'}</span>
             </p>
@@ -104,6 +118,7 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               </label>
               <input
                 type="number"
+                disabled={payed&& selectedType!='Remboursé'}
                 value={montant}
                 onChange={(e) => setMontant(e.target.value)}
                 placeholder="Ex: 150000"
@@ -130,7 +145,7 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               </div>
             </div>
 
-            <button onClick={pay} className="w-full mt-4 py-3 bg-[#895256] text-white font-semibold rounded-xl hover:bg-[#733935] transition-all shadow-md flex justify-center items-center gap-2">
+            <button disabled={payed&& selectedType!='Remboursé'} onClick={pay} className={`w-full mt-4 py-3 ${payed&& selectedType!='Remboursé'?'cursor-not-allowed bg-gray-500':'bg-[#895256] hover:bg-[#733935'}   text-white font-semibold rounded-xl ] transition-all shadow-md flex justify-center items-center gap-2`}>
               <FiPlus size={18} /> Valider le paiement
             </button>
           </div>
@@ -154,6 +169,13 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
                         Type : <span className="font-medium text-[#895256]">{item.type}</span>
                       </p>
                       <p
+                        className={`text-sm font-medium ${
+                          item.reste === 0  ? 'text-green-700' : 'text-red-700'
+                        }`}
+                      >
+                        {'Reste:'+item.reste+' Ar'}
+                      </p>
+                             <p
                         className={`text-sm font-medium ${
                           item.reste === 0  ? 'text-green-700' : 'text-red-700'
                         }`}

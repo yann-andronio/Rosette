@@ -13,6 +13,8 @@ type FormDataAlefa = {
   ecolage: number
   kermesse: number
   droit: number
+  droit_ancien: number
+  kermesse_ancien:number
 }
 
 type NiveauData = {
@@ -21,6 +23,8 @@ type NiveauData = {
   ac_id: string
   ecolage: number
   kermesse: number
+  droit_ancien: number
+  kermesse_ancien:number
   droit: number
   acs: { annee: string }
 }
@@ -49,7 +53,18 @@ const schema = yup.object({
     .number()
     .typeError('Le montant doit être un nombre')
     .required('Le montant est requis')
+    .min(0, 'Le montant ne peut pas être négatif'),
+  droit_ancien: yup
+    .number()
+    .typeError('Le montant doit être un nombre')
+    .required('Le montant est requis')
+    .min(0, 'Le montant ne peut pas être négatif'),
+  kermesse_ancien: yup
+    .number()
+    .typeError('Le montant doit être un nombre')
+    .required('Le montant est requis')
     .min(0, 'Le montant ne peut pas être négatif')
+  
 })
 
 const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
@@ -74,6 +89,8 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
       ecolage: NiveauData.ecolage,
       kermesse: NiveauData.kermesse,
       droit: NiveauData.droit,
+      kermesse_ancien: NiveauData.kermesse_ancien,
+      droit_ancien:NiveauData.droit_ancien
     }
   })
 
@@ -95,7 +112,10 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
       ac_id: ac_id_value,
       ecolage: data.ecolage,
       droit: data.droit,
-      kermesse: data.kermesse
+      kermesse: data.kermesse,
+      kermesse_ancien: data.kermesse_ancien,
+      droit_ancien: data.droit_ancien
+
     }
 
     try {
@@ -154,7 +174,19 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
         />
         {errors.droit && <p className="text-sm text-red-400 mt-1">{errors.droit.message}</p>}
       </div>
-
+      <div className="mt-4">
+        <input
+          type="number"
+          placeholder="Droit ancien scolaire (ex: 50000 Ar)"
+          {...register('droit_ancien', { valueAsNumber: true })}
+          className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+            errors.droit_ancien
+              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+              : 'border-gray-300 shadow-sm'
+          }`}
+        />
+        {errors.droit_ancien && <p className="text-sm text-red-400 mt-1">{errors.droit_ancien.message}</p>}
+      </div>
       <div className="mt-4">
         <input
           type="number"
@@ -167,6 +199,19 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
           }`}
         />
         {errors.kermesse && <p className="text-sm text-red-400 mt-1">{errors.kermesse.message}</p>}
+      </div>
+      <div className="mt-4">
+        <input
+          type="number"
+          placeholder="Kermesse ancien scolaire (ex: 50000 Ar)"
+          {...register('kermesse_ancien', { valueAsNumber: true })}
+          className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+            errors.kermesse_ancien
+              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+              : 'border-gray-300 shadow-sm'
+          }`}
+        />
+        {errors.kermesse_ancien && <p className="text-sm text-red-400 mt-1">{errors.kermesse_ancien.message}</p>}
       </div>
 
       <div className="mt-6">
