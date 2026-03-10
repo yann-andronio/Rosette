@@ -29,7 +29,7 @@ function StudentsDroit(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [macs, setMacs] = useState<{ id: number; mois: string }[]>([])
   const [selectedSexe, setSelectedSexe] = useState<string>('0')
-  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('All')
+  const [selectedstatusecolage, setSelectedstatusecolage] = useState<string>('0')
   const [selectedmoisEcolage, setselectedmoisEcolage] = useState<string>('0')
   const [students, setStudents] = useState<{
     per_page: number
@@ -84,7 +84,6 @@ function StudentsDroit(): JSX.Element {
     searcheleves,
     reload,
     selectedstatusecolage,
-    selectedmoisEcolage
   ])
 
   const pagination: number[] = []
@@ -94,8 +93,10 @@ function StudentsDroit(): JSX.Element {
   const [selectedStudent, setSelectedStudent] = useState<Etudiant | null>(null)
 
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
-    setter((prev) => (prev === current ? 'All' : current))
+    setter((prev) => (prev === current ? '0' : current))
   }
+
+
 
   const handleSearcheleves = (dataeleve: string) => {
     setSearcheleves(dataeleve)
@@ -317,9 +318,9 @@ function StudentsDroit(): JSX.Element {
                 Payé
               </button>
               <button
-                onClick={() => handleselect('0', setSelectedstatusecolage)}
+                onClick={() => handleselect('2', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === '0'
+                  selectedstatusecolage === '2'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}

@@ -79,6 +79,9 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               <span className="font-semibold">{student?.sousetudiants.length > 1?'Ancien(ne)':'Nouveau(lle)'}</span>
             </p>
             <p>
+              <span className="font-semibold">Total à payer: {student?.sousetudiants.length > 1?student?.sousetudiants[student.sousetudiants.length -1].classe?.droit_ancien:student?.sousetudiants[student.sousetudiants.length -1].classe?.droit} Ar</span>
+            </p>
+            <p>
               <span className="font-semibold">Classe :</span>{student?.sousetudiants[student.sousetudiants.length -1].classe.nom_classe}
             </p>
             <p>
