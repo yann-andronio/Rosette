@@ -1,9 +1,11 @@
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
-import { useEffect, useState } from 'react'
+import { formatDate } from '@renderer/utils/FormatDate'
+import { useEffect, useRef, useState } from 'react'
 import { FiX, FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi'
+import { LuPrinter } from 'react-icons/lu'
 import { toast } from 'react-toastify'
-import { number } from 'yup'
+import PapierImpressionRecueDroit from './PapierImpressionRecueDroit'
 
 type ShowInfoDroitsProps = {
   closemodal: () => void
@@ -13,6 +15,7 @@ type ShowInfoDroitsProps = {
 }
 
 export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroitsProps) {
+  const [selectedPayment, setSelectedPayment] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'paiement' | 'historique'>('paiement')
   const [montant, setMontant] = useState<number>()
   const [selectedType, setSelectedType] = useState<'Complet' | 'Avance' | 'Remboursé'>('Complet')
@@ -58,6 +61,20 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
   }
   
   const payed = droitinfo.payed
+  const printRef = useRef<HTMLDivElement>(null)
+  
+  const handlePrintStudentRecue = () => {
+    setTimeout(() => {
+      if (!printRef.current) return
+      const printContents = printRef.current.innerHTML
+      if (!printContents) return
+      const originalContents = document.body.innerHTML
+      document.body.innerHTML = printContents
+      window.print()
+      document.body.innerHTML = originalContents
+      window.location.reload()
+    }, 200)
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -76,22 +93,31 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
 
           <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
             <p>
-              <span className="font-semibold">{student?.sousetudiants.length > 1?'Ancien(ne)':'Nouveau(lle)'}</span>
+              <span className="font-semibold">
+                {student?.sousetudiants.length > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
+              </span>
             </p>
             <p>
-              <span className="font-semibold">Total à payer: {student?.sousetudiants.length > 1?student?.sousetudiants[student.sousetudiants.length -1].classe?.droit_ancien:student?.sousetudiants[student.sousetudiants.length -1].classe?.droit} Ar</span>
+              <span className="font-semibold">
+                Total à payer:{' '}
+                {student?.sousetudiants.length > 1
+                  ? student?.sousetudiants[student.sousetudiants.length - 1].classe?.droit_ancien
+                  : student?.sousetudiants[student.sousetudiants.length - 1].classe?.droit}{' '}
+                Ar
+              </span>
             </p>
             <p>
-              <span className="font-semibold">Classe :</span>{student?.sousetudiants[student.sousetudiants.length -1].classe.nom_classe}
+              <span className="font-semibold">Classe :</span>
+              {student?.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe}
             </p>
             <p>
               <span className="font-semibold">Matricule :</span> {student.matricule || '—'}
             </p>
             <p>
               <span className="font-semibold">Statut :</span>{' '}
-              <span className="text-[#895256] font-bold">{droitinfo.payed == 1
-                            ? 'Payé'
-                            : 'Non payé'}</span>
+              <span className="text-[#895256] font-bold">
+                {droitinfo.payed == 1 ? 'Payé' : 'Non payé'}
+              </span>
             </p>
           </div>
         </div>
@@ -121,7 +147,7 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               </label>
               <input
                 type="number"
-                disabled={payed&& selectedType!='Remboursé'}
+                disabled={payed && selectedType != 'Remboursé'}
                 value={montant}
                 onChange={(e) => setMontant(e.target.value)}
                 placeholder="Ex: 150000"
@@ -148,7 +174,11 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
               </div>
             </div>
 
-            <button disabled={payed&& selectedType!='Remboursé'} onClick={pay} className={`w-full mt-4 py-3 ${payed&& selectedType!='Remboursé'?'cursor-not-allowed bg-gray-500':'bg-[#895256] hover:bg-[#733935'}   text-white font-semibold rounded-xl ] transition-all shadow-md flex justify-center items-center gap-2`}>
+            <button
+              disabled={payed && selectedType != 'Remboursé'}
+              onClick={pay}
+              className={`w-full mt-4 py-3 ${payed && selectedType != 'Remboursé' ? 'cursor-not-allowed bg-gray-500' : 'bg-[#895256] hover:bg-[#733935'}   text-white font-semibold rounded-xl ] transition-all shadow-md flex justify-center items-center gap-2`}
+            >
               <FiPlus size={18} /> Valider le paiement
             </button>
           </div>
@@ -167,23 +197,23 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
                       <p className="font-semibold text-[#212529]">
                         Montant : {item.montant.toLocaleString()} Ar
                       </p>
-                      <p className="text-sm text-gray-500">Date : {item.created_at}</p>
+                      <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
                       <p className="text-sm">
                         Type : <span className="font-medium text-[#895256]">{item.type}</span>
                       </p>
                       <p
                         className={`text-sm font-medium ${
-                          item.reste === 0  ? 'text-green-700' : 'text-red-700'
+                          item.reste === 0 ? 'text-green-700' : 'text-red-700'
                         }`}
                       >
-                        {'Reste:'+item.reste+' Ar'}
+                        {'Reste:' + item.reste + ' Ar'}
                       </p>
-                             <p
+                      <p
                         className={`text-sm font-medium ${
-                          item.reste === 0  ? 'text-green-700' : 'text-red-700'
+                          item.reste === 0 ? 'text-green-700' : 'text-red-700'
                         }`}
                       >
-                        {item.reste ==0?'Payé':'Non Payé'}
+                        {item.reste == 0 ? 'Payé' : 'Non Payé'}
                       </p>
                     </div>
 
@@ -191,7 +221,21 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
                       {/* <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition">
                         <FiEdit size={18} />
                       </button> */}
-                      <button onClick={() => deletehisto(item.id)} className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition">
+                      <button
+                        onClick={() => {
+                          setSelectedPayment(item)
+                          handlePrintStudentRecue()
+                        }}
+                        title="Imprimer le reçu"
+                        className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition"
+                      >
+                        <LuPrinter size={20} />
+                      </button>
+                      <button
+                        title="Supprimer l'historique"
+                        onClick={() => deletehisto(item.id)}
+                        className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                      >
                         <FiTrash2 size={18} />
                       </button>
                     </div>
@@ -201,6 +245,14 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
             )}
           </div>
         )}
+      </div>
+
+      <div className="hidden">
+        <PapierImpressionRecueDroit
+          student={student}
+          paymentInfo={selectedPayment}
+          ref={printRef}
+        />
       </div>
     </div>
   )
