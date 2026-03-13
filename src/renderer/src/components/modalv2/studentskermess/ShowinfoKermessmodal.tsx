@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { FiX, FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi'
 import { LuPrinter } from 'react-icons/lu'
 import { toast } from 'react-toastify'
-import PapierImpressionRecueDroit from './PapierImpressionRecueDroit'
+import PapierImpressionRecueKermess from './PapierImpressionRecueKermess'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 
@@ -16,7 +16,7 @@ type ShowInfoDroitsProps = {
   reload: boolean
 }
 
-export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroitsProps) {
+export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDroitsProps) {
   const [loading, setLoading] = useState(false)
   const [loadingHisto, setLoadingHisto] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState<any>(null)
@@ -45,14 +45,14 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
   }, [fresh])
 
   const getHisto = async () => {
-      setLoadingHisto(true)
+    setLoadingHisto(true)
     await axiosRequest(
       'GET',
       `droithisto/${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.id}`,
       null,
       'token'
     ).then(({ data }) => setHisto(data))
-      setLoadingHisto(false)
+    setLoadingHisto(false)
   }
 
   const deletehisto = async () => {
@@ -67,11 +67,11 @@ export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroi
         setSelectedDeleteId(null)
       })
   }
-useEffect(() => {
-  if (activeTab === 'historique') {
-    getHisto()
-  }
-}, [activeTab, fresh])
+  useEffect(() => {
+    if (activeTab === 'historique') {
+      getHisto()
+    }
+  }, [activeTab, fresh])
 
   const pay = async () => {
     setLoading(true)
@@ -115,13 +115,11 @@ useEffect(() => {
     }, 200)
   }
 
-  
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto animate-fade-in">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-[#212529]">Paiement de Droit / Historique</h1>
+          <h1 className="text-2xl font-bold text-[#212529]">Paiement de Kermess / Historique</h1>
           <button onClick={closemodal} className="text-gray-400 hover:text-red-600 transition">
             <FiX size={24} />
           </button>
@@ -184,7 +182,7 @@ useEffect(() => {
             {/* Montant */}
             <div>
               <label className="block text-[#212529] font-semibold mb-2">
-                Montant du droit (Ar)
+                Montant du Kermess (Ar)
               </label>
               <input
                 type="number"
@@ -317,7 +315,7 @@ useEffect(() => {
       )}
 
       <div className="hidden">
-        <PapierImpressionRecueDroit
+        <PapierImpressionRecueKermess
           student={student}
           paymentInfo={selectedPayment}
           ref={printRef}

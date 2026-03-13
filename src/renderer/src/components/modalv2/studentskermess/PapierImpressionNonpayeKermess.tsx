@@ -1,19 +1,19 @@
 import { forwardRef } from 'react'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 
-interface PapierImpressionNonpayeDroitProps {
+interface PapierImpressionNonpayeKermessProps {
   elevesNonPayes: Etudiant[]
   yearSelected: string
   monthSelected: string
 }
 
-const PapierImpressionNonpayeDroit = forwardRef<HTMLDivElement, PapierImpressionNonpayeDroitProps>(
-  ({ elevesNonPayes, yearSelected, }, ref) => {
+const PapierImpressionNonpayeKermess = forwardRef<HTMLDivElement, PapierImpressionNonpayeKermessProps>(
+  ({ elevesNonPayes, yearSelected }, ref) => {
     
     return (
       <div ref={ref} className="p-6 bg-white text-gray-900 font-sans text-sm leading-relaxed">
         <div className="mb-6 text-center border-b pb-3">
-          <h1 className="text-2xl font-bold mb-1">Liste des élèves n’ayant pas payé de Droit</h1>
+          <h1 className="text-2xl font-bold mb-1">Liste des élèves n’ayant pas payé de Kermess</h1>
           <p className="text-gray-700">Année scolaire :{yearSelected}</p>
         </div>
 
@@ -64,4 +64,4 @@ const PapierImpressionNonpayeDroit = forwardRef<HTMLDivElement, PapierImpression
   }
 )
 
-export default PapierImpressionNonpayeDroit
+export default PapierImpressionNonpayeKermess

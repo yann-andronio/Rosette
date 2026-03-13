@@ -7,15 +7,15 @@ import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
 import { MdMeetingRoom } from 'react-icons/md'
-import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
+
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
-import PrintOptionsModal, {
-  PrintType
-} from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
-import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
+
+import PrintOptionsModalKermess from '@renderer/components/modalv2/studentskermess/PrintOptionsModalKermess'
+import ShowinfoKermessmodal from '@renderer/components/modalv2/studentskermess/ShowinfoKermessmodal'
+import PapierImpressionNonpayeKermess from '@renderer/components/modalv2/studentskermess/PapierImpressionNonpayeKermess'
 
 function StudentsKermess(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -47,7 +47,7 @@ function StudentsKermess(): JSX.Element {
     try {
       await axiosRequest(
         'GET',
-        `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`,
+        `etudiant-list_droit?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&payed=${selectedstatusecolage}`,
         null,
         'token'
       )
@@ -83,8 +83,7 @@ function StudentsKermess(): JSX.Element {
     selectedsalle,
     searcheleves,
     reload,
-    selectedstatusecolage,
-    selectedmoisEcolage
+    selectedstatusecolage
   ])
 
   const pagination: number[] = []
@@ -175,10 +174,6 @@ function StudentsKermess(): JSX.Element {
       window.location.reload()
     }, 200)
   }
-
-  console.log('====================================')
-  console.log(selectedstatusecolage, selectedyears)
-  console.log('====================================')
 
   return (
     <div
@@ -303,15 +298,15 @@ function StudentsKermess(): JSX.Element {
                 <LuWallet size={28} />
               </div>
               <h1 className="text-lg font-semibold text-gray-800">
-                Sélectionnez un Statut d'écolage
+                Sélectionnez un Statut de Droit
               </h1>
             </div>
 
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
               <button
-                onClick={() => handleselect('Complet', setSelectedstatusecolage)}
+                onClick={() => handleselect('1', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === 'Complet'
+                  selectedstatusecolage === '1'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
@@ -319,9 +314,9 @@ function StudentsKermess(): JSX.Element {
                 Payé
               </button>
               <button
-                onClick={() => handleselect('Incomplet', setSelectedstatusecolage)}
+                onClick={() => handleselect('2', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === 'Incomplet'
+                  selectedstatusecolage === '2'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold  rounded-md p-2 text-center cursor-pointer transition duration-200`}
@@ -332,7 +327,7 @@ function StudentsKermess(): JSX.Element {
           </div>
 
           {/* Filtre mois */}
-          <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
+          {/* <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1 shadow-md relative">
             <div className=" flex items-center mb-4">
               <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
                 <LuCalendarDays size={28} />
@@ -354,7 +349,7 @@ function StudentsKermess(): JSX.Element {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex z-0 flex-col md:flex-row justify-between text-center items-center my-6">
@@ -489,11 +484,10 @@ function StudentsKermess(): JSX.Element {
                       </div>
                       <div className="flex-1 ">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every((et) => et.payé == 1) == true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                         >
-                          {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(
-                            (et) => et.payé == 1
-                          ) == true
+                          {student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit
+                            ?.payed == 1
                             ? 'Payé'
                             : 'Non payé'}
                         </span>
@@ -503,7 +497,7 @@ function StudentsKermess(): JSX.Element {
                           <FaEye
                             onClick={() => {
                               setSelectedStudent(student)
-                              openModal('Showinfoecolagemodal')
+                              openModal('ShowinfoKermessmodal')
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
@@ -574,17 +568,17 @@ function StudentsKermess(): JSX.Element {
           mode="modifstudents"
         />
       )} */}
-      {modal.Showinfoecolagemodal && selectedStudent && (
-        <Showinfoecolagemodal
+      {modal.ShowinfoKermessmodal && selectedStudent && (
+        <ShowinfoKermessmodal
           reload={reload}
           fresh={setReload}
-          closemodal={() => closModal('Showinfoecolagemodal')}
+          closemodal={() => closModal('ShowinfoKermessmodal')}
           student={selectedStudent}
         />
       )}
 
       {modal.PrintOptionsModal && (
-        <PrintOptionsModal
+        <PrintOptionsModalKermess
           closemodal={() => closModal('PrintOptionsModal')}
           onPrint={handlePrintStudentsNonpayé}
           yearSelected={selectedyears}
@@ -594,7 +588,7 @@ function StudentsKermess(): JSX.Element {
       )}
 
       <div className="hidden">
-        <PapierImpressionNonPaye
+        <PapierImpressionNonpayeKermess
           yearSelected={selectedyears}
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
