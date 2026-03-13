@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react'
-import { FiX } from 'react-icons/fi'
+import { FiX, FiEye, FiEyeOff } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useState } from 'react'
 
 const schema = yup.object({
   name: yup.string().required('Nom requis'),
   firstname: yup.string().required('Prénom requis'),
-  email: yup.string().email('Email invalide').required('Email requis')
+  email: yup.string().email('Email invalide').required('Email requis'),
+    password: yup.string().optional()
 })
 
 type UserProfile = {
@@ -23,6 +25,7 @@ type FormData = {
   name: string
   firstname: string
   email: string
+  password?: string
 }
 
 type ProfileModalProps = {
@@ -31,6 +34,7 @@ type ProfileModalProps = {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
+  const [showPassword, setShowPassword] = useState(false)
   const {
     register,
     handleSubmit,
@@ -110,6 +114,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
                 focus:ring-2 focus:ring-[#895256]`}
             />
             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-600">Nouveau mot de passe</label>
+
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                {...register('password')}
+                placeholder="mot de passe"
+                className="w-full mt-1 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#895256]"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#895256]"
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
+            </div>
           </div>
 
           <div>
