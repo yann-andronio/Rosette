@@ -13,9 +13,9 @@ import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
 import { ToastContainer } from 'react-toastify'
 
-import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
 import PrintOptionsModalDroit from '@renderer/components/modalv2/studentsDroit/PrintOptionsModalDroit'
 import ShowinfoDroitmodal from '@renderer/components/modalv2/studentsDroit/ShowinfoDroitmodal'
+import PapierImpressionNonpayeDroit from '@renderer/components/modalv2/studentsDroit/PapierImpressionNonpayeDroit'
 
 function StudentsDroit(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -490,7 +490,8 @@ function StudentsDroit(): JSX.Element {
                         <span
                           className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                         >
-                          {student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1
+                          {student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit
+                            ?.payed == 1
                             ? 'Payé'
                             : 'Non payé'}
                         </span>
@@ -591,7 +592,7 @@ function StudentsDroit(): JSX.Element {
       )}
 
       <div className="hidden">
-        <PapierImpressionNonPaye
+        <PapierImpressionNonpayeDroit
           yearSelected={selectedyears}
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}

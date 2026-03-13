@@ -17,7 +17,7 @@ const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
   monthSelected,
   statusSelected
 }) => {
-  const isPrintAllowed = statusSelected === 'Incomplet' && yearSelected !== '0'
+  const isPrintAllowed = statusSelected === '2' && yearSelected !== '0'
 
   const handlePrintClick = () => {
     if (!isPrintAllowed) return
@@ -26,7 +26,7 @@ const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
   }
 
   const displayStatus =
-    statusSelected === 'Complet' ? 'Payé' : statusSelected === 'Incomplet' ? 'Non Payé' : '__'
+    statusSelected === '1' ? 'Payé' : statusSelected === '2' ? 'Non Payé' : '__'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -67,8 +67,7 @@ const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
               ⚠ Impression impossible :{' '}
               {yearSelected === '0'
                 ? 'Veuillez sélectionner une année scolaire.'
-                : monthSelected === '0'
-                  ? 'Veuillez sélectionner un mois.'
+                
                   : 'Seuls les élèves ayant écolage non payé peuvent être imprimés.'}
             </p>
           )}
