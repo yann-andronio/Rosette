@@ -21,14 +21,14 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
       month: 'long',
       day: 'numeric'
     })
-  const [num , setNum] = useState()
-    const getNum = async () => {
-      await axiosRequest('GET', 'recue', null, 'token')
-        .then(({data}) => setNum(data))
-    }
-    useEffect(() => {
-      getNum()
-    }, [])
+  // const [num , setNum] = useState()
+  //   const getNum = async () => {
+  //     await axiosRequest('GET', 'recue', null, 'token')
+  //       .then(({data}) => setNum(data))
+  //   }
+  //   useEffect(() => {
+  //     getNum()
+  //   }, [])
     return (
       <div
         ref={ref}
@@ -71,9 +71,9 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           </h2>
          <div className="mt-2 p-1 bg-gray-100 rounded-sm">
             <p className="text-sm font-semibold text-gray-800">
-              N° Reçu :{' '}
+              N° Reçu : {' '}
               <span className="text-lg font-extrabold text-[#895256]">
-                {num}
+                ECO-{numeroRecu}
               </span>
             </p>
           </div>

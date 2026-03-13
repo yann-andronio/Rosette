@@ -22,6 +22,7 @@ import { RotatingLines } from 'react-loader-spinner'
 import PaymentTypeModalecolage from '../modalv2/studentecolage/PaymentTypeModalecolage'
 import PaymentHistoryModal from '../modalv2/studentecolage/PaymentHistoryModal'
 
+
 type ShowInfoStudentsProps = {
   closemodal: () => void
   student: Etudiant
@@ -41,6 +42,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
   const [paymois, setPaymois] = useState()
   const [up, setUp] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedType, setSelectedType] = useState<string>("Complet")
   const pay = async (id: number, cost: number) => {
     try {
       await axiosRequest(
@@ -53,7 +55,8 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           salle: student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
           annee: student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
           ac_id: student.sousetudiants[student.sousetudiants.length - 1].annee.id,
-          prof: student.enfantProf
+          prof: student.enfantProf,
+          type:selectedType.toLowerCase()
         },
         'token'
       )
@@ -61,7 +64,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
         .then(() => fresh(!reload))
         // .then(() => closemodal())
         .then(() => setUp(!up))
-      // .catch(error => console.log(error))
+      .catch(error => toast.error(error.response.data.message))
     } catch (error) {
       console.log('Le serveur ne repond pas')
     }
@@ -216,7 +219,9 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                                 montant:
                                   student.sousetudiants[student.sousetudiants.length - 1].classe
                                     .ecolage,
-                                datePaiement: item?.updated_at
+                                datePaiement: item?.updated_at,
+                                numeroRecu:item.id
+                                
                               })
                             }
                           />
@@ -252,9 +257,17 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                   </div>
                   {item.payé ? (
                     <span
-                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
+                    onClick={() =>
+                        handleRequestPayment(
+                          item.id,
+                          item.mois,
+                          student.sousetudiants[student.sousetudiants.length - 1]?.classe
+                            ?.ecolage || 0
+                        )
+                      }
+                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full cursor-pointer  text-white  text-center ${
                         item.payé === 1
-                          ? 'bg-green-600 cursor-not-allowed'
+                          ? 'bg-green-600 '
                           : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
                       }`}
                     >
@@ -272,7 +285,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                       }
                       className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
                         item.payé === 1
-                          ? 'bg-green-600 cursor-not-allowed'
+                          ? 'bg-green-600 '
                           : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
                       }`}
                     >
@@ -288,6 +301,14 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {paymentTypeModal && (
         <PaymentTypeModalecolage
+          // student={student}
+          // reload={reload}
+          // fresh={fresh}
+          // up={up}
+          // id={ecolageConfirmation?.id}
+          // setUp={setUp}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
           mois={paymentTypeModal.mois}
           montant={paymentTypeModal.cost}
           closemodal={() => setPaymentTypeModal(null)}
@@ -310,6 +331,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           <Recuepayementecolage
             ref={printRef}
             eleve={selectedEcolage.eleve}
+            numeroRecu={selectedEcolage.numeroRecu}
             classe={selectedEcolage.classe}
             salle={selectedEcolage.salle}
             annee={selectedEcolage.annee}
