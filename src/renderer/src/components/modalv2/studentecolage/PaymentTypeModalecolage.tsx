@@ -1,23 +1,69 @@
+// import { axiosRequest } from '@renderer/config/helpers'
 import React, { useState } from 'react'
 import { FiX } from 'react-icons/fi'
+// import { toast } from 'react-toastify'
 
 type PaymentTypeModalProps = {
   closemodal: () => void
   onConfirm: (type: string, montant: number) => void
   mois: string
-  montant: number
+  montant: number,
+  selectedType:string,
+  setSelectedType:(type:string) =>void
+  // student:any,
+  // fresh:(boolean) => void
+  // reload:boolean
+  // up:boolean,
+  // setUp: (boolean) => void,
+  // id:number
 }
 
 const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
   closemodal,
   onConfirm,
   mois,
-  montant
+  montant,
+  selectedType,
+  setSelectedType
+  // fresh, 
+  // reload,
+  // student,
+  // up,
+  // setUp,
+  // id
 }) => {
-  const [selectedType, setSelectedType] = useState<string>('Complet')
+  // const [selectedType, setSelectedType] = useState<string>('Complet')
   const [customAmount, setCustomAmount] = useState<number>(montant)
 
   const paymentTypes = ['Complet', 'Avance', 'Remboursement']
+
+  //  const pay = async () => {
+  //   try {
+  //     await axiosRequest(
+  //       'PUT',
+  //       `ecolage-pay/${id}`,
+  //       {
+  //         cost: montant,
+    
+  //         eleve: student.nom,
+  //         classe: student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
+  //         salle: student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
+  //         annee: student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
+  //         ac_id: student.sousetudiants[student.sousetudiants.length - 1].annee.id,
+  //         prof: student.enfantProf,
+  //         type: selectedType.toLowerCase()
+  //       },
+  //       'token'
+  //     )
+  //       .then(({ data }) => toast.success(data?.message))
+  //       .then(() => fresh(!reload))
+  //       // .then(() => closemodal())
+  //       .then(() => setUp(!up))
+  //     // .catch(error => console.log(error))
+  //   } catch (error) {
+  //     console.log('Le serveur ne repond pas')
+  //   }
+  // }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
