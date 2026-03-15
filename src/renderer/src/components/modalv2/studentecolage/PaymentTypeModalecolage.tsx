@@ -1,5 +1,5 @@
-// import { axiosRequest } from '@renderer/config/helpers'
-import React, { useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
+import React, { useEffect, useState } from 'react'
 import { FiX } from 'react-icons/fi'
 // import { toast } from 'react-toastify'
 
@@ -10,6 +10,10 @@ type PaymentTypeModalProps = {
   montant: number,
   selectedType:string,
   setSelectedType:(type:string) =>void
+  student: any,
+  id:any,
+  pay:any,
+  reste:any
   // student:any,
   // fresh:(boolean) => void
   // reload:boolean
@@ -24,7 +28,10 @@ const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
   mois,
   montant,
   selectedType,
-  setSelectedType
+  setSelectedType,
+  pay,
+  id,
+  reste
   // fresh, 
   // reload,
   // student,
@@ -65,6 +72,28 @@ const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
   //   }
   // }
 
+    const [ecoinfo, setEcoinfo] = useState<{ payé: number }>({
+    payé: pay
+  })
+
+  const getEcoInfo = async () => {
+    await axiosRequest(
+      'GET',
+      `ecoinfo/${id}`,
+      null,
+      'token'
+    ).then(({ data }) => setEcoinfo(data))
+  }
+
+    let payed = pay
+useEffect(() => {
+    getEcoInfo()
+    payed = ecoinfo.payé == 1
+  }, [])
+
+  
+
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in scale-95 transform transition-transform duration-300">
@@ -83,11 +112,16 @@ const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
         <p className="mb-5 text-gray-600 text-base">
           Mois : <span className="font-semibold text-[#212529]">{mois}</span>
         </p>
+         <p className="mb-5 text-gray-600 text-base">
+          Reste à payer : <span className="font-semibold text-[#212529]">{reste} Ar</span>
+        </p>
+
 
   
         <div className="flex flex-col gap-3 mb-5">
           {paymentTypes.map((type) => (
             <button
+            
               key={type}
               onClick={() => setSelectedType(type)}
               className={`px-4 py-2 rounded-xl border-2 font-medium text-lg transition-all
@@ -115,8 +149,9 @@ const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
 
         {/* Bouton confirmer */}
         <button
+          disabled={payed && selectedType !='Remboursement' }
           onClick={() => onConfirm(selectedType, customAmount)}
-          className="w-full py-3 bg-[#895256] text-white font-semibold rounded-xl hover:bg-[#895256] transition-all shadow-md flex justify-center items-center gap-2"
+          className={`w-full py-3 ${payed && selectedType != 'Remboursement' ? 'cursor-not-allowed bg-gray-500' : 'bg-[#895256] hover:bg-[#733935]'}  text-white font-semibold rounded-xl  transition-all shadow-md flex justify-center items-center gap-2`}
         >
           Confirmer le paiement
         </button>

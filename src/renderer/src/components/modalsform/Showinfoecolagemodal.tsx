@@ -34,6 +34,8 @@ type EcolageToConfirm = {
   id: number
   mois: string
   cost: number
+  payé?: number|null
+  reste?:number|null
 }
 
 const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoStudentsProps) => {
@@ -114,8 +116,8 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
   const { openModal, modal, closModal } = useMultiModals()
   const [paymentTypeModal, setPaymentTypeModal] = useState<{ mois: string; cost: number } | null>(null)
 
-  const handleRequestPayment = (id, mois, cost) => {
-    setEcolageConfirmation({ id, mois, cost })
+  const handleRequestPayment = (id, mois, cost, payé=null, reste=null) => {
+    setEcolageConfirmation({ id, mois, cost, payé, reste })
     setPaymentTypeModal({ mois, cost })
   }
 
@@ -149,6 +151,8 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
     mois: string
     history: any[]
   } | null>(null)
+
+
 
 
   return (
@@ -236,7 +240,15 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                         <FaCheckCircle className="text-green-500 text-lg" />
                       </div>
                     ) : (
-                      <FaTimesCircle className="text-red-500 text-lg" />
+                        <div className="flex group gap-5"><div className="relative group">
+                      
+                      </div><FaInfoCircle
+                          className="text-yellow-600 cursor-pointer hover:text-yellow-400"
+                          title="Voir historique du paiement"
+                          onClick={() =>
+                            setPaymentHistoryModal({ mois: item.mois, history: item.history || [] })
+                          }
+                        /><FaTimesCircle className="text-red-500 text-lg" /></div>
                     )}
                   </div>
 
@@ -260,9 +272,12 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                     onClick={() =>
                         handleRequestPayment(
                           item.id,
+                          
                           item.mois,
                           student.sousetudiants[student.sousetudiants.length - 1]?.classe
-                            ?.ecolage || 0
+                            ?.ecolage || 0,
+                            item.payé,
+                            item.reste
                         )
                       }
                       className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full cursor-pointer  text-white  text-center ${
@@ -280,7 +295,9 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                           item.id,
                           item.mois,
                           student.sousetudiants[student.sousetudiants.length - 1]?.classe
-                            ?.ecolage || 0
+                            ?.ecolage || 0,
+                            item.payé,
+                            item.reste
                         )
                       }
                       className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
@@ -301,12 +318,15 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {paymentTypeModal && (
         <PaymentTypeModalecolage
-          // student={student}
+          student={student}
           // reload={reload}
           // fresh={fresh}
           // up={up}
           // id={ecolageConfirmation?.id}
           // setUp={setUp}
+          reste={ecolageConfirmation?.reste}
+          pay={ecolageConfirmation?.payé}
+          id={ecolageConfirmation?.id}
           selectedType={selectedType}
           setSelectedType={setSelectedType}
           mois={paymentTypeModal.mois}
@@ -319,7 +339,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
       {modal.confirmDelete && ecolageConfirmation && (
         <ConfirmDeleteModal
           title="Confirmation de Paiement"
-          message={`Voulez-vous confirmer le paiement d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
+          message={`Voulez-vous confirmer le ${selectedType=='Complet'?'payement':''} ${selectedType} d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
           onConfirm={handleConfirmPayment}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isPayingLoader}
