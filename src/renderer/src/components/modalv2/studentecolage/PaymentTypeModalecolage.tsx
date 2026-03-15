@@ -1,5 +1,8 @@
+
 import { axiosRequest } from '@renderer/config/helpers'
 import React, { useEffect, useState } from 'react'
+
+
 import { FiX } from 'react-icons/fi'
 // import { toast } from 'react-toastify'
 
@@ -10,10 +13,12 @@ type PaymentTypeModalProps = {
   montant: number,
   selectedType:string,
   setSelectedType:(type:string) =>void
+
   student: any,
   id:any,
   pay:any,
   reste:any
+
   // student:any,
   // fresh:(boolean) => void
   // reload:boolean
@@ -28,10 +33,12 @@ const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
   mois,
   montant,
   selectedType,
+
   setSelectedType,
   pay,
   id,
   reste
+
   // fresh, 
   // reload,
   // student,
@@ -72,6 +79,7 @@ const PaymentTypeModalecolage: React.FC<PaymentTypeModalProps> = ({
   //   }
   // }
 
+
     const [ecoinfo, setEcoinfo] = useState<{ payé: number }>({
     payé: pay
   })
@@ -94,6 +102,7 @@ useEffect(() => {
   
 
   
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in scale-95 transform transition-transform duration-300">

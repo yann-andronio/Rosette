@@ -272,12 +272,14 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                     onClick={() =>
                         handleRequestPayment(
                           item.id,
+
                           
                           item.mois,
                           student.sousetudiants[student.sousetudiants.length - 1]?.classe
                             ?.ecolage || 0,
                             item.payé,
                             item.reste
+
                         )
                       }
                       className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full cursor-pointer  text-white  text-center ${
@@ -318,15 +320,19 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {paymentTypeModal && (
         <PaymentTypeModalecolage
+
           student={student}
+
           // reload={reload}
           // fresh={fresh}
           // up={up}
           // id={ecolageConfirmation?.id}
           // setUp={setUp}
+
           reste={ecolageConfirmation?.reste}
           pay={ecolageConfirmation?.payé}
           id={ecolageConfirmation?.id}
+
           selectedType={selectedType}
           setSelectedType={setSelectedType}
           mois={paymentTypeModal.mois}
