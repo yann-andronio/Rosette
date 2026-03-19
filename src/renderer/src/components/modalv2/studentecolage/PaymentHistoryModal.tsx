@@ -1,15 +1,26 @@
-import React, {useState, useEffect} from 'react'
-import { FiX } from 'react-icons/fi'
+import React from 'react'
+import { FiTrash2, FiX } from 'react-icons/fi'
 import { formatDate } from '@renderer/utils/FormatDate'
+import { LuPrinter } from 'react-icons/lu'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 type PaymentHistoryModalProps = {
   mois: string
   history: { id: number; montant: number; type: string; reste: number; created_at: string }[]
-  closeModal: () => void
+  closeModal: () => void,
+
 }
 
-const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({ mois, history, closeModal }) => {
- 
+const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({mois, history, closeModal }) => {
+ const delhisto = async (id:number) => {
+  await axiosRequest('DELETE', `ecohisto/${id}`, null, 'token')
+  .then(({data}) => toast.success(data.message))
+
+ }
+
+
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-lg p-6 rounded-xl shadow-xl relative animate-fade-in scale-95 transition-transform duration-300">
@@ -68,18 +79,9 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({ mois, history
                                      title="Imprimer le reçu"
                                      className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition"
                                    >
-                                     {/* <LuPrinter size={20} /> */}
+                                     <LuPrinter size={20} />
                                    </button>
-                                   <button
-                                     title="Supprimer l'historique"
-                                     onClick={() => {
-                                      //  setSelectedDeleteId(item.id)
-                                      //  openModal('deleteHisto')
-                                     }}
-                                     className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                                   >
-                                     {/* <FiTrash2 size={18} /> */}
-                                   </button>
+                    
                                  </div>
                                </li>
             ))}

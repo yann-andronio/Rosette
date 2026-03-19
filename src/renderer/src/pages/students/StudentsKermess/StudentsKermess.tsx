@@ -47,7 +47,7 @@ function StudentsKermess(): JSX.Element {
     try {
       await axiosRequest(
         'GET',
-        `etudiant-list_droit?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&payed=${selectedstatusecolage}`,
+        `etudiant-list_kermesse?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&payed=${selectedstatusecolage}`,
         null,
         'token'
       )

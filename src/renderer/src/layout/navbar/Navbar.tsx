@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react'
+import React, { Fragment, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import { useDispatch } from 'react-redux'
@@ -7,6 +7,8 @@ import { AiOutlineMenu } from 'react-icons/ai'
 import { UserProvider } from '@renderer/context/UserContext'
 import ProfileModal from '@renderer/components/modalv2/profil/ProfileModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
+import { axiosRequest } from '@renderer/config/helpers'
+import Security from '@renderer/security/Security'
 
 
 
@@ -15,13 +17,32 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 const Navbar: React.FC = () => {
   const dispatch = useDispatch()
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
-    const { user } = useContext(UserProvider)
+    const { user, setUser } = useContext(UserProvider)
    const { openModal, modal, closModal } = useMultiModals()
   // const users = useSelector((state: RootState) => state.user)
+      const getUser = async () => {
+
+    try{
+      await axiosRequest('GET', 'user', null, 'token')
+        .then(({data}) => setUser({email:data?.email, name:data?.name, role:data?.roles.role_name, firstname:data?.firstname, has_access:data?.roles.pages}))
+      
+    }catch (error){
+      console.log(error)
+    }
+
+  }
+
+
+
+  useEffect(() => {
+    getUser()
+  }, []);
+
 
 
 
   return (
+    // <Security user={user}>
     <Fragment>
       <div className="navbar justify-between bg-white     flex w-full pr-14 pl-4 py-3 items-center">
         <div className="burgerflex gap-4 px-4 py-2 flex">
@@ -40,13 +61,14 @@ const Navbar: React.FC = () => {
 
           <div className="nameandfonction flex flex-col ">
             <h1 className="font-medium text-black text-base">{user?.name}</h1>
-            <p className="text-[#0000005C]">{user?.roles?.role_name}</p>
+            <p className="text-[#0000005C]">{user?.role}</p>
           </div>
         </div>
 
         {modal.profilModal && <ProfileModal user={user} onClose={() => closModal('profilModal')} />}
       </div>
     </Fragment>
+    // </Security>
   )
 }
 

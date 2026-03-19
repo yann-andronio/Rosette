@@ -28,13 +28,13 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
   >([])
   const [fresh, setFresh] = useState(false)
   const [droitinfo, setDroitinfo] = useState<{ payed: number }>({
-    payed: student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed
+    payed: student.sousetudiants[student.sousetudiants.length - 1]?.studentkr?.payed
   })
 
   const getDroitInfo = async () => {
     await axiosRequest(
       'GET',
-      `droitinfo/${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.id}`,
+      `krinfo/${student.sousetudiants[student.sousetudiants.length - 1]?.studentkr?.id}`,
       null,
       'token'
     ).then(({ data }) => setDroitinfo(data))
@@ -48,7 +48,7 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
     setLoadingHisto(true)
     await axiosRequest(
       'GET',
-      `droithisto/${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.id}`,
+      `krhisto/${student.sousetudiants[student.sousetudiants.length - 1]?.studentkr?.id}`,
       null,
       'token'
     ).then(({ data }) => setHisto(data))
@@ -58,7 +58,7 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
   const deletehisto = async () => {
     if (!selectedDeleteId) return
     setIsDeletingLoader(true)
-    await axiosRequest('DELETE', `droithisto/${selectedDeleteId}`, null, 'token')
+    await axiosRequest('DELETE', `krhisto/${selectedDeleteId}`, null, 'token')
       .then(({ data }) => toast.success(data.message))
       .then(() => setFresh((fresh) => !fresh))
       .finally(() => {
@@ -78,7 +78,7 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
     try {
       await axiosRequest(
         'POST',
-        'etudiant-droit',
+        'etudiant-kermesse',
         {
           type: selectedType.toLowerCase(),
           montant: selectedType != 'Avance' ? 0 : montant,

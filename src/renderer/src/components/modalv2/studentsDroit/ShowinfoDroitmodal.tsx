@@ -306,6 +306,7 @@ useEffect(() => {
         )}
       </div>
 
+
       {modal.deleteHisto && (
         <ConfirmDeleteModal
           closemodal={() => closModal('deleteHisto')}

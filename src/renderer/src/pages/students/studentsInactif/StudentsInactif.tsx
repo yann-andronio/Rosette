@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import {FaEye } from 'react-icons/fa'
+import {FaEye, FaRecycle, FaRegSave, FaUpload } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuPrinter, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
@@ -9,7 +9,7 @@ import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import PrintOptionsModalInnactif from '@renderer/components/modalv2/studentsinnactif/PrintOptionsModalInnactif'
 import PapierImpressionInactif from '@renderer/components/modalv2/studentsinnactif/PapierImpressionInactif'
@@ -45,7 +45,7 @@ function StudentsInactif(): JSX.Element {
     try {
       await axiosRequest(
         'GET',
-        `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`,
+        `etudiant-list_inactif?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&quitorfired=${selectedstatusecolage}`,
         null,
         'token'
       )
@@ -172,6 +172,17 @@ function StudentsInactif(): JSX.Element {
       document.body.innerHTML = originalContents
       window.location.reload()
     }, 200)
+  }
+
+  const unquit = async (id, type:string) => {
+    try{
+      await axiosRequest('PUT', `etudiant-un${type}/${id}`, null, 'token')
+      .then(({data}) => toast.success(data.message))
+      .then(() => setReload(!reload))
+      .catch(err => toast.error(err.response.data.message))
+    }catch(err){
+      console.log(err)
+    }
   }
 
   return (
@@ -304,25 +315,25 @@ function StudentsInactif(): JSX.Element {
 
             <div className="grid grid-cols-2 gap-3 max-h-[100px] pr-2">
               <button
-                onClick={() => handleselect('Quitter', setSelectedstatusecolage)}
+                onClick={() => handleselect('Quittés', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === 'Quitter'
+                  selectedstatusecolage === 'Quittés'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Quitter
+                Quittés
               </button>
 
               <button
-                onClick={() => handleselect('Renvoyer', setSelectedstatusecolage)}
+                onClick={() => handleselect('Renvoyés', setSelectedstatusecolage)}
                 className={`${
-                  selectedstatusecolage === 'Renvoyer'
+                  selectedstatusecolage === 'Renvoyés'
                     ? 'bg-[#895256] text-white border-none'
                     : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'
                 } border font-bold rounded-md p-2 text-center cursor-pointer transition duration-200`}
               >
-                Renvoyer
+                Renvoyés
               </button>
             </div>
           </div>
@@ -373,6 +384,7 @@ function StudentsInactif(): JSX.Element {
               <div className="flex-1">Sexe</div>
               <div className="flex-1">salle</div>
               <div className="flex-1">Statut</div>
+              <div className="flex-1">Date</div>
               <div className="flex-1">Opération</div>
             </div>
           </div>
@@ -460,13 +472,38 @@ function StudentsInactif(): JSX.Element {
                       </div>
                       <div className="flex-1 ">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every((et) => et.payé == 1) == true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                          className={`px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800`}
                         >
-                          {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(
-                            (et) => et.payé == 1
-                          ) == true
-                            ? 'Quitter'
-                            : 'Renvoyer'}
+                          {student.quit==1
+                            ? 'Quitté'
+                            : 
+
+                          student.fired==1
+                            ? 'Renvoyé'
+                            : 'none'}
+                        </span>
+                      </div>
+                               <div className="flex-1 ">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold  text-red-800`}
+                        >
+                          {student.quit==1
+                            ? new Date(student.quit_at).toLocaleDateString('fr-FR', {
+                              // weekday:'long',
+                              day:'numeric',
+                              month:'long',
+                              year:'numeric'
+                            })
+                            : 
+
+                          student.fired==1
+                            ? new Date(student.fired_at).toLocaleDateString('fr-FR', {
+                              // weekday:'long',
+                              day:'numeric',
+                              month:'long',
+                              year:'numeric'
+                            })
+                            : 'none'}
                         </span>
                       </div>
                       <div className="flex-1">
@@ -491,6 +528,13 @@ function StudentsInactif(): JSX.Element {
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
+                          <FaRecycle onClick={() => unquit(student.id, student.quit==1
+                            ? 'quit'
+                            : 
+
+                          student.fired==1
+                            ? 'fired'
+                            : 'none')} title='Reintegrer'/>
                           {/* <FaPlusCircle
                             onClick={() => openModal('AdUpinfostudents')}
                             className="hover:text-black cursor-pointer transition"

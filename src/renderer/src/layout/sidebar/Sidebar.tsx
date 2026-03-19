@@ -22,6 +22,8 @@ import { toast } from 'react-toastify'
 import { tr } from 'date-fns/locale'
 import { ThreeDote } from 'react-loader-spinner'
 import { UserContext, UserProvider } from '@renderer/context/UserContext'
+import { protect } from '@renderer/security/Security'
+
 
 interface Menu {
   name: string
@@ -32,45 +34,46 @@ interface Menu {
 
 const Sidebar = () => {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-  const { user } = useContext(UserProvider)
-
+  const {user} = useContext(UserProvider)
+  const paths = protect(user)
+  const navigate = useNavigate()
   const menus: Menu[] = [
     {
       name: 'Dashboard',
-      path: '/home',
+      path: paths?.includes('/home')?'/home':'/home/denied',
       icon: <LuLayoutDashboard size={25} />,
       subMenus: []
     },
     {
-      name: 'Elèves',
+      name:'Elèves',
       icon: <LuGraduationCap size={25} />,
       subMenus: [
         {
           name: 'Information des élèves',
-          path: '/home/StudentsInfo',
+          path:  paths?.includes('/home/StudentsInfo')?'/home/StudentsInfo':'/home/denied',
           iconsubmenu: <HiOutlineInformationCircle size={25} />
         },
         {
           name: 'Gestion des notes',
-          path: '/home/notemanagements',
+          path: paths?.includes('/home/notemanagements')?'/home/notemanagements':'/home/denied',
           iconsubmenu: <MdAssignment size={25} />
         },
         // { name: 'statuts', path: '/home/statutstudents', iconsubmenu: <BiStats size={25} /> },
         // { name: 'droit', path: '/home/droiteleve', iconsubmenu: <RiScales3Line size={25} /> },
         {
           name: 'Frais de Scolarité',
-          path: '/home/ecolagestudents',
+          path:  paths?.includes('/home/ecolagestudents')?'/home/ecolagestudents':'/home/denied',
           iconsubmenu: <BsCash size={25} />
         },
-        { name: 'Droit', path: '/home/StudentsDroit', iconsubmenu: <FaWallet size={25} /> },
+        { name: 'Droit', path:  paths?.includes('/home/StudentsDroit')?'/home/StudentsDroit':'/home/denied', iconsubmenu: <FaWallet size={25} /> },
         {
           name: 'Kermess',
-          path: '/home/StudentsKermess',
+          path: paths?.includes('/home/StudentsKermess')?'/home/StudentsKermess':'/home/denied',
           iconsubmenu: <FaCoins size={25} />
         },
         {
           name: 'Élèves inactifs',
-          path: '/home/studentsInactif',
+          path:  paths?.includes('/home/studentsInactif')?'/home/studentsInactif':'/home/denied',
           iconsubmenu: <FaUserSlash size={25} />
         }
       ]
@@ -82,20 +85,20 @@ const Sidebar = () => {
         {
           name: `information d'employés`,
           // path: user.role_id == 'directeur' ? '/home/EmployeInfo' : '#',
-          path: '/home/EmployeInfo',
+          path:  paths?.includes('/home/EmployeInfo')?'/home/EmployeInfo':'/home/denied',
 
           iconsubmenu: <FaUsers size={25} />
         },
         {
           name: `Suivie d'employés`,
-          path: '/home/Employersuivi',
+          path:  paths?.includes('/home/Employersuivi')?'/home':'/home/denied',
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]
     },
     {
       name: 'Historique',
-      path: '/home/Historique',
+      path:  paths?.includes('/home/Historique')?'/home/Historique':'/home/denied',
       icon: <FaHistory size={21} />,
       subMenus: []
     }
@@ -103,7 +106,7 @@ const Sidebar = () => {
   const dispatch = useDispatch()
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
-  const navigate = useNavigate()
+  
   const [isLoading, setIsLoading] = useState(false)
   const logout = async () => {
     setIsLoading(true)

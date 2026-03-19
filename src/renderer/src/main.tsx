@@ -26,6 +26,7 @@ import StudentsDroit from './pages/students/studentsdroit/StudentsDroit/Students
 import StudentsKermess from './pages/students/StudentsKermess/StudentsKermess'
 import StudentsInactif from './pages/students/studentsInactif/StudentsInactif'
 
+import Denied from './security/Denied'
 
 const route = createHashRouter([
   {
@@ -49,6 +50,10 @@ const route = createHashRouter([
       {
         path: '/home/StudentsInfo',
         element: <Studentsinfo />
+      },
+        {
+        path: '/home/denied',
+        element: <Denied />
       },
       {
         path: '/home/notemanagements',

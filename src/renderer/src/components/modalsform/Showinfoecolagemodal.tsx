@@ -370,6 +370,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {paymentHistoryModal && (
         <PaymentHistoryModal
+
           mois={paymentHistoryModal.mois}
           history={paymentHistoryModal.history}
           closeModal={() => setPaymentHistoryModal(null)}
