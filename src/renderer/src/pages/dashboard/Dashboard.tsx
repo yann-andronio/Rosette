@@ -23,10 +23,12 @@ import {
   LinearScale,
   BarElement,
   ArcElement,
+  Tooltip as ChartT,
+  Legend as ChartL
 
   
 } from 'chart.js'
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement)
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, ChartL, ChartT)
 import { Calendarfilter } from '@renderer/components/calendarfilter/Calendarfilter'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { CardDashboard } from '../../components/card/CardDashboard'
@@ -93,7 +95,27 @@ const dataPie = {
 const optionsPie = {
   responsive: true,
   maintainAspectRatio: false,
-  plugins: { legend: { position: 'top' as const } }
+  plugins: {
+    legend: {
+      position: 'top' as const,
+      labels: {
+        color: '#212529',
+        font: {
+          size: 14,
+          weight: 'bold'
+        }
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          const label = context.label || ''
+          const value = context.raw || 0
+          return `${label} : ${value} personnes`
+        }
+      }
+    }
+  }
 }
 
 export default function Dashboard(): JSX.Element {
@@ -552,7 +574,7 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
           </div>
                              <div className="bg-white shadow-xl rounded-2xl p-6 mt-8" style={{ height: '450px' }}>
   <h2 className="text-2xl font-bold text-[#212529] mb-4">
-    Évolution Débit & Crédit (Style Trading)
+    Évolution Débit & Crédit
   </h2>
 
   <div className="w-full h-full">

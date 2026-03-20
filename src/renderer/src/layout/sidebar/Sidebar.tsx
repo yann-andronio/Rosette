@@ -91,7 +91,7 @@ const Sidebar = () => {
         },
         {
           name: `Suivie d'employés`,
-          path:  paths?.includes('/home/Employersuivi')?'/home':'/home/denied',
+          path:  paths?.includes('/home/Employersuivi')?'/home/Employersuivi':'/home/denied',
           iconsubmenu: <HiUserCircle size={25} />
         }
       ]
