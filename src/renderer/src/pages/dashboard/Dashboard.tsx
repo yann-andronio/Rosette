@@ -549,14 +549,14 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
               <div className="flex flex-col space-y-4">
                 <div className="flex items-center justify-between p-6 bg-green-50 rounded-2xl shadow-md">
                   <div>
-                    <p className="text-lg text-gray-600">Débit</p>
+                    <p className="text-lg text-gray-600">Crédit</p>
                     <p className="text-3xl font-bold text-green-700 mt-1">+ {flux.debit} Ar</p>
                   </div>
                   <MdTrendingUp className="text-green-600 w-12 h-12" />
                 </div>
                 <div className="flex items-center justify-between p-6 bg-red-50 rounded-2xl shadow-md">
                   <div>
-                    <p className="text-lg text-gray-600">Crédit</p>
+                    <p className="text-lg text-gray-600">Débit</p>
                     <p className="text-3xl font-bold text-red-700 mt-1">- {flux.credit} Ar</p>
                   </div>
                   <MdTrendingDown className="text-red-600 w-12 h-12" />
@@ -585,10 +585,10 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
       >
         <XAxis dataKey="month" />
         <YAxis tickFormatter={(value) => `${value} Ar`} />
-        <Tooltip formatter={(value:number) =>  `${value} Ar`}/>
+        <Tooltip formatter={(value:number) =>  `${value} Ar`}/>dc2626
         <Legend />
-        <Line type="monotone" dataKey="debit" stroke="#16a34a" strokeWidth={2} dot={{ r: 4 }} />
-        <Line type="monotone" dataKey="credit" stroke="#dc2626" strokeWidth={2} dot={{ r: 4 }} />
+        <Line type="monotone" dataKey="debit" stroke="#dc2626" strokeWidth={2} dot={{ r: 4 }} />
+        <Line type="monotone" dataKey="credit" stroke="#16a34a" strokeWidth={2} dot={{ r: 4 }} />
       </LineChart>
     </ResponsiveContainer>
   </div>
