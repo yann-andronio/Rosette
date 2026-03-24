@@ -79,7 +79,7 @@ const optionsBar = {
 
 // // ---- Données Pie (graph boribory) ---- //
 const dataPie = {
-  labels: ['Filles', 'Garçons', 'Enseignants', 'Employés'],
+  labels: ['none', 'none', 'none', 'none'],
   datasets: [
     {
       label: 'Répartition',
@@ -111,7 +111,7 @@ const optionsPie = {
         label: function (context) {
           const label = context.label || ''
           const value = context.raw || 0
-          return `${label} : ${value} personnes`
+          return `${label} : ${value} élèves`
         }
       }
     }
