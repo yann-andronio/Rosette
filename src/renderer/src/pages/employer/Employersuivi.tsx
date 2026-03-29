@@ -272,7 +272,7 @@ function Employersuivi(): JSX.Element {
         {modal.confirmDelete && employerToDelete && (
           <ConfirmDeleteModal
             title="Supprimer la classe"
-            message={`Voulez-vous vraiment l'emplyer ${employerToDelete.nom_employer} ?`}
+            message={`Voulez-vous vraiment suprimer l'employer ${employerToDelete.nom_employer} ?`}
             onConfirm={handleConfirmDelete}
             closemodal={() => closModal('confirmDelete')}
             isDeletingLoader={isDeletingLoader}

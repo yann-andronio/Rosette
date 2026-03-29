@@ -2,6 +2,7 @@ import logo from '../../images/logo.jpg'
 import './cert.css'
 import { axiosRequest } from '@renderer/config/helpers'
 import { useEffect, useState } from 'react'
+import { formatDate } from '@renderer/utils/FormatDate'
 
 const CertScolaire = ({ student }) => {
 
@@ -79,7 +80,8 @@ const CertScolaire = ({ student }) => {
           jusqu'à ce jour.
         </p>
         <p>
-          En classe de : <span className="border-b border-dotted border-black px-1">{nom_salle}</span>
+          En classe de :{' '}
+          <span className="border-b border-dotted border-black px-1">{nom_salle}</span>
           pour l'année scolaire :
           <span className="border-b border-dotted border-black px-1">{annee}</span>
         </p>
@@ -89,7 +91,9 @@ const CertScolaire = ({ student }) => {
         </p>
         <p>
           Date de naissance :
-          <span className="border-b border-dotted border-black px-1">{dateNaissance}</span>
+          <span className="border-b border-dotted border-black px-1">
+            {dateNaissance ? new Date(dateNaissance).toLocaleDateString('fr-FR') : '—'}
+          </span>
         </p>
         <p>
           Fils ou fille de :
@@ -125,7 +129,6 @@ const CertScolaire = ({ student }) => {
         </div>
       </div>
 
-
       <div className="mt-2">
         <p>Ce présent certificat lui est délivré pour servir et valoir ce que de droit</p>
         <div className="flex mt-4 justify-between items-end">
@@ -133,24 +136,15 @@ const CertScolaire = ({ student }) => {
             <p className="font-bold">Motif :</p>
             <div className="mt-2 space-y-1">
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                />
+                <input type="checkbox" className="mr-2" />
                 Transfert
               </label>
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                />
+                <input type="checkbox" className="mr-2" />
                 Complément de dossier
               </label>
               <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                />
+                <input type="checkbox" className="mr-2" />
                 Autre :
               </label>
             </div>
