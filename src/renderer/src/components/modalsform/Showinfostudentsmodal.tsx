@@ -202,10 +202,10 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                     <span className="font-medium">Prénom du père :</span> {student.prenomPere}
                   </p>
                 )}
-                {student.telephone_pere && (
+                {student.telephonePere && (
                   <p>
                     <span className="font-medium">Téléphone du père :</span>{' '}
-                    {student.telephone_mere}
+                    {student.telephonePere}
                   </p>
                 )}
                 {student.nomMere && (
@@ -218,10 +218,10 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                     <span className="font-medium">Prénom de la mère :</span> {student.prenomMere}
                   </p>
                 )}
-                {student.telephone_mere && (
+                {student.telephoneMere && (
                   <p>
                     <span className="font-medium">Téléphone de la mère :</span>{' '}
-                    {student.telephone_mere}
+                    {student.telephoneMere}
                   </p>
                 )}
               </div>
@@ -229,7 +229,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
           )}
 
           {/* Tuteur */}
-          {(student.nomTuteur || student.telephone_tuteur) && (
+          {(student.nomTuteur || student.telephoneTuteur) && (
             <section>
               <h3 className="text-xl font-bold text-[#895256] mb-4 border-b pb-1 border-gray-300">
                 Tuteur légal
@@ -245,10 +245,10 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                     <span className="font-medium">Prénom du tuteur :</span> {student.prenomTuteur}
                   </p>
                 )}
-                {student.telephone_tuteur && (
+                {student.telephoneTuteur && (
                   <p>
                     <span className="font-medium">Téléphone du tuteur :</span>{' '}
-                    {student.telephone_tuteur}
+                    {student.telephoneTuteur}
                   </p>
                 )}
               </div>

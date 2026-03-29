@@ -11,7 +11,7 @@ const schema = yup.object({
   name: yup.string().required('Nom requis'),
   firstname: yup.string().required('Prénom requis'),
   email: yup.string().email('Email invalide').required('Email requis'),
-    password: yup.string().optional()
+  password: yup.string().optional()
 })
 
 type UserProfile = {
@@ -19,7 +19,7 @@ type UserProfile = {
   firstname?: string
   email?: string
   role: string
-  id:number
+  id: number
 }
 
 type FormData = {
@@ -27,7 +27,6 @@ type FormData = {
   firstname: string
   email: string
   password?: string
-  
 }
 
 type ProfileModalProps = {
@@ -37,6 +36,7 @@ type ProfileModalProps = {
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -45,34 +45,34 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      
       name: '',
       firstname: '',
-      email: '',
-      
+      email: ''
     }
   })
 
   useEffect(() => {
     reset({
-      
       name: user?.name ?? '',
       firstname: user?.firstname ?? '',
       email: user?.email ?? ''
     })
   }, [user, reset])
-console.log(user)
+  console.log(user)
   const onSubmit = async (data: FormData) => {
-    try{
+    setLoading(true)
+    try {
       await axiosRequest('PUT', `user/${user?.id}`, data, 'token')
-      .then(({data}) => toast.success(data.message))
-      .then(() => onClose())
-      .catch((err) => toast.error(err.response.data.message))
-    }catch(err){
+        .then(({ data }) => toast.success(data.message || 'Profil modifié avec succès'))
+        .then(() => onClose())
+        .catch((err) => toast.error(err.response?.data?.message || 'Erreur'))
+    } catch (err) {
       console.log(err)
+      toast.error('Erreur serveur')
+    } finally {
+      setLoading(false)
     }
   }
-  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -167,9 +167,19 @@ console.log(user)
 
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] font-semibold"
+              disabled={loading}
+              className={`px-5 py-2 rounded-lg font-semibold flex items-center gap-2 justify-center
+                        ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#895256] hover:bg-[#733935] text-white'}
+                           `}
             >
-              Enregistrer
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Enregistrement...
+                </>
+              ) : (
+                'Enregistrer'
+              )}
             </button>
           </div>
         </form>
