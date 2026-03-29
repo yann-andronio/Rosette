@@ -115,6 +115,17 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
     }, 200)
   }
 
+  const autopay = async () => {
+    try{
+      await axiosRequest('PUT', `autopay-kermess/${student.sousetudiants[student.sousetudiants.length - 1]?.studentkr?.id}`,null, 'token' )
+      .then(({data}) => toast.success(data.message))
+      .then(() => setFresh(!fresh))
+      .catch((err) => toast.error(err.response.data.message))
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto animate-fade-in">
@@ -140,8 +151,8 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
               <span className="font-semibold">
                 Total à payer:{' '}
                 {student?.sousetudiants.length > 1
-                  ? student?.sousetudiants[student.sousetudiants.length - 1].classe?.droit_ancien
-                  : student?.sousetudiants[student.sousetudiants.length - 1].classe?.droit}{' '}
+                  ? student?.sousetudiants[student.sousetudiants.length - 1].classe?.kermesse_ancien
+                  : student?.sousetudiants[student.sousetudiants.length - 1].classe?.kermesse}{' '}
                 Ar
               </span>
             </p>
@@ -212,7 +223,7 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
                 ))}
               </div>
             </div>
-
+                <input checked={droitinfo.payed == 1? true:false} onClick={autopay} id='p' type="checkbox" className='w-5'/><label htmlFor="p"> Paiement par un parent commun</label>
             <button
               disabled={loading || (payed && selectedType != 'Remboursé')}
               onClick={pay}

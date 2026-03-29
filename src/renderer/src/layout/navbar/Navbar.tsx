@@ -9,6 +9,7 @@ import ProfileModal from '@renderer/components/modalv2/profil/ProfileModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { axiosRequest } from '@renderer/config/helpers'
 import Security from '@renderer/security/Security'
+import { id } from 'date-fns/locale'
 
 
 
@@ -24,7 +25,7 @@ const Navbar: React.FC = () => {
 
     try{
       await axiosRequest('GET', 'user', null, 'token')
-        .then(({data}) => setUser({email:data?.email, name:data?.name, role:data?.roles.role_name, firstname:data?.firstname, has_access:data?.roles.pages}))
+        .then(({data}) => setUser({email:data?.email,id:data.id, name:data?.name, role:data?.roles.role_name, firstname:data?.firstname, has_access:data?.roles.pages}))
       
     }catch (error){
       console.log(error)

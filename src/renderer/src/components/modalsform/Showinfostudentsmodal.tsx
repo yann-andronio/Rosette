@@ -8,6 +8,9 @@ import { axiosRequest } from '@renderer/config/helpers'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import {toast} from "react-toastify"
+import { FaDoorOpen, FaXRay } from 'react-icons/fa'
+import { Footprints } from 'lucide-react'
+import { BsFillDoorOpenFill } from 'react-icons/bs'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -83,6 +86,28 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
     }
   }
 
+
+  const quit = async () => {
+    try{
+      await axiosRequest('PUT', `etudiant-quit/${student.id}`, null, 'token')
+      .then(({data}) => toast.success(data.message))
+      .then(() => setFresh(!fresh))
+      .catch((err) => toast.error(err.response.data.message))
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const fired = async () => {
+    try{
+      await axiosRequest('PUT', `etudiant-fired/${student.id}`, null, 'token')
+      .then(({data}) => toast.success(data.message))
+      .then(() => setFresh(!fresh))
+      .catch((err) => toast.error(err.response.data.message))
+    }catch(err){
+      console.log(err)
+    }
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
@@ -252,6 +277,39 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                 } text-white text-sm font-medium transition cursor-pointer`}
               >
                 <FiSlash size={16} /> {student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions =='suspendu'?'Desuspendre':'Suspendre'}
+              </button>
+              <button
+                onClick={quit}
+                type="button"
+                // disabled={
+                //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                //   'suspendu'
+                // }
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                  'suspendu'
+                    ? 'bg-red-400 hover:bg-red-500 '
+                    : 'bg-red-500 hover:bg-red-400'
+                } text-white text-sm font-medium transition cursor-pointer`}
+              >
+                <FaDoorOpen/>Marquer Quitté(e)
+              </button>
+              <button
+                onClick={fired}
+                type="button"
+                // disabled={
+                //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                //   'suspendu'
+                // }
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                  'suspendu'
+                    ? 'bg-red-400 hover:bg-red-500 '
+                    : 'bg-red-500 hover:bg-red-400'
+                } text-white text-sm font-medium transition cursor-pointer`}
+              >
+                <Footprints/>
+                Renvoyer
               </button>
 
               {/* btn Imprimer Certificat scolarité */}

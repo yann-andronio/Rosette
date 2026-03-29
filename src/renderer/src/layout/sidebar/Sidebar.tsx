@@ -20,7 +20,7 @@ import { FaCoins, FaHistory, FaUsers, FaUserSlash, FaWallet } from 'react-icons/
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { tr } from 'date-fns/locale'
-import { ThreeDote } from 'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 import { UserContext, UserProvider } from '@renderer/context/UserContext'
 import { protect } from '@renderer/security/Security'
 

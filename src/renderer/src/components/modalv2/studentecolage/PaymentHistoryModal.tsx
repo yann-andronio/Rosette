@@ -4,6 +4,7 @@ import { formatDate } from '@renderer/utils/FormatDate'
 import { LuPrinter } from 'react-icons/lu'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
+import { FaTrash } from 'react-icons/fa'
 
 type PaymentHistoryModalProps = {
   mois: string
@@ -13,10 +14,10 @@ type PaymentHistoryModalProps = {
 }
 
 const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({mois, history, closeModal }) => {
+
  const delhisto = async (id:number) => {
   await axiosRequest('DELETE', `ecohisto/${id}`, null, 'token')
   .then(({data}) => toast.success(data.message))
-
  }
 
 
@@ -80,6 +81,14 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({mois, history,
                                      className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition"
                                    >
                                      <LuPrinter size={20} />
+                                   </button>
+
+                                                    <button
+                                     onClick={() => delhisto(item.id)}
+                                     title="supprimer le reçu"
+                                     className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                                   >
+                                     <FaTrash size={20} />
                                    </button>
                     
                                  </div>

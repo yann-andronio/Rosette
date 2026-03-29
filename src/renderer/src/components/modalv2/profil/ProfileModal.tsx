@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
+import { axiosRequest } from '@renderer/config/helpers'
+import { toast } from 'react-toastify'
 
 const schema = yup.object({
   name: yup.string().required('Nom requis'),
@@ -16,9 +18,8 @@ type UserProfile = {
   name?: string
   firstname?: string
   email?: string
-  roles?: {
-    role_name?: string
-  }
+  role: string
+  id:number
 }
 
 type FormData = {
@@ -26,6 +27,7 @@ type FormData = {
   firstname: string
   email: string
   password?: string
+  
 }
 
 type ProfileModalProps = {
@@ -43,25 +45,34 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
+      
       name: '',
       firstname: '',
-      email: ''
+      email: '',
+      
     }
   })
 
   useEffect(() => {
     reset({
+      
       name: user?.name ?? '',
       firstname: user?.firstname ?? '',
       email: user?.email ?? ''
     })
   }, [user, reset])
-
-  const onSubmit = (data: FormData) => {
-    console.log('Profil modifié:', data)
-    //magnantso api pour modifier 
-    onClose()
+console.log(user)
+  const onSubmit = async (data: FormData) => {
+    try{
+      await axiosRequest('PUT', `user/${user?.id}`, data, 'token')
+      .then(({data}) => toast.success(data.message))
+      .then(() => onClose())
+      .catch((err) => toast.error(err.response.data.message))
+    }catch(err){
+      console.log(err)
+    }
   }
+  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -140,7 +151,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
             <label className="text-sm font-medium text-gray-600">Rôle</label>
             <input
               disabled
-              value={user?.roles?.role_name ?? ''}
+              value={user?.role ?? ''}
               className="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-500"
             />
           </div>

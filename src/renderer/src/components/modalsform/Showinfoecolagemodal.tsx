@@ -256,9 +256,9 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                     <div className="flex items-center gap-2 text-gray-700 font-medium text-sm">
                       <FaWallet className="text-[#895256]" />
                       <span>
-                        {student.sousetudiants[
+                        {(student.sousetudiants[
                           student.sousetudiants.length - 1
-                        ]?.classe?.ecolage?.toLocaleString()}{' '}
+                        ]?.classe?.ecolage / (student.enfantProf == 1?2:1)).toLocaleString()  }{' '}
                         Ar
                       </span>
                     </div>
