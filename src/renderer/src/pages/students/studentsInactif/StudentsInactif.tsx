@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import {FaEye, FaRecycle, FaRegSave, FaUpload } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuPrinter, LuUsers, LuWallet } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuPrinter, LuRefreshCw, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { MdMeetingRoom } from 'react-icons/md'
@@ -354,6 +354,13 @@ function StudentsInactif(): JSX.Element {
             <LuPrinter size={20} />
             Imprimer les listes
           </button>
+          <button
+            onClick={() => setReload((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#895256] text-[#895256] rounded-xl shadow-md hover:bg-[#895256] hover:text-white transition duration-300 font-bold"
+          >
+            <LuRefreshCw size={20} />
+            Actualiser
+          </button>
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
@@ -474,36 +481,28 @@ function StudentsInactif(): JSX.Element {
                         <span
                           className={`px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-800`}
                         >
-                          {student.quit==1
-                            ? 'Quitté'
-                            : 
-
-                          student.fired==1
-                            ? 'Renvoyé'
-                            : 'none'}
+                          {student.quit == 1 ? 'Quitté' : student.fired == 1 ? 'Renvoyé' : 'none'}
                         </span>
                       </div>
-                               <div className="flex-1 ">
+                      <div className="flex-1 ">
                         <span
                           className={`px-3 py-1 rounded-full text-sm font-semibold  text-red-800`}
                         >
-                          {student.quit==1
+                          {student.quit == 1
                             ? new Date(student.quit_at).toLocaleDateString('fr-FR', {
-                              // weekday:'long',
-                              day:'numeric',
-                              month:'long',
-                              year:'numeric'
-                            })
-                            : 
-
-                          student.fired==1
-                            ? new Date(student.fired_at).toLocaleDateString('fr-FR', {
-                              // weekday:'long',
-                              day:'numeric',
-                              month:'long',
-                              year:'numeric'
-                            })
-                            : 'none'}
+                                // weekday:'long',
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                              })
+                            : student.fired == 1
+                              ? new Date(student.fired_at).toLocaleDateString('fr-FR', {
+                                  // weekday:'long',
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric'
+                                })
+                              : 'none'}
                         </span>
                       </div>
                       <div className="flex-1">
@@ -528,13 +527,15 @@ function StudentsInactif(): JSX.Element {
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
-                          <FaRecycle onClick={() => unquit(student.id, student.quit==1
-                            ? 'quit'
-                            : 
-
-                          student.fired==1
-                            ? 'fired'
-                            : 'none')} title='Reintegrer'/>
+                          <FaRecycle
+                            onClick={() =>
+                              unquit(
+                                student.id,
+                                student.quit == 1 ? 'quit' : student.fired == 1 ? 'fired' : 'none'
+                              )
+                            }
+                            title="Reintegrer"
+                          />
                           {/* <FaPlusCircle
                             onClick={() => openModal('AdUpinfostudents')}
                             className="hover:text-black cursor-pointer transition"
@@ -625,15 +626,15 @@ function StudentsInactif(): JSX.Element {
       )}
 
       <div className="hidden">
-      <PapierImpressionInactif
-  yearSelected={yearForPrint}
-  niveauSelected={selectedniveau}
-  salleSelected={selectedsalle}
-  sexeSelected={selectedSexe}
-  statusSelected={selectedstatusecolage}
-  eleves={students.data}
-  ref={printRef}
-/>
+        <PapierImpressionInactif
+          yearSelected={yearForPrint}
+          niveauSelected={selectedniveau}
+          salleSelected={selectedsalle}
+          sexeSelected={selectedSexe}
+          statusSelected={selectedstatusecolage}
+          eleves={students.data}
+          ref={printRef}
+        />
       </div>
     </div>
   )

@@ -16,6 +16,7 @@ import { ToastContainer } from 'react-toastify'
 import PrintOptionsModalDroit from '@renderer/components/modalv2/studentsDroit/PrintOptionsModalDroit'
 import ShowinfoDroitmodal from '@renderer/components/modalv2/studentsDroit/ShowinfoDroitmodal'
 import PapierImpressionNonpayeDroit from '@renderer/components/modalv2/studentsDroit/PapierImpressionNonpayeDroit'
+import { LuRefreshCw } from 'react-icons/lu'
 
 function StudentsDroit(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -370,6 +371,13 @@ function StudentsDroit(): JSX.Element {
           >
             <LuPrinter size={20} />
             Imprimer les listes
+          </button>
+          <button
+            onClick={() => setReload((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#895256] text-[#895256] rounded-xl shadow-md hover:bg-[#895256] hover:text-white transition duration-300 font-bold"
+          >
+            <LuRefreshCw size={20} />
+            Actualiser
           </button>
 
           <div className="flex items-center gap-9">

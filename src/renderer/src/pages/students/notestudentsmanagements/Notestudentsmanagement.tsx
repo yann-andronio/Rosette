@@ -389,7 +389,7 @@ function Notestudentsmanagement(): JSX.Element {
                             }}
                             className="hover:text-black cursor-pointer transition"
                           />
-                          <FaTrash className="hover:text-red-600 cursor-pointer transition" />
+                          {/* <FaTrash className="hover:text-red-600 cursor-pointer transition" /> */}
                         </div>
                       </div>
                     </div>

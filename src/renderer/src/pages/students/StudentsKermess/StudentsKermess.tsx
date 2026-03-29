@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { FaEye } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuPrinter, LuUsers, LuWallet } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuPrinter, LuRefreshCw, LuUsers, LuWallet } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
@@ -366,6 +366,13 @@ function StudentsKermess(): JSX.Element {
           >
             <LuPrinter size={20} />
             Imprimer les listes
+          </button>
+          <button
+            onClick={() => setReload((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#895256] text-[#895256] rounded-xl shadow-md hover:bg-[#895256] hover:text-white transition duration-300 font-bold"
+          >
+            <LuRefreshCw size={20} />
+            Actualiser
           </button>
 
           <div className="flex items-center gap-9">

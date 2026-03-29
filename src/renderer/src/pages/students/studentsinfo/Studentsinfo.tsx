@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuUsers } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuRefreshCw, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
@@ -336,6 +336,13 @@ function Studentsinfo(): JSX.Element {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearcheleves} />
+          <button
+            onClick={() => setReload((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#895256] text-[#895256] rounded-xl shadow-md hover:bg-[#895256] hover:text-white transition duration-300 font-bold"
+          >
+            <LuRefreshCw size={20} />
+            Actualiser
+          </button>
 
           <div className="flex items-center gap-9">
             <div className="flex items-center gap-4">
