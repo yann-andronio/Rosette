@@ -43,6 +43,8 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             <FiX size={24} />
           </button>
         </div>
+
+        <p className="mb-8 text-gray-700 text-lg leading-relaxed">{message}</p>
         {withReason && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">Motif</label>
@@ -54,8 +56,6 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             />
           </div>
         )}
-
-        <p className="mb-8 text-gray-700 text-lg leading-relaxed">{message}</p>
 
         <div className="flex justify-end gap-4">
           <button
