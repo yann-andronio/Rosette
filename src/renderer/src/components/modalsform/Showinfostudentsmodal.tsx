@@ -17,9 +17,16 @@ type ShowInfoStudentsProps = {
   student: Etudiant
   fresh: boolean
   setFresh: (fresh: boolean) => void
+  hideActions?: boolean
 }
 
-const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowInfoStudentsProps) => {
+const Showinfostudentsmodal = ({
+  closemodal,
+  student,
+  fresh,
+  setFresh,
+  hideActions = false
+}: ShowInfoStudentsProps) => {
   const [statusBtnClicked, setStatusBtnClicked] = useState<string | null>(null)
   const [openClassModal, setOpenClassModal] = useState(false)
   const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
@@ -28,8 +35,12 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
   const [etId, setEtId] = useState<number>()
 
   const [issuspendreLoader, setIsDeletingLoader] = useState(false)
-  const [studentToSuspendId, setStudentToSuspendId]= useState<{id:number | null, route:string}|null>(null)
+  const [studentToSuspendId, setStudentToSuspendId] = useState<{
+    id: number | null
+    route: string
+  } | null>(null)
   const { openModal, modal, closModal } = useMultiModals()
+  const [actionType, setActionType] = useState<'suspendre' | 'quitte' | 'renvoyer' | null>(null)
 
   const handleStatusBtnClick = (statut: string, index: number) => {
     setStatusBtnClicked(statut)
@@ -58,11 +69,12 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
     window.location.reload() // miverigna mi reactualiser page
   }
 
-  const suspendre = async (id: number, route:string) => {
+  const suspendre = async (id: number, route: string) => {
     setIsDeletingLoader(true)
     try {
       await axiosRequest('PUT', `etudiant-${route}/${id}`, null, 'token')
-        .then(({ data }) => toast.success(data.message)).then(() => setFresh(!fresh))
+        .then(({ data }) => toast.success(data.message))
+        .then(() => setFresh(!fresh))
         .then(() => closemodal())
         .catch((err) => console.log(err?.response?.data?.error))
     } catch (error) {
@@ -72,42 +84,73 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
     }
   }
 
-   const handleOpenSuspendModal = () => {
-     const currentStatus = student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions
+  const handleOpenSuspendModal = () => {
+    const currentStatus =
+      student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions
     //  if (currentStatus !== 'suspendu') {
-       setStudentToSuspendId({id:student.id, route:currentStatus=='suspendu'?'desuspendre':'suspendre'})
-       openModal('confirmSuspend')
+    setStudentToSuspendId({
+      id: student.id,
+      route: currentStatus == 'suspendu' ? 'desuspendre' : 'suspendre'
+    })
+    setActionType('suspendre')
+    openModal('confirmSuspend')
     //  }
-   }
-
-  const handleConfirmSuspend = async () => {
-    if (studentToSuspendId !== null) {
-      await suspendre(studentToSuspendId.id as number, studentToSuspendId.route)
-    }
+  }
+  const handleQuitModal = () => {
+    setActionType('quitte')
+    openModal('confirmSuspend')
   }
 
+  // const handleConfirmSuspend = async () => {
+  //   if (studentToSuspendId !== null) {
+  //     await suspendre(studentToSuspendId.id as number, studentToSuspendId.route)
+  //   }
+  // }
+  const handleRenvoyeModal = () => {
+    setActionType('renvoyer')
+    openModal('confirmSuspend')
+  }
+
+  const handleConfirmAction = async (motif?: string) => {
+    console.log('Motif : ', motif) 
+
+    if (actionType === 'suspendre' && studentToSuspendId) {
+      await suspendre(studentToSuspendId.id as number, studentToSuspendId.route)
+    }
+
+    if (actionType === 'quitte') {
+      await quit()
+    }
+
+    if (actionType === 'renvoyer') {
+      await fired()
+    }
+
+     closModal('confirmSuspend')
+  }
 
   const quit = async () => {
-    try{
+    try {
       await axiosRequest('PUT', `etudiant-quit/${student.id}`, null, 'token')
-      .then(({data}) => toast.success(data.message))
-      .then(() => setFresh(!fresh))
-      .catch((err) => toast.error(err.response.data.message))
-    }catch(err){
+        .then(({ data }) => toast.success(data.message))
+        .then(() => setFresh(!fresh))
+        .catch((err) => toast.error(err.response.data.message))
+    } catch (err) {
       console.log(err)
     }
   }
 
   const fired = async () => {
-    try{
+    try {
       await axiosRequest('PUT', `etudiant-fired/${student.id}`, null, 'token')
-      .then(({data}) => toast.success(data.message))
-      .then(() => setFresh(!fresh))
-      .catch((err) => toast.error(err.response.data.message))
-    }catch(err){
+        .then(({ data }) => toast.success(data.message))
+        .then(() => setFresh(!fresh))
+        .catch((err) => toast.error(err.response.data.message))
+    } catch (err) {
       console.log(err)
     }
   }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
@@ -177,11 +220,10 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                 </p>
               )}
 
-                <p>
-                  <span className="font-medium">enfant de prof :</span>{' '}
-                  {student.enfantProf == 1 ? 'Oui' : 'Non'}
-                </p>
-
+              <p>
+                <span className="font-medium">enfant de prof :</span>{' '}
+                {student.enfantProf == 1 ? 'Oui' : 'Non'}
+              </p>
             </div>
           </section>
 
@@ -204,8 +246,7 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                 )}
                 {student.telephonePere && (
                   <p>
-                    <span className="font-medium">Téléphone du père :</span>{' '}
-                    {student.telephonePere}
+                    <span className="font-medium">Téléphone du père :</span> {student.telephonePere}
                   </p>
                 )}
                 {student.nomMere && (
@@ -262,55 +303,64 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
             </h3>
             <div className="flex flex-wrap gap-3 mb-4">
               {/* btn Suspendre */}
-              <button
-                onClick={handleOpenSuspendModal}
-                type="button"
-                // disabled={
-                //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                //   'suspendu'
-                // }
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
-                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                  'suspendu'
-                    ? 'bg-red-400 hover:bg-red-500 '
-                    : 'bg-red-500 hover:bg-red-400'
-                } text-white text-sm font-medium transition cursor-pointer`}
-              >
-                <FiSlash size={16} /> {student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions =='suspendu'?'Desuspendre':'Suspendre'}
-              </button>
-              <button
-                onClick={quit}
-                type="button"
-                // disabled={
-                //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                //   'suspendu'
-                // }
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
-                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                  'suspendu'
-                    ? 'bg-red-400 hover:bg-red-500 '
-                    : 'bg-red-500 hover:bg-red-400'
-                } text-white text-sm font-medium transition cursor-pointer`}
-              >
-                <FaDoorOpen/>Marquer Quitté(e)
-              </button>
-              <button
-                onClick={fired}
-                type="button"
-                // disabled={
-                //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                //   'suspendu'
-                // }
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
-                  student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
-                  'suspendu'
-                    ? 'bg-red-400 hover:bg-red-500 '
-                    : 'bg-red-500 hover:bg-red-400'
-                } text-white text-sm font-medium transition cursor-pointer`}
-              >
-                <Footprints/>
-                Renvoyer
-              </button>
+              {!hideActions && (
+                <>
+                  <button
+                    onClick={handleOpenSuspendModal}
+                    type="button"
+                    // disabled={
+                    //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                    //   'suspendu'
+                    // }
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                      student?.sousetudiants[student?.sousetudiants?.length - 1]
+                        ?.status_admissions == 'suspendu'
+                        ? 'bg-red-400 hover:bg-red-500 '
+                        : 'bg-red-500 hover:bg-red-400'
+                    } text-white text-sm font-medium transition cursor-pointer`}
+                  >
+                    <FiSlash size={16} />{' '}
+                    {student?.sousetudiants[student?.sousetudiants?.length - 1]
+                      ?.status_admissions == 'suspendu'
+                      ? 'Desuspendre'
+                      : 'Suspendre'}
+                  </button>
+                  <button
+                    onClick={handleQuitModal}
+                    type="button"
+                    // disabled={
+                    //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                    //   'suspendu'
+                    // }
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                      student?.sousetudiants[student?.sousetudiants?.length - 1]
+                        ?.status_admissions == 'suspendu'
+                        ? 'bg-red-400 hover:bg-red-500 '
+                        : 'bg-red-500 hover:bg-red-400'
+                    } text-white text-sm font-medium transition cursor-pointer`}
+                  >
+                    <FaDoorOpen />
+                    Marquer Quitté(e)
+                  </button>
+                  <button
+                    onClick={handleRenvoyeModal}
+                    type="button"
+                    // disabled={
+                    //   student?.sousetudiants[student?.sousetudiants?.length - 1]?.status_admissions ==
+                    //   'suspendu'
+                    // }
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                      student?.sousetudiants[student?.sousetudiants?.length - 1]
+                        ?.status_admissions == 'suspendu'
+                        ? 'bg-red-400 hover:bg-red-500 '
+                        : 'bg-red-500 hover:bg-red-400'
+                    } text-white text-sm font-medium transition cursor-pointer`}
+                  >
+                    <Footprints />
+                    Renvoyer
+                  </button>
+                </>
+              )}
 
               {/* btn Imprimer Certificat scolarité */}
               <button
@@ -360,7 +410,9 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
                               }
                             }}
                             disabled={
-                              status.status_admissions == 'cours' || status.status_admissions=='suspendu'|| status.transfert == 1
+                              status.status_admissions == 'cours' ||
+                              status.status_admissions == 'suspendu' ||
+                              status.transfert == 1
                                 ? true
                                 : false
                             }
@@ -407,11 +459,18 @@ const Showinfostudentsmodal = ({ closemodal, student , fresh , setFresh }: ShowI
 
       {modal.confirmSuspend && (
         <ConfirmDeleteModal
-          title="Confirmation de suspension"
-          message={`Voulez-vous vraiment suspendre l'élève ${student.nom} ${student.prenom}? Cette action renvoie l'élève de l'etablissement.`}
-          onConfirm={handleConfirmSuspend}
+          title={
+            actionType === 'suspendre'
+              ? 'Confirmation de suspension'
+              : actionType === 'quitte'
+                ? 'Confirmation de départ'
+                : 'Confirmation de renvoi'
+          }
+          message={`Voulez-vous continuer cette action pour ${student.nom} ${student.prenom} ?`}
+          onConfirm={handleConfirmAction}
           closemodal={() => closModal('confirmSuspend')}
           isDeletingLoader={issuspendreLoader}
+          withReason={true} 
         />
       )}
 

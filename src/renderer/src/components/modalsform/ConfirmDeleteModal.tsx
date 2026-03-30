@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FiX, FiAlertTriangle, FiTrash2, FiCheck } from 'react-icons/fi'
 import { ThreeDots } from 'react-loader-spinner'
 
 type ConfirmDeleteModalProps = {
   closemodal: () => void
-  onConfirm: () => Promise<void>
+  onConfirm: (motif?: string) => Promise<void>
   isDeletingLoader?: boolean
   title?: string
   message?: string
-  
+  withReason?: boolean
 }
 
 const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
@@ -16,7 +16,8 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   onConfirm,
   isDeletingLoader = false,
   title = 'Confirmation de suppression',
-  message = 'Êtes-vous sûr de vouloir supprimer cet élément ?'
+  message = 'Êtes-vous sûr de vouloir supprimer cet élément ?',
+  withReason = false
 }) => {
 
   // const isSuspension = title === 'Confirmation de suspension' || "Confirmation de Payement de salaire"
@@ -24,6 +25,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   // const buttonIcon = isSuspension ? FiCheck : FiTrash2
   // const ButtonText = isSuspension ? 'Confirmer' : 'Supprimer'
   // const IconComponent = buttonIcon
+  const [motif, setMotif] = useState('')
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -41,6 +43,17 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             <FiX size={24} />
           </button>
         </div>
+        {withReason && (
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Motif</label>
+            <textarea
+              value={motif}
+              onChange={(e) => setMotif(e.target.value)}
+              placeholder="Entrez le motif..."
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#895256]"
+            />
+          </div>
+        )}
 
         <p className="mb-8 text-gray-700 text-lg leading-relaxed">{message}</p>
 
@@ -53,7 +66,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             Annuler
           </button>
           <button
-            onClick={onConfirm}
+            onClick={() => onConfirm(motif)}
             disabled={isDeletingLoader}
             className={`px-6 py-2 rounded-lg text-white transition-all font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-green-600 hover:bg-green-700`}
           >

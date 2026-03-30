@@ -610,6 +610,7 @@ function StudentsInactif(): JSX.Element {
           student={selectedStudent}
           fresh={reload}
           setFresh={setReload}
+          hideActions={true}
         />
       )}
 
