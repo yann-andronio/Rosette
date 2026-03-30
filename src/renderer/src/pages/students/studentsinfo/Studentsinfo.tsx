@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FaEdit, FaTrash, FaEye, FaPlus } from 'react-icons/fa'
-import { LuCalendarDays, LuGraduationCap, LuRefreshCw, LuUsers } from 'react-icons/lu'
+import { LuCalendarDays, LuGraduationCap, LuPrinter, LuRefreshCw, LuUsers } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import AdUpinfostudentsmodal from '@renderer/components/modalsform/AdUpinfostudentsmodal'
@@ -12,6 +12,8 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { Oval, RotatingLines } from 'react-loader-spinner'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 import { toast, ToastContainer } from 'react-toastify'
+import PrintOptionsModalForInfo from '@renderer/components/modalv2/studentsInfo/PrintOptionsModalForInfo'
+import PapierImpressionStudentsInfo from '@renderer/components/modalv2/studentsInfo/PapierImpressionStudentsInfo'
 export type Etudiant = {
   id: number
   ecolage: { id: number; payé: boolean; mois: string; created_at: string }[]
@@ -202,6 +204,21 @@ function Studentsinfo(): JSX.Element {
   }
 
   const { modal, openModal, closModal } = useMultiModals()
+   const printRef = useRef<HTMLDivElement>(null)
+
+   const handlePrintStudentsinfo = () => {
+     setTimeout(() => {
+       if (!printRef.current) return
+       const printContents = printRef.current.innerHTML
+       if (!printContents) return
+       const originalContents = document.body.innerHTML
+       document.body.innerHTML = printContents
+       window.print()
+       document.body.innerHTML = originalContents
+       window.location.reload()
+     }, 200)
+   }
+
 //  ${ Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}
   return (
     <div
@@ -336,6 +353,13 @@ function Studentsinfo(): JSX.Element {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearcheleves} />
+          <button
+            onClick={() => openModal('PrintOptionsModalForInfo')}
+            className="flex items-center gap-2 px-4 py-2 bg-[#895256] text-white rounded-xl shadow-md hover:bg-[#7A3B3F] transition duration-300 font-bold"
+          >
+            <LuPrinter size={20} />
+            Imprimer les listes
+          </button>
           <button
             onClick={() => setReload((prev) => !prev)}
             className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#895256] text-[#895256] rounded-xl shadow-md hover:bg-[#895256] hover:text-white transition duration-300 font-bold"
@@ -544,9 +568,22 @@ function Studentsinfo(): JSX.Element {
           setFresh={setReload}
         />
       )}
+
+      {modal.PrintOptionsModalForInfo && (
+        <PrintOptionsModalForInfo
+          closemodal={() => closModal('PrintOptionsModalForInfo')}
+          onPrint={handlePrintStudentsinfo}
+          totalEleves={students.total}
+        />
+      )}
+
+      <div className="hidden">
+        <PapierImpressionStudentsInfo eleves={students.data} ref={printRef} />
+      </div>
     </div>
   )
 }
+
 const Trash: React.FC<{
   id: number
   nom: string
@@ -612,6 +649,10 @@ const Trash: React.FC<{
           title="Supprimer un étudiant"
         />
       )}
+
+     
+
+      
     </>
   )
 }
