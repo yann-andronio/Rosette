@@ -224,8 +224,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                                   student.sousetudiants[student.sousetudiants.length - 1].classe
                                     .ecolage,
                                 datePaiement: item?.updated_at,
-                                numeroRecu:item.id
-                                
+                                numeroRecu: item.id
                               })
                             }
                           />
@@ -240,15 +239,17 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                         <FaCheckCircle className="text-green-500 text-lg" />
                       </div>
                     ) : (
-                        <div className="flex group gap-5"><div className="relative group">
-                      
-                      </div><FaInfoCircle
+                      <div className="flex group gap-5">
+                        <div className="relative group"></div>
+                        <FaInfoCircle
                           className="text-yellow-600 cursor-pointer hover:text-yellow-400"
                           title="Voir historique du paiement"
                           onClick={() =>
                             setPaymentHistoryModal({ mois: item.mois, history: item.history || [] })
                           }
-                        /><FaTimesCircle className="text-red-500 text-lg" /></div>
+                        />
+                        <FaTimesCircle className="text-red-500 text-lg" />
+                      </div>
                     )}
                   </div>
 
@@ -256,9 +257,10 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                     <div className="flex items-center gap-2 text-gray-700 font-medium text-sm">
                       <FaWallet className="text-[#895256]" />
                       <span>
-                        {(student.sousetudiants[
-                          student.sousetudiants.length - 1
-                        ]?.classe?.ecolage / (student.enfantProf == 1?2:1)).toLocaleString()  }{' '}
+                        {(
+                          student.sousetudiants[student.sousetudiants.length - 1]?.classe?.ecolage /
+                          (student.enfantProf == 1 ? 2 : 1)
+                        ).toLocaleString()}{' '}
                         Ar
                       </span>
                     </div>
@@ -269,17 +271,15 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                   </div>
                   {item.payé ? (
                     <span
-                    onClick={() =>
+                      onClick={() =>
                         handleRequestPayment(
                           item.id,
 
-                          
                           item.mois,
                           student.sousetudiants[student.sousetudiants.length - 1]?.classe
                             ?.ecolage || 0,
-                            item.payé,
-                            item.reste
-
+                          item.payé,
+                          item.reste
                         )
                       }
                       className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full cursor-pointer  text-white  text-center ${
@@ -298,8 +298,8 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                           item.mois,
                           student.sousetudiants[student.sousetudiants.length - 1]?.classe
                             ?.ecolage || 0,
-                            item.payé,
-                            item.reste
+                          item.payé,
+                          item.reste
                         )
                       }
                       className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
@@ -320,9 +320,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {paymentTypeModal && (
         <PaymentTypeModalecolage
-
           student={student}
-
           // reload={reload}
           // fresh={fresh}
           // up={up}
@@ -332,7 +330,6 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           reste={ecolageConfirmation?.reste}
           pay={ecolageConfirmation?.payé}
           id={ecolageConfirmation?.id}
-
           selectedType={selectedType}
           setSelectedType={setSelectedType}
           mois={paymentTypeModal.mois}
@@ -345,7 +342,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
       {modal.confirmDelete && ecolageConfirmation && (
         <ConfirmDeleteModal
           title="Confirmation de Paiement"
-          message={`Voulez-vous confirmer le ${selectedType=='Complet'?'payement':''} ${selectedType} d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
+          message={`Voulez-vous confirmer le ${selectedType == 'Complet' ? 'payement' : ''} ${selectedType} d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
           onConfirm={handleConfirmPayment}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isPayingLoader}
@@ -370,9 +367,15 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {paymentHistoryModal && (
         <PaymentHistoryModal
-
+          eleve={eleveNom}
+          numeroRecu={undefined}
+          classe={student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe}
+          salle={student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle}
+          annee={student.sousetudiants[student.sousetudiants.length - 1].annee.annee}
           mois={paymentHistoryModal.mois}
           history={paymentHistoryModal.history}
+          fresh={fresh} 
+          reload={reload}
           closeModal={() => setPaymentHistoryModal(null)}
         />
       )}

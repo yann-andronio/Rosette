@@ -1,26 +1,90 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { FiTrash2, FiX } from 'react-icons/fi'
 import { formatDate } from '@renderer/utils/FormatDate'
 import { LuPrinter } from 'react-icons/lu'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { FaTrash } from 'react-icons/fa'
+import PrintHistoryEcolage from './PrintHistoryEcolage'
+import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
+import useMultiModals from '@renderer/hooks/useMultiModals'
 
 type PaymentHistoryModalProps = {
+  eleve: string
+  classe: string
+  salle: string
+  numeroRecu?: string
   mois: string
+  annee: string
   history: { id: number; montant: number; type: string; reste: number; created_at: string }[]
-  closeModal: () => void,
-
+  closeModal: () => void
+  fresh: (val: boolean) => void
+  reload: boolean
 }
 
-const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({mois, history, closeModal }) => {
+const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
+  mois,
+  history: initialHistory,
+  closeModal,
+  eleve,
+  classe,
+  salle,
+  numeroRecu,
+  annee,
+  fresh,
+  reload
+}) => {
+  const delhisto = async (id: number) => {
+    await axiosRequest('DELETE', `ecohisto/${id}`, null, 'token').then(({ data }) =>
+      toast.success(data.message)
+    )
+  }
+  const [selectedHistoryPayement, setselectedHistoryPayement] = useState<any | null>(null)
+  const printRef = useRef<HTMLDivElement>(null)
+  const handlePrint = (paiement: any) => {
+    setselectedHistoryPayement(paiement)
 
- const delhisto = async (id:number) => {
-  await axiosRequest('DELETE', `ecohisto/${id}`, null, 'token')
-  .then(({data}) => toast.success(data.message))
- }
+    setTimeout(() => {
+      if (!printRef.current) return
 
+      const printContents = printRef.current.innerHTML
+      const originalContents = document.body.innerHTML
 
+      document.body.innerHTML = printContents
+      window.print()
+      document.body.innerHTML = originalContents
+
+      window.location.reload()
+    }, 200)
+  }
+
+  const { modal, openModal, closModal } = useMultiModals()
+  const [localHistory, setLocalHistory] = useState(initialHistory)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+    const handleRequestDelete = (id: number) => {
+      setSelectedId(id)
+      openModal('confirmDelete')
+    }
+
+  const handleConfirmDelete = async () => {
+    if (!selectedId) return
+    setIsDeleting(true)
+    try {
+      await axiosRequest('DELETE', `ecohisto/${selectedId}`, null, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => setLocalHistory((prev) => prev.filter((item) => item.id !== selectedId)))
+        .then(() => fresh(!reload))
+        .catch((err) => toast.error(err.response?.data?.message))
+    } catch (error) {
+      console.log('Le serveur ne répond pas')
+    } finally {
+      setIsDeleting(false)
+      setSelectedId(null)
+      closModal('confirmDelete')
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
@@ -35,68 +99,88 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({mois, history,
 
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Historique de paiement - {mois}</h2>
 
-        {history.length === 0 ? (
+        {localHistory.length === 0 ? (
           <p className="text-gray-500 text-center">Aucun paiement pour ce mois.</p>
         ) : (
           <ul className="space-y-2 max-h-96 overflow-y-auto">
-            {history.map((item, idx) => (
-                        <li
-                                 key={item.id}
-                                 className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center hover:shadow-md transition"
-                               >
-                                 <div>
-                                   <p className="font-semibold text-[#212529]">
-                                     Montant : {item.montant.toLocaleString()} Ar
-                                   </p>
-                                   <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
-                                   <p className="text-sm">
-                                     Type : <span className="font-medium text-[#895256]">{item.type}</span>
-                                   </p>
-                                   <p
-                                     className={`text-sm font-medium ${
-                                       item.reste === 0 ? 'text-green-700' : 'text-red-700'
-                                     }`}
-                                   >
-                                     {'Reste:' + item.reste + ' Ar'}
-                                   </p>
-                                   <p
-                                     className={`text-sm font-medium ${
-                                       item.reste === 0 ? 'text-green-700' : 'text-red-700'
-                                     }`}
-                                   >
-                                     {item.reste == 0 ? 'Payé' : 'Non Payé'}
-                                   </p>
-                                 </div>
-             
-                                 <div className="flex gap-2">
-                                   {/* <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition">
+            {localHistory.map((item, idx) => (
+              <li
+                key={item.id}
+                className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center hover:shadow-md transition"
+              >
+                <div>
+                  <p className="font-semibold text-[#212529]">
+                    Montant : {item.montant.toLocaleString()} Ar
+                  </p>
+                  <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
+                  <p className="text-sm">
+                    Type : <span className="font-medium text-[#895256]">{item.type}</span>
+                  </p>
+                  <p
+                    className={`text-sm font-medium ${
+                      item.reste === 0 ? 'text-green-700' : 'text-red-700'
+                    }`}
+                  >
+                    {'Reste:' + item.reste + ' Ar'}
+                  </p>
+                  <p
+                    className={`text-sm font-medium ${
+                      item.reste === 0 ? 'text-green-700' : 'text-red-700'
+                    }`}
+                  >
+                    {item.reste == 0 ? 'Payé' : 'Non Payé'}
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  {/* <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition">
                                      <FiEdit size={18} />
                                    </button> */}
-                                   <button
-                                     onClick={() => {
-                                      //  setSelectedPayment(item)
-                                      //  handlePrintStudentRecue()
-                                     }}
-                                     title="Imprimer le reçu"
-                                     className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition"
-                                   >
-                                     <LuPrinter size={20} />
-                                   </button>
+                  <button
+                    onClick={() =>
+                      handlePrint({
+                        ...item,
+                        eleve: eleve,
+                        classe: classe,
+                        salle: salle,
+                        annee: annee
+                      })
+                    }
+                    title="Imprimer le reçu"
+                    className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition"
+                  >
+                    <LuPrinter size={20} />
+                  </button>
 
-                                                    <button
-                                     onClick={() => delhisto(item.id)}
-                                     title="supprimer le reçu"
-                                     className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
-                                   >
-                                     <FaTrash size={20} />
-                                   </button>
-                    
-                                 </div>
-                               </li>
+                  <button
+                    onClick={() => handleRequestDelete(item.id)}
+                    title="Supprimer"
+                    className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                  >
+                    <FaTrash size={20} />
+                  </button>
+                </div>
+              </li>
             ))}
           </ul>
         )}
       </div>
+
+      {modal.confirmDelete && (
+        <ConfirmDeleteModal
+          closemodal={() => closModal('confirmDelete')}
+          onConfirm={handleConfirmDelete}
+          isDeletingLoader={isDeleting}
+          message={`Êtes-vous sûr de vouloir supprimer cette historique? Cette action est irréversible.`}
+          title="Supprimer un étudiant"
+        />
+      )}
+
+      {selectedHistoryPayement && (
+        <div className="hidden">
+          <PrintHistoryEcolage ref={printRef} mois={mois} paiement={selectedHistoryPayement} />
+        </div>
+      )}
     </div>
   )
 }
