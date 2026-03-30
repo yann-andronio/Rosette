@@ -89,7 +89,7 @@ export default function SuiviEmployerModal({
   reloads,
   setReloads
 }: SuiviEmployerModalProps) {
-  const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut'>('salaire')
+  const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut' | "charges">('salaire')
   const [moissalaires, setMoissalaires] = useState<{ id: number; mois: string; payé: number; reste: 0 }[]>([])
   const [filtres, setFiltres] = useState<{ id: number; annee: string }[]>([])
  const [loadMontshSalary, setLoadMontshSalary] = useState(false)
@@ -145,7 +145,8 @@ const [fresh, setFresh] = useState<boolean>(false)
   const tabs = [
     { id: 'salaire', label: 'Paiement', icon: <FaMoneyBillWave className="text-base" /> },
     { id: 'conge', label: 'Congé', icon: <FaCalendarAlt className="text-base" /> },
-    { id: 'statut', label: 'Statut', icon: <FaUserCheck className="text-base" /> }
+    { id: 'statut', label: 'Statut', icon: <FaUserCheck className="text-base" /> },
+    { id: 'charges', label: 'Charges', icon: <FaMoneyBillWave className="text-base" /> }
   ]
   const [reloadstatus, setReloadstatus] = useState<boolean>(false)
   useEffect(() => {
@@ -832,6 +833,67 @@ const [fresh, setFresh] = useState<boolean>(false)
                 </form>
               </motion.div>
             )}
+
+            //CHARGES
+            {activeTab === 'charges' && (
+              <motion.div
+                key="charges"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className="space-y-4"
+              >
+                <form className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Charges et retenues</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium text-gray-600 mb-1">
+                        Retenue CNAPS
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 20000"
+                        className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none shadow-sm"
+                      />
+                    </div>
+
+                  
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium text-gray-600 mb-1">Retenue IRSA</label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 15000"
+                        className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none shadow-sm"
+                      />
+                    </div>
+
+                  
+                    <div className="flex flex-col md:col-span-2">
+                      <label className="text-sm font-medium text-gray-600 mb-1">
+                        Allocation familiale
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 10000"
+                        className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none shadow-sm"
+                      />
+                    </div>
+                  </div>
+
+                
+                  <button
+                    type="submit"
+                    className="w-full mt-4 py-2.5 bg-[#895256] text-white rounded-lg font-semibold hover:bg-[#6a4247] transition shadow-md flex items-center justify-center gap-2"
+                  >
+                    <FiSave size={18} /> Enregistrer
+                  </button>
+                </form>
+              </motion.div>
+            )}
+
           </AnimatePresence>
         </div>
       </div>
