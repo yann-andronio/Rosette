@@ -40,6 +40,30 @@ export type StatusFormInputs = {
   nouveauStatut: string
 }
 
+export type ChargesType = {
+  cnaps: number
+  irsa: number
+  allocations: number
+}
+
+const chargesSchema = yup.object().shape({
+  cnaps: yup
+    .number()
+    .typeError('La retenue CNAPS doit être un nombre.')
+    .required('La retenue CNAPS est requise.')
+    .min(0, 'La valeur ne peut pas être négative.'),
+  irsa: yup
+    .number()
+    .typeError('La retenue IRSA doit être un nombre.')
+    .required('La retenue IRSA est requise.')
+    .min(0, 'La valeur ne peut pas être négative.'),
+  allocations: yup
+    .number()
+    .typeError("L'allocation familiale doit être un nombre.")
+    .required("L'allocation familiale est requise.")
+    .min(0, 'La valeur ne peut pas être négative.')
+})
+
 const salarySchema = yup.object().shape({
   montant: yup
     .number()
@@ -89,12 +113,14 @@ export default function SuiviEmployerModal({
   reloads,
   setReloads
 }: SuiviEmployerModalProps) {
-  const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut' | "charges">('salaire')
-  const [moissalaires, setMoissalaires] = useState<{ id: number; mois: string; payé: number; reste: 0 }[]>([])
+  const [activeTab, setActiveTab] = useState<'salaire' | 'conge' | 'statut' | 'charges'>('salaire')
+  const [moissalaires, setMoissalaires] = useState<
+    { id: number; mois: string; payé: number; reste: 0 }[]
+  >([])
   const [filtres, setFiltres] = useState<{ id: number; annee: string }[]>([])
- const [loadMontshSalary, setLoadMontshSalary] = useState(false)
- const [loadHistoriqueSalary, setLoadHistoriqueSalary] = useState(false)
-const [fresh, setFresh] = useState<boolean>(false)
+  const [loadMontshSalary, setLoadMontshSalary] = useState(false)
+  const [loadHistoriqueSalary, setLoadHistoriqueSalary] = useState(false)
+  const [fresh, setFresh] = useState<boolean>(false)
 
   const getFiltres = async () => {
     try {
@@ -142,6 +168,13 @@ const [fresh, setFresh] = useState<boolean>(false)
     reset: resetStatus
   } = useForm<StatusFormInputs>({ resolver: yupResolver(statusSchema) })
 
+  const {
+    register: registerCharges,
+    handleSubmit: handleSubmitCharges,
+    formState: { errors: errorsCharges },
+    reset: resetCharges
+  } = useForm<ChargesType>({ resolver: yupResolver(chargesSchema) })
+
   const tabs = [
     { id: 'salaire', label: 'Paiement', icon: <FaMoneyBillWave className="text-base" /> },
     { id: 'conge', label: 'Congé', icon: <FaCalendarAlt className="text-base" /> },
@@ -154,8 +187,12 @@ const [fresh, setFresh] = useState<boolean>(false)
   }, [activeTab == 'statut', reloadstatus])
 
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
-  const [historiques, setHistoriques] = useState<{ id: number; montant: number; mois: string; type: number }[]>([])
-  const [archconge, setArchconge] = useState<{ id: number; debut: string; fin: string; status: number; motif: string }[]>([])
+  const [historiques, setHistoriques] = useState<
+    { id: number; montant: number; mois: string; type: number }[]
+  >([])
+  const [archconge, setArchconge] = useState<
+    { id: number; debut: string; fin: string; status: number; motif: string }[]
+  >([])
   const getConges = async () => {
     try {
       await axiosRequest('GET', `conge/${employer.id}`, null, 'token')
@@ -167,14 +204,14 @@ const [fresh, setFresh] = useState<boolean>(false)
   }
 
   const [reloadMonth, setReloadMonth] = useState(false)
-  
+
   useEffect(() => {
     getMoissalaires()
   }, [reloadMonth])
 
   useEffect(() => {
     getFiltres()
-  }, [fresh]);
+  }, [fresh])
 
   const [reload, setReload] = useState<boolean>(false)
 
@@ -207,15 +244,17 @@ const [fresh, setFresh] = useState<boolean>(false)
     resetSalary()
     resetConge()
     resetStatus()
+    resetCharges()
     setSelectedMonths([])
-  }, [activeTab, resetSalary, resetConge, resetStatus])
+  }, [activeTab, resetSalary, resetConge, resetStatus, resetCharges])
+
   const [reloadsalaire, setReloadsalaire] = useState<boolean>(false)
   const [confirmesalary, setconfirmesalary] = useState<{} | null>(null)
   const [isDeletingLoader, setIsConfirmPayemntLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
 
   const onSalarySubmit = (data: SalaireEmploye) => {
-    const datasForConfirmation = { ...data, w_id: employer.id ,nom :employer.nom }
+    const datasForConfirmation = { ...data, w_id: employer.id, nom: employer.nom }
     setconfirmesalary(datasForConfirmation)
     openModal('confirmDelete')
   }
@@ -225,13 +264,12 @@ const [fresh, setFresh] = useState<boolean>(false)
       await axiosRequest('POST', 'worker-pay', data, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => resetSalary())
-        .then(() => setSelectedMonths([]) )
+        .then(() => setSelectedMonths([]))
         .then(() => setReloadsalaire((prev) => !prev))
         .then(() => setFresh(!fresh))
         .then(() => setReloads((prev) => !prev))
         .catch((err) => {
           toast.error(err.response.data.message)
-
         })
     } catch (err) {
       console.log('Le serveur ne repond pas', err)
@@ -239,7 +277,7 @@ const [fresh, setFresh] = useState<boolean>(false)
   }
 
   const handleConfirmPayement = async () => {
-      setReloadMonth(!reloadMonth)
+    setReloadMonth(!reloadMonth)
     if (!confirmesalary) return
     setIsConfirmPayemntLoader(true)
     try {
@@ -249,11 +287,9 @@ const [fresh, setFresh] = useState<boolean>(false)
       setIsConfirmPayemntLoader(false)
       setconfirmesalary(null)
       closModal('confirmDelete')
-    
     }
   }
   const [loadconger, setloadconger] = useState(false)
-
 
   const onCongeSubmit = async (data: CongeType) => {
     const prepared = {
@@ -277,8 +313,7 @@ const [fresh, setFresh] = useState<boolean>(false)
     }
   }
 
-
-  const [loadstatus, setloadstatus] =useState(false)
+  const [loadstatus, setloadstatus] = useState(false)
   const onStatusSubmit = async (data: StatusFormInputs) => {
     setloadstatus(true)
     try {
@@ -297,17 +332,20 @@ const [fresh, setFresh] = useState<boolean>(false)
     } catch (error) {
       console.log('Le serveur ne repond pas')
     } finally {
-       setloadstatus(false)
+      setloadstatus(false)
     }
   }
 
   const [selectedPayment, setSelectedPayment] = useState<SalaireEmploye | null>(null)
+
   const printRef = useRef<HTMLDivElement>(null)
-  const handlePrint = (paiement: SalaireEmploye) => {
+  const bulletinRef = useRef<HTMLDivElement>(null)
+  const handlePrint = (paiement: SalaireEmploye, type: 'recue' | 'bulletin') => {
     setSelectedPayment(paiement)
+    const ref = type === 'recue' ? printRef : bulletinRef
     setTimeout(() => {
-      if (!printRef.current) return
-      const printContents = printRef.current.innerHTML
+      if (!ref.current) return
+      const printContents = ref.current.innerHTML
       if (!printContents) return
       const originalContents = document.body.innerHTML
       document.body.innerHTML = printContents
@@ -332,9 +370,8 @@ const [fresh, setFresh] = useState<boolean>(false)
     }
   }
 
-
   useEffect(() => {
-    resetSalary({montant:employer.salaire_base})
+    resetSalary({ montant: employer.salaire_base })
   }, [activeTab == 'salaire'])
 
   useEffect(() => {
@@ -344,7 +381,22 @@ const [fresh, setFresh] = useState<boolean>(false)
     setSelectedyearfilter(id)
   }
 
+  const [loadcharges, setLoadcharges] = useState(false)
 
+  //eto mila modifien nla
+  const onChargesSubmit = async (data: ChargesType) => {
+    setLoadcharges(true)
+    try {
+      await axiosRequest('POST', `charges/${employer.id}`, data, 'token')
+        .then(({ data }) => toast.success(data.message))
+        .then(() => resetCharges())
+        .catch((err) => toast.error(err.response.data.message))
+    } catch (err) {
+      console.log('Le serveur ne répond pas')
+    } finally {
+      setLoadcharges(false)
+    }
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
@@ -614,18 +666,18 @@ const [fresh, setFresh] = useState<boolean>(false)
                               {formatNumber(item.montant)} Ar
                             </span>
                             <button
-                              onClick={() => handlePrint(item)}
+                              onClick={() => handlePrint(item, 'bulletin')}
                               className="p-1 rounded-md hover:bg-gray-100"
                               title="Imprimer le fiche de paie"
                             >
-                              <FaPrint className="text-red-600  hover:text-blue-500" />
+                              <FaPrint className="text-red-600 hover:text-blue-500" />
                             </button>
                             <button
-                              onClick={() => handlePrint(item)}
+                              onClick={() => handlePrint(item, 'recue')}
                               className="p-1 rounded-md hover:bg-gray-100"
                               title="Imprimer le reçu"
                             >
-                              <FaPrint className="text-gray-600  hover:text-blue-500" />
+                              <FaPrint className="text-gray-600 hover:text-blue-500" />
                             </button>
                             {/* Le bouton de suppression a été commenté dans votre code original : */}
                             {/* <button className="p-1 rounded-md hover:bg-gray-100">
@@ -643,7 +695,6 @@ const [fresh, setFresh] = useState<boolean>(false)
                 </div>
               </motion.div>
             )}
-
             {/* CONGES */}
             {activeTab === 'conge' && (
               <motion.div
@@ -781,7 +832,6 @@ const [fresh, setFresh] = useState<boolean>(false)
                 </div>
               </motion.div>
             )}
-
             {/* STATUT */}
             {activeTab === 'statut' && (
               <motion.div
@@ -833,7 +883,6 @@ const [fresh, setFresh] = useState<boolean>(false)
                 </form>
               </motion.div>
             )}
-
             //CHARGES
             {activeTab === 'charges' && (
               <motion.div
@@ -844,11 +893,13 @@ const [fresh, setFresh] = useState<boolean>(false)
                 transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
-                <form className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <form
+                  onSubmit={handleSubmitCharges(onChargesSubmit)}
+                  className="bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+                >
                   <h3 className="text-lg font-bold text-gray-800 mb-4">Charges et retenues</h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   
                     <div className="flex flex-col">
                       <label className="text-sm font-medium text-gray-600 mb-1">
                         Retenue CNAPS
@@ -856,21 +907,35 @@ const [fresh, setFresh] = useState<boolean>(false)
                       <input
                         type="number"
                         placeholder="Ex: 20000"
-                        className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none shadow-sm"
+                        {...registerCharges('cnaps')}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsCharges.cnaps
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
                       />
+                      {errorsCharges.cnaps && (
+                        <p className="text-red-500 text-xs mt-1">{errorsCharges.cnaps.message}</p>
+                      )}
                     </div>
 
-                  
                     <div className="flex flex-col">
                       <label className="text-sm font-medium text-gray-600 mb-1">Retenue IRSA</label>
                       <input
                         type="number"
                         placeholder="Ex: 15000"
-                        className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none shadow-sm"
+                        {...registerCharges('irsa')}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsCharges.irsa
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
                       />
+                      {errorsCharges.irsa && (
+                        <p className="text-red-500 text-xs mt-1">{errorsCharges.irsa.message}</p>
+                      )}
                     </div>
 
-                  
                     <div className="flex flex-col md:col-span-2">
                       <label className="text-sm font-medium text-gray-600 mb-1">
                         Allocation familiale
@@ -878,22 +943,36 @@ const [fresh, setFresh] = useState<boolean>(false)
                       <input
                         type="number"
                         placeholder="Ex: 10000"
-                        className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none shadow-sm"
+                        {...registerCharges('allocations')}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsCharges.allocations
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
                       />
+                      {errorsCharges.allocations && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errorsCharges.allocations.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                
                   <button
                     type="submit"
                     className="w-full mt-4 py-2.5 bg-[#895256] text-white rounded-lg font-semibold hover:bg-[#6a4247] transition shadow-md flex items-center justify-center gap-2"
                   >
-                    <FiSave size={18} /> Enregistrer
+                    {loadcharges ? (
+                      <ThreeDots visible={true} height="20" width="50" color="white" radius="9" />
+                    ) : (
+                      <>
+                        <FiSave size={18} /> Enregistrer
+                      </>
+                    )}
                   </button>
                 </form>
               </motion.div>
             )}
-
           </AnimatePresence>
         </div>
       </div>
@@ -909,12 +988,11 @@ const [fresh, setFresh] = useState<boolean>(false)
 
       <div className="hidden">
         {selectedPayment && (
-          <div ref={printRef}>
+          <div ref={bulletinRef}>
             <BulletinDepaye employer={employer} salaire={selectedPayment} />
           </div>
         )}
       </div>
-
       {modal.confirmDelete && confirmesalary && (
         <ConfirmDeleteModal
           title="Confirmation de Paiement de Salaire"
