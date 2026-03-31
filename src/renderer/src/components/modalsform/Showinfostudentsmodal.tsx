@@ -11,6 +11,7 @@ import {toast} from "react-toastify"
 import { FaDoorOpen, FaXRay } from 'react-icons/fa'
 import { Footprints } from 'lucide-react'
 import { BsFillDoorOpenFill } from 'react-icons/bs'
+import { motion } from 'framer-motion'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -33,6 +34,7 @@ const Showinfostudentsmodal = ({
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number | null>(null)
   const [setId, setSetId] = useState<number>()
   const [etId, setEtId] = useState<number>()
+ 
 
   const [issuspendreLoader, setIsDeletingLoader] = useState(false)
   const [studentToSuspendId, setStudentToSuspendId] = useState<{
@@ -112,39 +114,40 @@ const Showinfostudentsmodal = ({
   }
 
   const handleConfirmAction = async (motif?: string) => {
-    console.log('Motif : ', motif) 
-
+    
     if (actionType === 'suspendre' && studentToSuspendId) {
       await suspendre(studentToSuspendId.id as number, studentToSuspendId.route)
     }
 
     if (actionType === 'quitte') {
-      await quit()
+      await quit(motif)
     }
 
     if (actionType === 'renvoyer') {
-      await fired()
+      await fired(motif)
     }
 
      closModal('confirmSuspend')
   }
 
-  const quit = async () => {
+  const quit = async (m) => {
     try {
-      await axiosRequest('PUT', `etudiant-quit/${student.id}`, null, 'token')
+      await axiosRequest('PUT', `etudiant-quit/${student.id}`, {motif:m}, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => setFresh(!fresh))
+        .then(() => closemodal())
         .catch((err) => toast.error(err.response.data.message))
     } catch (err) {
       console.log(err)
     }
   }
 
-  const fired = async () => {
+  const fired = async (m) => {
     try {
-      await axiosRequest('PUT', `etudiant-fired/${student.id}`, null, 'token')
+      await axiosRequest('PUT', `etudiant-fired/${student.id}`, {motif:m}, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => setFresh(!fresh))
+        .then(() => closemodal())
         .catch((err) => toast.error(err.response.data.message))
     } catch (err) {
       console.log(err)

@@ -391,6 +391,7 @@ function StudentsInactif(): JSX.Element {
               <div className="flex-1">Sexe</div>
               <div className="flex-1">salle</div>
               <div className="flex-1">Statut</div>
+              <div className="flex-1">Motif</div>
               <div className="flex-1">Date</div>
               <div className="flex-1">Opération</div>
             </div>
@@ -483,6 +484,9 @@ function StudentsInactif(): JSX.Element {
                         >
                           {student.quit == 1 ? 'Quitté' : student.fired == 1 ? 'Renvoyé' : 'none'}
                         </span>
+                      </div>
+                       <div className="flex-1 text-gray-700">
+                        {student.quit ==1?student.quit_motif:student.fired_motif}
                       </div>
                       <div className="flex-1 ">
                         <span
