@@ -13,10 +13,11 @@ type ShowInfoDroitsProps = {
   closemodal: () => void
   student: Etudiant
   fresh: (boolean) => void
-  reload: boolean
+  reload: boolean,
+  school:string
 }
 
-export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDroitsProps) {
+export default function ShowinfoKermessmodal({ closemodal, student , school}: ShowInfoDroitsProps) {
   const [loading, setLoading] = useState(false)
   const [loadingHisto, setLoadingHisto] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState<any>(null)
@@ -330,6 +331,7 @@ export default function ShowinfoKermessmodal({ closemodal, student }: ShowInfoDr
           student={student}
           paymentInfo={selectedPayment}
           ref={printRef}
+          school={school}
         />
       </div>
     </div>

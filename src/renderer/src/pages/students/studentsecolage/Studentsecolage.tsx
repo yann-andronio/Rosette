@@ -36,7 +36,7 @@ function Studentsecolage(): JSX.Element {
     last_page: number
     data: Etudiant[]
   }>({ last_page: 1, data: [], total: 0, per_page: 0 })
-
+ 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
   const [reload, setReload] = useState<boolean>(false)

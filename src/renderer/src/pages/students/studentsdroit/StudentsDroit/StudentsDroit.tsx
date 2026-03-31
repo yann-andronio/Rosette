@@ -179,7 +179,22 @@ function StudentsDroit(): JSX.Element {
   }
 
 
+   const [school, setSchool] = useState<{name:string}>({name:'XXXX'})
 
+ const getSchool = async () => {
+    try{
+
+      await axiosRequest('GET', 'school',null, 'token')
+        .then(({data}) => setSchool(data))
+        .catch(error => console.log(error))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getSchool()
+  }, [])
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${
@@ -586,6 +601,7 @@ function StudentsDroit(): JSX.Element {
           fresh={setReload}
           closemodal={() => closModal('ShowinfoDroitmodal')}
           student={selectedStudent}
+           school={school.name}
         />
       )}
 
@@ -596,6 +612,7 @@ function StudentsDroit(): JSX.Element {
           yearSelected={selectedyears}
           monthSelected={selectedmoisEcolage}
           statusSelected={selectedstatusecolage}
+         
         />
       )}
 
@@ -605,6 +622,7 @@ function StudentsDroit(): JSX.Element {
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
           ref={printRef}
+          
         />
       </div>
     </div>

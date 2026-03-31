@@ -43,7 +43,7 @@ export type StatusFormInputs = {
 export type ChargesType = {
   cnaps: number
   irsa: number
-  allocations: number
+  allocation: number
 }
 
 const chargesSchema = yup.object().shape({
@@ -57,7 +57,7 @@ const chargesSchema = yup.object().shape({
     .typeError('La retenue IRSA doit être un nombre.')
     .required('La retenue IRSA est requise.')
     .min(0, 'La valeur ne peut pas être négative.'),
-  allocations: yup
+  allocation: yup
     .number()
     .typeError("L'allocation familiale doit être un nombre.")
     .required("L'allocation familiale est requise.")
@@ -185,7 +185,9 @@ export default function SuiviEmployerModal({
   useEffect(() => {
     resetStatus({ nouveauStatut: employer.status })
   }, [activeTab == 'statut', reloadstatus])
-
+  useEffect(() => {
+    resetCharges({cnaps:employer?.cnaps, irsa: employer?.irsa,allocation:employer?.allocation })
+  }, [activeTab == 'charges', reloadstatus])
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
   const [historiques, setHistoriques] = useState<
     { id: number; montant: number; mois: string; type: number }[]
@@ -387,9 +389,9 @@ export default function SuiviEmployerModal({
   const onChargesSubmit = async (data: ChargesType) => {
     setLoadcharges(true)
     try {
-      await axiosRequest('POST', `charges/${employer.id}`, data, 'token')
+      await axiosRequest('PUT', `workers-charges/${employer.id}`, data, 'token')
         .then(({ data }) => toast.success(data.message))
-        .then(() => resetCharges())
+        .then(() => resetCharges(data))
         .catch((err) => toast.error(err.response.data.message))
     } catch (err) {
       console.log('Le serveur ne répond pas')
@@ -397,6 +399,21 @@ export default function SuiviEmployerModal({
       setLoadcharges(false)
     }
   }
+
+  const [nif, setNif] = useState<{nif:string}>({nif:'XXXXXX'})
+  const getNif = async () => {
+      try {
+          await axiosRequest('GET', 'nif-1', null, 'token').then(({data}) =>setNif(data))
+    
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    
+  useEffect(() => {
+    getNif()
+  }, [])
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
@@ -943,16 +960,16 @@ export default function SuiviEmployerModal({
                       <input
                         type="number"
                         placeholder="Ex: 10000"
-                        {...registerCharges('allocations')}
+                        {...registerCharges('allocation')}
                         className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                          errorsCharges.allocations
+                          errorsCharges.allocation
                             ? 'border-red-500 shadow-[0_0_5px_#f87171]'
                             : 'border-gray-300 shadow-sm'
                         }`}
                       />
-                      {errorsCharges.allocations && (
+                      {errorsCharges.allocation && (
                         <p className="text-red-500 text-xs mt-1">
-                          {errorsCharges.allocations.message}
+                          {errorsCharges.allocation.message}
                         </p>
                       )}
                     </div>
@@ -981,7 +998,7 @@ export default function SuiviEmployerModal({
       <div className="hidden">
         {selectedPayment && (
           <div ref={printRef}>
-            <Recuepayementemploye employer={employer} salaire={selectedPayment} />
+            <Recuepayementemploye employer={employer} salaire={selectedPayment}  nif={nif.nif}/>
           </div>
         )}
       </div>
@@ -989,7 +1006,7 @@ export default function SuiviEmployerModal({
       <div className="hidden">
         {selectedPayment && (
           <div ref={bulletinRef}>
-            <BulletinDepaye employer={employer} salaire={selectedPayment} />
+            <BulletinDepaye employer={employer} salaire={selectedPayment} nif={nif.nif}/>
           </div>
         )}
       </div>

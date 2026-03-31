@@ -8,7 +8,8 @@ const CertScolaire = ({ student }) => {
 
 
   const dateImpression = new Date().toLocaleDateString('fr-FR')
-  const [decision, setDecision] = useState<string>('')
+  const [school, setSchool] = useState<{name:string}>({name:'XXXXX'})
+   const [decision, setDecision] = useState<string>('')
   const getDecision = async () => {
     try{
 
@@ -20,8 +21,20 @@ const CertScolaire = ({ student }) => {
     }
   }
 
+    const getSchool = async () => {
+    try{
+
+      await axiosRequest('GET', 'school',null, 'token')
+        .then(({data}) => setSchool(data))
+        .catch(error => console.log(error))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getDecision()
+    getSchool()
   }, [])
 
   const {
@@ -35,7 +48,8 @@ const CertScolaire = ({ student }) => {
     prenomPere = '',
     nomMere = '',
     prenomMere = '',
-    adresse = ''
+    adresse = '',
+    created_at,
   } = student || {}
 
   return (
@@ -47,7 +61,7 @@ const CertScolaire = ({ student }) => {
       <div className="flex justify-between items-center pb-2 ">
         <div className="text-sm leading-tight font-serif">
           <p>CIRCONRSCRIPTION SCOLAIRE : MANANARA-NORD</p>
-          <p>Collège privé : LA ROSETTE II</p>
+          <p>Collège privé : {school.name}</p>
           <p>Décision N° : {decision}</p>
           <p>Code : 511071201</p>
         </div>
@@ -66,7 +80,7 @@ const CertScolaire = ({ student }) => {
       <div className="text-base relative leading-relaxed font-serif">
         <p>
           Je soussignée, Directeur du collège privé
-          <span className="font-bold"> LA ROSETTE II</span> Mananara-Nord certifie que :
+          <span className="font-bold"> {school.name}</span> Mananara-Nord certifie que :
         </p>
         <p>
           Le / la nommé (e) :
@@ -76,7 +90,7 @@ const CertScolaire = ({ student }) => {
         </p>
         <p>
           Fréquente régulièrement mon établissement depuis
-          <span className="border-b border-dotted border-black px-1">12 Septembre 2024</span>
+          <span className="border-b border-dotted border-black px-1">{new Date(created_at).toLocaleDateString('fr-FR')}</span>
           jusqu'à ce jour.
         </p>
         <p>

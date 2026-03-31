@@ -15,7 +15,8 @@ type PaymentHistoryModalProps = {
   salle: string
   numeroRecu?: string
   mois: string
-  annee: string
+  annee: string,
+  school:string
   history: { id: number; montant: number; type: string; reste: number; created_at: string }[]
   closeModal: () => void
   fresh: (val: boolean) => void
@@ -28,6 +29,7 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
   closeModal,
   eleve,
   classe,
+  school,
   salle,
   numeroRecu,
   annee,
@@ -178,7 +180,7 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
 
       {selectedHistoryPayement && (
         <div className="hidden">
-          <PrintHistoryEcolage ref={printRef} mois={mois} paiement={selectedHistoryPayement} />
+          <PrintHistoryEcolage school={school} ref={printRef} mois={mois} paiement={selectedHistoryPayement} />
         </div>
       )}
     </div>

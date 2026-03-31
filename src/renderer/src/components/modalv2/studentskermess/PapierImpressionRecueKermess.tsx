@@ -14,10 +14,11 @@ type PaymentInfo = {
 interface PapierImpressionRecueKermessProps {
   student: Etudiant
   paymentInfo?: PaymentInfo
+  school:string
 }
 
 const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpressionRecueKermessProps>(
-  ({ student, paymentInfo }, ref) => {
+  ({ student, paymentInfo, school }, ref) => {
     if (!paymentInfo) return null
 
     const lastSousEtudiant = student.sousetudiants[student.sousetudiants.length - 1]
@@ -37,7 +38,7 @@ const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpression
             <img src={logo} alt="Logo de l'école" className="w-16 h-16 object-contain" />
             <div>
               <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">
-                LA ROSETTE
+                {school}
               </h1>
               {/* <p className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-tight">
                 Lycée Privé - Homologué par le Ministère

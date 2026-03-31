@@ -8,11 +8,13 @@ interface PrintOptionsModalDroitProps {
   yearSelected: string
   monthSelected: string
   statusSelected: string // Complet | Incomplet | Tous
+  
 }
 
 const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
   closemodal,
   onPrint,
+  
   yearSelected,
   monthSelected,
   statusSelected

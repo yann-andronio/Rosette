@@ -5,10 +5,11 @@ interface PapierImpressionNonpayeDroitProps {
   elevesNonPayes: Etudiant[]
   yearSelected: string
   monthSelected: string
+  
 }
 
 const PapierImpressionNonpayeDroit = forwardRef<HTMLDivElement, PapierImpressionNonpayeDroitProps>(
-  ({ elevesNonPayes, yearSelected, }, ref) => {
+  ({ elevesNonPayes, yearSelected,school }, ref) => {
     
     return (
       <div ref={ref} className="p-6 bg-white text-gray-900 font-sans text-sm leading-relaxed">

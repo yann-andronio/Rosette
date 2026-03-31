@@ -175,6 +175,22 @@ function StudentsKermess(): JSX.Element {
     }, 200)
   }
 
+     const [school, setSchool] = useState<{name:string}>({name:'XXXX'})
+  
+   const getSchool = async () => {
+      try{
+  
+        await axiosRequest('GET', 'school',null, 'token')
+          .then(({data}) => setSchool(data))
+          .catch(error => console.log(error))
+      }catch(error){
+        console.log(error)
+      }
+    }
+  
+    useEffect(() => {
+      getSchool()
+    }, [])
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${
@@ -581,6 +597,7 @@ function StudentsKermess(): JSX.Element {
           fresh={setReload}
           closemodal={() => closModal('ShowinfoKermessmodal')}
           student={selectedStudent}
+          school={school.name}
         />
       )}
 

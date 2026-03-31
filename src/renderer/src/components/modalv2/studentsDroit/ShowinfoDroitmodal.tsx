@@ -14,9 +14,10 @@ type ShowInfoDroitsProps = {
   student: Etudiant
   fresh: (boolean) => void
   reload: boolean
+  school:string
 }
 
-export default function ShowinfoDroitmodal({ closemodal, student }: ShowInfoDroitsProps) {
+export default function ShowinfoDroitmodal({ closemodal, student, school }: ShowInfoDroitsProps) {
   const [loading, setLoading] = useState(false)
   const [loadingHisto, setLoadingHisto] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState<any>(null)
@@ -322,6 +323,7 @@ useEffect(() => {
           student={student}
           paymentInfo={selectedPayment}
           ref={printRef}
+          school={school}
         />
       </div>
     </div>

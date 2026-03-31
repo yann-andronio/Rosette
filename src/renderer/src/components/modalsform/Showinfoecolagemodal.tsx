@@ -152,7 +152,22 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
     history: any[]
   } | null>(null)
 
+   const [school, setSchool] = useState<{name:string}>({name:'XXXX'})
 
+ const getSchool = async () => {
+    try{
+
+      await axiosRequest('GET', 'school',null, 'token')
+        .then(({data}) => setSchool(data))
+        .catch(error => console.log(error))
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getSchool()
+  }, [])
 
 
   return (
@@ -360,6 +375,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
             annee={selectedEcolage.annee}
             mois={selectedEcolage.mois}
             montant={selectedEcolage.montant}
+            school={school.name}
             datePaiement={selectedEcolage.datePaiement}
           />
         </div>
@@ -376,6 +392,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           history={paymentHistoryModal.history}
           fresh={fresh} 
           reload={reload}
+          school={school.name}
           closeModal={() => setPaymentHistoryModal(null)}
         />
       )}

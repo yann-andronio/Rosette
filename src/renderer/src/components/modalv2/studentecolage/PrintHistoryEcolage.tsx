@@ -5,6 +5,7 @@ import { axiosRequest } from '@renderer/config/helpers'
 
 type PrintHistoryEcolageProps = {
   mois: string
+  school:string
   paiement: {
     id: number
     montant: number
@@ -19,7 +20,7 @@ type PrintHistoryEcolageProps = {
   }
 }
 const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>(
-  ({ mois, paiement }, ref) => {
+  ({ mois, paiement, school }, ref) => {
     const formattedDatePaiement = new Date(paiement.created_at).toLocaleDateString('fr-FR')
     const statut = paiement.reste === 0 ? 'Payé' : 'Non Payé'
 
@@ -37,7 +38,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
             <img src={logo} alt="Logo de l'école" className="w-20 h-20 object-contain" />
             <div>
               <h1 className="text-xl font-extrabold text-gray-900 uppercase tracking-wider">
-                LA ROSETTE
+                {school}
               </h1>
               <p className="text-xs text-gray-700 font-medium mt-1">
                 Lycée Privé - Homologué par le Ministère

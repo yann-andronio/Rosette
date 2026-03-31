@@ -11,24 +11,20 @@ type RecuepayementecolageProps = {
   mois: string
   montant: number
   datePaiement: string
-  numeroRecu?: string
+  numeroRecu?: string,
+  school:string
 }
 
 const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProps>(
-  ({ eleve, classe, salle, annee, mois, montant, datePaiement, numeroRecu }, ref) => {
+  ({ eleve, classe, salle, annee, mois, montant, datePaiement, numeroRecu, school }, ref) => {
     const formattedDatePaiement = new Date(datePaiement).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     })
-  // const [num , setNum] = useState()
-  //   const getNum = async () => {
-  //     await axiosRequest('GET', 'recue', null, 'token')
-  //       .then(({data}) => setNum(data))
-  //   }
-  //   useEffect(() => {
-  //     getNum()
-  //   }, [])
+
+
+
     return (
       <div
         ref={ref}
@@ -41,7 +37,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
             <img src={logo} alt="Logo de l'école" className="w-20 h-20 object-contain" />
             <div>
               <h1 className="text-xl font-extrabold text-gray-900 uppercase tracking-wider">
-                LA ROSETTE
+                {school}
               </h1>
               <p className="text-xs text-gray-700 font-medium mt-1">
                 Lycée Privé - Homologué par le Ministère

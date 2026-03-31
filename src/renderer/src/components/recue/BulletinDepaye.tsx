@@ -26,23 +26,12 @@ type RecueProps = {
     classification?: string
     indice?: string
   }
-  salaire: Salaire
+  salaire: Salaire,
+  nif:string
 }
 
-export default function BulletinDePaye({ employer, salaire }: RecueProps) {
-  const [nif, setNif] = useState<string>('XXXXXXX')
-
-  useEffect(() => {
-    const getNif = async () => {
-      try {
-        const { data } = await axiosRequest('GET', 'nif', null, 'token')
-        if (data) setNif(data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getNif()
-  }, [])
+export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
+  
 
   const formatN = (num: number = 0) => num.toLocaleString('fr-FR').replace(/\s/g, ' ')
 
@@ -78,7 +67,7 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
         </div>
         <div className="flex border-b border-black">
           <div className="w-1/2 border-r border-black p-1 font-semibold">N° matricule :</div>
-          <div className="w-1/2 p-1">{employer.matricule || 'XXXXX'}</div>
+          <div className="w-1/2 p-1">{'ROSE-'+employer.id}</div>
         </div>
         <div className="flex border-b border-black bg-gray-50">
           <div className="w-1/2 border-r border-black p-1 font-semibold">
@@ -95,7 +84,7 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
         </div>
         <div className="flex border-b border-black italic">
           <div className="w-1/2 border-r border-black p-1">pour la période du :</div>
-          <div className="w-1/2 p-1">{salaire.mois || 'XXXXX'}</div>
+          <div className="w-1/2 p-1">{salaire.mois+'-'+new Date().getFullYear()}</div>
         </div>
       </div>
 
@@ -105,7 +94,7 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
         </div>
         <div className="flex">
           <div className="flex-1 border-r border-black">
-            <div className="p-1">01 mois, journées ou heure à .....</div>
+            <div className="p-1">0{salaire.mois.split(',').length} mois, journées ou heure à .....</div>
             <div className="p-1">___ vacation ou pièce ....... à .........</div>
             <div className="p-1">___ heures supplémentaires à .........</div>
             <div className="p-1">Prime d'ancienneté ......................</div>
@@ -114,7 +103,7 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
           </div>
           <div className="w-32 text-right border-black border-b">
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
-              {formatN(salaire.salaireBase)}
+              {formatN(employer.salaire_base*salaire.mois.split(',').length)}
             </div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">0</div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">0</div>
@@ -130,7 +119,7 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
       <div className="flex border-x border-b border-black font-bold">
         <div className="flex-1 text-right pr-4 p-1 uppercase">Rémunération totale brute</div>
         <div className="w-32 text-right p-1 border-l border-black">
-          {formatN(salaire.totalBrut)}
+          {formatN(employer.salaire_base *salaire.mois.split(',').length)}
         </div>
       </div>
 
@@ -146,10 +135,10 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
           </div>
           <div className="w-32 text-right border-black border-b">
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
-              {formatN(salaire.avances)}
+              {0}
             </div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
-              {formatN(salaire.cnaps)}
+              {formatN(employer.cnaps)}
             </div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
               {formatN(salaire.ostie)}
@@ -157,7 +146,7 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
               {formatN(salaire.retenuesDiverses)}
             </div>
-            <div className="p-1 h-8 flex items-center justify-end">{formatN(salaire.irsa)}</div>
+            <div className="p-1 h-8 flex items-center justify-end">{formatN(employer.irsa)}</div>
           </div>
         </div>
       </div>
@@ -166,25 +155,25 @@ export default function BulletinDePaye({ employer, salaire }: RecueProps) {
         <div className="flex font-bold">
           <div className="flex-1 text-right pr-4 p-1">Total réduction</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN(salaire.totalReduction)}
+            {formatN(employer.irsa+employer.cnaps)}
           </div>
         </div>
         <div className="flex font-bold">
           <div className="flex-1 text-right pr-4 p-1 uppercase">Montant de la paye</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN(salaire.montantPaye)}
+            {formatN((employer.salaire_base*salaire.mois.split(',').length) - (employer.irsa+employer.cnaps) )}
           </div>
         </div>
         <div className="flex">
           <div className="flex-1 text-right pr-4 p-1">Allocation familiales</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN(salaire.allocations)}
+            {formatN(employer?.allocation)}
           </div>
         </div>
         <div className="flex font-bold bg-gray-50">
           <div className="flex-1 text-right pr-4 p-1">Total général ......</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN(salaire.totalGeneral)}
+            {formatN((employer.salaire_base*salaire.mois.split(',').length) - (employer.irsa+employer.cnaps+employer.allocation) )}
           </div>
         </div>
       </div>
