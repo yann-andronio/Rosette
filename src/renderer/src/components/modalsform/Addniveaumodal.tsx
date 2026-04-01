@@ -9,6 +9,7 @@ import useMultiModals from '@renderer/hooks/useMultiModals'
 import { toast } from 'react-toastify'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import UpdateNiveauxForm from '../updatemodalparametres/UpdateNiveauxForm'
+import { niveau } from '@renderer/data/Filterselectiondata'
 type ClassModalProps = {
   closemodal: () => void
 }
@@ -20,7 +21,8 @@ type FormDataAlefa = {
   kermesse:number,
   droit:number,
   kermesse_ancien:number
-  droit_ancien:number
+  droit_ancien:number,
+  niveau:string
 }
 
 const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
@@ -35,7 +37,8 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
       kermesse: number 
       droit:number,
       droit_ancien:number,
-      kermesse_ancien:number
+      kermesse_ancien:number,
+      niveau:string
     }[]
   >([])
 
@@ -121,7 +124,11 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
       .number()
       .typeError('Le montant doit être un nombre')
       .required('Le montant est requis')
-      .min(0, 'Le montant ne peut pas être négatif')
+      .min(0, 'Le montant ne peut pas être négatif'),
+    niveau: yup
+    .string()
+    .required('Le niveau est requis')
+
   })
 
   const {
@@ -143,7 +150,8 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
       droit: data.droit,
       kermesse: data.kermesse,
       droit_ancien:data.droit_ancien,
-      kermesse_ancien:data.kermesse_ancien
+      kermesse_ancien:data.kermesse_ancien,
+      niveau:data.niveau
     }
 
     setIsLoading(true)
@@ -239,6 +247,23 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
             />
             {errors.nom_classe && (
               <p className="text-sm text-red-400 mt-1">{errors.nom_classe.message}</p>
+            )}
+
+            {/* niveau */}
+            <select {...register('niveau')} className={`w-full mt-4 px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                errors.niveau
+                  ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                  : 'border-gray-300 shadow-sm'
+              }`}>
+           
+            <option value="">Selectionnez un niveau</option>
+            <option value="prescolaire">Prescolaire</option>
+            <option value="primaire">Primaire</option>
+            <option value="college">Collège</option>
+
+            </select>
+            {errors.niveau && (
+              <p className="text-sm text-red-400 mt-1">{errors.niveau.message}</p>
             )}
 
             {/* ecolage  */}
@@ -405,7 +430,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                   <p className="text-gray-500 text-center">Aucune classe ajoutée</p>
                 ) : (
                   <ul className="space-y-3">
-                    {historiques.map(({ id, nom_classe, ecolage, acs, kermesse, droit, droit_ancien, kermesse_ancien }, index) => (
+                    {historiques.map(({ id, nom_classe, ecolage, acs, kermesse, droit, droit_ancien, kermesse_ancien, niveau }, index) => (
                       <li
                         key={index}
                         className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
@@ -416,7 +441,10 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                           </span>
                           <span className="text-sm text-gray-500">Année : {acs?.annee}</span>
                           <span className="text-sm text-[#895256] font-medium mt-1">
-                            {ecolage} Ar
+                            Ecolage: {ecolage} Ar
+                          </span>
+                           <span className="text-sm text-[#895256] font-medium mt-1">
+                            Niveau: <span >{niveau.toUpperCase()}</span> 
                           </span>
                           <span className="text-sm text-[#895256] font-medium mt-1">
                             Droit: {droit} Ar{' '}
@@ -434,7 +462,7 @@ const Addniveaumodal: React.FC<ClassModalProps> = ({ closemodal }) => {
                         <div className="flex space-x-2">
                           <button
                             aria-label={`Modifier le niveaux}`}
-                            onClick={() => handleclickEdit({ id, nom_classe, ecolage, acs , kermesse , droit, droit_ancien, kermesse_ancien })}
+                            onClick={() => handleclickEdit({ id, nom_classe, ecolage, acs , kermesse , droit, droit_ancien, kermesse_ancien , niveau})}
                             className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
                           >
                             <FiEdit size={18} />

@@ -12,18 +12,37 @@ import { formatDate } from '@renderer/utils/FormatDate'
 import UpdateForSimpleInput from '../updatemodalparametres/UpdateForSimpleInput'
 
 type OperationProps = { closemodal: () => void }
-
+     
 interface FormValues {
-  name: string
+  name: string,
+  owner:string,
+  telephone:string,
+  email:string,
+  adresse:string,
+  decision:string,
+  code:string
 }
 
 const schema = yup.object({
-  name: yup.string().required('Le titre est requis')
+  name: yup.string().required('Le titre est requis'),
+  owner: yup.string().required('Le Directeur est requis'),
+  telephone: yup.string().required('Le telephone est requis'),
+  email: yup.string().required('L\'email est requis'),
+  adresse: yup.string().required('L\'adresse est requis'),
+  decision: yup.string().required('La decision est requise'),
+  code: yup.string().required('Le code est requis'),
+
 })
 
 export default function Addtitremodal({ closemodal }: OperationProps) {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
-  const [historiques, setHistoriques] = useState<{ name: string; id: number; created_at:string }[]>([])
+  const [historiques, setHistoriques] = useState<{ name: string; id: number; created_at:string,  owner:string,
+  telephone:string,
+  email:string,
+  adresse:string,
+  decision:string,
+  code:string  }[]>([])
+
   const [reload, setReload] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -36,7 +55,12 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
     formState: { errors }
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    defaultValues: { name: '' }
+    defaultValues: { name: '',   owner:'',
+  telephone:'',
+  email:'',
+  adresse:'',
+  decision:'',
+  code:''}
   })
   const getHistoriques = async () => {
     try {

@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import {  FaEdit, FaTrash, FaEye } from 'react-icons/fa'
+import {  FaEdit, FaTrash, FaEye, FaLevelUpAlt } from 'react-icons/fa'
 import { LuCalendarDays, LuGraduationCap, LuUsers, LuAward } from 'react-icons/lu'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
@@ -28,6 +28,7 @@ function Notestudentsmanagement(): JSX.Element {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [lines, setLines] = useState<number>(15)
   const [reload, setReload] = useState<boolean>(false)
+  const [selectedLevel, setSelectedLevel] = useState<string>('0')
   const handleselect = (current: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
     setter((prev) => (prev === current ? '0' : current))
   }
@@ -54,7 +55,7 @@ function Notestudentsmanagement(): JSX.Element {
   const getEtudiants = async ()=>  {
     setIsLoading(true)
     try{
-      await axiosRequest('GET', `etudiant-list_note?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&mention=${selectedmention}`, null , 'token')
+      await axiosRequest('GET', `etudiant-list_note?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&mention=${selectedmention}&level=${selectedLevel}`, null , 'token')
         .then(({data}) => setStudents((data)))
         .then(() => setIsLoading(false))
         .catch(error => console.log(error.response.data?.message))
@@ -64,6 +65,7 @@ function Notestudentsmanagement(): JSX.Element {
     }
   }
 
+  console.log(selectedLevel)
   const mention = [
     { id: 1, name: 'Aucune' },
     { id: 2, name: 'passable' },
@@ -72,7 +74,13 @@ function Notestudentsmanagement(): JSX.Element {
     { id: 5, name: 'Très-Bien' },
     { id: 6, name: 'Honorable' }
   ]
+  const level = [
+    { id: 1, name: 'prescolaire' },
+    { id: 2, name: 'primaire' },
+    { id: 3, name: 'college' },
 
+ 
+  ]
   const getClasse = async () => {
 
     try{
@@ -121,7 +129,7 @@ function Notestudentsmanagement(): JSX.Element {
 
   useEffect(() => {
     getEtudiants()
-  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves, reload, selectedmention])
+  }, [currentPage, lines, selectedSexe, selectedyear, selectedniveau, selectedsalle, searcheleves, reload, selectedmention, selectedLevel])
   const pagination:number[] = []
   for(let i:number=1; i<=Math.ceil(students?.total / students.per_page); i++){
     pagination.push(i)
@@ -272,6 +280,30 @@ function Notestudentsmanagement(): JSX.Element {
                 </button>
               ))}
             </div>
+            
+       
+          </div>
+                   <div className="filter p-4 rounded-xl flex flex-col bg-white flex-1  shadow-md relative">
+            <div className=" flex items-center mb-4">
+              <div className="p-2 rounded-lg bg-[#895256] text-white mr-3 flex items-center justify-center">
+                <FaLevelUpAlt size={28} />
+              </div>
+              <h1 className="text-lg font-semibold text-gray-800">Sélectionnez un cycle </h1>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-[100px] pr-2 ">
+              {level.map((l, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleselect(l.name, setSelectedLevel)}
+                  className={`${selectedLevel === l.name ? 'bg-[#895256] text-white border-none ' : 'text-gray-700 bg-gray-100 border-none hover:bg-[#895256e7] hover:text-white'} border font-bold border-gray-400 rounded-md p-2 text-center  cursor-pointer transition duration-200`}
+                >
+                  {l.name.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            
+       
           </div>
         </div>
 
@@ -370,7 +402,7 @@ function Notestudentsmanagement(): JSX.Element {
                         className={`${getMentionColor(student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal)} flex-1 `}
                       >
                         {getMention(
-                          student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal
+                          student?.sousetudiants[student?.sousetudiants.length - 1]?.noteTotal, student?.sousetudiants[student?.sousetudiants.length - 1].classe?.niveau=='prescolaire'?2:1
                         )}
                       </div>
                       <div className="flex-1">

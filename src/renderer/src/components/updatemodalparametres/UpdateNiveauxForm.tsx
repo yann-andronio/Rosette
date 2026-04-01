@@ -6,6 +6,7 @@ import { ThreeDots } from 'react-loader-spinner'
 import { toast } from 'react-toastify'
 import { axiosRequest } from '@renderer/config/helpers'
 import { FiEdit } from 'react-icons/fi'
+import { niveau } from '@renderer/data/Filterselectiondata'
 
 type FormDataAlefa = {
   nom_classe: string
@@ -14,7 +15,8 @@ type FormDataAlefa = {
   kermesse: number
   droit: number
   droit_ancien: number
-  kermesse_ancien:number
+  kermesse_ancien:number,
+  niveau:string
 }
 
 type NiveauData = {
@@ -26,6 +28,7 @@ type NiveauData = {
   droit_ancien: number
   kermesse_ancien:number
   droit: number
+  niveau:string
   acs: { annee: string }
 }
 
@@ -63,8 +66,10 @@ const schema = yup.object({
     .number()
     .typeError('Le montant doit être un nombre')
     .required('Le montant est requis')
-    .min(0, 'Le montant ne peut pas être négatif')
-  
+    .min(0, 'Le montant ne peut pas être négatif'),
+  niveau:yup
+  .string()
+  .required('Le niveau est requis')
 })
 
 const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
@@ -90,7 +95,8 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
       kermesse: NiveauData.kermesse,
       droit: NiveauData.droit,
       kermesse_ancien: NiveauData.kermesse_ancien,
-      droit_ancien:NiveauData.droit_ancien
+      droit_ancien:NiveauData.droit_ancien,
+      niveau:NiveauData.niveau
     }
   })
 
@@ -114,7 +120,8 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
       droit: data.droit,
       kermesse: data.kermesse,
       kermesse_ancien: data.kermesse_ancien,
-      droit_ancien: data.droit_ancien
+      droit_ancien: data.droit_ancien,
+      niveau:data.niveau
 
     }
 
@@ -150,7 +157,22 @@ const UpdateNiveauxForm: React.FC<UpdateNiveauxFormProps> = ({
           <p className="text-sm text-red-400 mt-1">{errors.nom_classe.message}</p>
         )}
       </div>
+              {/* niveau */}
+            <select {...register('niveau')} className={`w-full mt-4 px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                errors.niveau
+                  ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                  : 'border-gray-300 shadow-sm'
+              }`}>
+           
+            <option value="">Selectionnez un niveau</option>
+            <option value="prescolaire">Prescolaire</option>
+            <option value="primaire">Primaire</option>
+            <option value="college">Collège</option>
 
+            </select>
+            {errors.niveau && (
+              <p className="text-sm text-red-400 mt-1">{errors.niveau.message}</p>
+            )}
       <div className="mt-4">
         <input
           type="number"

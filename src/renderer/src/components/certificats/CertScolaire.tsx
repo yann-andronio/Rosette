@@ -9,17 +9,6 @@ const CertScolaire = ({ student }) => {
 
   const dateImpression = new Date().toLocaleDateString('fr-FR')
   const [school, setSchool] = useState<{name:string}>({name:'XXXXX'})
-   const [decision, setDecision] = useState<string>('')
-  const getDecision = async () => {
-    try{
-
-      await axiosRequest('GET', 'identifys',null, 'token')
-        .then(({data}) => setDecision(data))
-        .catch(error => console.log(error))
-    }catch(error){
-      console.log(error)
-    }
-  }
 
     const getSchool = async () => {
     try{
@@ -33,7 +22,7 @@ const CertScolaire = ({ student }) => {
   }
 
   useEffect(() => {
-    getDecision()
+
     getSchool()
   }, [])
 
@@ -60,10 +49,10 @@ const CertScolaire = ({ student }) => {
       {/* headerr */}
       <div className="flex justify-between items-center pb-2 ">
         <div className="text-sm leading-tight font-serif">
-          <p>CIRCONRSCRIPTION SCOLAIRE : MANANARA-NORD</p>
+          <p>CIRCONSCRIPTION SCOLAIRE : {school?.adresse||'MANANARA-NORD'}</p>
           <p>Collège privé : {school.name}</p>
-          <p>Décision N° : {decision}</p>
-          <p>Code : 511071201</p>
+          <p>Décision N° : {school?.decision}</p>
+          <p>Code : {school?.code}</p>
         </div>
         <div>
           <img src={logo} alt="Logo La Rosette II" className="w-40 h-auto" />
@@ -80,7 +69,7 @@ const CertScolaire = ({ student }) => {
       <div className="text-base relative leading-relaxed font-serif">
         <p>
           Je soussignée, Directeur du collège privé
-          <span className="font-bold"> {school.name}</span> Mananara-Nord certifie que :
+          <span className="font-bold"> {school.name}</span> {school?.adresse||'Mananara-Nord'} certifie que :
         </p>
         <p>
           Le / la nommé (e) :
@@ -112,17 +101,17 @@ const CertScolaire = ({ student }) => {
         <p>
           Fils ou fille de :
           <span className="border-b border-dotted border-black px-1">
-            {nomPere + '  ' + prenomPere}
+            {nomPere||''} {'  '}  {prenomPere||''}
           </span>
         </p>
         <p>
           Et de :
           <span className="border-b border-dotted border-black px-1">
-            {nomMere + '  ' + prenomMere}
+            {nomMere||''} { '  '}  {prenomMere||''}
           </span>
         </p>
         <p>
-          Demeurant à : <span className="border-b border-dotted border-black px-1">{adresse}</span>
+          Demeurant à : <span className="border-b border-dotted border-black px-1">{adresse||''}</span>
         </p>
 
         {/* sary comme logo comme filigramme */}
@@ -139,7 +128,7 @@ const CertScolaire = ({ student }) => {
         <p className="mt-1">Le Directeur</p>
 
         <div className="mt-28">
-          <p>MANANJARA Ludovic Lai</p>
+          <p>{school?.owner||'MANANJARA Ludovic Lai'}</p>
         </div>
       </div>
 
