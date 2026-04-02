@@ -415,6 +415,17 @@ export default function SuiviEmployerModal({
     getNif()
   }, [])
 
+  const impot = async () => {
+    try{
+      await axiosRequest('POST', `impot/${employer.id}`, null, 'token')
+      .then(({data}) => toast.success(data.message))
+      .catch(err => toast.error(err.response.data.message))
+    }catch(err){
+        console.log(err)
+    }
+  }
+
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
       <div className="bg-white w-full max-w-2xl h-[640px] rounded-2xl shadow-xl flex flex-col overflow-hidden">
@@ -910,11 +921,13 @@ export default function SuiviEmployerModal({
                 transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
+               
                 <form
                   onSubmit={handleSubmitCharges(onChargesSubmit)}
-                  className="bg-white p-4 rounded-xl shadow-sm border border-gray-100"
+                  className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative"
                 >
                   <h3 className="text-lg font-bold text-gray-800 mb-4">Charges et retenues</h3>
+                   <p onClick={impot} className='absolute py-2 px-3 text-white bg-green-500 right-2 top-2 rounded-xl cursor-pointer'>CNAPS(1%) + FMFP(8%)</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col">

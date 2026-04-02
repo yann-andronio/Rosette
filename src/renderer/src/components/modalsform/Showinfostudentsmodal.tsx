@@ -435,6 +435,7 @@ const Showinfostudentsmodal = ({
                               ? status.status_admissions.charAt(0).toUpperCase() +
                                 status.status_admissions?.slice(1)
                               : 'en cours...'}
+                            {status?.by_delib == 1?<span className='text-red-600 ml-5'>Par Déliberation</span>:''}
                           </button>
                         </td>
                       </tr>

@@ -284,13 +284,13 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
                       </div>
 
                       <div className="flex space-x-2">
-                        <button
+                        {/* <button
                           aria-label={`Modifier l'année ${annee}`}
                           onClick={() => handleclickEdit({ id, annee, mois, debut })}
                           className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
                         >
                           <FiEdit size={18} />
-                        </button>
+                        </button> */}
 
                         <button
                           aria-label={`Supprimer l'année ${annee}`}

@@ -115,6 +115,15 @@ useEffect(() => {
       window.location.reload()
     }, 200)
   }
+const [isOld, setIsOld] = useState(0)
+  const isAncien = async () => {
+    await axiosRequest('GET', `isold/${student.id}`, null, 'token')
+    .then(({data}) => setIsOld(data))
+  }
+
+  useEffect(() => {
+    isAncien()
+  }, [])
 
   
 
@@ -136,13 +145,14 @@ useEffect(() => {
           <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
             <p>
               <span className="font-semibold">
-                {student?.sousetudiants.length > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
+                {isOld > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
+  
               </span>
             </p>
             <p>
               <span className="font-semibold">
                 Total à payer:{' '}
-                {student?.sousetudiants.length > 1
+                {isOld > 1
                   ? student?.sousetudiants[student.sousetudiants.length - 1].classe?.droit_ancien
                   : student?.sousetudiants[student.sousetudiants.length - 1].classe?.droit}{' '}
                 Ar

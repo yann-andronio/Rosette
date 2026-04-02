@@ -58,7 +58,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
       email: user?.email ?? ''
     })
   }, [user, reset])
-  console.log(user)
+ 
   const onSubmit = async (data: FormData) => {
     setLoading(true)
     try {

@@ -65,7 +65,7 @@ const CertScolaire = ({ student }) => {
         </div>
       </div>
 
-      {/* Contenu principal */}
+      {/* Contenu principal */} 
       <div className="text-base relative leading-relaxed font-serif">
         <p>
           Je soussignée, Directeur du collège privé

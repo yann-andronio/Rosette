@@ -126,7 +126,15 @@ export default function ShowinfoKermessmodal({ closemodal, student , school}: Sh
       console.log(err)
     }
   }
+const [isOld, setIsOld] = useState(0)
+  const isAncien = async () => {
+    await axiosRequest('GET', `isold/${student.id}`, null, 'token')
+    .then(({data}) => setIsOld(data))
+  }
 
+  useEffect(() => {
+    isAncien()
+  }, [])
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto animate-fade-in">
@@ -145,13 +153,13 @@ export default function ShowinfoKermessmodal({ closemodal, student , school}: Sh
           <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
             <p>
               <span className="font-semibold">
-                {student?.sousetudiants.length > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
+                {isOld > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
               </span>
             </p>
             <p>
               <span className="font-semibold">
                 Total à payer:{' '}
-                {student?.sousetudiants.length > 1
+                {isOld> 1
                   ? student?.sousetudiants[student.sousetudiants.length - 1].classe?.kermesse_ancien
                   : student?.sousetudiants[student.sousetudiants.length - 1].classe?.kermesse}{' '}
                 Ar
