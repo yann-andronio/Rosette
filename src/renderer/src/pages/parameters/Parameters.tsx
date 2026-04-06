@@ -1,19 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import useMultiModals from '@renderer/hooks/useMultiModals'
-import {
-
-  FiCalendar,
-  FiLayers,
-  FiBookOpen,
-  FiUserCheck,
-  FiUploadCloud,
-  FiDownloadCloud,
-  FiCreditCard,
-  FiBarChart2,
-  FiUserPlus,
-
-} from 'react-icons/fi'
+import { FiCalendar, FiLayers, FiBookOpen, FiUserCheck, FiUploadCloud, FiDownloadCloud, FiCreditCard, FiBarChart2, FiUserPlus} from 'react-icons/fi'
 
 import Addyearmodal from '@renderer/components/modalsform/Addyearmodal'
 import Addniveaumodal from '@renderer/components/modalsform/Addniveaumodal'
@@ -22,7 +10,7 @@ import Register from '@renderer/auth/register/Register'
 import { MdMeetingRoom } from 'react-icons/md'
 import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
 
-import { HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
+import { HiCalendar, HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
 import { useRef, useState } from 'react'
@@ -38,6 +26,7 @@ import Addtitremodal from '@renderer/components/modalsform/AddTittleEcolemodal'
 import { BsFillPencilFill } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import AddRole from '@renderer/components/modalsform/AddRole'
+import MoisAnneeScolaireModal from '@renderer/components/modalv2/parameters/MoisAnneeScolaireModal'
 
 function Parameters(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -61,7 +50,16 @@ function Parameters(): JSX.Element {
       modalName: 'Choosestatusmoyennemodalparams'
     },
     { icon: <MdMeetingRoom size={28} />, label: `Ajouter une salle `, modalName: 'Addsallemodal' },
-    { icon: <BiTransfer  size={28} />, label: `Transfert d'infrastructures`, modalName: 'confirmationmodaltransfert' }
+    {
+      icon: <BiTransfer size={28} />,
+      label: `Transfert d'infrastructures`,
+      modalName: 'confirmationmodaltransfert'
+    },
+    {
+      icon: <HiCalendar size={28} />,
+      label: `Mois d'année scolaire`,
+      modalName: 'Moidannscolaire'
+    }
   ]
   const buttonsForParamsemployers = [
     // { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
@@ -92,7 +90,11 @@ function Parameters(): JSX.Element {
   const buttonsForCongigNifStat = [
     { icon: <FiCreditCard size={28} />, label: 'Configuration NIF', modalName: 'Nifmodal' },
     { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' },
-    { icon: <BsFillPencilFill size={28} />, label: 'Configuration du titre', modalName: 'titremodal' }
+    {
+      icon: <BsFillPencilFill size={28} />,
+      label: 'Configuration du titre',
+      modalName: 'titremodal'
+    }
   ]
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -118,7 +120,6 @@ function Parameters(): JSX.Element {
           setTimeout(() => {
             navigate('/')
           }, 1500)
-
         })
         .catch((error) => toast.error(error.response.data.message))
     } catch (error) {
@@ -175,18 +176,18 @@ function Parameters(): JSX.Element {
   }
 
   const HandleConfirmTransfet = async () => {
-     try {
-       setIsBAckup(true)
-       await axiosRequest('GET', 'transfert-data', null, 'token')
-         .then(() => toast.success('Sauvegarde reussi'))
-         .then(() => setIsBAckup(false))
-         .catch((error) => toast.error(error.response.data.message))
-         .finally(() => setIsBAckup(false))
-     } catch (error) {
-       console.log('Le serveur ne repond pas')
-     } finally {
-       closModal('confirmationmodaltransfert')
-     }
+    try {
+      setIsBAckup(true)
+      await axiosRequest('GET', 'transfert-data', null, 'token')
+        .then(() => toast.success('Sauvegarde reussi'))
+        .then(() => setIsBAckup(false))
+        .catch((error) => toast.error(error.response.data.message))
+        .finally(() => setIsBAckup(false))
+    } catch (error) {
+      console.log('Le serveur ne repond pas')
+    } finally {
+      closModal('confirmationmodaltransfert')
+    }
   }
 
   return (
@@ -395,6 +396,9 @@ function Parameters(): JSX.Element {
           closemodal={() => closModal('confirmexport')}
           isDeletingLoader={isBackup}
         />
+      )}
+      {modal.Moidannscolaire && (
+        <MoisAnneeScolaireModal closemodal={() => closModal('Moidannscolaire')} />
       )}
     </div>
   )
