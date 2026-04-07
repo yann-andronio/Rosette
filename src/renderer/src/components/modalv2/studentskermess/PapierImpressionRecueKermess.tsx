@@ -30,7 +30,7 @@ const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpression
       >
         {/* Filgrame */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] -rotate-45 pointer-events-none">
-          <h1 className="text-9xl font-black">LA ROSETTE</h1>
+          <h1 className="text-9xl font-black">{school}</h1>
         </div>
 
         <div className="flex justify-between items-center border-b-2 border-slate-800 pb-6 mb-8">

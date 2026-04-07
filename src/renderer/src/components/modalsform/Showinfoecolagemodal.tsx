@@ -5,12 +5,10 @@ import {
   FaCalendarAlt,
   FaSchool,
   FaPrint,
-  FaInfo,
   FaInfoCircle
 } from 'react-icons/fa'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { FiX } from 'react-icons/fi'
-
 import { axiosRequest } from '@renderer/config/helpers'
 import { useRef, useState, useEffect } from 'react'
 import Recuepayementecolage from '../recue/Recuepayementecolage'
@@ -21,7 +19,6 @@ import { formatDate } from '../../utils/FormatDate'
 import { RotatingLines } from 'react-loader-spinner'
 import PaymentTypeModalecolage from '../modalv2/studentecolage/PaymentTypeModalecolage'
 import PaymentHistoryModal from '../modalv2/studentecolage/PaymentHistoryModal'
-
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -34,8 +31,18 @@ type EcolageToConfirm = {
   id: number
   mois: string
   cost: number
-  payé?: number|null
-  reste?:number|null
+  payé?: number | null
+  reste?: number | null
+}
+
+type EcoleInfo = {
+  name: string
+  owner: string
+  telephone: string
+  email: string
+  adresse: string
+  decision: string
+  code: string
 }
 
 const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoStudentsProps) => {
@@ -44,7 +51,35 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
   const [paymois, setPaymois] = useState()
   const [up, setUp] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedType, setSelectedType] = useState<string>("Complet")
+  const [selectedType, setSelectedType] = useState<string>('Complet')
+
+  const [ecoleInfo, setEcoleInfo] = useState<EcoleInfo>({
+    name: '',
+    owner: '',
+    telephone: '',
+    email: '',
+    adresse: '',
+    decision: '',
+    code: ''
+  })
+
+  const getSchool = async () => {
+    try {
+      await axiosRequest('GET', 'school', null, 'token')
+        .then(({ data }) => {
+          const result = Array.isArray(data) ? data[0] : data
+          if (result) setEcoleInfo(result)
+        })
+        .catch((error) => console.log(error))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getSchool()
+  }, [])
+
   const pay = async (id: number, cost: number) => {
     try {
       await axiosRequest(
@@ -58,15 +93,14 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           annee: student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
           ac_id: student.sousetudiants[student.sousetudiants.length - 1].annee.id,
           prof: student.enfantProf,
-          type:selectedType.toLowerCase()
+          type: selectedType.toLowerCase()
         },
         'token'
       )
         .then(({ data }) => toast.success(data?.message))
         .then(() => fresh(!reload))
-        // .then(() => closemodal())
         .then(() => setUp(!up))
-      .catch(error => toast.error(error.response.data.message))
+        .catch((error) => toast.error(error.response.data.message))
     } catch (error) {
       console.log('Le serveur ne repond pas')
     }
@@ -114,19 +148,15 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
   const [ecolageConfirmation, setEcolageConfirmation] = useState<EcolageToConfirm | null>(null)
   const [isPayingLoader, setIsPayingLoader] = useState(false)
   const { openModal, modal, closModal } = useMultiModals()
-  const [paymentTypeModal, setPaymentTypeModal] = useState<{ mois: string; cost: number } | null>(null)
+  const [paymentTypeModal, setPaymentTypeModal] = useState<{ mois: string; cost: number } | null>(
+    null
+  )
 
-  const handleRequestPayment = (id, mois, cost, payé=null, reste=null) => {
+  const handleRequestPayment = (id, mois, cost, payé = null, reste = null) => {
     setEcolageConfirmation({ id, mois, cost, payé, reste })
     setPaymentTypeModal({ mois, cost })
   }
 
-  //  const handleRequestPayment = (id, mois, cost) => {
-  //    setEcolageConfirmation({ id, mois, cost })
-  //    openModal('confirmDelete')
-  //  }
-
-  // ouvre la confirmation de payement d'ecolage  final
   const handleConfirmPaymentType = (type: string, montant: number) => {
     setEcolageConfirmation((prev) => (prev ? { ...prev, type, cost: montant } : null))
     setPaymentTypeModal(null)
@@ -146,29 +176,10 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
     }
   }
 
-
   const [paymentHistoryModal, setPaymentHistoryModal] = useState<{
     mois: string
     history: any[]
   } | null>(null)
-
-   const [school, setSchool] = useState<{name:string}>({name:'XXXX'})
-
- const getSchool = async () => {
-    try{
-
-      await axiosRequest('GET', 'school',null, 'token')
-        .then(({data}) => setSchool(data))
-        .catch(error => console.log(error))
-    }catch(error){
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    getSchool()
-  }, [])
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
@@ -192,7 +203,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
         </div>
 
         <div
-          className={` ${isLoading ? ' flex items-center justify-center' : ' grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 '}`}
+          className={`${isLoading ? 'flex items-center justify-center' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5'}`}
         >
           {isLoading ? (
             <div className="flex w-full h-full items-center justify-center">
@@ -216,9 +227,6 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                     {item?.payé === 1 ? (
                       <div className="flex group gap-5">
                         <div className="relative group">
-                          {/* <span className=" absolute bottom-full left-1/2 transform -translate-x-1/2  mb-2 px-2 py-1  text-xs font-medium text-white  bg-gray-800 rounded-lg shadow-lg  opacity-0 group-hover:opacity-100  transition-opacity duration-300 whitespace-nowrap  ">
-                            Imprimer le reçu
-                          </span> */}
                           <FaPrint
                             title="Imprimer le reçu"
                             className="text-gray-600 cursor-pointer hover:text-blue-500"
@@ -284,12 +292,12 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                       <span>{item.payé == 1 ? formatDate(item.updated_at) : 'Non payé'}</span>
                     </div>
                   </div>
+
                   {item.payé ? (
                     <span
                       onClick={() =>
                         handleRequestPayment(
                           item.id,
-
                           item.mois,
                           student.sousetudiants[student.sousetudiants.length - 1]?.classe
                             ?.ecolage || 0,
@@ -297,9 +305,9 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                           item.reste
                         )
                       }
-                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full cursor-pointer  text-white  text-center ${
+                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full cursor-pointer text-white text-center ${
                         item.payé === 1
-                          ? 'bg-green-600 '
+                          ? 'bg-green-600'
                           : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
                       }`}
                     >
@@ -317,9 +325,9 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                           item.reste
                         )
                       }
-                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white  text-center ${
+                      className={`mt-3 px-3 py-1 text-sm font-semibold rounded-full text-white text-center ${
                         item.payé === 1
-                          ? 'bg-green-600 '
+                          ? 'bg-green-600'
                           : 'bg-gray-400 hover:bg-gray-700 cursor-pointer'
                       }`}
                     >
@@ -336,12 +344,6 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
       {paymentTypeModal && (
         <PaymentTypeModalecolage
           student={student}
-          // reload={reload}
-          // fresh={fresh}
-          // up={up}
-          // id={ecolageConfirmation?.id}
-          // setUp={setUp}
-
           reste={ecolageConfirmation?.reste}
           pay={ecolageConfirmation?.payé}
           id={ecolageConfirmation?.id}
@@ -375,8 +377,9 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
             annee={selectedEcolage.annee}
             mois={selectedEcolage.mois}
             montant={selectedEcolage.montant}
-            school={school.name}
             datePaiement={selectedEcolage.datePaiement}
+            school={ecoleInfo.name}
+            ecoleInfo={ecoleInfo}
           />
         </div>
       )}
@@ -390,9 +393,10 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           annee={student.sousetudiants[student.sousetudiants.length - 1].annee.annee}
           mois={paymentHistoryModal.mois}
           history={paymentHistoryModal.history}
-          fresh={fresh} 
+          fresh={fresh}
           reload={reload}
-          school={school.name}
+          school={ecoleInfo.name}
+          ecoleInfo={ecoleInfo}
           closeModal={() => setPaymentHistoryModal(null)}
         />
       )}

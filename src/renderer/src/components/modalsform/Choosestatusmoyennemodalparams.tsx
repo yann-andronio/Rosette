@@ -17,6 +17,9 @@ type ChosseCtausMoyenModalProps = {
 type FormDataAlefa = {
   ac_id: string
   note: number
+  note_pre: number // Moyenne d'admission pour préscolaire
+  par_delib: number // Délibération pour primaire et collège
+  par_delib_pre: number // Délibération pour préscolaire
 }
 
 const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ closemodal }) => {
@@ -27,7 +30,14 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
   const [histLoading, setHistLoading] = useState<boolean>(false)
   const [acs, setAcs] = useState<{ id: number; annee: string }[]>([])
   const [historiques, setHistoriques] = useState<
-    { id: number; note: number; acs: { id: number; annee: string } }[]
+    {
+      id: number
+      note: number
+      note_pre: number
+      par_delib: number
+      par_delib_pre: number
+      acs: { id: number; annee: string }
+    }[]
   >([])
 
   const [noteadmissionToDelete, setnoteadmissionToDelete] = useState<{
@@ -56,6 +66,7 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
   useEffect(() => {
     getAcs()
   }, [activeTab === 'ajouter'])
+
   const schema = yup.object({
     ac_id: yup.string().required('Sélectionnez une année'),
     note: yup
@@ -63,7 +74,25 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
       .typeError('La moyenne doit être un nombre')
       .required('La moyenne est requise')
       .min(0, 'La moyenne ne peut pas être négative')
-      .max(20, 'La moyenne ne peut pas dépasser 20')
+      .max(20, 'La moyenne ne peut pas dépasser 20'),
+    note_pre: yup
+      .number()
+      .typeError('La moyenne doit être un nombre')
+      .required('La moyenne préscolaire est requise')
+      .min(0, 'La moyenne ne peut pas être négative')
+      .max(20, 'La moyenne ne peut pas dépasser 20'),
+    par_delib: yup
+      .number()
+      .typeError('La délibération doit être un nombre')
+      .required('La délibération primaire/collège est requise')
+      .min(0, 'Ne peut pas être négative')
+      .max(20, 'Ne peut pas dépasser 20'),
+    par_delib_pre: yup
+      .number()
+      .typeError('La délibération doit être un nombre')
+      .required('La délibération préscolaire est requise')
+      .min(0, 'Ne peut pas être négative')
+      .max(20, 'Ne peut pas dépasser 20')
   })
 
   const {
@@ -136,11 +165,9 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
     } finally {
       setIsDeletingLoader(false)
       setnoteadmissionToDelete(null)
-      //  closModal('confirmDelete')
     }
   }
 
-  // Modif
   const handleclickEdit = (MoyenneAdmData: any) => {
     setmoyenneadmToEdit(MoyenneAdmData)
     openModal('updateniveaux')
@@ -152,14 +179,12 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
     setmoyenneadmToEdit(null)
   }
 
-  
-
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
         <h1 className="text-2xl font-bold ">Réglage d' admission</h1>
       </div>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-4">
             <button
@@ -189,10 +214,11 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
 
         {activeTab === 'ajouter' ? (
           <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Moyenne d'admission (primaire / collège) — champ existant */}
             <div>
               <input
                 type="number"
-                placeholder="Moyenne d’admission (ex: 10)"
+                placeholder="Moyenne d'admission Primaire/Collège (ex: 10)"
                 step="0.01"
                 {...register('note')}
                 className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
@@ -204,6 +230,61 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
               {errors.note && <p className="text-sm text-red-400 mt-1">{errors.note.message}</p>}
             </div>
 
+            {/* Moyenne d'admission préscolaire — nouveau champ */}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Moyenne d'admission Préscolaire (ex: 10)"
+                step="0.01"
+                {...register('note_pre')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.note_pre
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.note_pre && (
+                <p className="text-sm text-red-400 mt-1">{errors.note_pre.message}</p>
+              )}
+            </div>
+
+            {/* Délibération primaire / collège — nouveau champ */}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Délibération Primaire/Collège (ex: 10)"
+                step="0.01"
+                {...register('par_delib')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.par_delib
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.par_delib && (
+                <p className="text-sm text-red-400 mt-1">{errors.par_delib.message}</p>
+              )}
+            </div>
+
+            {/* Délibération préscolaire — nouveau champ */}
+            <div className="mt-4">
+              <input
+                type="number"
+                placeholder="Délibération Préscolaire (ex: 10)"
+                step="0.01"
+                {...register('par_delib_pre')}
+                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                  errors.par_delib_pre
+                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                    : 'border-gray-300 shadow-sm'
+                }`}
+              />
+              {errors.par_delib_pre && (
+                <p className="text-sm text-red-400 mt-1">{errors.par_delib_pre.message}</p>
+              )}
+            </div>
+
+            {/* Sélection de l'année */}
             <div className="mt-6">
               <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
 
@@ -219,24 +300,21 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                   />
                 </div>
               ) : (
-                <>
-                  {' '}
-                  <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
-                    {acs.map((noteadmission, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setValue('ac_id', noteadmission.id.toString())}
-                        className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
-                          selectednoteadmissionforstyle === noteadmission.id.toString()
-                            ? 'bg-[#895256] text-white border-[#895256]'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
-                        }`}
-                      >
-                        {noteadmission.annee}
-                      </div>
-                    ))}{' '}
-                  </div>
-                </>
+                <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
+                  {acs.map((noteadmission, index) => (
+                    <div
+                      key={index}
+                      onClick={() => setValue('ac_id', noteadmission.id.toString())}
+                      className={`text-sm font-medium text-center rounded-lg px-3 py-2 cursor-pointer transition-all duration-200 border ${
+                        selectednoteadmissionforstyle === noteadmission.id.toString()
+                          ? 'bg-[#895256] text-white border-[#895256]'
+                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      {noteadmission.annee}
+                    </div>
+                  ))}
+                </div>
               )}
 
               {errors.ac_id && <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>}
@@ -287,31 +365,52 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                 />
               </div>
             ) : (
-              <>
-                {' '}
-                <div className="mt-4 max-h-64 overflow-auto">
-                  {historiques.length === 0 ? (
-                    <p className="text-gray-500 text-center">Aucun paramètre ajouté</p>
-                  ) : (
-                    <ul className="space-y-3">
-                      {historiques.map(({ id, acs, note }, index) => (
+              <div className="mt-4 max-h-[60vh] overflow-auto">
+                {historiques.length === 0 ? (
+                  <p className="text-gray-500 text-center">Aucun paramètre ajouté</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {historiques.map(
+                      ({ id, acs, note, note_pre, par_delib, par_delib_pre }, index) => (
                         <li
                           key={index}
                           className="bg-white shadow-sm px-5 py-3 rounded-xl flex justify-between items-center border border-gray-200 hover:shadow-md transition"
                         >
-                          <div className="flex flex-col text-left">
+                          <div className="flex flex-col text-left gap-1">
                             <span className="text-sm text-gray-500">
-                              {' '}
                               Année : {acs?.annee || 'N/A'}
                             </span>
+
+                            {/* Champs existant */}
                             <span className="text-sm text-[#895256] font-medium mt-1">
-                              Moyenne : {note}
+                              Moy. admission Prim/Col : {note}
+                            </span>
+
+                            {/* 3 nouveaux champs */}
+                            <span className="text-sm text-[#895256] font-medium">
+                              Moy. admission Présco : {note_pre}
+                            </span>
+                            <span className="text-sm text-[#895256] font-medium">
+                              Délibération Prim/Col : {par_delib}
+                            </span>
+                            <span className="text-sm text-[#895256] font-medium">
+                              Délibération Présco : {par_delib_pre}
                             </span>
                           </div>
+
                           <div className="flex space-x-2">
                             <button
-                              aria-label={`Modifier le niveaux}`}
-                              onClick={() => handleclickEdit({ id, acs, note })}
+                              aria-label="Modifier la note d'admission"
+                              onClick={() =>
+                                handleclickEdit({
+                                  id,
+                                  acs,
+                                  note,
+                                  note_pre,
+                                  par_delib,
+                                  par_delib_pre
+                                })
+                              }
                               className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition"
                             >
                               <FiEdit size={18} />
@@ -325,11 +424,11 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
                             </button>
                           </div>
                         </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </>
+                      )
+                    )}
+                  </ul>
+                )}
+              </div>
             )}
           </>
         )}
@@ -338,7 +437,7 @@ const Choosestatusmoyennemodalparams: React.FC<ChosseCtausMoyenModalProps> = ({ 
       {modal.confirmDelete && noteadmissionToDelete && (
         <ConfirmDeleteModal
           title="Supprimer la note d' admission"
-          message={`Voulez-vous vraiment supprimer la note d'admission de  ${noteadmissionToDelete.note} pour l'année scolaire ${noteadmissionToDelete.acs.annee} ?`}
+          message={`Voulez-vous vraiment supprimer la note d'admission de ${noteadmissionToDelete.note} pour l'année scolaire ${noteadmissionToDelete.acs.annee} ?`}
           onConfirm={handleConfirmDelete}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}

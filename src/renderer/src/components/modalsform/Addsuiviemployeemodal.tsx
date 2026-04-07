@@ -122,6 +122,11 @@ export default function SuiviEmployerModal({
   const [loadHistoriqueSalary, setLoadHistoriqueSalary] = useState(false)
   const [fresh, setFresh] = useState<boolean>(false)
 
+
+   const [confirmImpot, setConfirmImpot] = useState(false)
+   const [confirmCharges, setConfirmCharges] = useState<ChargesType | null>(null)
+   const [isConfirmChargesLoader, setIsConfirmChargesLoader] = useState(false)
+
   const getFiltres = async () => {
     try {
       await axiosRequest('GET', 'ac-list', null, 'token')
@@ -186,7 +191,7 @@ export default function SuiviEmployerModal({
     resetStatus({ nouveauStatut: employer.status })
   }, [activeTab == 'statut', reloadstatus])
   useEffect(() => {
-    resetCharges({cnaps:employer?.cnaps, irsa: employer?.irsa,allocation:employer?.allocation })
+    resetCharges({ cnaps: employer?.cnaps, irsa: employer?.irsa, allocation: employer?.allocation })
   }, [activeTab == 'charges', reloadstatus])
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
   const [historiques, setHistoriques] = useState<
@@ -385,46 +390,100 @@ export default function SuiviEmployerModal({
 
   const [loadcharges, setLoadcharges] = useState(false)
 
-  //eto mila modifien nla
   const onChargesSubmit = async (data: ChargesType) => {
-    setLoadcharges(true)
+    setConfirmCharges(data)
+    openModal('confirmCharges')
+  }
+
+  const executeCharges = async (data: ChargesType) => {
+    setIsConfirmChargesLoader(true)
     try {
       await axiosRequest('PUT', `workers-charges/${employer.id}`, data, 'token')
         .then(({ data }) => toast.success(data.message))
         .then(() => resetCharges(data))
+        .then(() => setReloads((prev) => !prev))
         .catch((err) => toast.error(err.response.data.message))
     } catch (err) {
       console.log('Le serveur ne répond pas')
     } finally {
-      setLoadcharges(false)
+      setIsConfirmChargesLoader(false)
+      setConfirmCharges(null)
+      closModal('confirmCharges')
     }
   }
 
-  const [nif, setNif] = useState<{nif:string}>({nif:'XXXXXX'})
+  const [nif, setNif] = useState<{ nif: string }>({ nif: 'XXXXXX' })
   const getNif = async () => {
-      try {
-          await axiosRequest('GET', 'nif-1', null, 'token').then(({data}) =>setNif(data))
-    
-      } catch (error) {
-        console.log(error)
-      }
+    try {
+      await axiosRequest('GET', 'nif-1', null, 'token').then(({ data }) => setNif(data))
+    } catch (error) {
+      console.log(error)
     }
+  }
 
-    
+  // useEffect(() => {
+  //   getNif()
+  // }, [])
+
+const impot = async () => {
+  setConfirmImpot(true)
+  openModal('confirmImpot')
+  }
+  
+  const [isConfirmImpotLoader, setIsConfirmImpotLoader] = useState(false)
+
+  const executeImpot = async () => {
+    setIsConfirmImpotLoader(true)
+    try {
+      await axiosRequest('POST', `impot/${employer.id}`, null, 'token')
+        .then(({ data }) => {
+          toast.success(data.message)
+          resetCharges({
+            cnaps: data.cnaps ?? employer.cnaps,
+            irsa: data.irsa ?? employer.irsa,
+            allocation: data.allocation ?? employer.allocation
+          })
+        })
+        .then(() => setReloads((prev) => !prev))
+        .catch((err) => toast.error(err.response.data.message))
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setIsConfirmImpotLoader(false)
+      setConfirmImpot(false)
+      closModal('confirmImpot')
+    }
+  }
+
+  const [ecoleInfo, setEcoleInfo] = useState({
+    name: '',
+    owner: '',
+    telephone: '',
+    email: '',
+    adresse: '',
+    decision: '',
+    code: ''
+  })
+
+  const getSchool = async () => {
+    try {
+      await axiosRequest('GET', 'school', null, 'token')
+        .then(({ data }) => {
+          const result = Array.isArray(data) ? data[0] : data
+          if (result) setEcoleInfo(result)
+        })
+        .catch((error) => console.log(error))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getNif()
+    getSchool()
   }, [])
 
-  const impot = async () => {
-    try{
-      await axiosRequest('POST', `impot/${employer.id}`, null, 'token')
-      .then(({data}) => toast.success(data.message))
-      .catch(err => toast.error(err.response.data.message))
-    }catch(err){
-        console.log(err)
-    }
-  }
-
+ 
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
@@ -921,13 +980,17 @@ export default function SuiviEmployerModal({
                 transition={{ duration: 0.25 }}
                 className="space-y-4"
               >
-               
                 <form
                   onSubmit={handleSubmitCharges(onChargesSubmit)}
                   className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative"
                 >
                   <h3 className="text-lg font-bold text-gray-800 mb-4">Charges et retenues</h3>
-                   <p onClick={impot} className='absolute py-2 px-3 text-white bg-green-500 right-2 top-2 rounded-xl cursor-pointer'>CNAPS(1%) + FMFP(8%)</p>
+                  <p
+                    onClick={impot}
+                    className="absolute py-2 px-3 text-white bg-green-500 right-2 top-2 rounded-xl cursor-pointer"
+                  >
+                    CNAPS(1%) + FMFP(8%)
+                  </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col">
@@ -1011,7 +1074,12 @@ export default function SuiviEmployerModal({
       <div className="hidden">
         {selectedPayment && (
           <div ref={printRef}>
-            <Recuepayementemploye employer={employer} salaire={selectedPayment}  nif={nif.nif}/>
+            <Recuepayementemploye
+              employer={employer}
+              salaire={selectedPayment}
+              nif={nif.nif}
+              ecoleInfo={ecoleInfo}
+            />
           </div>
         )}
       </div>
@@ -1019,7 +1087,7 @@ export default function SuiviEmployerModal({
       <div className="hidden">
         {selectedPayment && (
           <div ref={bulletinRef}>
-            <BulletinDepaye employer={employer} salaire={selectedPayment} nif={nif.nif}/>
+            <BulletinDepaye employer={employer} salaire={selectedPayment} nif={nif.nif} />
           </div>
         )}
       </div>
@@ -1030,6 +1098,35 @@ export default function SuiviEmployerModal({
           onConfirm={handleConfirmPayement}
           closemodal={() => closModal('confirmDelete')}
           isDeletingLoader={isDeletingLoader}
+        />
+      )}
+
+      {modal.confirmCharges && confirmCharges && (
+        <ConfirmDeleteModal
+          title="Confirmation des charges"
+          message={`Voulez-vous enregistrer les charges suivantes pour ${employer.nom} ${employer.prenom} ?
+                  CNAPS : ${confirmCharges.cnaps.toLocaleString()} Ar
+                   IRSA : ${confirmCharges.irsa.toLocaleString()} Ar
+                   Allocation familiale : ${confirmCharges.allocation.toLocaleString()} Ar`}
+          onConfirm={() => executeCharges(confirmCharges)}
+          closemodal={() => {
+            closModal('confirmCharges')
+            setConfirmCharges(null)
+          }}
+          isDeletingLoader={isConfirmChargesLoader}
+        />
+      )}
+
+      {modal.confirmImpot && confirmImpot && (
+        <ConfirmDeleteModal
+          title="Confirmation CNAPS + FMFP"
+          message={`Voulez-vous calculer automatiquement CNAPS (1%) et FMFP (8%) sur le salaire de base de ${formatNumber(employer.salaire_base)} Ar pour ${employer.nom} ${employer.prenom} ?`}
+          onConfirm={executeImpot}
+          closemodal={() => {
+            closModal('confirmImpot')
+            setConfirmImpot(false)
+          }}
+          isDeletingLoader={isConfirmImpotLoader}
         />
       )}
     </div>

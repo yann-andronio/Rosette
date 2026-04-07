@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { FiTrash2, FiX } from 'react-icons/fi'
+import { FiX } from 'react-icons/fi'
 import { formatDate } from '@renderer/utils/FormatDate'
 import { LuPrinter } from 'react-icons/lu'
 import { axiosRequest } from '@renderer/config/helpers'
@@ -9,14 +9,25 @@ import PrintHistoryEcolage from './PrintHistoryEcolage'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
+type EcoleInfo = {
+  name: string
+  owner: string
+  telephone: string
+  email: string
+  adresse: string
+  decision: string
+  code: string
+}
+
 type PaymentHistoryModalProps = {
   eleve: string
   classe: string
   salle: string
   numeroRecu?: string
   mois: string
-  annee: string,
-  school:string
+  annee: string
+  school: string
+  ecoleInfo: EcoleInfo 
   history: { id: number; montant: number; type: string; reste: number; created_at: string }[]
   closeModal: () => void
   fresh: (val: boolean) => void
@@ -30,32 +41,25 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
   eleve,
   classe,
   school,
+  ecoleInfo,
   salle,
   numeroRecu,
   annee,
   fresh,
   reload
 }) => {
-  const delhisto = async (id: number) => {
-    await axiosRequest('DELETE', `ecohisto/${id}`, null, 'token').then(({ data }) =>
-      toast.success(data.message)
-    )
-  }
   const [selectedHistoryPayement, setselectedHistoryPayement] = useState<any | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
+
   const handlePrint = (paiement: any) => {
     setselectedHistoryPayement(paiement)
-
     setTimeout(() => {
       if (!printRef.current) return
-
       const printContents = printRef.current.innerHTML
       const originalContents = document.body.innerHTML
-
       document.body.innerHTML = printContents
       window.print()
       document.body.innerHTML = originalContents
-
       window.location.reload()
     }, 200)
   }
@@ -65,10 +69,10 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-    const handleRequestDelete = (id: number) => {
-      setSelectedId(id)
-      openModal('confirmDelete')
-    }
+  const handleRequestDelete = (id: number) => {
+    setSelectedId(id)
+    openModal('confirmDelete')
+  }
 
   const handleConfirmDelete = async () => {
     if (!selectedId) return
@@ -105,7 +109,7 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
           <p className="text-gray-500 text-center">Aucun paiement pour ce mois.</p>
         ) : (
           <ul className="space-y-2 max-h-96 overflow-y-auto">
-            {localHistory.map((item, idx) => (
+            {localHistory.map((item) => (
               <li
                 key={item.id}
                 className="bg-gray-50 p-4 rounded-2xl flex justify-between items-center hover:shadow-md transition"
@@ -119,33 +123,26 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
                     Type : <span className="font-medium text-[#895256]">{item.type}</span>
                   </p>
                   <p
-                    className={`text-sm font-medium ${
-                      item.reste === 0 ? 'text-green-700' : 'text-red-700'
-                    }`}
+                    className={`text-sm font-medium ${item.reste === 0 ? 'text-green-700' : 'text-red-700'}`}
                   >
-                    {'Reste:' + item.reste + ' Ar'}
+                    {'Reste : ' + item.reste + ' Ar'}
                   </p>
                   <p
-                    className={`text-sm font-medium ${
-                      item.reste === 0 ? 'text-green-700' : 'text-red-700'
-                    }`}
+                    className={`text-sm font-medium ${item.reste === 0 ? 'text-green-700' : 'text-red-700'}`}
                   >
                     {item.reste == 0 ? 'Payé' : 'Non Payé'}
                   </p>
                 </div>
 
                 <div className="flex gap-2">
-                  {/* <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition">
-                                     <FiEdit size={18} />
-                                   </button> */}
                   <button
                     onClick={() =>
                       handlePrint({
                         ...item,
-                        eleve: eleve,
-                        classe: classe,
-                        salle: salle,
-                        annee: annee
+                        eleve,
+                        classe,
+                        salle,
+                        annee
                       })
                     }
                     title="Imprimer le reçu"
@@ -153,7 +150,6 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
                   >
                     <LuPrinter size={20} />
                   </button>
-
                   <button
                     onClick={() => handleRequestDelete(item.id)}
                     title="Supprimer"
@@ -173,14 +169,20 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
           closemodal={() => closModal('confirmDelete')}
           onConfirm={handleConfirmDelete}
           isDeletingLoader={isDeleting}
-          message={`Êtes-vous sûr de vouloir supprimer cette historique? Cette action est irréversible.`}
-          title="Supprimer un étudiant"
+          message="Êtes-vous sûr de vouloir supprimer cet historique ? Cette action est irréversible."
+          title="Supprimer un historique"
         />
       )}
 
       {selectedHistoryPayement && (
         <div className="hidden">
-          <PrintHistoryEcolage school={school} ref={printRef} mois={mois} paiement={selectedHistoryPayement} />
+          <PrintHistoryEcolage
+            ref={printRef}
+            school={school}
+            ecoleInfo={ecoleInfo}
+            mois={mois}
+            paiement={selectedHistoryPayement}
+          />
         </div>
       )}
     </div>

@@ -46,7 +46,7 @@ export default function Nifmodal({ closemodal }: OperationProps) {
   const getHistoriques = async () => {
     try {
       await axiosRequest('GET', 'nif-1', null, 'token')
-        .then(({ data }) => setHistoriques(data))
+        .then(({ data }) => setHistoriques(Array.isArray(data) ? data : [data]))
         .catch((error) => console.log(error))
     } catch (e) {
       console.log('Le serveur ne repond pas')

@@ -13,6 +13,7 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { toast, ToastContainer } from 'react-toastify'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 import { RotatingLines } from 'react-loader-spinner'
+import { LuRefreshCw } from 'react-icons/lu'
 
 function Employersuivi(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -129,6 +130,13 @@ function Employersuivi(): JSX.Element {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <Searchbar onSearch={handleSearchEmployes} />
+          <button
+            onClick={() => setReload((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#895256] text-[#895256] rounded-xl shadow-md hover:bg-[#895256] hover:text-white transition duration-300 font-bold"
+          >
+            <LuRefreshCw size={20} />
+            Actualiser
+          </button>
           <div className="bg-white text-[#212529] shadow px-4 py-2 rounded-lg text-sm font-medium">
             Total employés : <span className="font-bold">{workers.total}</span>
           </div>

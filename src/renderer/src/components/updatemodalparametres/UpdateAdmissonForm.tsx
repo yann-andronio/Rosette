@@ -9,11 +9,17 @@ import { FiEdit } from 'react-icons/fi'
 
 type FormDataAlefa = {
   note: string
+  note_pre: string
+  par_delib: string
+  par_delib_pre: string
   ac_id: string
 }
 
 type myenneadmdata = {
   note: any
+  note_pre: any
+  par_delib: any
+  par_delib_pre: any
   id: number
   ac_id: string
   acs: { annee: string }
@@ -27,7 +33,10 @@ type UpdateAdmissonFormProps = {
 }
 
 const schema = yup.object({
-  note: yup.string().required('Vous devez saisir un nom de classe'),
+  note: yup.string().required('La moyenne Primaire/Collège est requise'),
+  note_pre: yup.string().required('La moyenne Préscolaire est requise'),
+  par_delib: yup.string().required('La délibération Primaire/Collège est requise'),
+  par_delib_pre: yup.string().required('La délibération Préscolaire est requise'),
   ac_id: yup.string().required('Sélectionnez une année')
 })
 
@@ -49,6 +58,9 @@ const UpdateAdmissonForm: React.FC<UpdateAdmissonFormProps> = ({
     resolver: yupResolver(schema),
     defaultValues: {
       note: myenneadmdata.note,
+      note_pre: myenneadmdata.note_pre,
+      par_delib: myenneadmdata.par_delib,
+      par_delib_pre: myenneadmdata.par_delib_pre,
       ac_id: myenneadmdata.acs.annee
     }
   })
@@ -61,26 +73,28 @@ const UpdateAdmissonForm: React.FC<UpdateAdmissonFormProps> = ({
     const ac_id_value = anneeScolaireSelectionnee ? anneeScolaireSelectionnee.id : null
 
     if (!ac_id_value) {
-      toast.error("Erreur: L'id de l'année scolair est introuvable.")
+      toast.error("Erreur: L'id de l'année scolaire est introuvable.")
       setIsLoading(false)
       return
     }
 
     const donneAlefa = {
       note: data.note,
+      note_pre: data.note_pre,
+      par_delib: data.par_delib,
+      par_delib_pre: data.par_delib_pre,
       ac_id: ac_id_value
     }
 
     try {
-
       await axiosRequest('PUT', `admission-update/${myenneadmdata.id}`, donneAlefa, 'token')
-        .then(({ data }) => toast.success(data?.message || 'Classe modifiée '))
+        .then(({ data }) => toast.success(data?.message || 'Admission modifiée ✅'))
         .then(() => onUpdateSuccess())
         .catch((error) =>
-          toast.error(error?.response?.data?.message || 'Erreur lors de la modification ')
+          toast.error(error?.response?.data?.message || 'Erreur lors de la modification')
         )
     } catch (error) {
-      toast.error('Le serveur ne répond pas ')
+      toast.error('Le serveur ne répond pas')
     } finally {
       setIsLoading(false)
     }
@@ -88,10 +102,11 @@ const UpdateAdmissonForm: React.FC<UpdateAdmissonFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Moyenne admission Primaire / Collège  */}
       <div className="mb-4">
         <input
           type="text"
-          placeholder="note d’admission (ex: 10)"
+          placeholder="Moyenne d'admission Primaire/Collège (ex: 10)"
           {...register('note')}
           className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
             errors.note ? 'border-red-500 shadow-[0_0_5px_#f87171]' : 'border-gray-300 shadow-sm'
@@ -100,10 +115,59 @@ const UpdateAdmissonForm: React.FC<UpdateAdmissonFormProps> = ({
         {errors.note && <p className="text-sm text-red-400 mt-1">{errors.note.message}</p>}
       </div>
 
+      {/* Moyenne admission Préscolaire  */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Moyenne d'admission Préscolaire (ex: 10)"
+          {...register('note_pre')}
+          className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+            errors.note_pre
+              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+              : 'border-gray-300 shadow-sm'
+          }`}
+        />
+        {errors.note_pre && <p className="text-sm text-red-400 mt-1">{errors.note_pre.message}</p>}
+      </div>
+
+      {/* Délibération Primaire / Collège */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Délibération Primaire/Collège (ex: 10)"
+          {...register('par_delib')}
+          className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+            errors.par_delib
+              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+              : 'border-gray-300 shadow-sm'
+          }`}
+        />
+        {errors.par_delib && (
+          <p className="text-sm text-red-400 mt-1">{errors.par_delib.message}</p>
+        )}
+      </div>
+
+      {/* Délibération Préscolaire*/}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Délibération Préscolaire (ex: 10)"
+          {...register('par_delib_pre')}
+          className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+            errors.par_delib_pre
+              ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+              : 'border-gray-300 shadow-sm'
+          }`}
+        />
+        {errors.par_delib_pre && (
+          <p className="text-sm text-red-400 mt-1">{errors.par_delib_pre.message}</p>
+        )}
+      </div>
+
       <div className="mt-6">
         <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez une année</h2>
 
-        {years && years.length && (
+        {years && years.length > 0 && (
           <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white border">
             {years.map((year, index) => (
               <div
@@ -120,9 +184,6 @@ const UpdateAdmissonForm: React.FC<UpdateAdmissonFormProps> = ({
             ))}
           </div>
         )}
-        {/* // ) : (
-        //   <p className="text-sm text-gray-500 mt-2">Aucune année disponible</p>
-        // )} */}
 
         {errors.ac_id && <p className="text-sm text-red-400 mt-1">{errors.ac_id.message}</p>}
       </div>
