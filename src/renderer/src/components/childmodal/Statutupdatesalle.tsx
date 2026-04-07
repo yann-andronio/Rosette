@@ -54,6 +54,7 @@ const Statutupdatesalle: React.FC<ClassModalProps> = ({
         'token'
       )
         .then(({ data }) => toast.success(data.message))
+        .then(() => closemodal())
         .catch((err) => toast.error(err.response?.data?.error))
     } catch (error) {
       console.log('Le serveur ne repond pas')
