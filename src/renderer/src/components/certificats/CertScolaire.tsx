@@ -4,10 +4,10 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@renderer/utils/FormatDate'
 
-const CertScolaire = ({ student }) => {
+const CertScolaire = ({ student, d }) => {
 
 
-  const dateImpression = new Date().toLocaleDateString('fr-FR')
+  const dateImpression = new Date(d).toLocaleDateString('fr-FR')
   const [school, setSchool] = useState<{name:string}>({name:'XXXXX'})
 
     const getSchool = async () => {
@@ -122,7 +122,7 @@ const CertScolaire = ({ student }) => {
 
       <div className=" right-0 pt-12 absolute flex flex-col items-center w-1/2 justify-end">
         <p>
-          Fait à Mananara-Nord, le
+          Fait à {school?.adresse||'Mananara-Nord'}, le
           <span className="border-b border-dotted border-black px-1">{dateImpression}</span>
         </p>
         <p className="mt-1">Le Directeur</p>

@@ -89,9 +89,9 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
               <span className="text-lg font-extrabold text-[#895256]">ECO-{paiement.id}</span>
             </p>
             <p className={`text-sm font-bold ${statutColor}`}>Statut : {statut}</p>
-            <p className="text-sm text-gray-700">
+            {/* <p className="text-sm text-gray-700">
               Type : <span className="font-semibold text-[#895256]">{typeLabel}</span>
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -139,7 +139,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
             <tbody>
               <tr>
                 <td className="p-3">
-                  Écolage du mois de {mois} ({typeLabel})
+                  Écolage du mois de {mois} ({typeLabel=='rembourse'.toUpperCase()?'Remboursement'.toUpperCase():typeLabel})
                 </td>
                 <td className="p-3 text-center">{formattedDatePaiement}</td>
                 <td className="p-3 text-right font-bold text-lg">{montant.toLocaleString()} Ar</td>

@@ -191,6 +191,7 @@ function StudentsKermess(): JSX.Element {
     useEffect(() => {
       getSchool()
     }, [])
+    const [k, setK] = useState('')
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${
@@ -212,7 +213,10 @@ function StudentsKermess(): JSX.Element {
               {acs.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.id.toString(), setselectedyears)}
+                  onClick={() => {
+                    handleselect(year.id.toString(), setselectedyears)
+                    setK(year.annee)
+                  }}
                   className={`${
                     selectedyears === year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
@@ -605,7 +609,7 @@ function StudentsKermess(): JSX.Element {
         <PrintOptionsModalKermess
           closemodal={() => closModal('PrintOptionsModal')}
           onPrint={handlePrintStudentsNonpayé}
-          yearSelected={selectedyears}
+          yearSelected={k}
           monthSelected={selectedmoisEcolage}
           statusSelected={selectedstatusecolage}
         />
@@ -613,7 +617,7 @@ function StudentsKermess(): JSX.Element {
 
       <div className="hidden">
         <PapierImpressionNonpayeKermess
-          yearSelected={selectedyears}
+          yearSelected={k}
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
           ref={printRef}

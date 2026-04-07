@@ -120,7 +120,7 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
                   </p>
                   <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
                   <p className="text-sm">
-                    Type : <span className="font-medium text-[#895256]">{item.type}</span>
+                    Type : <span className="font-medium text-[#895256]">{item.type=='rembourse'?'Remboursement':item.type}</span>
                   </p>
                   <p
                     className={`text-sm font-medium ${item.reste === 0 ? 'text-green-700' : 'text-red-700'}`}

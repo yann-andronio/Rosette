@@ -516,14 +516,14 @@ function StudentsInactif(): JSX.Element {
                               setSelectedStudent({
                                 ...student,
                                 nom_salle:
-                                  student?.sousetudiants[student?.sousetudiants.length - 1].salle
+                                  student?.sousetudiants[student?.sousetudiants.length - 1]?.salle
                                     ?.nom_salle,
                                 nom_classe:
                                   student?.sousetudiants[student?.sousetudiants?.length - 1]?.classe
                                     ?.nom_classe,
                                 noteTotal:
                                   student?.sousetudiants[student?.sousetudiants?.length - 1]
-                                    .noteTotal,
+                                    ?.noteTotal,
                                 annee: 'test',
                                 enfant_prof: student.enfantProf
                               })

@@ -49,7 +49,7 @@ const Sidebar = () => {
       icon: <LuGraduationCap size={25} />,
       subMenus: [
         {
-          name: 'Information des élèves',
+          name: 'Infos des élèves',
           path:  paths?.includes('/home/StudentsInfo')?'/home/StudentsInfo':'/home/denied',
           iconsubmenu: <HiOutlineInformationCircle size={25} />
         },
@@ -67,7 +67,7 @@ const Sidebar = () => {
         },
         { name: 'Droit', path:  paths?.includes('/home/StudentsDroit')?'/home/StudentsDroit':'/home/denied', iconsubmenu: <FaWallet size={25} /> },
         {
-          name: 'Kermess',
+          name: 'Kermesse',
           path: paths?.includes('/home/StudentsKermess')?'/home/StudentsKermess':'/home/denied',
           iconsubmenu: <FaCoins size={25} />
         },
@@ -97,7 +97,7 @@ const Sidebar = () => {
       ]
     },
     {
-      name: 'Historique',
+      name: 'Historiques',
       path:  paths?.includes('/home/Historique')?'/home/Historique':'/home/denied',
       icon: <FaHistory size={21} />,
       subMenus: []

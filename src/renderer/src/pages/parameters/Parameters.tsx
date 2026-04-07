@@ -26,6 +26,7 @@ import Addtitremodal from '@renderer/components/modalsform/AddTittleEcolemodal'
 import { BsFillPencilFill } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import AddRole from '@renderer/components/modalsform/AddRole'
+
 import MoisAnneeScolaireModal from '@renderer/components/modalv2/parameters/MoisAnneeScolaireModal'
 
 function Parameters(): JSX.Element {
@@ -275,7 +276,7 @@ function Parameters(): JSX.Element {
         {/* Section administrateurs */}
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2 mt-12">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
-          Paramètres Employé
+          Paramètres Employés
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {buttonsForParamsemployers.map((item, index) => (
@@ -294,7 +295,7 @@ function Parameters(): JSX.Element {
 
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2 mt-12">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
-          Configuration de Nif , Stat et Titre de l' établissement
+          Configuration de Nif , Stat et Informations de l' établissement
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {buttonsForCongigNifStat.map((item, index) => (

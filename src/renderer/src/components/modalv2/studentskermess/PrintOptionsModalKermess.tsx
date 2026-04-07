@@ -68,7 +68,7 @@ const PrintOptionsModalKermess: React.FC<PrintOptionsModalKermessProps> = ({
               {yearSelected === '0'
                 ? 'Veuillez sélectionner une année scolaire.'
                 
-                  : 'Seuls les élèves ayant écolage non payé peuvent être imprimés.'}
+                  : 'Seuls les élèves ayant kermesse non payé peuvent être imprimés.'}
             </p>
           )}
         </div>

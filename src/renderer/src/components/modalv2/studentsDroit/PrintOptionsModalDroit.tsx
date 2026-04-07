@@ -70,7 +70,7 @@ const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
               {yearSelected === '0'
                 ? 'Veuillez sélectionner une année scolaire.'
                 
-                  : 'Seuls les élèves ayant écolage non payé peuvent être imprimés.'}
+                  : 'Seuls les élèves ayant droit non payé peuvent être imprimés.'}
             </p>
           )}
         </div>

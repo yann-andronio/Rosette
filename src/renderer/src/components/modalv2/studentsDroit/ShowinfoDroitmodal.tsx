@@ -220,7 +220,7 @@ const [isOld, setIsOld] = useState(0)
                         : 'border-gray-300 bg-gray-50 text-[#212529] hover:border-[#895256] hover:bg-[#fff4e6]'
                     }`}
                   >
-                    {type}
+                    {type=='Remboursé'?'Remboursement':type}
                   </button>
                 ))}
               </div>
@@ -266,7 +266,7 @@ const [isOld, setIsOld] = useState(0)
                       </p>
                       <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
                       <p className="text-sm">
-                        Type : <span className="font-medium text-[#895256]">{item.type}</span>
+                        Type : <span className="font-medium text-[#895256]">{item.type =='rembourse'?"remboursement":item.type}</span>
                       </p>
                       <p
                         className={`text-sm font-medium ${

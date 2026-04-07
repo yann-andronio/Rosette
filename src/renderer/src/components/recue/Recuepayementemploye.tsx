@@ -84,7 +84,7 @@ export default function Recuepayementemploye({ employer, salaire, nif, ecoleInfo
             <tr className="bg-gray-100">
               <th className="border px-2 py-1">Mois</th>
               <th className="border px-2 py-1">Montant (Ar)</th>
-              <th className="border px-2 py-1">Type</th>
+              {/* <th className="border px-2 py-1">Type</th> */}
               <th className="border px-2 py-1">Motif</th>
             </tr>
           </thead>
@@ -92,13 +92,13 @@ export default function Recuepayementemploye({ employer, salaire, nif, ecoleInfo
             <tr>
               <td className="border px-2 py-1">{moisLabel}</td>
               <td className="border px-2 py-1">{formatNumber(salaire.montant)}</td>
-              <td className="border px-2 py-1">
+              {/* <td className="border px-2 py-1">
                 {salaire.type == 1
                   ? 'Salaire Complet'
                   : salaire.type == 0
                     ? 'Avance sur Salaire'
                     : 'Reste sur Salaire'}
-              </td>
+              </td> */}
               <td className="border px-2 py-1">{salaire.motif || '-'}</td>
             </tr>
           </tbody>

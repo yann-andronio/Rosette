@@ -206,7 +206,7 @@ const Addyearmodal: React.FC<YearProps> = ({ closemodal }) => {
             </div>
 
             <div className="mt-6">
-              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez les mois</h2>
+              <h2 className="mb-2 font-semibold text-gray-800">Sélectionnez les mois de salaires d'employés</h2>
               <div className="grid grid-cols-3 gap-3 max-h-[250px] overflow-y-auto p-4 rounded-xl border-gray-300 bg-white">
                 {Monthlistedata.map((month) => {
                   const isSelected = selectedMonths.includes(month.id)

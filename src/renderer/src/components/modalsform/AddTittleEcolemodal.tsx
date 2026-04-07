@@ -172,7 +172,7 @@ export default function Addtitremodal({ closemodal }: OperationProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="flex items-center justify-center text-white gap-3 mb-5">
-        <h1 className="text-2xl font-bold">Configuration du Titre de l&apos; établissement</h1>
+        <h1 className="text-2xl font-bold">Configuration des Informations de l&apos; établissement</h1>
       </div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between mb-6">

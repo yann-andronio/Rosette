@@ -101,7 +101,7 @@ const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpression
                   {/* <p className="text-[10px] text-slate-400 font-medium">Année Scolaire en cours</p> */}
                 </td>
                 <td className="text-center text-xs font-bold text-slate-600 uppercase italic">
-                  {paymentInfo.type}
+                  {paymentInfo.type =='rembourse'?"remboursement":paymentInfo.type}
                 </td>
                 <td className="text-right py-4 font-black text-lg text-slate-900">
                   {paymentInfo.montant.toLocaleString()} Ar

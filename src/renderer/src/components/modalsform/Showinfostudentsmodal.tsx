@@ -154,6 +154,9 @@ const Showinfostudentsmodal = ({
     }
   }
 
+  const [d, setD] = useState<string>(new Date().toISOString().split('T')[0])
+const [openDateModal, setOpenDateModal] = useState(false)
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-[95%] max-h-[32rem] max-w-6xl overflow-hidden flex relative">
@@ -362,17 +365,18 @@ const Showinfostudentsmodal = ({
                     <Footprints />
                     Renvoyer
                   </button>
-                </>
-              )}
-
-              {/* btn Imprimer Certificat scolarité */}
-              <button
+                            <button
                 type="button"
-                onClick={() => handlePrint()}
+                onClick={() => setOpenDateModal(true)}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#895256] hover:bg-[#733935] text-white text-sm font-medium transition"
               >
                 <FiPrinter size={16} /> Imprimer Certificat
               </button>
+                </>
+              )}
+
+              {/* btn Imprimer Certificat scolarité */}
+    
             </div>
 
             {student.sousetudiants && student.sousetudiants.length > 0 ? (
@@ -478,9 +482,45 @@ const Showinfostudentsmodal = ({
         />
       )}
 
+      {openDateModal && (
+  <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+    <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-xl">
+      <h2 className="text-lg font-semibold mb-4 text-[#895256]">
+        Sélectionner une date
+      </h2>
+
+      <input
+        type="date"
+        value={d}
+        onChange={(e) => setD(e.target.value)}
+        className="w-full border rounded-lg px-3 py-2 mb-4"
+      />
+
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setOpenDateModal(false)}
+          className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+        >
+          Annuler
+        </button>
+
+        <button
+          onClick={() => {
+            setOpenDateModal(false)
+            handlePrint()
+          }}
+          className="px-4 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935]"
+        >
+          Imprimer
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       {/* avony ato nle impression  */}
       <div className="hidden">
-        <CertScolaire student={student} />
+        <CertScolaire student={student} d={d}/>
       </div>
     </div>
   )

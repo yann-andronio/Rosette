@@ -195,6 +195,7 @@ function StudentsDroit(): JSX.Element {
   useEffect(() => {
     getSchool()
   }, [])
+  const [a, setA] = useState('')
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${
@@ -216,7 +217,10 @@ function StudentsDroit(): JSX.Element {
               {acs.map((year, index) => (
                 <button
                   key={index}
-                  onClick={() => handleselect(year.id.toString(), setselectedyears)}
+                  onClick={() => {
+                    handleselect(year.id.toString(), setselectedyears)
+                    setA(year?.annee)
+                  }}
                   className={`${
                     selectedyears === year.id.toString()
                       ? 'bg-[#895256] text-white border-none'
@@ -609,7 +613,7 @@ function StudentsDroit(): JSX.Element {
         <PrintOptionsModalDroit
           closemodal={() => closModal('PrintOptionsModal')}
           onPrint={handlePrintStudentsNonpayé}
-          yearSelected={selectedyears}
+          yearSelected={a}
           monthSelected={selectedmoisEcolage}
           statusSelected={selectedstatusecolage}
          
@@ -618,7 +622,7 @@ function StudentsDroit(): JSX.Element {
 
       <div className="hidden">
         <PapierImpressionNonpayeDroit
-          yearSelected={selectedyears}
+          yearSelected={a}
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
           ref={printRef}

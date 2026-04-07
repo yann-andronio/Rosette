@@ -214,6 +214,7 @@ const MoisAnneeScolaireModal: React.FC<Props> = ({ closemodal }) => {
                     : 'border-gray-300 shadow-sm'
                 }`}
               />
+
               {errors.prescolaire && (
                 <p className="text-sm text-red-400 mt-1">{errors.prescolaire.message}</p>
               )}
