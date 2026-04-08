@@ -76,8 +76,8 @@ const MoisAnneeScolaireModal: React.FC<Props> = ({ closemodal }) => {
   const getHistoriques = async () => {
     setIsListLoading(true)
     try {
-      await axiosRequest('GET', 'monthbylevels/1', null, 'token')
-        .then(({ data }) => setHistoriques(Array.isArray(data) ? data : [data]))
+      await axiosRequest('GET', 'monthbylevels', null, 'token')
+        .then(({ data }) => setHistoriques(data))
         .catch((err) => console.log(err?.response?.data?.message))
         .finally(() => setIsListLoading(false))
     } catch (err) {
