@@ -605,7 +605,7 @@ function StudentsDroit(): JSX.Element {
           fresh={setReload}
           closemodal={() => closModal('ShowinfoDroitmodal')}
           student={selectedStudent}
-           school={school.name}
+          school={school.name}
         />
       )}
 
@@ -616,7 +616,6 @@ function StudentsDroit(): JSX.Element {
           yearSelected={a}
           monthSelected={selectedmoisEcolage}
           statusSelected={selectedstatusecolage}
-         
         />
       )}
 
@@ -625,8 +624,8 @@ function StudentsDroit(): JSX.Element {
           yearSelected={a}
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
+          statusSelected={selectedstatusecolage}
           ref={printRef}
-          
         />
       </div>
     </div>

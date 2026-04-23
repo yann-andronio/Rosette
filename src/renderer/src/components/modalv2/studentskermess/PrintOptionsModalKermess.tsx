@@ -17,7 +17,7 @@ const PrintOptionsModalKermess: React.FC<PrintOptionsModalKermessProps> = ({
   monthSelected,
   statusSelected
 }) => {
-  const isPrintAllowed = statusSelected === '2' && yearSelected !== '0'
+  const isPrintAllowed = statusSelected === '2' || statusSelected=='1'&& yearSelected !== '0'
 
   const handlePrintClick = () => {
     if (!isPrintAllowed) return
@@ -41,7 +41,7 @@ const PrintOptionsModalKermess: React.FC<PrintOptionsModalKermessProps> = ({
         {/* Body */}
         <div className="mb-6 text-gray-700">
           <p className="mb-4 text-gray-800">
-            Vous êtes sur le point d’imprimer la liste des élèves selon le statut de Kermess.
+            Vous êtes sur le point d’imprimer la liste des élèves selon le statut de Kermesse.
           </p>
 
           <div className="grid grid-cols-2 gap-4 text-center  mb-4">
@@ -67,7 +67,7 @@ const PrintOptionsModalKermess: React.FC<PrintOptionsModalKermessProps> = ({
               ⚠ Impression impossible :{' '}
               {yearSelected === '0'
                 ? 'Veuillez sélectionner une année scolaire.'
-                
+
                   : 'Seuls les élèves ayant kermesse non payé peuvent être imprimés.'}
             </p>
           )}

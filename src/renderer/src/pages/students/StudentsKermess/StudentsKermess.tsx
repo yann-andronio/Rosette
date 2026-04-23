@@ -176,10 +176,10 @@ function StudentsKermess(): JSX.Element {
   }
 
      const [school, setSchool] = useState<{name:string}>({name:'XXXX'})
-  
+
    const getSchool = async () => {
       try{
-  
+
         await axiosRequest('GET', 'school',null, 'token')
           .then(({data}) => setSchool(data))
           .catch(error => console.log(error))
@@ -187,7 +187,7 @@ function StudentsKermess(): JSX.Element {
         console.log(error)
       }
     }
-  
+
     useEffect(() => {
       getSchool()
     }, [])
@@ -621,6 +621,7 @@ function StudentsKermess(): JSX.Element {
           monthSelected={selectedmoisEcolage}
           elevesNonPayes={students.data}
           ref={printRef}
+          selectedStatus={selectedstatusecolage}
         />
       </div>
     </div>

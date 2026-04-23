@@ -5,15 +5,19 @@ interface PapierImpressionNonpayeKermessProps {
   elevesNonPayes: Etudiant[]
   yearSelected: string
   monthSelected: string
+  selectedStatus:string
 }
 
 const PapierImpressionNonpayeKermess = forwardRef<HTMLDivElement, PapierImpressionNonpayeKermessProps>(
-  ({ elevesNonPayes, yearSelected }, ref) => {
-    
+  ({ elevesNonPayes, yearSelected, selectedStatus }, ref) => {
+
     return (
       <div ref={ref} className="p-6 bg-white text-gray-900 font-sans text-sm leading-relaxed">
         <div className="mb-6 text-center border-b pb-3">
-          <h1 className="text-2xl font-bold mb-1">Liste des élèves n’ayant pas payé de Kermess</h1>
+          <h1 className="text-2xl font-bold mb-1">
+            Liste des élèves {selectedStatus == '2' ? "n'" : ''}ayant{' '}
+            {selectedStatus == '2' ? 'pas' : ''} payé le Kermesse
+          </h1>
           <p className="text-gray-700">Année scolaire :{yearSelected}</p>
         </div>
 

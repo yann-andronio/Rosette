@@ -8,18 +8,18 @@ interface PrintOptionsModalDroitProps {
   yearSelected: string
   monthSelected: string
   statusSelected: string // Complet | Incomplet | Tous
-  
+
 }
 
 const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
   closemodal,
   onPrint,
-  
+
   yearSelected,
   monthSelected,
   statusSelected
 }) => {
-  const isPrintAllowed = statusSelected === '2' && yearSelected !== '0'
+  const isPrintAllowed = statusSelected === '2'||statusSelected=='1' && yearSelected !== '0'
 
   const handlePrintClick = () => {
     if (!isPrintAllowed) return
@@ -69,7 +69,7 @@ const PrintOptionsModalDroit: React.FC<PrintOptionsModalDroitProps> = ({
               ⚠ Impression impossible :{' '}
               {yearSelected === '0'
                 ? 'Veuillez sélectionner une année scolaire.'
-                
+
                   : 'Seuls les élèves ayant droit non payé peuvent être imprimés.'}
             </p>
           )}
