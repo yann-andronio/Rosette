@@ -2,7 +2,7 @@ import { FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 import { ThreeDots } from 'react-loader-spinner'
@@ -59,10 +59,10 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
       console.log('Le serveur ne repond pas')
     }
   }
-
+const [fresh, setFresh] = useState(false)
   useEffect(() => {
     getHistoriques()
-  }, [activeTab == 'historique'])
+  }, [activeTab == 'historique', fresh])
 
   const {
     register,
@@ -88,11 +88,47 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
       console.log('Le serveur ne repond pas')
     }
     seterrorkely(null)
-    // setActiveTab('historique')
-    // reset()
   }
 
-  // const removeHistorique = (id: number) => setHistoriques((prev) => prev.filter((h) => h.id !== id))
+  const removeHistorique = async (id: any) => {
+    await axiosRequest('DELETE', `retrait/${id}`, null, 'token')
+      .then(({ data }) => toast.success(data.message))
+      .then(() => setFresh(!fresh))
+      .then(() => setReload(!reload))
+      .finally(() => setFresh(!fresh))
+  }
+
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [password, setPassword] = useState('')
+  const [isCheckingPassword, setIsCheckingPassword] = useState(false)
+
+
+  const handleCheckPassword = async () => {
+
+    if (!selectedId) return
+    setIsCheckingPassword(true)
+    try {
+
+      const { data } = await axiosRequest('POST', 'checkpassword', { password }, 'token')
+      if (data === true) {
+
+        setShowPasswordModal(false)
+        setPassword('')
+        await removeHistorique(selectedId)
+      } else {
+
+        toast.error('Mot de passe Incorrect')
+      }
+    } catch (error) {
+
+      toast.error('Erreur serveur')
+    } finally {
+
+      setIsCheckingPassword(false)
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -123,7 +159,6 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
           </button>
         </div>
 
-        {/* Formulairess */}
         {activeTab === 'retirer' ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
@@ -195,7 +230,6 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
               </div>
             </div>
 
-            {/* Message d'erreurkely raha tsisy vola > 0 @ champs */}
             {errorkely && (
               <p className="text-red-700 font-semibold text-center text-base mt-2">{errorkely}</p>
             )}
@@ -213,16 +247,7 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
                 className="px-5 py-2 rounded-lg bg-[#895256] text-white hover:bg-[#733935] transition font-semibold flex items-center gap-2"
               >
                 {isLoadingRetirerOperation ? (
-                  <ThreeDots
-                    visible={true}
-                    height="20"
-                    width="50"
-                    color="pink"
-                    radius="9"
-                    ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                  />
+                  <ThreeDots height="20" width="50" color="pink" />
                 ) : (
                   <div className="flex items-center justify-center gap-2 ">
                     <FiPlus size={18} />
@@ -254,12 +279,15 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
                         ))}
                       </ul>
                     </div>
-                    {/*<button*/}
-                    {/*  onClick={() => removeHistorique(id)}*/}
-                    {/*  className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"*/}
-                    {/*>*/}
-                    {/*  <FiTrash2 size={18} />*/}
-                    {/*</button>*/}
+                    <button
+                      onClick={() => {
+                        setSelectedId(id)
+                        setShowPasswordModal(true)
+                      }} //
+                      className="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                    >
+                      <FiTrash2 size={18} />
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -267,6 +295,44 @@ export default function OperationModal({ closemodal, reload, setReload }: Operat
           </div>
         )}
       </div>
+
+      {showPasswordModal && ( //
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          {' '}
+          {/* *** */}
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
+            {' '}
+            {/* *** */}
+            <h2 className="text-lg font-semibold mb-4">Confirmation par mot de passe</h2> {/* *** */}
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Entrer mot de passe"
+              className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-[#895256]"
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100"
+              >
+                Annuler
+              </button>
+
+              <button
+                onClick={handleCheckPassword}
+                className="px-4 py-2 bg-[#895256] text-white rounded-lg flex items-center justify-center"
+              >
+                {isCheckingPassword ? (
+                  <ThreeDots height="20" width="40" color="white" />
+                ) : (
+                  'Valider'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
