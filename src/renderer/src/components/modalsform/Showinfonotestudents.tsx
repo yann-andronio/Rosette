@@ -35,7 +35,7 @@ const Showinfonotestudents = ({ closemodal, student }: ShowInfoStudentsProps) =>
           <h2 className="text-xl font-semibold text-center">
             {student.nom} {student.prenom}
           </h2>
-          <p className="mt-1 text-sm italic opacity-90">{student?.sousetudiants[student?.sousetudiants.length - 1].salle.nom_salle}</p>
+          <p className="mt-1 text-sm italic opacity-90">{student?.sousetudiants[student?.sousetudiants.length - 1]?.salle?.nom_salle}</p>
         </div>
 
         {/* Section droite - Infos */}

@@ -125,7 +125,7 @@ const [isOld, setIsOld] = useState(0)
     isAncien()
   }, [])
 
-  
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -144,10 +144,7 @@ const [isOld, setIsOld] = useState(0)
 
           <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
             <p>
-              <span className="font-semibold">
-                {isOld > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
-  
-              </span>
+              <span className="font-semibold">{isOld > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}</span>
             </p>
             <p>
               <span className="font-semibold">
@@ -161,6 +158,10 @@ const [isOld, setIsOld] = useState(0)
             <p>
               <span className="font-semibold">Classe :</span>
               {student?.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe}
+            </p>
+            <p>
+              <span className="font-semibold">salle :</span>
+              {student?.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle}
             </p>
             <p>
               <span className="font-semibold">Matricule :</span> {student.matricule || '—'}
@@ -220,7 +221,7 @@ const [isOld, setIsOld] = useState(0)
                         : 'border-gray-300 bg-gray-50 text-[#212529] hover:border-[#895256] hover:bg-[#fff4e6]'
                     }`}
                   >
-                    {type=='Remboursé'?'Remboursement':type}
+                    {type == 'Remboursé' ? 'Remboursement' : type}
                   </button>
                 ))}
               </div>
@@ -266,7 +267,10 @@ const [isOld, setIsOld] = useState(0)
                       </p>
                       <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
                       <p className="text-sm">
-                        Type : <span className="font-medium text-[#895256]">{item.type =='rembourse'?"remboursement":item.type}</span>
+                        Type :{' '}
+                        <span className="font-medium text-[#895256]">
+                          {item.type == 'rembourse' ? 'remboursement' : item.type}
+                        </span>
                       </p>
                       <p
                         className={`text-sm font-medium ${
@@ -316,7 +320,6 @@ const [isOld, setIsOld] = useState(0)
           </div>
         )}
       </div>
-
 
       {modal.deleteHisto && (
         <ConfirmDeleteModal

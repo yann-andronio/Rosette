@@ -106,7 +106,7 @@ const Sidebar = () => {
   const dispatch = useDispatch()
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const activeName = useSelector((state: RootState) => state.activeLink.activeName)
-  
+
   const [isLoading, setIsLoading] = useState(false)
   const logout = async () => {
     setIsLoading(true)
@@ -158,7 +158,7 @@ const Sidebar = () => {
                   <Link
                     onClick={() => dispatch(setActiveName(menu.name))}
                     to={menu.path || '#'}
-                    className={`flex items-center  ${activeName === menu.name ? s.active : s.inactive}  
+                    className={`flex items-center  ${activeName === menu.name ? s.active : s.inactive}
                      p-2 w-full ${closeBar ? 'w-[5rem] justify-center ' : 'w-[16rem]'}`}
                   >
                     {menu.icon}
@@ -239,7 +239,7 @@ const Sidebar = () => {
         {/* Paramètres sy  deconnexion */}
         <div className="absolute z-50 bottom-4 left-0 w-full px-4 flex flex-col space-y-3">
           <Link
-            to="/home/parametre"
+            to={paths?.includes('/home/parametre') ? '/home/parametre' : '/home/denied'}
             onClick={() => dispatch(setActiveName('Paramètres'))}
             className={` ${closeBar ? 'justify-center' : ''} z-50 flex items-center p-2 bg-[#fffaf0] text-[#895256] hover:bg-[#6d3f42] hover:text-white rounded-lg transition-all duration-300 shadow-md`}
           >

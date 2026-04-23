@@ -152,14 +152,12 @@ const [isOld, setIsOld] = useState(0)
 
           <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
             <p>
-              <span className="font-semibold">
-                {isOld > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}
-              </span>
+              <span className="font-semibold">{isOld > 1 ? 'Ancien(ne)' : 'Nouveau(lle)'}</span>
             </p>
             <p>
               <span className="font-semibold">
                 Total à payer:{' '}
-                {isOld> 1
+                {isOld > 1
                   ? student?.sousetudiants[student.sousetudiants.length - 1].classe?.kermesse_ancien
                   : student?.sousetudiants[student.sousetudiants.length - 1].classe?.kermesse}{' '}
                 Ar
@@ -167,7 +165,11 @@ const [isOld, setIsOld] = useState(0)
             </p>
             <p>
               <span className="font-semibold">Classe :</span>
-              {student?.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe}
+              {student?.sousetudiants[student.sousetudiants.length - 1]?.classe?.nom_classe}
+            </p>
+            <p>
+              <span className="font-semibold">salle :</span>
+              {student?.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle}
             </p>
             <p>
               <span className="font-semibold">Matricule :</span> {student.matricule || '—'}
@@ -227,12 +229,19 @@ const [isOld, setIsOld] = useState(0)
                         : 'border-gray-300 bg-gray-50 text-[#212529] hover:border-[#895256] hover:bg-[#fff4e6]'
                     }`}
                   >
-                    {type=='Remboursé'?'Remboursement':type}
+                    {type == 'Remboursé' ? 'Remboursement' : type}
                   </button>
                 ))}
               </div>
             </div>
-                <input checked={droitinfo.payed == 1? true:false} onClick={autopay} id='p' type="checkbox" className='w-5'/><label htmlFor="p"> Paiement par un parent commun</label>
+            <input
+              checked={droitinfo.payed == 1 ? true : false}
+              onClick={autopay}
+              id="p"
+              type="checkbox"
+              className="w-5"
+            />
+            <label htmlFor="p"> Paiement par un parent commun</label>
             <button
               disabled={loading || (payed && selectedType != 'Remboursé')}
               onClick={pay}
@@ -273,7 +282,10 @@ const [isOld, setIsOld] = useState(0)
                       </p>
                       <p className="text-sm text-gray-500">Date : {formatDate(item.created_at)}</p>
                       <p className="text-sm">
-                        Type : <span className="font-medium text-[#895256]">{item.type=="rembourse"?"remboursement":item.type}</span>
+                        Type :{' '}
+                        <span className="font-medium text-[#895256]">
+                          {item.type == 'rembourse' ? 'remboursement' : item.type}
+                        </span>
                       </p>
                       <p
                         className={`text-sm font-medium ${

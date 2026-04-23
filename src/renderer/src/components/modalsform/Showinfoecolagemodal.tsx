@@ -89,7 +89,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           cost: cost,
           eleve: eleveNom,
           classe: student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe,
-          salle: student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle,
+          salle: student.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle,
           annee: student.sousetudiants[student.sousetudiants.length - 1].annee.annee,
           ac_id: student.sousetudiants[student.sousetudiants.length - 1].annee.id,
           prof: student.enfantProf,
@@ -196,7 +196,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           <h2 className="text-3xl font-bold text-gray-800">{eleveNom}</h2>
           <p className="text-gray-600 flex justify-center items-center gap-2 mt-1 text-sm">
             <FaSchool className="text-[#895256]" />{' '}
-            {student.sousetudiants[student.sousetudiants.length - 1]?.salle.nom_salle} - Année{' '}
+            {student.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle} - Année{' '}
             {student.sousetudiants[student.sousetudiants.length - 1]?.annee.annee}
           </p>
           <h3 className="text-xl font-semibold text-[#895256] mt-2">Paiements d'écolage</h3>
@@ -237,8 +237,8 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
                                   student.sousetudiants[student.sousetudiants.length - 1].classe
                                     .nom_classe,
                                 salle:
-                                  student.sousetudiants[student.sousetudiants.length - 1].salle
-                                    .nom_salle,
+                                  student.sousetudiants[student.sousetudiants.length - 1]?.salle
+                                    ?.nom_salle,
                                 annee:
                                   student.sousetudiants[student.sousetudiants.length - 1].annee
                                     .annee,
@@ -389,7 +389,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
           eleve={eleveNom}
           numeroRecu={undefined}
           classe={student.sousetudiants[student.sousetudiants.length - 1].classe.nom_classe}
-          salle={student.sousetudiants[student.sousetudiants.length - 1].salle.nom_salle}
+          salle={student.sousetudiants[student.sousetudiants.length - 1]?.salle?.nom_salle}
           annee={student.sousetudiants[student.sousetudiants.length - 1].annee.annee}
           mois={paymentHistoryModal.mois}
           history={paymentHistoryModal.history}
