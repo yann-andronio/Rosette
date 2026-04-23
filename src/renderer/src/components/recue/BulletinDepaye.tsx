@@ -31,7 +31,7 @@ type RecueProps = {
 }
 
 export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
-  
+
 
   const formatN = (num: number = 0) => num.toLocaleString('fr-FR').replace(/\s/g, ' ')
 
@@ -67,7 +67,7 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
         </div>
         <div className="flex border-b border-black">
           <div className="w-1/2 border-r border-black p-1 font-semibold">N° matricule :</div>
-          <div className="w-1/2 p-1">{'ROSE-'+employer.id}</div>
+          <div className="w-1/2 p-1">{employer.matricule||',,,'}</div>
         </div>
         <div className="flex border-b border-black bg-gray-50">
           <div className="w-1/2 border-r border-black p-1 font-semibold">

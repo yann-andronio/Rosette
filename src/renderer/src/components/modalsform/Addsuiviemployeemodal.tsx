@@ -43,7 +43,10 @@ export type StatusFormInputs = {
 export type ChargesType = {
   cnaps: number
   irsa: number
-  allocation: number
+  allocation: number,
+  matricule: string,
+  indice:string,
+  classification:string
 }
 
 const chargesSchema = yup.object().shape({
@@ -61,7 +64,14 @@ const chargesSchema = yup.object().shape({
     .number()
     .typeError("L'allocation familiale doit être un nombre.")
     .required("L'allocation familiale est requise.")
-    .min(0, 'La valeur ne peut pas être négative.')
+    .min(0, 'La valeur ne peut pas être négative.'),
+  classification: yup.string()
+    .required('Classification requis'),
+  indice: yup.string()
+    .required('indice requis'),
+  matricule: yup.string()
+    .required()
+
 })
 
 const salarySchema = yup.object().shape({
@@ -191,7 +201,7 @@ export default function SuiviEmployerModal({
     resetStatus({ nouveauStatut: employer.status })
   }, [activeTab == 'statut', reloadstatus])
   useEffect(() => {
-    resetCharges({ cnaps: employer?.cnaps, irsa: employer?.irsa, allocation: employer?.allocation })
+    resetCharges({ cnaps: employer?.cnaps, irsa: employer?.irsa, allocation: employer?.allocation, classification:employer?.classification, indice: employer?.indice, matricule: employer?.matricule})
   }, [activeTab == 'charges', reloadstatus])
   const formatNumber = (num: number) => num.toLocaleString('fr-FR')
   const [historiques, setHistoriques] = useState<
@@ -429,7 +439,7 @@ const impot = async () => {
   setConfirmImpot(true)
   openModal('confirmImpot')
   }
-  
+
   const [isConfirmImpotLoader, setIsConfirmImpotLoader] = useState(false)
 
   const executeImpot = async () => {
@@ -441,7 +451,10 @@ const impot = async () => {
           resetCharges({
             cnaps: data.cnaps ?? employer.cnaps,
             irsa: data.irsa ?? employer.irsa,
-            allocation: data.allocation ?? employer.allocation
+            allocation: data.allocation ?? employer.allocation,
+            classification: data.classification ?? employer.classification,
+            indice: data.indice ?? employer.indice,
+            matricule: data.matricule ?? employer.matricule
           })
         })
         .then(() => setReloads((prev) => !prev))
@@ -483,7 +496,7 @@ const impot = async () => {
     getSchool()
   }, [])
 
- 
+
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
@@ -1029,7 +1042,7 @@ const impot = async () => {
                       )}
                     </div>
 
-                    <div className="flex flex-col md:col-span-2">
+                    <div className="flex flex-col md:col-span-1">
                       <label className="text-sm font-medium text-gray-600 mb-1">
                         Allocation familiale
                       </label>
@@ -1049,7 +1062,63 @@ const impot = async () => {
                         </p>
                       )}
                     </div>
+
+
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-600 mb-1">Matricule</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: ROSE-01"
+                      {...registerCharges('matricule')}
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errorsCharges.matricule
+                          ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                          : 'border-gray-300 shadow-sm'
+                      }`}
+                    />
+                    {errorsCharges.matricule && (
+                      <p className="text-red-500 text-xs mt-1">{errorsCharges.matricule.message}</p>
+                    )}
                   </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-600 mb-1">Classification</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: class-01"
+                      {...registerCharges('classification')}
+                      className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                        errorsCharges.classification
+                          ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                          : 'border-gray-300 shadow-sm'
+                      }`}
+                    />
+                    {errorsCharges.classification && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errorsCharges.classification.message}
+                      </p>
+                    )}
+                  </div>
+                    <div className="flex flex-col ">
+                      <label className="text-sm font-medium text-gray-600 mb-1">Indice</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: indice-01"
+                        {...registerCharges('indice')}
+                        className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
+                          errorsCharges.indice
+                            ? 'border-red-500 shadow-[0_0_5px_#f87171]'
+                            : 'border-gray-300 shadow-sm'
+                        }`}
+                      />
+                      {errorsCharges.indice && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errorsCharges.indice.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
 
                   <button
                     type="submit"
@@ -1107,7 +1176,11 @@ const impot = async () => {
           message={`Voulez-vous enregistrer les charges suivantes pour ${employer.nom} ${employer.prenom} ?
                   CNAPS : ${confirmCharges.cnaps.toLocaleString()} Ar
                    IRSA : ${confirmCharges.irsa.toLocaleString()} Ar
-                   Allocation familiale : ${confirmCharges.allocation.toLocaleString()} Ar`}
+                   Allocation familiale : ${confirmCharges.allocation.toLocaleString()} Ar
+                   matricule: ${confirmCharges.matricule}
+                   classification: ${confirmCharges.classification}
+                   indice: ${confirmCharges.indice}
+                `}
           onConfirm={() => executeCharges(confirmCharges)}
           closemodal={() => {
             closModal('confirmCharges')

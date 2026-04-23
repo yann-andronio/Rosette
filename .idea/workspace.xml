@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="89de1f1e-a35f-42d7-8575-0bbc8b408193" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalv2/studentsDroit/PapierImpressionNonpayeDroit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalv2/studentsDroit/PapierImpressionNonpayeDroit.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalv2/studentsDroit/PrintOptionsModalDroit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalv2/studentsDroit/PrintOptionsModalDroit.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsdroit/StudentsDroit/StudentsDroit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/pages/students/studentsdroit/StudentsDroit/StudentsDroit.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/modalsform/Addsuiviemployeemodal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/src/components/recue/BulletinDepaye.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/src/components/recue/BulletinDepaye.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +145,7 @@
       <workItem from="1762945358725" duration="3000" />
       <workItem from="1763706180401" duration="822000" />
       <workItem from="1763708486877" duration="3136000" />
-      <workItem from="1776965326351" duration="7898000" />
+      <workItem from="1776965326351" duration="10884000" />
     </task>
     <servers />
   </component>
