@@ -357,20 +357,71 @@ export default function SuiviEmployerModal({
 
   const printRef = useRef<HTMLDivElement>(null)
   const bulletinRef = useRef<HTMLDivElement>(null)
-  const handlePrint = (paiement: SalaireEmploye, type: 'recue' | 'bulletin') => {
-    setSelectedPayment(paiement)
-    const ref = type === 'recue' ? printRef : bulletinRef
-    setTimeout(() => {
-      if (!ref.current) return
-      const printContents = ref.current.innerHTML
-      if (!printContents) return
-      const originalContents = document.body.innerHTML
-      document.body.innerHTML = printContents
-      window.print()
-      document.body.innerHTML = originalContents
-      window.location.reload()
-    }, 200)
-  }
+const handlePrint = (paiement: SalaireEmploye, type: 'recue' | 'bulletin') => {
+  setSelectedPayment(paiement)
+  const ref = type === 'recue' ? printRef : bulletinRef
+
+  setTimeout(() => {
+    if (!ref.current) return
+    const printContents = ref.current.innerHTML
+    if (!printContents) return
+
+    const existingIframe = document.getElementById('print-iframe')
+    if (existingIframe) existingIframe.remove()
+
+    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map((el) => el.outerHTML)
+      .join('\n')
+
+    const iframe = document.createElement('iframe')
+    iframe.id = 'print-iframe'
+    iframe.style.position = 'fixed'
+    iframe.style.top = '-9999px'
+    iframe.style.left = '-9999px'
+    iframe.style.width = '0'
+    iframe.style.height = '0'
+    iframe.style.border = 'none'
+    document.body.appendChild(iframe)
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document
+    if (!doc) return
+
+    doc.open()
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          ${styles}
+          <style>
+            @page {
+              margin-top: 2cm;
+              margin-bottom: 1cm;
+              margin-left: 1cm;
+              margin-right: 1cm;
+              size: A4;
+            }
+            body {
+              margin: 0;
+              padding: 0;
+              background: white;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContents}
+        </body>
+      </html>
+    `)
+    doc.close()
+
+    iframe.onload = () => {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+      setTimeout(() => iframe.remove(), 1000)
+    }
+  }, 200)
+}
 
   const [Selectedyearfilter, setSelectedyearfilter] = useState<number | null>(null)
 

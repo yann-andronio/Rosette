@@ -51,18 +51,69 @@ const PaymentHistoryModal: React.FC<PaymentHistoryModalProps> = ({
   const [selectedHistoryPayement, setselectedHistoryPayement] = useState<any | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
 
-  const handlePrint = (paiement: any) => {
-    setselectedHistoryPayement(paiement)
-    setTimeout(() => {
-      if (!printRef.current) return
-      const printContents = printRef.current.innerHTML
-      const originalContents = document.body.innerHTML
-      document.body.innerHTML = printContents
-      window.print()
-      document.body.innerHTML = originalContents
-      window.location.reload()
-    }, 200)
-  }
+ const handlePrint = (paiement: any) => {
+   setselectedHistoryPayement(paiement)
+   setTimeout(() => {
+     if (!printRef.current) return
+     const printContents = printRef.current.innerHTML
+     const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+       .map((el) => el.outerHTML)
+       .join('\n')
+
+     // Supprimer l'ancienne iframe si elle existe
+     const existingIframe = document.getElementById('print-iframe')
+     if (existingIframe) existingIframe.remove()
+
+     // Créer une iframe cachée
+     const iframe = document.createElement('iframe')
+     iframe.id = 'print-iframe'
+     iframe.style.position = 'fixed'
+     iframe.style.top = '-9999px'
+     iframe.style.left = '-9999px'
+     iframe.style.width = '0'
+     iframe.style.height = '0'
+     iframe.style.border = 'none'
+     document.body.appendChild(iframe)
+
+     const doc = iframe.contentDocument || iframe.contentWindow?.document
+     if (!doc) return
+
+     doc.open()
+     doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          ${styles}
+          <style>
+            @page {
+              margin-top: 2cm;
+              margin-bottom: 1cm;
+              margin-left: 1cm;
+              margin-right: 1cm;
+              size: A4;
+            }
+            body {
+              margin: 0;
+              padding: 0;
+              background: white;
+            }
+          </style>
+        </head>
+        <body>
+          ${printContents}
+        </body>
+      </html>
+    `)
+     doc.close()
+
+     iframe.onload = () => {
+       iframe.contentWindow?.focus()
+       iframe.contentWindow?.print()
+       setTimeout(() => iframe.remove(), 1000)
+     }
+   }, 200)
+ }
 
   const { modal, openModal, closModal } = useMultiModals()
   const [localHistory, setLocalHistory] = useState(initialHistory)

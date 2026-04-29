@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '@renderer/config/helpers'
+import logo from '../../images/logo.jpg'
 
 type Salaire = {
   mois: string
@@ -40,6 +41,21 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
       className="bg-white p-4 max-w-[700px] mx-auto text-black border border-gray-300"
       style={{ fontFamily: 'Arial, sans-serif', fontSize: '13px' }}
     >
+      <div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{ zIndex: 0 }}
+      >
+        <img
+          src={logo}
+          alt="filigrane"
+          style={{
+            width: '350px',
+            height: '350px',
+            objectFit: 'contain',
+            opacity: 0.12
+          }}
+        />
+      </div>
       <h1 className="text-center text-xl font-bold underline mb-4 uppercase">Bulletin de paye</h1>
 
       <div className="grid grid-cols-1 border-t border-x border-black">
@@ -67,7 +83,7 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
         </div>
         <div className="flex border-b border-black">
           <div className="w-1/2 border-r border-black p-1 font-semibold">N° matricule :</div>
-          <div className="w-1/2 p-1">{employer.matricule||',,,'}</div>
+          <div className="w-1/2 p-1">{employer.matricule || ',,,'}</div>
         </div>
         <div className="flex border-b border-black bg-gray-50">
           <div className="w-1/2 border-r border-black p-1 font-semibold">
@@ -84,7 +100,7 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
         </div>
         <div className="flex border-b border-black italic">
           <div className="w-1/2 border-r border-black p-1">pour la période du :</div>
-          <div className="w-1/2 p-1">{salaire.mois+'-'+new Date().getFullYear()}</div>
+          <div className="w-1/2 p-1">{salaire.mois + '-' + new Date().getFullYear()}</div>
         </div>
       </div>
 
@@ -94,7 +110,9 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
         </div>
         <div className="flex">
           <div className="flex-1 border-r border-black">
-            <div className="p-1">0{salaire.mois.split(',').length} mois, journées ou heure à .....</div>
+            <div className="p-1">
+              0{salaire.mois.split(',').length} mois, journées ou heure à .....
+            </div>
             <div className="p-1">___ vacation ou pièce ....... à .........</div>
             <div className="p-1">___ heures supplémentaires à .........</div>
             <div className="p-1">Prime d'ancienneté ......................</div>
@@ -103,7 +121,7 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
           </div>
           <div className="w-32 text-right border-black border-b">
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
-              {formatN(employer.salaire_base*salaire.mois.split(',').length)}
+              {formatN(employer.salaire_base * salaire.mois.split(',').length)}
             </div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">0</div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">0</div>
@@ -119,7 +137,7 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
       <div className="flex border-x border-b border-black font-bold">
         <div className="flex-1 text-right pr-4 p-1 uppercase">Rémunération totale brute</div>
         <div className="w-32 text-right p-1 border-l border-black">
-          {formatN(employer.salaire_base *salaire.mois.split(',').length)}
+          {formatN(employer.salaire_base * salaire.mois.split(',').length)}
         </div>
       </div>
 
@@ -134,9 +152,7 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
             <div className="p-1">Retenue IRSA .................................</div>
           </div>
           <div className="w-32 text-right border-black border-b">
-            <div className="p-1 border-b border-black h-8 flex items-center justify-end">
-              {0}
-            </div>
+            <div className="p-1 border-b border-black h-8 flex items-center justify-end">{0}</div>
             <div className="p-1 border-b border-black h-8 flex items-center justify-end">
               {formatN(employer.cnaps)}
             </div>
@@ -155,13 +171,16 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
         <div className="flex font-bold">
           <div className="flex-1 text-right pr-4 p-1">Total réduction</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN(employer.irsa+employer.cnaps)}
+            {formatN(employer.irsa + employer.cnaps)}
           </div>
         </div>
         <div className="flex font-bold">
           <div className="flex-1 text-right pr-4 p-1 uppercase">Montant de la paye</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN((employer.salaire_base*salaire.mois.split(',').length) - (employer.irsa+employer.cnaps) )}
+            {formatN(
+              employer.salaire_base * salaire.mois.split(',').length -
+                (employer.irsa + employer.cnaps)
+            )}
           </div>
         </div>
         <div className="flex">
@@ -173,7 +192,10 @@ export default function BulletinDePaye({ employer, salaire, nif }: RecueProps) {
         <div className="flex font-bold bg-gray-50">
           <div className="flex-1 text-right pr-4 p-1">Total général ......</div>
           <div className="w-32 text-right p-1 border-l border-black">
-            {formatN((employer.salaire_base*salaire.mois.split(',').length) - (employer.irsa+employer.cnaps+employer.allocation) )}
+            {formatN(
+              employer.salaire_base * salaire.mois.split(',').length -
+                (employer.irsa + employer.cnaps + employer.allocation)
+            )}
           </div>
         </div>
       </div>
