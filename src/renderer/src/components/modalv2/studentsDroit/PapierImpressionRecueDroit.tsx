@@ -9,7 +9,7 @@ type PaymentInfo = {
   type: string
   reste: number
   created_at: string
-  
+
 }
 
 interface PapierImpressionRecueDroitProps {
@@ -41,10 +41,10 @@ const PapierImpressionRecueDroit = forwardRef<HTMLDivElement, PapierImpressionRe
               <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">
                 {school}
               </h1>
-              {/* <p className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-tight">
-                Lycée Privé - Homologué par le Ministère
-              </p> */}
-              <p className="text-[9px] text-slate-500 italic font-medium">Éducation d'excellence</p>
+              <p className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-tight">
+                Collège Privé
+              </p>
+              {/*<p className="text-[9px] text-slate-500 italic font-medium">Éducation d'excellence</p>*/}
             </div>
           </div>
 
@@ -132,7 +132,7 @@ const PapierImpressionRecueDroit = forwardRef<HTMLDivElement, PapierImpressionRe
           </div>
           <div className="text-center">
             <div className="mb-14 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              Le Comptable
+              Secrétaire
             </div>
             <div className="w-24 h-[1px] bg-slate-300 mx-auto"></div>
           </div>

@@ -42,7 +42,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
         ref={ref}
         className="bg-white w-[600px] mx-auto p-8 border border-gray-900 shadow-xl text-sm leading-normal text-gray-900 print:w-full print:shadow-none print:p-4"
       >
-  
+
         <div className="flex justify-between items-start border-b-2 border-[#895256] pb-4 mb-6">
           <div className="flex items-center gap-4">
             <img src={logo} alt="Logo de l'école" className="w-20 h-20 object-contain" />
@@ -51,7 +51,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
                 {ecoleInfo.name || school}
               </h1>
               <p className="text-xs text-gray-700 font-medium mt-1">
-                Lycée Privé - Homologué par le Ministère
+                Collège Privé
               </p>
               {ecoleInfo.decision && (
                 <p className="text-xs text-gray-500 mt-0.5">Décision : {ecoleInfo.decision}</p>
@@ -95,7 +95,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
           </div>
         </div>
 
-      
+
         <div className="mb-6 p-4 border border-gray-400 rounded-lg bg-gray-50">
           <h3 className="text-base font-bold mb-3 border-b border-gray-300 pb-1 text-gray-700">
             INFORMATIONS DE L'ÉLÈVE
@@ -122,7 +122,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
           </div>
         </div>
 
-     
+
         <h3 className="text-base font-bold mb-3 text-gray-700">DÉTAILS DU PAIEMENT</h3>
         <div className="border-2 border-gray-600 rounded-lg mb-6 overflow-hidden">
           <div className="mb-4 flex justify-end">
@@ -170,7 +170,7 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
           le <span className="font-semibold">{formattedDatePaiement}</span>.
         </p>
 
-    
+
         <div className="flex justify-between mt-10 text-sm">
           <div className="text-center w-1/3">
             <p className="mb-12 border-b border-dashed border-gray-500 pb-1">
@@ -181,11 +181,11 @@ const PrintHistoryEcolage = forwardRef<HTMLDivElement, PrintHistoryEcolageProps>
             <p className="mb-12 border-b border-dashed border-gray-500 pb-1">
               Signature & Cachet de l'École
             </p>
-            {ecoleInfo.owner && <p className="text-xs text-gray-600 mt-1">{ecoleInfo.owner}</p>}
+            <p className="text-xs text-gray-600 mt-1">Secrétaire</p>
           </div>
         </div>
 
-      
+
         <div className="mt-12 text-center text-xs text-gray-600 border-t pt-3">
           <p className="font-bold text-gray-800">CONSERVEZ PRÉCIEUSEMENT CE DOCUMENT.</p>
           <p className="mt-1">

@@ -40,16 +40,16 @@ const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpression
               <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">
                 {school}
               </h1>
-              {/* <p className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-tight">
-                Lycée Privé - Homologué par le Ministère
-              </p> */}
-              <p className="text-[9px] text-slate-500 italic font-medium">Éducation d'excellence</p>
+               <p className="text-[10px] text-slate-600 font-bold mt-1 uppercase tracking-tight">
+                Collège Privé
+              </p>
+              {/*<p className="text-[9px] text-slate-500 italic font-medium">Éducation d'excellence</p>*/}
             </div>
           </div>
 
           <div className="text-right">
             <h2 className="text-sm font-black uppercase text-slate-500 tracking-widest mb-1">
-              Reçu de Kermess
+              Reçu de Kermesse
             </h2>
             <div className="bg-slate-900 text-white px-3 py-1 text-xs font-mono font-bold rounded inline-block">
               N° {paymentInfo.id.toString().padStart(6, '0')}
@@ -97,7 +97,7 @@ const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpression
             <tbody className="divide-y divide-slate-100">
               <tr>
                 <td className="py-4">
-                  <p className="font-bold text-slate-800">Kermess / Scolarité</p>
+                  <p className="font-bold text-slate-800">Kermesse / Scolarité</p>
                   {/* <p className="text-[10px] text-slate-400 font-medium">Année Scolaire en cours</p> */}
                 </td>
                 <td className="text-center text-xs font-bold text-slate-600 uppercase italic">
@@ -131,7 +131,7 @@ const PapierImpressionRecueKermess = forwardRef<HTMLDivElement, PapierImpression
           </div>
           <div className="text-center">
             <div className="mb-14 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              Le Comptable
+              Secrétaire
             </div>
             <div className="w-24 h-[1px] bg-slate-300 mx-auto"></div>
           </div>

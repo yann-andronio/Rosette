@@ -41,7 +41,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
         ref={ref}
         className="bg-white w-[600px] mx-auto p-8 border border-gray-900 shadow-xl text-sm leading-normal text-gray-900 print:w-full print:shadow-none print:p-4"
       >
-       
+
         <div className="flex justify-between items-start border-b-2 border-[#895256] pb-4 mb-6">
           <div className="flex items-center gap-4">
             <img src={logo} alt="Logo de l'école" className="w-20 h-20 object-contain" />
@@ -50,7 +50,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
                 {ecoleInfo.name || school}
               </h1>
               <p className="text-xs text-gray-700 font-medium mt-1">
-                Lycée Privé - Homologué par le Ministère
+                Collège Privé
               </p>
               {ecoleInfo.decision && (
                 <p className="text-xs text-gray-500 mt-0.5">Décision : {ecoleInfo.decision}</p>
@@ -115,7 +115,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
           </div>
         </div>
 
-    
+
         <h3 className="text-base font-bold mb-3 text-gray-700">DÉTAILS DU PAIEMENT</h3>
         <div className="border-2 border-gray-600 rounded-lg mb-6 overflow-hidden">
           <table className="w-full text-sm">
@@ -161,7 +161,7 @@ const Recuepayementecolage = forwardRef<HTMLDivElement, RecuepayementecolageProp
             <p className="mb-12 border-b border-dashed border-gray-500 pb-1">
               Signature & Cachet de l'École
             </p>
-            {ecoleInfo.owner && <p className="text-xs text-gray-600 mt-1">{ecoleInfo.owner}</p>}
+            <p className="text-xs text-gray-600 mt-1">Secrétaire</p>
           </div>
         </div>
 
