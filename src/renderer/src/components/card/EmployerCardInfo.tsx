@@ -4,10 +4,12 @@ import {
   MdOutlineMail,
   MdPhoneIphone,
   MdOutlineLocationOn,
-  MdOutlineAttachMoney
+  MdOutlineAttachMoney,
+  MdEventNote
 } from 'react-icons/md'
 import { BsGenderMale, BsGenderFemale } from 'react-icons/bs'
 import { EmployerType } from '@renderer/types/Alltypes'
+import { formatDate } from '@renderer/utils/FormatDate'
 
 interface EmployerCardProps {
   employer: EmployerType
@@ -36,7 +38,10 @@ const EmployerCardInfo: FC<EmployerCardProps> = ({ employer }) => {
       <div className="flex items-center gap-5 pb-5 border-b border-gray-200">
         <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
           {employer.photo ? (
-            <img src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`} className="w-full h-full object-cover" />
+            <img
+              src={`${import.meta.env.VITE_BACKEND_URL}/storage/uploads/${employer.photo}`}
+              className="w-full h-full object-cover"
+            />
           ) : (
             <FaUserCircle className="text-5xl text-gray-400" />
           )}
@@ -67,6 +72,11 @@ const EmployerCardInfo: FC<EmployerCardProps> = ({ employer }) => {
           <MdOutlineLocationOn className="text-lg text-[#895256] flex-shrink-0" />
           <span className="font-semibold">Adresse:</span> {employer.adresse}
         </div>
+        <div className="flex items-center gap-3">
+          <MdEventNote className="text-lg text-[#895256] flex-shrink-0" />
+          <span className="font-semibold text-gray-800">Embauché le:</span>
+          <span>{formatDate(employer.created_at)}</span>
+        </div>
 
         <div className="pt-5 border-t border-gray-200">
           <div className="flex items-center gap-3">
@@ -75,29 +85,27 @@ const EmployerCardInfo: FC<EmployerCardProps> = ({ employer }) => {
           </div>
           <div className="flex items-center gap-3 mt-3">
             {getGenderIcon(employer.sexe.toString())}
-            <span className="font-semibold">Sexe:</span> {employer.sexe==1?"Homme":"Femme"}
+            <span className="font-semibold">Sexe:</span> {employer.sexe == 1 ? 'Homme' : 'Femme'}
           </div>
         </div>
 
-        {employer.profs.id === 1 &&
-          employer.matiere &&
-          employer.matiere.length > 0 && (
-            <div className="mt-5 pt-5 border-t border-gray-200 text-sm">
-              <h4 className="flex items-center gap-2 font-bold text-gray-800 mb-2">
-                <FaChalkboardTeacher className="text-xl text-[#895256] flex-shrink-0" /> Matières &
-                Salles
-              </h4>
-              <ul className="space-y-2 text-gray-700">
-                {employer.matiere.map((ms, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <FaMapMarkerAlt className="text-sm text-[#895256] flex-shrink-0" />
-                    <span className="font-medium">{ms.matiere}</span>
-                    <span className="text-gray-500">en salle {ms.salle}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        {employer.profs.id === 1 && employer.matiere && employer.matiere.length > 0 && (
+          <div className="mt-5 pt-5 border-t border-gray-200 text-sm">
+            <h4 className="flex items-center gap-2 font-bold text-gray-800 mb-2">
+              <FaChalkboardTeacher className="text-xl text-[#895256] flex-shrink-0" /> Matières &
+              Salles
+            </h4>
+            <ul className="space-y-2 text-gray-700">
+              {employer.matiere.map((ms, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm">
+                  <FaMapMarkerAlt className="text-sm text-[#895256] flex-shrink-0" />
+                  <span className="font-medium">{ms.matiere}</span>
+                  <span className="text-gray-500">en salle {ms.salle}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   )

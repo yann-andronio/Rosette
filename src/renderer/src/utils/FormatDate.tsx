@@ -8,9 +8,10 @@
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-     } as Intl.DateTimeFormatOptions 
+    timeZone: 'UTC'
+    // hour: '2-digit',
+    // minute: '2-digit'
+  } as Intl.DateTimeFormatOptions 
     //  mangala erreur de typage nle intl ....
 
   return date.toLocaleString('fr-FR', options)
