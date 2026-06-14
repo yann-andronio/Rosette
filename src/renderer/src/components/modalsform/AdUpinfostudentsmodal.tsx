@@ -465,7 +465,7 @@ const [niv, setNiv] = useState(0)
                     <option value={0}>Sélectionnez une salle</option>
                     {salles.map((sal) => (
                       <option key={sal.id} value={sal.id}>
-                        {sal.nom_salle}
+                        {sal?.nom_salle}
                       </option>
                     ))}
                   </select>
