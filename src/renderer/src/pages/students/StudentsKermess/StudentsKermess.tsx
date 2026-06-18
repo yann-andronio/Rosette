@@ -511,9 +511,9 @@ function StudentsKermess(): JSX.Element {
                       </div>
                       <div className="flex-1 ">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit?.payed == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.studentkr?.payed == 1 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                         >
-                          {student.sousetudiants[student.sousetudiants.length - 1]?.studentdroit
+                          {student.sousetudiants[student.sousetudiants.length - 1]?.studentkr
                             ?.payed == 1
                             ? 'Payé'
                             : 'Non payé'}

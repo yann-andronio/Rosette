@@ -36,7 +36,7 @@ const Addnotemodal: React.FC<NotemodalProps> = ({ closemodal , student, reload, 
         .then(({data}) => toast.success(data.message))
         .then(() => setReload(!reload))
         .then(() => closemodal())
-        .catch(error => console.log(error?.response?.data?.message))
+        .catch(error => toast.error(error?.response?.data?.message))
     }catch(error){
       console.log('Le serveur ne repond pas')
     }
