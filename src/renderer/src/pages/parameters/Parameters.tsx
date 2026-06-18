@@ -13,7 +13,7 @@ import Addsallemodal from '@renderer/components/modalsform/Addsallemodal'
 import { HiCalendar, HiOutlineBookOpen, HiOutlineClipboardList } from 'react-icons/hi'
 import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal'
 import Addfonctionemployer from '@renderer/components/modalsform/Addfonctionemployer'
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import Addmatieremodal from '@renderer/components/modalsform/Addmatieremodal'
 import Nifmodal from '@renderer/components/modalsform/Nifmodal'
@@ -28,8 +28,11 @@ import { BiTransfer } from 'react-icons/bi'
 import AddRole from '@renderer/components/modalsform/AddRole'
 
 import MoisAnneeScolaireModal from '@renderer/components/modalv2/parameters/MoisAnneeScolaireModal'
+import { UserContext, UserProvider } from '@renderer/context/UserContext'
+
 
 function Parameters(): JSX.Element {
+    const {user} = useContext(UserProvider)
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
   const { openModal, modal, closModal } = useMultiModals()
   const [reload, setReload] = useState<boolean>(false)
@@ -64,24 +67,27 @@ function Parameters(): JSX.Element {
   ]
   const buttonsForParamsemployers = [
     // { icon: <FaUserTie size={28} />, label: 'Ajouter un employé', modalName: 'AdUpEmployeemodal' },
-    {
+   !user?.role.toLowerCase().includes("secrétaire")&& {
       icon: <HiOutlineClipboardList size={28} />,
       label: 'Ajouter une fonction',
       modalName: 'Addfonctionemployer'
     },
-    {
+     !user?.role.toLowerCase().includes("secrétaire")&& {
       icon: <HiOutlineBookOpen size={28} />,
       label: 'Ajouter une matière',
       modalName: 'Addmatieremodal'
     }
   ]
+  
 
   const buttonsForParamsAdmin = [
+    !user?.role.toLowerCase().includes("secrétaire")&&
     {
       icon: <FiUserCheck size={28} />,
       label: 'Ajouter un administrateur',
       modalName: 'registeremploye'
     },
+      !user?.role.toLowerCase().includes("secrétaire")&&
     {
       icon: <FiUserPlus size={28} />,
       label: 'Ajouter un Rôle',
@@ -89,9 +95,9 @@ function Parameters(): JSX.Element {
     }
   ]
   const buttonsForCongigNifStat = [
-    { icon: <FiCreditCard size={28} />, label: 'Configuration NIF', modalName: 'Nifmodal' },
-    { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' },
-    {
+       !user?.role.toLowerCase().includes("secrétaire")&& { icon: <FiCreditCard size={28} />, label: 'Configuration NIF', modalName: 'Nifmodal' },
+       !user?.role.toLowerCase().includes("secrétaire")&& { icon: <FiBarChart2 size={28} />, label: 'Configuration STAT', modalName: 'Statmodal' },
+       !user?.role.toLowerCase().includes("secrétaire")&& {
       icon: <BsFillPencilFill size={28} />,
       label: 'Configuration du titre',
       modalName: 'titremodal'
@@ -191,6 +197,8 @@ function Parameters(): JSX.Element {
     }
   }
 
+
+
   return (
     <div
       className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${
@@ -204,7 +212,7 @@ function Parameters(): JSX.Element {
             Gérez les éléments clés de votre établissement ici
           </p>
         </div>
-        {/* Section etudiants */}
+      {!user?.role.toLowerCase().includes("secrétaire") &&  (<>        {/* Section etudiants */}
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
           Paramètres Étudiants
@@ -222,7 +230,8 @@ function Parameters(): JSX.Element {
               <span className="text-lg text-[#333] font-semibold text-center">{item.label}</span>
             </button>
           ))}
-        </div>
+        </div></>)}
+
         {/* Section administrateurs */}
         <h2 className="text-2xl sm:text-2xl font-semibold text-[#895256] mb-4 flex items-center gap-2">
           <span className="inline-block w-1.5 h-6 bg-[#895256] rounded-full"></span>
@@ -241,8 +250,7 @@ function Parameters(): JSX.Element {
               <span className="text-lg text-[#333] font-semibold text-center">{item.label}</span>
             </button>
           ))}
-
-          <div
+            {!user?.role.toLowerCase().includes("secrétaire") &&           <div
             onClick={handleClick}
             className="cursor-pointer border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center p-6 gap-4 bg-white hover:border-[#9f7126] hover:bg-[#fdf8f3] shadow-sm hover:shadow-lg transition-all duration-300 group"
           >
@@ -260,6 +268,7 @@ function Parameters(): JSX.Element {
               accept=".sql" // type na fichier accepten ngiah
             />
           </div>
+}
 
           <button
             onClick={() => handleConfirmExport()}
