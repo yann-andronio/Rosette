@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import { Users, UsersRound, DoorOpen } from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, CartesianGrid, PieChart, Pie, Cell, Label } from 'recharts';
 
 import {
   FaUserGraduate,
@@ -519,29 +519,44 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
             </div>
 
             {/* Graphique Pie  (boribory)*/}
-            <div className="card p-6 flex flex-col lg:col-span-3">
+            <div className="card p-6 flex flex-col lg:col-span-3" style={{ minHeight: '360px' }}>
               <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Répartition des effectifs</h2>
-              <div className="flex-1 w-full h-full pb-6">
+              <div className="flex-1 w-full h-full pb-6 relative">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Tooltip 
-                      formatter={(value: number) => `${value} élèves`} 
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      formatter={(value: number) => [`${value} élèves`]} 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', fontWeight: 500 }}
                     />
-                    <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                    <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '13px' }} />
                     <Pie
                       data={datapie.labels.map((label, index) => ({ name: label, value: datapie.datasets[0]?.data[index] || 0 }))}
                       cx="50%"
                       cy="50%"
-                      innerRadius={70}
-                      outerRadius={110}
-                      paddingAngle={5}
+                      innerRadius={85}
+                      outerRadius={120}
+                      paddingAngle={6}
                       dataKey="value"
                       stroke="none"
+                      cornerRadius={8}
                     >
                       {datapie.labels.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={(datapie.datasets[0]?.backgroundColor as string[])?.[index % ((datapie.datasets[0]?.backgroundColor as string[])?.length || 1)] || '#895256'} />
                       ))}
+                      <Label 
+                        value={(datapie.datasets[0]?.data || []).reduce((a, b) => a + b, 0)} 
+                        position="center" 
+                        fill="#212529"
+                        style={{ fontSize: '32px', fontWeight: 'bold' }}
+                        dy={-10}
+                      />
+                      <Label 
+                        value="Total Élèves" 
+                        position="center" 
+                        fill="#6b7280"
+                        style={{ fontSize: '14px', fontWeight: '500' }}
+                        dy={16}
+                      />
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
