@@ -1213,6 +1213,7 @@ const impot = async () => {
       </div>
       {modal.confirmDelete && confirmesalary && (
         <ConfirmDeleteModal
+          variant="confirm"
           title="Confirmation de Paiement de Salaire"
           message={`Confirmez-vous le paiement de ${formatNumber(confirmesalary.montant)} Ar pour le(s) mois : ${confirmesalary.mois.join(', ')} pour ${confirmesalary.nom} ?`}
           onConfirm={handleConfirmPayement}
@@ -1223,6 +1224,7 @@ const impot = async () => {
 
       {modal.confirmCharges && confirmCharges && (
         <ConfirmDeleteModal
+          variant="confirm"
           title="Confirmation des charges"
           message={`Voulez-vous enregistrer les charges suivantes pour ${employer.nom} ${employer.prenom} ?
                   CNAPS : ${confirmCharges.cnaps.toLocaleString()} Ar
@@ -1243,6 +1245,7 @@ const impot = async () => {
 
       {modal.confirmImpot && confirmImpot && (
         <ConfirmDeleteModal
+          variant="confirm"
           title="Confirmation CNAPS + FMFP"
           message={`Voulez-vous calculer automatiquement CNAPS (1%) et FMFP (8%) sur le salaire de base de ${formatNumber(employer.salaire_base)} Ar pour ${employer.nom} ${employer.prenom} ?`}
           onConfirm={executeImpot}

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
-import { FiX, FiEye, FiEyeOff } from 'react-icons/fi'
+import React, { useEffect, useState } from 'react'
+import { FiX, FiEye, FiEyeOff, FiLogOut } from 'react-icons/fi'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useState } from 'react'
+import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 import { axiosRequest } from '@renderer/config/helpers'
 import { toast } from 'react-toastify'
 
@@ -37,6 +37,7 @@ type ProfileModalProps = {
 const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const {
     register,
     handleSubmit,
@@ -62,7 +63,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
   const onSubmit = async (data: FormData) => {
     setLoading(true)
     try {
-      await axiosRequest('PUT', `user/${user?.id}`, data, 'token')
+      await axiosRequest('PUT', `user/${user?.id}`, data)
         .then(({ data }) => toast.success(data.message || 'Profil modifié avec succès'))
         .then(() => onClose())
         .catch((err) => toast.error(err.response?.data?.message || 'Erreur'))
@@ -74,14 +75,30 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('ACCESS_TOKEN')
+    window.location.hash = '/'
+  }
+
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-[#212529]">Modifier le profil</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500">
-            <FiX size={22} />
-          </button>
+          <h2 className="text-xl font-bold text-[#212529]">Mon Profil</h2>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowLogoutConfirm(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-medium transition-colors"
+              aria-label="Se déconnecter"
+            >
+              <FiLogOut size={16} />
+              Déconnexion
+            </button>
+            <button onClick={onClose} className="text-gray-400 hover:text-red-500 ml-1">
+              <FiX size={22} />
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-center mb-6">
@@ -185,6 +202,17 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
         </form>
       </div>
     </div>
+
+    {showLogoutConfirm && (
+      <ConfirmDeleteModal
+        title="Confirmer la déconnexion"
+        message="Êtes-vous sûr de vouloir vous déconnecter ? Vous serez redirigé vers la page de connexion."
+        onConfirm={handleLogout}
+        closemodal={() => setShowLogoutConfirm(false)}
+        isDeletingLoader={false}
+      />
+    )}
+    </>
   )
 }
 

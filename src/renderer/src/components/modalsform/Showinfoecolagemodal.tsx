@@ -408,6 +408,7 @@ const Showinfoecolagemodal = ({ closemodal, student, fresh, reload }: ShowInfoSt
 
       {modal.confirmDelete && ecolageConfirmation && (
         <ConfirmDeleteModal
+          variant="confirm"
           title="Confirmation de Paiement"
           message={`Voulez-vous confirmer le ${selectedType == 'Complet' ? 'payement' : ''} ${selectedType} d'écolage pour le mois de ${ecolageConfirmation.mois} d'un montant de ${ecolageConfirmation.cost?.toLocaleString()} Ar pour ${eleveNom} ?`}
           onConfirm={handleConfirmPayment}

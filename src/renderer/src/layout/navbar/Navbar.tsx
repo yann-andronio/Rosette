@@ -42,7 +42,7 @@ export default function Navbar(){
   return (
     <Fragment>
       <header
-        className="navbar flex justify-between bg-white w-full pr-8 pl-4 py-3 items-center shadow-sm border-b border-gray-100 sticky top-0 z-30"
+        className="navbar flex justify-between bg-white/80 backdrop-blur-xl w-full pr-6 pl-4 py-2.5 items-center shadow-sm border-b border-white/60 sticky top-0 z-30"
         role="banner"
       >
         {/* Gauche : burger + nom de page */}

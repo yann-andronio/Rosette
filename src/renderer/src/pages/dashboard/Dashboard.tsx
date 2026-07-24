@@ -401,28 +401,17 @@ useEffect(() => {
 majors.sort((a,b) => b.moyenne-a.moyenne)
   return (
     <div
-      className={`Rigth bg-[#E6E6FA] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
+      className={`Rigth bg-[#F0EFF8] w-full ${closeBar ? '"ml-16"' : ''} transition-all duration-[600ms] ease-in-out ${Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}`}
     >
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center min-h-screen w-full bg-[#E6E6FA]">
-          <TailSpin
-            visible={true}
-            height="80"
-            width="80"
-            color="#895256"
-            ariaLabel="tail-spin-loading"
-            radius="1"
-            wrapperStyle={{}}
-            wrapperClass=""
-          />
-          <p className="mt-4 text-xl font-semibold text-[#895256]">
-            Chargement du tableau de bord...
-          </p>
+        <div className="flex flex-col items-center justify-center min-h-screen w-full bg-[#F0EFF8]">
+          <TailSpin visible height="60" width="60" color="#7A3B3F" ariaLabel="tail-spin-loading" radius="1" />
+          <p className="mt-4 text-base font-semibold text-[#7A3B3F]">Chargement du tableau de bord...</p>
         </div>
       ) : (
-        <div className="px-20 py-8">
+        <div className="page-content">
           {/* Cartes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/*{dashboardCardsData.map((card, index) => (*/}
             {/*  <CardDashboard key={index} item={card} />*/}
             {/*))}*/}
@@ -432,35 +421,32 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
             <CardDashboard key="ecolage" item={ecolage} />
             <CardDashboard key="droit" item={droit} />
             <CardDashboard key="kermesse" item={kermesse} />
-            <div
+            <button
+              type="button"
               onClick={() => openModal('Operationajoutmodal')}
-              className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
+              className="card p-5 flex flex-col items-center justify-center gap-3 cursor-pointer border-2 border-dashed border-green-200 hover:border-green-400 hover:bg-green-50/50 transition-all min-h-[100px]"
             >
-              <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
-                <FaPlus size={22} />
+              <div className="p-3 rounded-xl bg-green-100 text-green-600">
+                <FaPlus size={18} />
               </div>
+              <p className="text-sm font-semibold text-green-700">Dépôt d'argent</p>
+            </button>
 
-              <p className="text-lg text-white font-semibold text-center">Depot d'argent</p>
-            </div>
-
-            <div
+            <button
+              type="button"
               onClick={() => openModal('Operationretirermodal')}
-              className="bg-[#895256]  hover:shadow-2xl hover:scale-102 transition-all duration-300 flex-col rounded-2xl flex items-center justify-center cursor-pointer"
+              className="card p-5 flex flex-col items-center justify-center gap-3 cursor-pointer border-2 border-dashed border-red-200 hover:border-red-400 hover:bg-red-50/50 transition-all min-h-[100px]"
             >
-              <div className="p-3 rounded-full bg-white text-[#895256] mb-3">
-                <FaMinus size={22} />
+              <div className="p-3 rounded-xl bg-red-100 text-red-600">
+                <FaMinus size={18} />
               </div>
-
-              <p className="text-lg text-white font-semibold text-center">Retrait d'argent</p>
-            </div>
+              <p className="text-sm font-semibold text-red-700">Retrait d'argent</p>
+            </button>
           </div>
 
           {/* Graphique principal + calendrier */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative">
-            <div
-              className="bg-white shadow-lg rounded-2xl p-6 lg:col-span-2 flex flex-col items-start relative"
-              style={{ height: '450px' }}
-            >
+            <div className="card p-6 lg:col-span-2 flex flex-col items-start relative" style={{ height: '420px' }}>
               {isLoaderDataBar && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/80">
                   <RotatingLines
@@ -474,49 +460,34 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
               )}
 
               {/* Contenu du graphique */}
-              <div className="flex justify-between items-center w-full mb-4">
-                <h2 className="text-xl font-bold text-[#212529]">
-                  Évolution Revenus, Dépenses & Bénéfices
-                </h2>
-                <div className="flex space-x-2">
-                  <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    className="p-2 border border-gray-300 rounded-md"
-                  >
-                    {ac.map((y, index) => (
-                      <option key={index} value={y.id}>
-                        {y.annee}
-                      </option>
-                    ))}
+              <div className="flex flex-wrap gap-3 justify-between items-center w-full mb-4">
+                <h2 className="text-base font-bold text-gray-900">Revenus · Dépenses · Bénéfices</h2>
+                <div className="flex gap-2 flex-wrap">
+                  <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="select-field text-sm">
+                    {ac.map((y, index) => <option key={index} value={y.id}>{y.annee}</option>)}
                   </select>
-
-                  <select
-                    value={range}
-                    onChange={(e) => setRange(parseInt(e.target.value))}
-                    className="p-2 border border-gray-300 rounded-md"
-                  >
-                    <option value={3}>Trimestre (3 mois)</option>
-                    <option value={6}>Semestre (6 mois)</option>
-                    <option value={12}>Année complète (12 mois)</option>
+                  <select value={range} onChange={(e) => setRange(parseInt(e.target.value))} className="select-field text-sm">
+                    <option value={3}>3 mois</option>
+                    <option value={6}>6 mois</option>
+                    <option value={12}>12 mois</option>
                   </select>
                 </div>
               </div>
               <div className="w-full h-full pb-10 flex items-center justify-start">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={rechartsBarData} margin={{ top: 20, right: 10, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
-                    <YAxis tickFormatter={(val) => `${val.toLocaleString()} Ar`} axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
-                    <Tooltip 
-                      formatter={(value: number) => `${value.toLocaleString()} Ar`} 
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                      cursor={{fill: 'transparent'}}
+                  <BarChart data={rechartsBarData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0eef8" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9593b4', fontSize: 12 }} />
+                    <YAxis tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} axisLine={false} tickLine={false} tick={{ fill: '#9593b4', fontSize: 11 }} width={45} />
+                    <Tooltip
+                      formatter={(value: number) => [`${value.toLocaleString('fr-FR')} Ar`]}
+                      contentStyle={{ borderRadius: '10px', border: '1px solid #ede9f6', boxShadow: '0 8px 24px rgba(0,0,0,.08)', fontSize: 13 }}
+                      cursor={{ fill: 'rgba(122,59,63,.04)' }}
                     />
-                    <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
-                    <Bar dataKey="Revenus" fill="#895256" radius={[4, 4, 0, 0]} barSize={16} />
-                    <Bar dataKey="Dépenses" fill="#9f7126" radius={[4, 4, 0, 0]} barSize={16} />
-                    <Bar dataKey="Bénéfices" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={16} />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 12 }} />
+                    <Bar dataKey="Revenus" fill="#7A3B3F" radius={[6, 6, 0, 0]} barSize={14} />
+                    <Bar dataKey="Dépenses" fill="#9f7126" radius={[6, 6, 0, 0]} barSize={14} />
+                    <Bar dataKey="Bénéfices" fill="#4f46e5" radius={[6, 6, 0, 0]} barSize={14} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -527,29 +498,29 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mt-6">
             {/* Résumé benefice et perte en actuel  iniani iniany , magnano maj isan andro , ko tsisy perte de atao 0 */}
-            <div className="bg-white shadow-xl rounded-2xl p-6 flex flex-col justify-between lg:col-span-2">
-              <h2 className="text-2xl font-bold text-[#212529] mb-6">Résumé financier</h2>
-              <div className="flex flex-col space-y-4">
-                <div className="flex items-center justify-between p-6 bg-green-50 rounded-2xl shadow-md">
+            <div className="card p-6 flex flex-col justify-between lg:col-span-2">
+              <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-5">Résumé financier</h2>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between p-4 bg-green-50 border border-green-100 rounded-xl">
                   <div>
-                    <p className="text-lg text-gray-600">Crédit</p>
-                    <p className="text-3xl font-bold text-green-700 mt-1">+ {flux.debit} Ar</p>
+                    <p className="text-xs font-semibold text-green-600 uppercase tracking-wide">Crédit total</p>
+                    <p className="text-2xl font-extrabold text-green-700 mt-0.5">{Number(flux.debit).toLocaleString('fr-FR')} Ar</p>
                   </div>
-                  <MdTrendingUp className="text-green-600 w-12 h-12" />
+                  <div className="p-3 rounded-xl bg-green-100"><MdTrendingUp className="text-green-600 w-7 h-7" /></div>
                 </div>
-                <div className="flex items-center justify-between p-6 bg-red-50 rounded-2xl shadow-md">
+                <div className="flex items-center justify-between p-4 bg-red-50 border border-red-100 rounded-xl">
                   <div>
-                    <p className="text-lg text-gray-600">Débit</p>
-                    <p className="text-3xl font-bold text-red-700 mt-1">- {flux.credit} Ar</p>
+                    <p className="text-xs font-semibold text-red-600 uppercase tracking-wide">Débit total</p>
+                    <p className="text-2xl font-extrabold text-red-700 mt-0.5">{Number(flux.credit).toLocaleString('fr-FR')} Ar</p>
                   </div>
-                  <MdTrendingDown className="text-red-600 w-12 h-12" />
+                  <div className="p-3 rounded-xl bg-red-100"><MdTrendingDown className="text-red-600 w-7 h-7" /></div>
                 </div>
               </div>
             </div>
 
             {/* Graphique Pie  (boribory)*/}
-            <div className="bg-white shadow-xl rounded-2xl p-6 flex flex-col lg:col-span-3">
-              <h2 className="text-2xl font-bold text-[#212529] mb-4">Répartition des effectifs</h2>
+            <div className="card p-6 flex flex-col lg:col-span-3">
+              <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Répartition des effectifs</h2>
               <div className="flex-1 w-full h-full pb-6">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -577,10 +548,8 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
               </div>
             </div>
           </div>
-                             <div className="bg-white shadow-xl rounded-2xl p-6 mt-8" style={{ height: '450px' }}>
-  <h2 className="text-2xl font-bold text-[#212529] mb-4">
-    Évolution Débit & Crédit
-  </h2>
+              <div className="card p-6 mt-6" style={{ height: '380px' }}>
+            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Évolution Débit &amp; Crédit</h2>
 
   <div className="w-full h-full">
     <ResponsiveContainer width="100%" height="100%">
@@ -595,21 +564,19 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
           contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
         />
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-        <Legend wrapperStyle={{ paddingTop: '10px' }} iconType="circle" />
-        <Line type="monotone" dataKey="debit" stroke="#dc2626" strokeWidth={2} dot={{ r: 4 }} />
-        <Line type="monotone" dataKey="credit" stroke="#16a34a" strokeWidth={2} dot={{ r: 4 }} />
+        <Legend iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
+        <Line type="monotone" dataKey="debit" stroke="#dc2626" strokeWidth={2.5} dot={{ r: 3, fill: '#dc2626' }} activeDot={{ r: 5 }} />
+        <Line type="monotone" dataKey="credit" stroke="#16a34a" strokeWidth={2.5} dot={{ r: 3, fill: '#16a34a' }} activeDot={{ r: 5 }} />
       </LineChart>
     </ResponsiveContainer>
-  </div>
-</div>
-                        {/* ===== Performance & Majors ===== */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10">
+          </div>
+        </div>
+          {/* ===== Performance & Majors ===== */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
-  {/* Graphique Performance */}
-  <div className="bg-white shadow-xl rounded-2xl p-6" style={{ height: '400px' }}>
-    <h2 className="text-2xl font-bold text-[#212529] mb-4">
-      Performance Moyenne par Classe
-    </h2>
+            {/* Graphique Performance */}
+            <div className="card p-6" style={{ height: '380px' }}>
+              <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Performance par Classe</h2>
     <div className="w-full h-full pb-10">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart 
@@ -632,69 +599,58 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
         </BarChart>
       </ResponsiveContainer>
     </div>
-  </div>
-
-  {/* Tableau Majors */}
-  <div className="bg-white shadow-xl rounded-2xl p-6 relative">
-    <h2 className="text-2xl font-bold text-[#212529] mb-6">
-      Élèves Majors par Classe
-    </h2>
-
-  <select
-    value={selectedMajorExam}
-    onChange={(e) =>
-      setSelectedMajorExam(e.target.value as '1' | '2' | '3' | 'last', '4')
-    }
-    className="p-2 border border-gray-300 rounded-md absolute right-3 top-5"
-  >
-    <option value="last">Dernier Examen</option>
-    <option value="1">1er Examen</option>
-    <option value="2">2ème Examen</option>
-    <option value="3">3ème Examen</option>
-    <option value="4">Moyenne générale</option>
-  
-
-  </select>
-    <div className="overflow-x-auto">
-      <table className="min-w-full border border-slate-200 rounded-lg overflow-hidden">
-        <thead className="bg-[#895256] text-white">
-          <tr>
-            <th className="py-3 px-4 text-left">Classe</th>
-            <th className="py-3 px-4 text-left">Nom</th>
-            <th className="py-3 px-4 text-left">Moyenne</th>
-          </tr>
-        </thead>
-        <tbody>
-          {majors.map((eleve, index) => (
-            <tr
-              key={index}
-              className="border-b border-slate-200 hover:bg-slate-50 transition"
-            >
-              <td className="py-3 px-4 font-semibold text-slate-700">
-                {eleve.classe}
-              </td>
-              <td className="py-3 px-4">{eleve.nom}</td>
-              <td className="py-3 px-4 font-bold text-[#895256]">
-                {eleve.moyenne} / 20
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
- 
-          <div className="max-w-7xl mt-8 mx-auto mb-5">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-slate-800 mb-2">
-                Infrastructures de L'établissement
-              </h1>
-              <p className="text-slate-600">Vue d'ensemble des salles de classe par niveau</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+            {/* Tableau Majors */}
+            <div className="card p-6 relative">
+              <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-5">Élèves Majors par Classe</h2>
+
+              <select
+                value={selectedMajorExam}
+                onChange={(e) => setSelectedMajorExam(e.target.value as '1' | '2' | '3' | 'last' | '4')}
+                className="select-field text-sm absolute right-4 top-4"
+              >
+                <option value="last">Dernier Examen</option>
+                <option value="1">1er Examen</option>
+                <option value="2">2ème Examen</option>
+                <option value="3">3ème Examen</option>
+                <option value="4">Moyenne générale</option>
+              </select>
+              <div className="overflow-x-auto mt-10">
+                <table className="min-w-full rounded-xl overflow-hidden">
+                  <thead className="table-header">
+                    <tr>
+                      <th className="py-3 px-4 text-left">Classe</th>
+                      <th className="py-3 px-4 text-left">Nom</th>
+                      <th className="py-3 px-4 text-left">Moy.</th>
+                    </tr>
+        </thead>
+        <tbody>
+                    {majors.map((eleve, index) => (
+                      <tr key={index} className="table-row">
+                        <td className="py-2.5 px-4 text-xs font-semibold text-gray-500 uppercase">{eleve.classe}</td>
+                        <td className="py-2.5 px-4 text-sm font-medium text-gray-800">{eleve.nom}</td>
+                        <td className="py-2.5 px-4">
+                          <span className="badge badge-brand">{eleve.moyenne}/20</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+ 
+          <div className="mt-8 mb-5">
+            <div className="page-header">
+              <div>
+                <h2 className="page-title">Infrastructures</h2>
+                <p className="text-sm text-gray-500 mt-1 ml-4">Vue d'ensemble des salles de classe par niveau</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="card p-5">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-600 mb-1">Total Classes</p>
@@ -705,7 +661,7 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+              <div className="card p-5">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-600 mb-1">Total Salles</p>
@@ -718,7 +674,7 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+              <div className="card p-5">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-slate-600 mb-1">Total Élèves</p>

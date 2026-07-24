@@ -1,73 +1,72 @@
 /* ============================================================
-   Sidebar — Module CSS
+   Sidebar — Module CSS (Design System cohérent)
    ============================================================ */
 
 /* ---- État actif ---- */
 .active {
-  background: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.15);
   color: #ffffff;
   font-weight: 600;
-  border-left: 3px solid #fffbe7;
-  border-radius: 10px;
-  transition: all 250ms ease;
+  border-left: 3px solid rgba(255,251,231,.9);
+  border-radius: 12px;
+  transition: all 220ms ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
-.active:hover {
-  background: rgba(255,255,255,.25);
-}
+.active:hover { background: rgba(255,255,255,.2); }
 
 /* ---- État inactif ---- */
 .inactive {
   background: transparent;
-  color: rgba(255,255,255,.82);
-  font-weight: 450;
+  color: rgba(255,255,255,.75);
+  font-weight: 500;
   border-left: 3px solid transparent;
-  border-radius: 10px;
-  transition: all 200ms ease;
+  border-radius: 12px;
+  transition: all 180ms ease;
 }
 .inactive:hover {
-  background: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.08);
   color: #ffffff;
-  border-left-color: rgba(255,251,231,.5);
+  border-left-color: rgba(255,251,231,.35);
 }
 
 /* ---- Sous-menu actif ---- */
 .submenuactive {
-  background: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.15);
   color: #ffffff;
   font-weight: 600;
-  border-left: 3px solid #fffbe7;
-  border-radius: 10px;
-  transition: all 250ms ease;
+  border-left: 3px solid rgba(255,251,231,.9);
+  border-radius: 12px;
+  transition: all 220ms ease;
 }
-.submenuactive:hover {
-  background: rgba(255,255,255,.25);
-}
+.submenuactive:hover { background: rgba(255,255,255,.2); }
 
 /* ---- Sous-menu inactif ---- */
 .submenuinactive {
-  color: rgba(255,255,255,.78);
+  color: rgba(255,255,255,.7);
   border-left: 3px solid transparent;
-  border-radius: 10px;
-  transition: all 200ms ease;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 180ms ease;
 }
 .submenuinactive:hover {
-  background: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.08);
   color: #ffffff;
-  border-left-color: rgba(255,251,231,.4);
+  border-left-color: rgba(255,251,231,.3);
 }
 
 /* ---- Bouton normal (avec sous-menus) ---- */
 .normalBtn {
   position: relative;
-  color: rgba(255,255,255,.82);
+  color: rgba(255,255,255,.75);
   border-left: 3px solid transparent;
-  border-radius: 10px;
-  transition: all 200ms ease;
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 180ms ease;
 }
 .normalBtn:hover {
-  background: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.08);
   color: #ffffff;
-  border-left-color: rgba(255,251,231,.4);
+  border-left-color: rgba(255,251,231,.3);
 }
 
 /* ---- Tooltip sidebar collapsed ---- */
@@ -75,14 +74,14 @@
   display: none;
   position: fixed;
   left: 5.2rem;
-  background: #5a2535;
+  background: #4e2233;
   border-radius: 10px;
   padding: 6px 8px;
   z-index: 9999;
   gap: 4px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-  border: 1px solid rgba(255,255,255,.1);
-  transition: opacity 200ms ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+  border: 1px solid rgba(255,255,255,.12);
+  transition: opacity 180ms ease;
 }
 
 /* flèche tooltip */
@@ -96,7 +95,7 @@
   height: 0;
   border-top:   7px solid transparent;
   border-bottom:7px solid transparent;
-  border-right: 7px solid #5a2535;
+  border-right: 7px solid #4e2233;
 }
 
 li:hover .menukely2 {

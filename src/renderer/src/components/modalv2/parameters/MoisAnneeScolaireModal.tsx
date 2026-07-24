@@ -37,22 +37,76 @@ const TransMajDebut = (str: string): string =>
     })
     .join(', ')
 
-const monthListRegex = /^[A-Za-zÀ-ÿ]+(,\s*[A-Za-zÀ-ÿ]+)*$/
+// The 12 French months used for the picker
+const ALL_MONTHS = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+]
 
 const schema = yup.object({
-  prescolaire: yup
-    .string()
-    .required('Le champ Préscolaire est requis')
-    .matches(monthListRegex, 'Format invalide (ex: Janvier, Mars)'),
-  primaire: yup
-    .string()
-    .required('Le champ Primaire est requis')
-    .matches(monthListRegex, 'Format invalide (ex: Janvier, Mars)'),
-  college: yup
-    .string()
-    .required('Le champ Collège est requis')
-    .matches(monthListRegex, 'Format invalide (ex: Janvier, Mars)')
+  prescolaire: yup.string().required('Sélectionnez au moins un mois pour Préscolaire'),
+  primaire: yup.string().required('Sélectionnez au moins un mois pour Primaire'),
+  college: yup.string().required('Sélectionnez au moins un mois pour Collège')
 })
+
+/** Converts a stored comma string to an array of month names */
+const strToArray = (str: string): string[] =>
+  str ? str.split(',').map((s) => s.trim()).filter(Boolean) : []
+
+/** Small reusable month picker */
+const MonthPicker = ({
+  label,
+  value,
+  onChange,
+  error
+}: {
+  label: string
+  value: string
+  onChange: (val: string) => void
+  error?: string
+}) => {
+  const selected = strToArray(value)
+
+  const toggle = (month: string) => {
+    const next = selected.includes(month)
+      ? selected.filter((m) => m !== month)
+      : [...selected, month]
+    onChange(next.join(', '))
+  }
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {label} <span className="text-red-400">*</span>
+      </label>
+      <div className="grid grid-cols-3 gap-2">
+        {ALL_MONTHS.map((month) => {
+          const active = selected.includes(month)
+          return (
+            <button
+              key={month}
+              type="button"
+              onClick={() => toggle(month)}
+              className={`px-2 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150 ${
+                active
+                  ? 'bg-[#895256] text-white border-[#895256] shadow-sm'
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-[#895256] hover:text-[#895256]'
+              }`}
+            >
+              {month}
+            </button>
+          )
+        })}
+      </div>
+      {error && <p className="text-sm text-red-400 mt-1">{error}</p>}
+      {selected.length > 0 && (
+        <p className="text-xs text-gray-400 mt-1">
+          Sélectionnés : <span className="text-[#895256] font-medium">{value}</span>
+        </p>
+      )}
+    </div>
+  )
+}
 
 const MoisAnneeScolaireModal: React.FC<Props> = ({ closemodal }) => {
   const [activeTab, setActiveTab] = useState<'ajouter' | 'historique'>('ajouter')
@@ -66,12 +120,16 @@ const MoisAnneeScolaireModal: React.FC<Props> = ({ closemodal }) => {
   const { openModal, modal, closModal } = useMultiModals()
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue
+    setValue,
+    watch
   } = useForm<FormData>({ resolver: yupResolver(schema) })
+
+  const prescolaireVal = watch('prescolaire') ?? ''
+  const primaireVal = watch('primaire') ?? ''
+  const collegeVal = watch('college') ?? ''
 
   const getHistoriques = async () => {
     setIsListLoading(true)
@@ -198,72 +256,30 @@ const MoisAnneeScolaireModal: React.FC<Props> = ({ closemodal }) => {
         </div>
 
         {activeTab === 'ajouter' ? (
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
             {/* Préscolaire */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Préscolaire <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Ex: Janvier, Mars, Juin"
-                {...register('prescolaire')}
-                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.prescolaire
-                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                    : 'border-gray-300 shadow-sm'
-                }`}
-              />
-
-              {errors.prescolaire && (
-                <p className="text-sm text-red-400 mt-1">{errors.prescolaire.message}</p>
-              )}
-              <p className="text-xs text-gray-400 mt-1">
-                Séparez les mois par une virgule (ex: Janvier, Mars, Juin)
-              </p>
-            </div>
+            <MonthPicker
+              label="Préscolaire"
+              value={prescolaireVal}
+              onChange={(val) => setValue('prescolaire', val, { shouldValidate: true })}
+              error={errors.prescolaire?.message}
+            />
 
             {/* Primaire */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Primaire <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Ex: Janvier, Février, Avril"
-                {...register('primaire')}
-                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.primaire
-                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                    : 'border-gray-300 shadow-sm'
-                }`}
-              />
-              {errors.primaire && (
-                <p className="text-sm text-red-400 mt-1">{errors.primaire.message}</p>
-              )}
-              <p className="text-xs text-gray-400 mt-1">Séparez les mois par une virgule</p>
-            </div>
+            <MonthPicker
+              label="Primaire"
+              value={primaireVal}
+              onChange={(val) => setValue('primaire', val, { shouldValidate: true })}
+              error={errors.primaire?.message}
+            />
 
             {/* Collège */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Collège <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Ex: Octobre, Novembre, Décembre"
-                {...register('college')}
-                className={`w-full px-5 py-3 border rounded-xl focus:ring-4 focus:ring-[#895256] focus:outline-none transition-shadow duration-300 ${
-                  errors.college
-                    ? 'border-red-500 shadow-[0_0_5px_#f87171]'
-                    : 'border-gray-300 shadow-sm'
-                }`}
-              />
-              {errors.college && (
-                <p className="text-sm text-red-400 mt-1">{errors.college.message}</p>
-              )}
-              <p className="text-xs text-gray-400 mt-1">Séparez les mois par une virgule</p>
-            </div>
+            <MonthPicker
+              label="Collège"
+              value={collegeVal}
+              onChange={(val) => setValue('college', val, { shouldValidate: true })}
+              error={errors.college?.message}
+            />
 
             <div className="flex justify-end gap-3 mt-2">
               <button

@@ -25,7 +25,7 @@ function Login(): JSX.Element {
     autoUser()
   }, [])
   const navigate = useNavigate()
-  const { setUser} = useContext(UserProvider)
+  const { setUser } = useContext(UserProvider)
   const [isLoading, setIsLoading] = useState(false)
   const ValidationSchema = yup.object({
     email: yup.string().email('Email invalide').required('Veuillez entrer votre email'),
@@ -86,9 +86,8 @@ function Login(): JSX.Element {
                 <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
                   type="email"
-                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] outline-none ${
-                    errors.email ? 'border-red-400' : 'border-gray-300'
-                  }`}
+                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] outline-none ${errors.email ? 'border-red-400' : 'border-gray-300'
+                    }`}
                   placeholder="Votre e-mail"
                   {...register('email')}
                 />
@@ -109,9 +108,8 @@ function Login(): JSX.Element {
                 <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] outline-none ${
-                    errors.password ? 'border-red-400' : 'border-gray-300'
-                  }`}
+                  className={`bg-white text-black w-full p-3 pl-10 border rounded-lg focus:ring-2 focus:ring-[#7A3B3F] outline-none ${errors.password ? 'border-red-400' : 'border-gray-300'
+                    }`}
                   placeholder="Votre mot de passe"
                   {...register('password')}
                 />

@@ -8,11 +8,12 @@ import { axiosRequest } from '@renderer/config/helpers'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
 import {toast} from "react-toastify"
-import { FaDoorOpen, FaXRay } from 'react-icons/fa'
+import { FaDoorOpen } from 'react-icons/fa'
 import { Footprints } from 'lucide-react'
-import { BsFillDoorOpenFill } from 'react-icons/bs'
+import { BsCalendar2Check, BsFileEarmarkText, BsGift } from 'react-icons/bs'
 import { motion } from 'framer-motion'
 import { printElement } from '@renderer/utils/printHelper'
+import { useNavigate } from 'react-router-dom'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -29,6 +30,7 @@ const Showinfostudentsmodal = ({
   setFresh,
   hideActions = false
 }: ShowInfoStudentsProps) => {
+  const navigate = useNavigate()
   const [statusBtnClicked, setStatusBtnClicked] = useState<string | null>(null)
   const [openClassModal, setOpenClassModal] = useState(false)
   const [TabStatusWhoAreValide, setTabStatusWhoAreValide] = useState<number[]>([])
@@ -297,6 +299,40 @@ const [openDateModal, setOpenDateModal] = useState(false)
               </div>
             </section>
           )}
+
+          {/* Accès Rapide */}
+          <section>
+            <h3 className="text-base font-bold text-gray-700 mb-3 flex items-center gap-2">
+              <span className="w-2 h-4 rounded-full bg-[var(--color-primary,#895256)]"></span>
+              Accès rapide
+            </h3>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <button
+                type="button"
+                onClick={() => { closemodal(); navigate('/students/ecolage') }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm font-medium transition-colors border border-blue-100"
+              >
+                <BsCalendar2Check size={14} />
+                Écolage
+              </button>
+              <button
+                type="button"
+                onClick={() => { closemodal(); navigate('/students/droit') }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 text-sm font-medium transition-colors border border-amber-100"
+              >
+                <BsFileEarmarkText size={14} />
+                Droits
+              </button>
+              <button
+                type="button"
+                onClick={() => { closemodal(); navigate('/students/kermess') }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 text-sm font-medium transition-colors border border-purple-100"
+              >
+                <BsGift size={14} />
+                Kermesse
+              </button>
+            </div>
+          </section>
 
           {/* Statuts */}
           <section>
