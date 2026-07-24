@@ -167,7 +167,7 @@ useEffect(() => {
   }
 const [isOld, setIsOld] = useState(0)
   const isAncien = async () => {
-    await axiosRequest('GET', `isold/${student.id}/${student.sousetudiants[student.sousetudiants.length - 1].id}`, null, 'token')
+    await axiosRequest('GET', `isold/${student.id}`, null, 'token')
     .then(({data}) => setIsOld(data))
   }
 
