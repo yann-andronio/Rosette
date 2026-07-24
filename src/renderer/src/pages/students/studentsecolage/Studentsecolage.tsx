@@ -10,9 +10,9 @@ import { MdMeetingRoom } from 'react-icons/md'
 import Showinfoecolagemodal from '@renderer/components/modalsform/Showinfoecolagemodal'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
+import { printElement } from '@renderer/utils/printHelper'
 import { RotatingLines } from 'react-loader-spinner'
-import { ToastContainer } from 'react-toastify'
-import PrintOptionsModal, { PrintType } from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
+import PrintOptionsModal from '@renderer/components/modalv2/studentecolage/PrintOptionsModal'
 import PapierImpressionNonPaye from '@renderer/components/modalv2/studentecolage/PapierImpressionNonpaye'
 
 function Studentsecolage(): JSX.Element {
@@ -46,15 +46,13 @@ function Studentsecolage(): JSX.Element {
     try {
       await axiosRequest(
         'GET',
-        `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`,
-        null,
-        'token'
+        `etudiant-list_ecolage?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyears}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&ecolage=${selectedstatusecolage}&mois=${selectedmoisEcolage}`,
+        null
       )
         .then(({ data }) => setStudents(data))
-        .then(() => setIsLoading(false))
-        .catch((error) => console.log(error.response.data?.message))
+        .catch((error) => console.log(error.response?.data?.message))
         .finally(() => setIsLoading(false))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -105,40 +103,40 @@ function Studentsecolage(): JSX.Element {
 
   const getAcs = async () => {
     try {
-      await axiosRequest('GET', 'ac-list', null, 'token')
+      await axiosRequest('GET', 'ac-list', null)
         .then(({ data }) => setAcs(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getClasse = async () => {
     try {
-      await axiosRequest('GET', `classe-list_year/${selectedyears}`, null, 'token')
+      await axiosRequest('GET', `classe-list_year/${selectedyears}`, null)
         .then(({ data }) => setClasses(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getMac = async () => {
     try {
-      await axiosRequest('GET', `mac-list_year/${selectedyears}`, null, 'token')
+      await axiosRequest('GET', `mac-list_year/${selectedyears}`, null)
         .then(({ data }) => setMacs(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getSalle = async () => {
     try {
-      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null, 'token')
+      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null)
         .then(({ data }) => setSalles(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -166,16 +164,7 @@ function Studentsecolage(): JSX.Element {
 
 
   const handlePrintStudentsNonpayé = () => {
-     setTimeout(() => {
-       if (!printRef.current) return
-       const printContents = printRef.current.innerHTML
-       if (!printContents) return
-       const originalContents = document.body.innerHTML
-       document.body.innerHTML = printContents
-       window.print()
-       document.body.innerHTML = originalContents
-       window.location.reload()
-     }, 200)
+    setTimeout(() => printElement(printRef.current), 200)
   }
 
 
@@ -498,11 +487,11 @@ function Studentsecolage(): JSX.Element {
                       </div>
                       <div className="flex-1 ">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every((et) => et.payé == 1) == true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${student.sousetudiants[student.sousetudiants.length - 1]?.ecolage?.every((et) => et.payé == 1) === true ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                         >
-                          {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage.every(
+                          {student.sousetudiants[student.sousetudiants.length - 1]?.ecolage?.every(
                             (et) => et.payé == 1
-                          ) == true
+                          ) === true
                             ? 'Payé'
                             : 'Non payé'}
                         </span>
@@ -565,16 +554,6 @@ function Studentsecolage(): JSX.Element {
             </span>
           </button>
         </div>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-        />
       </div>
 
       {/* {modal.AdUpinfostudents && (

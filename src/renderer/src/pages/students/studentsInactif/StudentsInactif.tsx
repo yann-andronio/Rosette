@@ -9,10 +9,11 @@ import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import Showinfostudentsmodal from '@renderer/components/modalsform/Showinfostudentsmodal'
 import PrintOptionsModalInnactif from '@renderer/components/modalv2/studentsinnactif/PrintOptionsModalInnactif'
 import PapierImpressionInactif from '@renderer/components/modalv2/studentsinnactif/PapierImpressionInactif'
+import { printElement } from '@renderer/utils/printHelper'
 
 function StudentsInactif(): JSX.Element {
   const closeBar = useSelector((state: RootState) => state.activeLink.closeBar)
@@ -162,16 +163,7 @@ function StudentsInactif(): JSX.Element {
   const printRef = useRef<HTMLDivElement>(null)
 
   const handlePrintStudentsNonpayé = () => {
-    setTimeout(() => {
-      if (!printRef.current) return
-      const printContents = printRef.current.innerHTML
-      if (!printContents) return
-      const originalContents = document.body.innerHTML
-      document.body.innerHTML = printContents
-      window.print()
-      document.body.innerHTML = originalContents
-      window.location.reload()
-    }, 200)
+    setTimeout(() => printElement(printRef.current), 200)
   }
 
   const unquit = async (id, type:string) => {
@@ -590,15 +582,6 @@ function StudentsInactif(): JSX.Element {
           </button>
         </div>
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-        />
       </div>
 
       {/* {modal.AdUpinfostudents && (

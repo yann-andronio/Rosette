@@ -11,7 +11,7 @@ import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
-import { ToastContainer } from 'react-toastify'
+import { printElement } from '@renderer/utils/printHelper'
 
 import PrintOptionsModalDroit from '@renderer/components/modalv2/studentsDroit/PrintOptionsModalDroit'
 import ShowinfoDroitmodal from '@renderer/components/modalv2/studentsDroit/ShowinfoDroitmodal'
@@ -166,16 +166,7 @@ function StudentsDroit(): JSX.Element {
   const printRef = useRef<HTMLDivElement>(null)
 
   const handlePrintStudentsNonpayé = () => {
-    setTimeout(() => {
-      if (!printRef.current) return
-      const printContents = printRef.current.innerHTML
-      if (!printContents) return
-      const originalContents = document.body.innerHTML
-      document.body.innerHTML = printContents
-      window.print()
-      document.body.innerHTML = originalContents
-      window.location.reload()
-    }, 200)
+    setTimeout(() => printElement(printRef.current), 200)
   }
 
 
@@ -581,16 +572,6 @@ function StudentsDroit(): JSX.Element {
             </span>
           </button>
         </div>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-        />
       </div>
 
       {/* {modal.AdUpinfostudents && (

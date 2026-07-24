@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import { useEffect, useState } from 'react'
-import { FaEdit, FaTrash, FaUserCircle, FaUserTie } from 'react-icons/fa'
+import { FaTrash, FaUserCircle, FaUserTie } from 'react-icons/fa'
 import Searchbar from '@renderer/components/searchbar/Searchbar'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 
@@ -10,7 +10,7 @@ import { EmployerType } from '@renderer/types/Alltypes'
 import EmployerCardSuivi from '@renderer/components/card/EmployerCardSuivi'
 import Addsuiviemployeemodal from '@renderer/components/modalsform/Addsuiviemployeemodal'
 import { axiosRequest } from '@renderer/config/helpers'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 import { RotatingLines } from 'react-loader-spinner'
 import { LuRefreshCw } from 'react-icons/lu'
@@ -24,7 +24,6 @@ function Employersuivi(): JSX.Element {
     last_page: number
     data: EmployerType[]
   }>({ last_page: 1, data: [], total: 0, per_page: 0 })
-  const [w_id, setW_id] = useState<number>()
 
   const [selectedEmployer, setSelectedEmployer] = useState<EmployerType | null>(
     workers.data.length > 0 ? workers.data[0] : null
@@ -32,10 +31,10 @@ function Employersuivi(): JSX.Element {
 
   const auto = async () => {
     try {
-      await axiosRequest('GET', 'conge-auto-stop', null, 'token')
+      await axiosRequest('GET', 'conge-auto-stop', null)
         .then(() => setReload(!reload))
-        .catch((error) => console.log(error.response.data.message))
-    } catch (error) {
+        .catch((error) => console.log(error.response?.data?.message))
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -72,12 +71,11 @@ function Employersuivi(): JSX.Element {
   const getWorkers = async () => {
     setIsLoading(true)
     try {
-      await axiosRequest('GET', `worker-list?q=${searchEmployes}`, null, 'token')
+      await axiosRequest('GET', `worker-list?q=${searchEmployes}`, null)
         .then(({ data }) => setWorkkers(data))
-        .then(() => setIsLoading(false))
-        .catch((error) => console.log(error.response.data.error))
+        .catch((error) => console.log(error.response?.data?.error))
         .finally(() => setIsLoading(false))
-    } catch (err) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -89,11 +87,11 @@ function Employersuivi(): JSX.Element {
 
   const deletes = async (id: number) => {
     try {
-      await axiosRequest('DELETE', `worker/${id}`, null, 'token')
+      await axiosRequest('DELETE', `worker/${id}`, null)
         .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
-        .catch((error) => toast.error(error.response.data.error))
-    } catch (error) {
+        .catch((error) => toast.error(error.response?.data?.error))
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -287,16 +285,6 @@ function Employersuivi(): JSX.Element {
           />
         )}
       </div>
-
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
     </div>
   )
 }

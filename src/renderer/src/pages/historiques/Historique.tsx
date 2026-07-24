@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@renderer/redux/Store'
 import useMultiModals from '@renderer/hooks/useMultiModals'
@@ -59,10 +59,10 @@ export default function Historique() {
   const getHistoriques = async () => {
     setIsLoading(true)
     try {
-      await axiosRequest('GET', `audit?type=${activeFilter}&q=${searchHistorique}`, null, 'token')
+      await axiosRequest('GET', `audit?type=${activeFilter}&q=${searchHistorique}`, null)
         .then(({ data }) => setHistoriques(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     } finally {
       setIsLoading(false)
@@ -81,10 +81,10 @@ export default function Historique() {
 
   const getStats = async () => {
     try {
-      await axiosRequest('GET', 'audit-stats', null, 'token')
+      await axiosRequest('GET', 'audit-stats', null)
         .then(({ data }) => setStats(data))
-        .catch((error) => console.log(error.response.data.message))
-    } catch (error) {
+        .catch((error) => console.log(error.response?.data?.message))
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -123,11 +123,11 @@ export default function Historique() {
   const handleConfirmDelete = async () => {
     setIsDeletingLoader(true)
     try {
-      await axiosRequest('POST', 'audit-del', { ids: selectedRows }, 'token')
+      await axiosRequest('POST', 'audit-del', { ids: selectedRows })
         .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     } finally {
       setIsDeletingLoader(false)

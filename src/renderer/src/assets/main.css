@@ -1,1 +1,138 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ============================================================
+   Design Tokens — Rosette
+   ============================================================ */
+:root {
+  /* Brand */
+  --brand-primary:   #7A3B3F;
+  --brand-dark:      #6a2e3e;
+  --brand-light:     #a86a66;
+  --brand-accent:    #9f7126;
+
+  /* Surfaces */
+  --surface-page:    #E6E6FA;
+  --surface-card:    #ffffff;
+  --surface-muted:   #f8f7ff;
+
+  /* Text */
+  --text-primary:    #1e1b2e;
+  --text-secondary:  #4b4869;
+  --text-muted:      #9593b4;
+
+  /* Feedback */
+  --success:         #16a34a;
+  --danger:          #dc2626;
+  --warning:         #d97706;
+
+  /* Shadow */
+  --shadow-sm:       0 1px 3px rgba(122,59,63,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:       0 4px 12px rgba(122,59,63,.12), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:       0 10px 30px rgba(122,59,63,.16), 0 4px 8px rgba(0,0,0,.08);
+
+  /* Radii */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-xl:  22px;
+
+  /* Transitions */
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   400ms cubic-bezier(.4,0,.2,1);
+  --transition-sidebar:550ms cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--surface-page);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   Custom Scrollbar
+   ============================================================ */
+::-webkit-scrollbar            { width: 6px; height: 6px; }
+::-webkit-scrollbar-track      { background: transparent; }
+::-webkit-scrollbar-thumb      { background: var(--brand-light); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover{ background: var(--brand-primary); }
+
+/* ============================================================
+   Focus ring accessible
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in-up { animation: fadeInUp  280ms var(--transition-slow) both; }
+.animate-fade-in    { animation: fadeIn    200ms ease both; }
+.animate-scale-in   { animation: scaleIn   250ms cubic-bezier(.34,1.56,.64,1) both; }
+
+/* ============================================================
+   Page Layout helper
+   ============================================================ */
+.page-content {
+  padding: 2rem 5rem;
+  min-height: 100%;
+}
+
+@media (max-width: 1280px) { .page-content { padding: 1.5rem 2.5rem; } }
+@media (max-width:  768px) { .page-content { padding: 1rem 1rem; } }
+
+/* ============================================================
+   Card base
+   ============================================================ */
+.card {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+/* ============================================================
+   Table stripe
+   ============================================================ */
+.table-row-even { background: #ffffff; }
+.table-row-odd  { background: #f8f7ff; }
+.table-row-hover:hover {
+  background: #f3eef7 !important;
+  border-left: 4px solid var(--brand-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   Badge
+   ============================================================ */
+.badge-success { background:#dcfce7; color:#15803d; }
+.badge-danger  { background:#fee2e2; color:#b91c1c; }
+.badge-warning { background:#fef3c7; color:#92400e; }

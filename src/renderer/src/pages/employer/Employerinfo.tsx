@@ -9,7 +9,7 @@ import AdUpEmployeemodal from '@renderer/components/modalsform/AdUpEmployeemodal
 import EmployerCardInfo from '../../components/card/EmployerCardInfo'
 import { axiosRequest } from '@renderer/config/helpers'
 import { RotatingLines } from "react-loader-spinner";
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
 
 function Employerinfo(): JSX.Element {
@@ -31,17 +31,15 @@ function Employerinfo(): JSX.Element {
 
   const getWorkers = async () => {
     setIsLoading(true)
-    try{
-      await axiosRequest('GET', `worker-list?q=${searchEmployes}`, null, 'token')
-        .then(({data}) => setWorkkers(data))
-        .then(() => setIsLoading(false))
-        .catch(error => console.log(error.response.data.error))
+    try {
+      await axiosRequest('GET', `worker-list?q=${searchEmployes}`, null)
+        .then(({ data }) => setWorkkers(data))
+        .catch((error) => console.log(error.response?.data?.error))
         .finally(() => setIsLoading(false))
-    }catch(err){
+    } catch {
       console.log('Le serveur ne repond pas')
     }
-
-}
+  }
 
   useEffect(() => {
     getWorkers()
@@ -71,13 +69,13 @@ function Employerinfo(): JSX.Element {
     pagination.push(i)
   }
 
-  const deletes = async (id:number) => {
-    try{
-      await axiosRequest('DELETE', `worker/${id}`, null,'token')
-        .then(({data}) => toast.success(data.message))
+  const deletes = async (id: number) => {
+    try {
+      await axiosRequest('DELETE', `worker/${id}`, null)
+        .then(({ data }) => toast.success(data.message))
         .then(() => setReload(!reload))
-        .catch(error => toast.error(error.response.data.error))
-    }catch (error){
+        .catch((error) => toast.error(error.response?.data?.error))
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -283,16 +281,6 @@ function Employerinfo(): JSX.Element {
           )}
         </div>
       </div>
-
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
     </div>
   )
 }

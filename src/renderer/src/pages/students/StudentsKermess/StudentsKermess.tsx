@@ -11,7 +11,7 @@ import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Etudiant } from '@renderer/pages/students/studentsinfo/Studentsinfo'
 import { RotatingLines } from 'react-loader-spinner'
-import { ToastContainer } from 'react-toastify'
+import { printElement } from '@renderer/utils/printHelper'
 
 import PrintOptionsModalKermess from '@renderer/components/modalv2/studentskermess/PrintOptionsModalKermess'
 import ShowinfoKermessmodal from '@renderer/components/modalv2/studentskermess/ShowinfoKermessmodal'
@@ -163,16 +163,7 @@ function StudentsKermess(): JSX.Element {
   const printRef = useRef<HTMLDivElement>(null)
 
   const handlePrintStudentsNonpayé = () => {
-    setTimeout(() => {
-      if (!printRef.current) return
-      const printContents = printRef.current.innerHTML
-      if (!printContents) return
-      const originalContents = document.body.innerHTML
-      document.body.innerHTML = printContents
-      window.print()
-      document.body.innerHTML = originalContents
-      window.location.reload()
-    }, 200)
+    setTimeout(() => printElement(printRef.current), 200)
   }
 
      const [school, setSchool] = useState<{name:string}>({name:'XXXX'})
@@ -577,16 +568,6 @@ function StudentsKermess(): JSX.Element {
             </span>
           </button>
         </div>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-        />
       </div>
 
       {/* {modal.AdUpinfostudents && (

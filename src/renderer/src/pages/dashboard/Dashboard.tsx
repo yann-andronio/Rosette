@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import { Users, UsersRound, DoorOpen } from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer , Tooltip, Legend} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 import {
   FaUserGraduate,
@@ -16,19 +16,6 @@ import {
 } from 'react-icons/fa'
 
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md'
-import { Bar, Pie } from 'react-chartjs-2'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip as ChartT,
-  Legend as ChartL
-
-  
-} from 'chart.js'
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, ChartL, ChartT)
 import { Calendarfilter } from '@renderer/components/calendarfilter/Calendarfilter'
 import useMultiModals from '@renderer/hooks/useMultiModals'
 import { CardDashboard } from '../../components/card/CardDashboard'
@@ -37,8 +24,6 @@ import { IconType } from 'react-icons'
 import Operationretirermodal from '@renderer/components/modalsform/Operationretirermodal'
 import Operationajoutmodal from '@renderer/components/modalsform/Operationajoutmodal'
 import { RotatingLines, TailSpin } from 'react-loader-spinner'
-import { ToastContainer } from 'react-toastify'
-import { title } from 'process';
 
 // ---- Mois jiaby ---- //
 const FullMonth = [
@@ -170,101 +155,98 @@ export default function Dashboard(): JSX.Element {
 
   const getFlux = async () => {
     try {
-      await axiosRequest('GET', 'flux', null, 'token')
+      await axiosRequest('GET', 'flux', null)
         .then(({ data }) => setFlux(data))
         .catch((err) => console.log(err?.response?.data?.error))
-    } catch (error) {
+    } catch {
       console.log('Le Serveur ne repond pas')
     }
   }
-const [dataDebitCreditRechart, setDataDebitCreditRechart] = useState<{ month: string, debit: number, credit: number }[]>([])
+  const [dataDebitCreditRechart, setDataDebitCreditRechart] = useState<{ month: string; debit: number; credit: number }[]>([])
 
-const getTradingChart = async () => {
-  try{
-      await axiosRequest('GET', 'tradingchart', null, 'token')
-      .then(({data}) => setDataDebitCreditRechart(data))
-  }catch(error){
-    console.log(error)
+  const getTradingChart = async () => {
+    try {
+      await axiosRequest('GET', 'tradingchart', null)
+        .then(({ data }) => setDataDebitCreditRechart(data))
+    } catch (error) {
+      console.log(error)
+    }
   }
-}
 
-useEffect(() => {
-  getTradingChart()
-}, [])
+  useEffect(() => {
+    getTradingChart()
+  }, [])
+
   const [isLoaderDataBar, setIsLoaderDataBar] = useState<boolean>(false)
 
   const getDatabar = async () => {
     setIsLoaderDataBar(true)
     try {
-      await axiosRequest(
-        'GET',
-        `databar?year=${selectedYear}&start=${debut}&end=${fin}`,
-        null,
-        'token'
-      )
+      await axiosRequest('GET', `databar?year=${selectedYear}&start=${debut}&end=${fin}`, null)
         .then(({ data }) => setDatabar(data))
         .catch((error) => console.log(error))
-        .then(() => setIsLoaderDataBar(false))
         .finally(() => setIsLoaderDataBar(false))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
+
   const getDatapie = async () => {
     try {
-      await axiosRequest('GET', 'datapie', null, 'token')
+      await axiosRequest('GET', 'datapie', null)
         .then(({ data }) => setDatapie(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
+
   const getEcolage = async () => {
     try {
-      await axiosRequest('GET', 'ecolage-solde', null, 'token')
+      await axiosRequest('GET', 'ecolage-solde', null)
         .then(({ data }) => setEcolage(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getEmploye = async () => {
     try {
-      await axiosRequest('GET', 'worker-count', null, 'token')
+      await axiosRequest('GET', 'worker-count', null)
         .then(({ data }) => setEmploye(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getEtudiant = async () => {
     try {
-      await axiosRequest('GET', 'etudiant-count', null, 'token')
+      await axiosRequest('GET', 'etudiant-count', null)
         .then(({ data }) => setEtudiant(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getDroit = async () => {
     try {
-      await axiosRequest('GET', 'droit-solde', null, 'token')
+      await axiosRequest('GET', 'droit-solde', null)
         .then(({ data }) => setDroit(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getKermesse = async () => {
     try {
-      await axiosRequest('GET', 'kermesse-solde', null, 'token')
+      await axiosRequest('GET', 'kermesse-solde', null)
         .then(({ data }) => setKermesse(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -301,7 +283,7 @@ useEffect(() => {
     getKermesse()
   }, [reload])
 
-  const [infra, setInfra] = useState([])
+  const [infra, setInfra] = useState<any[]>([])
 
   const visibleLabels = FullMonth.slice(0, range)
 
@@ -311,33 +293,19 @@ useEffect(() => {
   const visibleBenefices = databar?.status.slice(0, range)
 
   // ----  données pour le graph bar ---- //
-  const dataBar = {
-    labels: visibleLabels,
-    datasets: [
-      {
-        label: 'Revenus',
-        data: visibleRevenus,
-        backgroundColor: '#895256'
-      },
-      {
-        label: 'Dépenses',
-        data: visibleDepenses,
-        backgroundColor: '#9f7126'
-      },
-      {
-        label: 'Bénéfices / Pertes',
-        data: visibleBenefices,
-        backgroundColor: '#3b82f6'
-      }
-    ]
-  }
+  const rechartsBarData = visibleLabels.map((label, index) => ({
+    name: label,
+    Revenus: visibleRevenus[index] || 0,
+    Dépenses: visibleDepenses[index] || 0,
+    Bénéfices: visibleBenefices[index] || 0
+  }));
 
   const getAc = async () => {
     try {
-      await axiosRequest('GET', 'ac-list-no-month', null, 'token')
+      await axiosRequest('GET', 'ac-list-no-month', null)
         .then(({ data }) => setAc(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -350,10 +318,10 @@ useEffect(() => {
 
   const getInfra = async () => {
     try {
-      await axiosRequest('GET', 'infra', null, 'token')
+      await axiosRequest('GET', 'infra', null)
         .then(({ data }) => setInfra(data))
         .catch((error) => console.log(error))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -534,8 +502,23 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
                   </select>
                 </div>
               </div>
-              <div className="w-full h-full flex items-center justify-start">
-                <Bar data={dataBar} options={optionsBar} />
+              <div className="w-full h-full pb-10 flex items-center justify-start">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={rechartsBarData} margin={{ top: 20, right: 10, left: 10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
+                    <YAxis tickFormatter={(val) => `${val.toLocaleString()} Ar`} axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
+                    <Tooltip 
+                      formatter={(value: number) => `${value.toLocaleString()} Ar`} 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      cursor={{fill: 'transparent'}}
+                    />
+                    <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                    <Bar dataKey="Revenus" fill="#895256" radius={[4, 4, 0, 0]} barSize={16} />
+                    <Bar dataKey="Dépenses" fill="#9f7126" radius={[4, 4, 0, 0]} barSize={16} />
+                    <Bar dataKey="Bénéfices" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={16} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
@@ -567,8 +550,30 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
             {/* Graphique Pie  (boribory)*/}
             <div className="bg-white shadow-xl rounded-2xl p-6 flex flex-col lg:col-span-3">
               <h2 className="text-2xl font-bold text-[#212529] mb-4">Répartition des effectifs</h2>
-              <div className="flex-1 w-full h-full">
-                <Pie data={datapie} options={optionsPie} />
+              <div className="flex-1 w-full h-full pb-6">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Tooltip 
+                      formatter={(value: number) => `${value} élèves`} 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                    <Pie
+                      data={datapie.labels.map((label, index) => ({ name: label, value: datapie.datasets[0]?.data[index] || 0 }))}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={70}
+                      outerRadius={110}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {datapie.labels.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={(datapie.datasets[0]?.backgroundColor as string[])?.[index % ((datapie.datasets[0]?.backgroundColor as string[])?.length || 1)] || '#895256'} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -584,9 +589,13 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
         // margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
       >
         <XAxis dataKey="month" />
-        <YAxis tickFormatter={(value) => `${value} Ar`} />
-        <Tooltip formatter={(value:number) =>  `${value} Ar`}/>dc2626
-        <Legend />
+        <YAxis tickFormatter={(value) => `${value.toLocaleString()} Ar`} axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
+        <Tooltip 
+          formatter={(value:number) =>  `${value.toLocaleString()} Ar`}
+          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+        />
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+        <Legend wrapperStyle={{ paddingTop: '10px' }} iconType="circle" />
         <Line type="monotone" dataKey="debit" stroke="#dc2626" strokeWidth={2} dot={{ r: 4 }} />
         <Line type="monotone" dataKey="credit" stroke="#16a34a" strokeWidth={2} dot={{ r: 4 }} />
       </LineChart>
@@ -601,12 +610,27 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
     <h2 className="text-2xl font-bold text-[#212529] mb-4">
       Performance Moyenne par Classe
     </h2>
-    <div className="w-full h-full">
-      
-      <Bar data={dataPerformance} options={optionsPerformance} />
-           
-    
-    
+    <div className="w-full h-full pb-10">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart 
+          data={dataPerformance.labels.map((label, index) => ({
+            name: label,
+            "Moyenne": dataPerformance.datasets[0]?.data[index] || 0
+          }))} 
+          margin={{ top: 20, right: 10, left: 10, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
+          <YAxis domain={[0, 100]} tickFormatter={(val) => `${val}%`} axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
+          <Tooltip 
+            formatter={(value: number) => `${value}%`} 
+            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            cursor={{fill: 'transparent'}}
+          />
+          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+          <Bar dataKey="Moyenne" fill="#7c3aed" radius={[4, 4, 0, 0]} barSize={24} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   </div>
 
@@ -802,16 +826,6 @@ majors.sort((a,b) => b.moyenne-a.moyenne)
               })}
             </div>
           </div>
-
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            pauseOnHover
-            draggable
-          />
         </div>
       )}
 

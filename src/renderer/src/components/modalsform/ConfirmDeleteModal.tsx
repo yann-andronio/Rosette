@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FiX, FiAlertTriangle, FiTrash2, FiCheck } from 'react-icons/fi'
 import { ThreeDots } from 'react-loader-spinner'
+import { motion, AnimatePresence } from 'framer-motion'
 
 type ConfirmDeleteModalProps = {
   closemodal: () => void
@@ -9,6 +10,8 @@ type ConfirmDeleteModalProps = {
   title?: string
   message?: string
   withReason?: boolean
+  /** 'danger' = bouton rouge (suppression), 'confirm' = bouton vert (validation) */
+  variant?: 'danger' | 'confirm'
 }
 
 const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
@@ -17,79 +20,134 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   isDeletingLoader = false,
   title = 'Confirmation de suppression',
   message = 'Êtes-vous sûr de vouloir supprimer cet élément ?',
-  withReason = false
+  withReason = false,
+  variant = 'danger'
 }) => {
-
-  // const isSuspension = title === 'Confirmation de suspension' || "Confirmation de Payement de salaire"
-  // const buttonColor = isSuspension? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
-  // const buttonIcon = isSuspension ? FiCheck : FiTrash2
-  // const ButtonText = isSuspension ? 'Confirmer' : 'Supprimer'
-  // const IconComponent = buttonIcon
   const [motif, setMotif] = useState('')
-  
+  const confirmBtnRef = useRef<HTMLButtonElement>(null)
+  const cancelBtnRef  = useRef<HTMLButtonElement>(null)
+
+  /* Focus trap — met le focus sur Annuler à l'ouverture */
+  useEffect(() => {
+    cancelBtnRef.current?.focus()
+  }, [])
+
+  /* Fermeture au clavier Echap */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isDeletingLoader) closemodal()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [isDeletingLoader, closemodal])
+
+  const btnClass =
+    variant === 'danger'
+      ? 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-400'
+      : 'bg-green-600 hover:bg-green-700 focus-visible:ring-green-400'
+
+  const iconVariant = variant === 'danger' ? FiTrash2 : FiCheck
+  const IconComponent = iconVariant
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-[45rem] p-8 animate-fade-in scale-95 transition-transform duration-300">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <FiAlertTriangle className="text-yellow-500 text-2xl" />
-            <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/45 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={(e) => { if (e.target === e.currentTarget && !isDeletingLoader) closemodal() }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-modal-title"
+      >
+        <motion.div
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-[42rem] p-8"
+          initial={{ scale: 0.92, opacity: 0, y: 16 }}
+          animate={{ scale: 1,    opacity: 1, y: 0  }}
+          exit={{   scale: 0.92, opacity: 0, y: 8  }}
+          transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+        >
+          {/* Header */}
+          <div className="flex items-start justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-full ${variant === 'danger' ? 'bg-red-50' : 'bg-green-50'}`}>
+                <FiAlertTriangle
+                  size={22}
+                  className={variant === 'danger' ? 'text-red-500' : 'text-green-500'}
+                />
+              </div>
+              <h2
+                id="confirm-modal-title"
+                className="text-xl font-semibold text-gray-800"
+              >
+                {title}
+              </h2>
+            </div>
+            <button
+              onClick={closemodal}
+              disabled={isDeletingLoader}
+              aria-label="Fermer la boîte de dialogue"
+              className="text-gray-400 hover:text-gray-600 transition-colors rounded-lg p-1 focus-visible:ring-2 focus-visible:ring-gray-400 disabled:opacity-40"
+            >
+              <FiX size={22} />
+            </button>
           </div>
-          <button
-            onClick={closemodal}
-            className="text-gray-400 hover:text-red-600 transition-all"
-            disabled={isDeletingLoader}
-          >
-            <FiX size={24} />
-          </button>
-        </div>
 
-        <p className="mb-8 text-gray-700 text-lg leading-relaxed">{message}</p>
-        {withReason && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Motif</label>
-            <textarea
-              value={motif}
-              onChange={(e) => setMotif(e.target.value)}
-              placeholder="Entrez le motif..."
-              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#895256]"
-            />
-          </div>
-        )}
+          {/* Message */}
+          <p className="mb-6 text-gray-600 text-base leading-relaxed">{message}</p>
 
-        <div className="flex justify-end gap-4">
-          <button
-            onClick={closemodal}
-            disabled={isDeletingLoader}
-            className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Annuler
-          </button>
-          <button
-            onClick={() => onConfirm(motif)}
-            disabled={isDeletingLoader}
-            className={`px-6 py-2 rounded-lg text-white transition-all font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-green-600 hover:bg-green-700`}
-          >
-            {isDeletingLoader ? (
-              <ThreeDots
-                height="20"
-                width="50"
-                color="white"
-                radius="9"
-                visible={true}
-                ariaLabel="loading"
+          {/* Motif optionnel */}
+          {withReason && (
+            <div className="mb-6">
+              <label
+                htmlFor="confirm-motif"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Motif <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                id="confirm-motif"
+                value={motif}
+                onChange={(e) => setMotif(e.target.value)}
+                placeholder="Entrez le motif..."
+                rows={3}
+                className="w-full border border-gray-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#895256] resize-none transition"
               />
-            ) : (
-              <>
-                <FiCheck size={18} />
-                Confirmer
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3">
+            <button
+              ref={cancelBtnRef}
+              onClick={closemodal}
+              disabled={isDeletingLoader}
+              className="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors focus-visible:ring-2 focus-visible:ring-gray-400 disabled:opacity-50"
+            >
+              Annuler
+            </button>
+            <button
+              ref={confirmBtnRef}
+              onClick={() => onConfirm(motif)}
+              disabled={isDeletingLoader}
+              className={`px-6 py-2.5 rounded-xl text-white text-sm font-semibold flex items-center gap-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed ${btnClass}`}
+            >
+              {isDeletingLoader ? (
+                <ThreeDots height="20" width="44" color="white" radius="9" visible />
+              ) : (
+                <>
+                  <IconComponent size={16} />
+                  {variant === 'danger' ? 'Supprimer' : 'Confirmer'}
+                </>
+              )}
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   )
 }
 
 export default ConfirmDeleteModal
+

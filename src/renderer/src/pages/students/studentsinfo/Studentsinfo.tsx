@@ -11,9 +11,10 @@ import { MdMeetingRoom } from 'react-icons/md'
 import { axiosRequest } from '@renderer/config/helpers'
 import { Oval, RotatingLines } from 'react-loader-spinner'
 import ConfirmDeleteModal from '@renderer/components/modalsform/ConfirmDeleteModal'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import PrintOptionsModalForInfo from '@renderer/components/modalv2/studentsInfo/PrintOptionsModalForInfo'
 import PapierImpressionStudentsInfo from '@renderer/components/modalv2/studentsInfo/PapierImpressionStudentsInfo'
+import { printElement } from '@renderer/utils/printHelper'
 export type Etudiant = {
   id: number
   ecolage: { id: number; payé: boolean; mois: string; created_at: string }[]
@@ -38,6 +39,11 @@ export type Etudiant = {
   created_at: string
   updated_at: string
   enfantProf: number
+  nom_salle?: string
+  nom_classe?: string
+  noteTotal?: number | null
+  annee?: string
+  enfant_prof?: number
   sousetudiants: {
     id: number
     cl_id: number
@@ -104,64 +110,52 @@ function Studentsinfo(): JSX.Element {
   const [reload, setReload] = useState<boolean>(false)
   const getClasse = async () => {
     try {
-      await axiosRequest('GET', `classe-list_year/${selectedyear}`, null, 'token')
+      await axiosRequest('GET', `classe-list_year/${selectedyear}`, null)
         .then(({ data }) => setClasses(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getSalle = async () => {
     try {
-      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null, 'token')
+      await axiosRequest('GET', `salle-list_year/${selectedniveau}`, null)
         .then(({ data }) => setSalles(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
   const getAcs = async () => {
     try {
-      await axiosRequest('GET', 'ac-list', null, 'token')
+      await axiosRequest('GET', 'ac-list', null)
         .then(({ data }) => setAcs(data))
         .catch((error) => console.log(error.response?.data?.message))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
 
-  useEffect(() => {
-    getSalle()
-  }, [selectedniveau])
+  useEffect(() => { getSalle() }, [selectedniveau])
+  useEffect(() => { getClasse() }, [selectedyear])
+  useEffect(() => { getAcs() }, [])
 
-  useEffect(() => {
-    getClasse()
-  }, [selectedyear])
-
-  useEffect(() => {
-    getAcs()
-  }, [])
-
-  const nextPage = (page: number) => {
-    setCurrentPage(page)
-  }
+  const nextPage = (page: number) => setCurrentPage(page)
 
   const getEtudiants = async () => {
     setIsLoading(true)
     try {
       await axiosRequest(
         'GET',
-        `etudiant-list?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}&q=${searcheleves}`,
-        null,
-        'token'
+        `etudiant-list?page=${currentPage}&lines=${lines}&sexe=${selectedSexe}&annee=${selectedyear}&classe=${selectedniveau}&salle=${selectedsalle}&q=${searcheleves}`,
+        null
       )
         .then(({ data }) => setStudents(data))
-        .then(() => setIsLoading(false))
-        .catch((error) => console.log(error.response.data?.message))
+        .catch((error) => console.log(error.response?.data?.message))
         .finally(() => setIsLoading(false))
-    } catch (error) {
+    } catch {
       console.log('Le serveur ne repond pas')
     }
   }
@@ -206,18 +200,15 @@ function Studentsinfo(): JSX.Element {
   const { modal, openModal, closModal } = useMultiModals()
    const printRef = useRef<HTMLDivElement>(null)
 
-   const handlePrintStudentsinfo = () => {
-     setTimeout(() => {
-       if (!printRef.current) return
-       const printContents = printRef.current.innerHTML
-       if (!printContents) return
-       const originalContents = document.body.innerHTML
-       document.body.innerHTML = printContents
-       window.print()
-       document.body.innerHTML = originalContents
-       window.location.reload()
-     }, 200)
-   }
+  /**
+   * Impression sans window.location.reload().
+   * On ouvre un iframe caché, on y injecte le contenu imprimable, on imprime, puis on le retire.
+   */
+  const handlePrintStudentsinfo = () => {
+    setTimeout(() => {
+      printElement(printRef.current)
+    }, 200)
+  }
 
 //  ${ Object.values(modal).some((isOpen) => isOpen) ? 'overflow-hidden' : ''}
   return (
@@ -450,7 +441,7 @@ function Studentsinfo(): JSX.Element {
                       </div>
                       <div className="flex-1">
                         <div className="flex gap-3 text-[#9f7126] text-lg">
-                          <FaEye
+        <FaEye
                             onClick={() => {
                               setSelectedStudent({
                                 ...student,
@@ -468,14 +459,16 @@ function Studentsinfo(): JSX.Element {
                               })
                               openModal('showinfostudents')
                             }}
-                            className="hover:text-black cursor-pointer transition"
+                            aria-label={`Voir les informations de ${student.nom} ${student.prenom}`}
+                            className="hover:text-[#6a2e3e] cursor-pointer transition"
                           />
                           <FaEdit
                             onClick={() => {
                               openModal('AdUpinfostudents')
                               setEt_id(student.id)
                             }}
-                            className="hover:text-black cursor-pointer transition"
+                            aria-label={`Modifier ${student.nom} ${student.prenom}`}
+                            className="hover:text-[#6a2e3e] cursor-pointer transition"
                           />
 
                           <Trash
@@ -533,15 +526,6 @@ function Studentsinfo(): JSX.Element {
           </button>
         </div>
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          pauseOnHover
-          draggable
-        />
       </div>
       {modal.AdUpinfostudentsmodal && (
         <AdUpinfostudentsmodal
@@ -598,7 +582,7 @@ const Trash: React.FC<{
   const deleteStudent = async (id: number) => {
     setIsDeleting(true)
     try {
-      await axiosRequest('DELETE', `etudiant/${id}`, null, 'token')
+      await axiosRequest('DELETE', `etudiant/${id}`, null)
         .then(({ data }) => toast.success(data?.message || 'suppresion avec succes'))
         .then(() => setIsDeleting(false))
         .then(() => refresh(!reload))

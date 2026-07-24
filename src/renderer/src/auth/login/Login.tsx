@@ -11,13 +11,13 @@ import { axiosRequest } from '@renderer/config/helpers'
 import { useNavigate } from 'react-router-dom'
 import { ThreeDots } from 'react-loader-spinner'
 
-import { UserContext, UserProvider } from '@renderer/context/UserContext'
 import { toast, ToastContainer } from 'react-toastify'
+import { UserProvider } from '@renderer/context/UserContext'
 
 function Login(): JSX.Element {
   const [showPassword, setShowPassword] = useState(false)
   const autoUser = async () => {
-    await axiosRequest('GET', 'user-auto', null, 'token')
+    await axiosRequest('GET', 'user-auto', null)
       .then((res) => console.log(res))
       .catch((error) => console.log(error))
   }
@@ -42,34 +42,30 @@ function Login(): JSX.Element {
   const onSubmit = async (data: any) => {
     setIsLoading(true)
     const getUser = async () => {
-      await axiosRequest('GET', 'user', null, 'token')
-        .then(({data}) => setUser({id:data.id,email:data?.email, name:data?.name, roles:data?.roles, firstname:data?.firstname}))
+      await axiosRequest('GET', 'user', null)
+        .then(({ data }) =>
+          setUser({ id: data.id, email: data?.email, name: data?.name, roles: data?.roles, firstname: data?.firstname })
+        )
         .then(() => navigate('/home'))
-        .catch((error) => console.log(error))
-
+        .catch((error) => console.error(error))
     }
     try {
-      await axiosRequest('POST', 'users-connexion', data, 'none')
+      await axiosRequest('POST', 'users-connexion', data)
         .then(({ data }) => {
           if (data?.token) {
             localStorage.setItem('ACCESS_TOKEN', data.token)
-            // toast.success(data?.message)
             toast.success('Connexion réussie !')
             reset()
             getUser()
-
-
-          }else{
+          } else {
             toast.error(data?.message)
           }
         })
-        .catch((error) => toast.error(error.response.data.message))
+        .catch((error) => toast.error(error?.response?.data?.message ?? 'Identifiants invalides'))
         .finally(() => setIsLoading(false))
-    } catch (error) {
-      //aketo ela mi affiche toast we "Serveur deconnecté"
-      alert('Erreur lors de la connexion au serveur')
+    } catch {
+      toast.error('Erreur de connexion au serveur. Vérifiez votre réseau.')
     }
-    // console.log(data)
   }
 
   return (
@@ -177,6 +173,7 @@ function Login(): JSX.Element {
         closeOnClick
         pauseOnHover
         draggable
+        theme="light"
       />
     </div>
   )

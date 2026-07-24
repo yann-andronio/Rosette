@@ -12,6 +12,7 @@ import { FaDoorOpen, FaXRay } from 'react-icons/fa'
 import { Footprints } from 'lucide-react'
 import { BsFillDoorOpenFill } from 'react-icons/bs'
 import { motion } from 'framer-motion'
+import { printElement } from '@renderer/utils/printHelper'
 
 type ShowInfoStudentsProps = {
   closemodal: () => void
@@ -62,13 +63,8 @@ const Showinfostudentsmodal = ({
   }
 
   const handlePrint = () => {
-    const printContents = document.getElementById('certificat-a-imprimer')?.innerHTML
-    if (!printContents) return
-    const originalContents = document.body.innerHTML
-    document.body.innerHTML = printContents
-    window.print()
-    document.body.innerHTML = originalContents
-    window.location.reload() // miverigna mi reactualiser page
+    const el = document.getElementById('certificat-a-imprimer')
+    printElement(el)
   }
 
   const suspendre = async (id: number, route: string) => {
