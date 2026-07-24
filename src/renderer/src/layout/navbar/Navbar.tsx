@@ -77,11 +77,11 @@ export default function Navbar(){
             </div>
           </button>
         </div>
-
-        {modal.profilModal && (
-          <ProfileModal user={user} onClose={() => closModal('profilModal')} />
-        )}
       </header>
+
+      {modal.profilModal && (
+        <ProfileModal user={user} onClose={() => closModal('profilModal')} />
+      )}
     </Fragment>
   )
 }
