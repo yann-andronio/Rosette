@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FiX, FiAlertTriangle, FiTrash2, FiCheck } from 'react-icons/fi'
+import { FiX, FiAlertTriangle, FiTrash2, FiCheck, FiCheckCircle } from 'react-icons/fi'
 import { ThreeDots } from 'react-loader-spinner'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -72,10 +72,11 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
           <div className="flex items-start justify-between mb-5">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-full ${variant === 'danger' ? 'bg-red-50' : 'bg-green-50'}`}>
-                <FiAlertTriangle
-                  size={22}
-                  className={variant === 'danger' ? 'text-red-500' : 'text-green-500'}
-                />
+                {variant === 'danger' ? (
+                  <FiAlertTriangle size={22} className="text-red-500" />
+                ) : (
+                  <FiCheckCircle size={22} className="text-green-500" />
+                )}
               </div>
               <h2
                 id="confirm-modal-title"

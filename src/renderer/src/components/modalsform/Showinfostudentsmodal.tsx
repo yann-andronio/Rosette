@@ -499,6 +499,7 @@ const [openDateModal, setOpenDateModal] = useState(false)
 
       {modal.confirmSuspend && (
         <ConfirmDeleteModal
+          variant="confirm"
           title={
             actionType === 'suspendre'
               ? 'Confirmation de suspension'

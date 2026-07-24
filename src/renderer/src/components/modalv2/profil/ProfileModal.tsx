@@ -205,6 +205,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose, user }) => {
 
     {showLogoutConfirm && (
       <ConfirmDeleteModal
+        variant="confirm"
         title="Confirmer la déconnexion"
         message="Êtes-vous sûr de vouloir vous déconnecter ? Vous serez redirigé vers la page de connexion."
         onConfirm={handleLogout}
